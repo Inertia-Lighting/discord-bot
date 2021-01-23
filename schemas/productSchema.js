@@ -12,8 +12,7 @@ const productSchema = mongoose.Schema({
     'code': requiredString,
     'name': requiredString,
     'discord_role_id': requiredString,
-    'description': requiredString
-
+    'description': requiredString,
 });
 
 //---------------------------------------------------------------------------------------------------------------//
