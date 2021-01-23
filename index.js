@@ -13,7 +13,7 @@ const moment = require('moment-timezone');
 
 const Discord = require('discord.js');
 const client = new Discord.Client();
-const prefix = process.env.PREFIX
+const prefix = process.env.PREFIX;
 
 //---------------------------------------------------------------------------------------------------------------//
 
