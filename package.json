@@ -28,6 +28,7 @@
     "express": "^4.17.1",
     "fs": "0.0.1-security",
     "moment-timezone": "^0.5.32",
-    "mongoose": "^5.11.9"
+    "mongoose": "^5.11.9",
+    "path": "^0.12.7"
   }
 }
