@@ -10,7 +10,7 @@ async function userProductsFetch(router, client, userSchema, mongo) {
         }
 
         const { player_id: roblox_user_id } = req.body;
-
+        console.log('req.body', req.body);
         await mongo(); // initialize connection to database
 
         const user_data = await userSchema.findOne({
