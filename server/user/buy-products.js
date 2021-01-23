@@ -74,7 +74,7 @@ const roblox_products = new Discord.Collection([
         discord_role_id: '673362639660908559',
         description: '',
     },
-].map(item => ([item.roblox_product_id, item])));
+].map(item => ([item.id, item])));
 
 //---------------------------------------------------------------------------------------------------------------//
 
