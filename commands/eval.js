@@ -2,7 +2,7 @@
 
 module.exports = {
     name: 'eval',
-    description: 'Very powerful command this command is used by my bot owner only.',
+    description: 'very powerful command that is used by my bot owner',
     ownerOnly: true,
     async execute(message, args, client, Discord) {
         message.delete();

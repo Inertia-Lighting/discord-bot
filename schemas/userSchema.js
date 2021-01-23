@@ -1,14 +1,14 @@
 const mongoose = require('mongoose');
 
-const reqString = {
+const requiredString = {
     type: String,
     required: true,
-}
+};
 
 const userSchema = mongoose.Schema({
-    _id: reqString,
-    ROBLOX_ID: reqString,
-    products: Object,
+    '_id': requiredString,
+    'ROBLOX_ID': requiredString,
+    'products': Object,
 });
 
 module.exports = mongoose.model('users', userSchema);

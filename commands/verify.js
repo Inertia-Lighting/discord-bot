@@ -20,7 +20,7 @@ module.exports = {
                 },
                 title: 'Error',
                 description: [
-                    'That verification code was not recognised!',
+                    'That verification code was not recognized!',
                     'You need to provide the verification code that was given to you in the product hub!',
                     `Example: \`${prefix}verify CODE_HERE\``,
                 ].join('\n'),
@@ -39,7 +39,7 @@ module.exports = {
                 url: 'https://inertia-lighting.xyz',
             },
             title: 'Success',
-            description: 'That verification code was recognised!',
+            description: 'That verification code was recognized!',
         }));
 
         await mongo(); // initialize connection to database

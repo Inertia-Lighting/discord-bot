@@ -16,7 +16,7 @@ async function commandHandler(client, message, prefix, errorEmbed, mongo, userSc
                 url: 'https://inertia-lighting.xyz',
             },
             title: 'Command Error',
-            description: 'That is not a vailid command!',
+            description: 'That is not a valid command!',
         }));
         return;
     }

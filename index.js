@@ -45,15 +45,7 @@ function errorEmbed(message) {
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const express = require('express');
-const bodyParser = require('body-parser');
-const router = express.Router();
-const app = express();
-app.set('port', process.env.SERVER_PORT);
-
-//---------------------------------------------------------------------------------------------------------------//
-
-const { commandHandler } = require('./Handlers/commandHandler');
+const { commandHandler } = require('./handlers/commandHandler');
 const { userVerify } = require('./server/user/verify');
 const { userVerified } = require('./server/user/verified');
 const { userFind } = require('./server/user/find-player');
@@ -75,7 +67,7 @@ client.on('ready', async () => {
     console.log(`----------------------------------------------------------------------------------------------------------------`);
 });
 
-/* handle  */
+/* handle messages */
 client.on('message', async (message) => {
     /* don't allow bots */
     if (message.author.bot) return;
@@ -98,6 +90,12 @@ client.on('message', async (message) => {
 client.login(process.env.TOKEN);
 
 //---------------------------------------------------------------------------------------------------------------//
+
+const express = require('express');
+const bodyParser = require('body-parser');
+const router = express.Router();
+const app = express();
+app.set('port', process.env.SERVER_PORT);
 
 app.use(bodyParser.json()); // parse application/json
 app.use('/', router);
