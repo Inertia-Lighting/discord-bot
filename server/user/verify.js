@@ -1,6 +1,5 @@
 'use strict';
 
-const Discord = require('discord.js');
 const axios = require('axios');
 
 async function userVerify(router, client, userSchema, mongo) {

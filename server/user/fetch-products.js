@@ -1,3 +1,5 @@
+'use strict';
+
 async function userProducts(router, client, userSchema, mongo) {
     router.post('/user/fetch-products/:product_name?', async (req, res) => {
         if (req.headers?.['content-type'] !== 'application/json') {

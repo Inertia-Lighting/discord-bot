@@ -1,3 +1,5 @@
+'use strict';
+
 async function userVerified(router, client, userSchema, mongo) {
     router.post('/user/verified', async (req, res) => {
         if (req.headers?.['content-type'] !== 'application/json') {

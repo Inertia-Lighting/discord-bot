@@ -1,3 +1,5 @@
+'use strict';
+
 async function userFind(router, client, userSchema, mongo) {
     router.post('/user/find-player', async (req, res) => {
         if (req.headers?.['content-type'] !== 'application/json') {
