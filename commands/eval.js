@@ -1,5 +1,7 @@
 'use strict';
 
+//---------------------------------------------------------------------------------------------------------------//
+
 module.exports = {
     name: 'eval',
     description: 'very powerful command that is used by my bot owner',
@@ -42,4 +44,4 @@ module.exports = {
             message.channel.send(embed);
         }
     },
-}
+};

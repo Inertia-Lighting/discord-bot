@@ -1,7 +1,9 @@
 'use strict';
 
-async function userProducts(router, client, userSchema, mongo) {
-    router.post('/user/fetch-products/:product_name?', async (req, res) => {
+//---------------------------------------------------------------------------------------------------------------//
+
+async function userProductsFetch(router, client, userSchema, mongo) {
+    router.post('/user/products/fetch/:product_name?', async (req, res) => {
         if (req.headers?.['content-type'] !== 'application/json') {
             console.error('WRONG CONTENT TYPE SENT TO SERVER!');
             return;
@@ -36,6 +38,8 @@ async function userProducts(router, client, userSchema, mongo) {
     });
 }
 
+//---------------------------------------------------------------------------------------------------------------//
+
 module.exports = {
-    userProducts,
-}
+    userProductsFetch,
+};

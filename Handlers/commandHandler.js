@@ -1,6 +1,10 @@
 'use strict';
 
+//---------------------------------------------------------------------------------------------------------------//
+
 const Discord = require('discord.js');
+
+//---------------------------------------------------------------------------------------------------------------//
 
 async function commandHandler(client, message, prefix, errorEmbed, mongo, userSchema) {
     /* find command by command_name */
@@ -50,6 +54,8 @@ async function commandHandler(client, message, prefix, errorEmbed, mongo, userSc
     }
 }
 
+//---------------------------------------------------------------------------------------------------------------//
+
 module.exports = {
     commandHandler,
-}
+};

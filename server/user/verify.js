@@ -1,6 +1,10 @@
 'use strict';
 
+//---------------------------------------------------------------------------------------------------------------//
+
 const axios = require('axios');
+
+//---------------------------------------------------------------------------------------------------------------//
 
 async function userVerify(router, client, userSchema, mongo) {
     router.post('/user/verify', async (req, res) => {
@@ -69,6 +73,8 @@ async function userVerify(router, client, userSchema, mongo) {
     });
 }
 
+//---------------------------------------------------------------------------------------------------------------//
+
 module.exports = {
     userVerify,
-}
+};

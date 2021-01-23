@@ -1,5 +1,7 @@
 'use strict';
 
+//---------------------------------------------------------------------------------------------------------------//
+
 module.exports = {
     name: 'verify',
     description: 'verifies the user and adds them to the database',
@@ -83,4 +85,4 @@ module.exports = {
             });
         }
     },
-}
+};

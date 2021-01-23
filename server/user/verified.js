@@ -1,5 +1,7 @@
 'use strict';
 
+//---------------------------------------------------------------------------------------------------------------//
+
 async function userVerified(router, client, userSchema, mongo) {
     router.post('/user/verified', async (req, res) => {
         if (req.headers?.['content-type'] !== 'application/json') {
@@ -27,6 +29,8 @@ async function userVerified(router, client, userSchema, mongo) {
     });
 }
 
+//---------------------------------------------------------------------------------------------------------------//
+
 module.exports = {
     userVerified,
-}
+};

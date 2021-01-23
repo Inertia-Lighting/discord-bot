@@ -1,5 +1,7 @@
 'use strict';
 
+//---------------------------------------------------------------------------------------------------------------//
+
 require('dotenv').config();
 
 //---------------------------------------------------------------------------------------------------------------//
@@ -19,6 +21,7 @@ const prefix = process.env.PREFIX;
 
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
+/* expose interface on client for internal usage */
 client.$ = {
     commands: new Discord.Collection(),
     verification_contexts: new Discord.Collection(),
@@ -42,8 +45,6 @@ function errorEmbed(message) {
         description: `You do not have access to use this command!`
     }));
 }
-
-
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -90,17 +91,18 @@ app.use('/', router);
 //---------------------------------------------------------------------------------------------------------------//
 
 const { commandHandler } = require('./handlers/commandHandler');
+
 const { userVerify } = require('./server/user/verify');
 const { userVerified } = require('./server/user/verified');
-const { userFind } = require('./server/user/find-player');
-const { userProducts } = require('./server/user/fetch-products');
+const { userProductsFetch } = require('./server/user/fetch-products');
+const { userProductsBuy } = require('./server/user/buy-products');
 
 //---------------------------------------------------------------------------------------------------------------//
 
 userVerify(router, client, userSchema, mongo);
 userVerified(router, client, userSchema, mongo);
-userFind(router, client, userSchema, mongo);
-userProducts(router, client, userSchema, mongo);
+userProductsFetch(router, client, userSchema, mongo);
+userProductsBuy(router, client, userSchema, mongo);
 
 /* start the server on the port */
 app.listen(app.get('port'), () => {

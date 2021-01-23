@@ -1,5 +1,7 @@
 'use strict';
 
+//---------------------------------------------------------------------------------------------------------------//
+
 module.exports = {
     name: 'help',
     description: 'Shows a list of commands for you to use.',
@@ -43,4 +45,4 @@ module.exports = {
             }));
         }
     },
-}
+};
