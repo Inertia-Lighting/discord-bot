@@ -43,20 +43,7 @@ function errorEmbed(message) {
     }));
 }
 
-//---------------------------------------------------------------------------------------------------------------//
 
-const { commandHandler } = require('./handlers/commandHandler');
-const { userVerify } = require('./server/user/verify');
-const { userVerified } = require('./server/user/verified');
-const { userFind } = require('./server/user/find-player');
-const { userProducts } = require('./server/user/fetch-products');
-
-//---------------------------------------------------------------------------------------------------------------//
-
-userVerify(router, client, userSchema, mongo);
-userVerified(router, client, userSchema, mongo);
-userFind(router, client, userSchema, mongo);
-userProducts(router, client, userSchema, mongo);
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -99,6 +86,21 @@ app.set('port', process.env.SERVER_PORT);
 
 app.use(bodyParser.json()); // parse application/json
 app.use('/', router);
+
+//---------------------------------------------------------------------------------------------------------------//
+
+const { commandHandler } = require('./handlers/commandHandler');
+const { userVerify } = require('./server/user/verify');
+const { userVerified } = require('./server/user/verified');
+const { userFind } = require('./server/user/find-player');
+const { userProducts } = require('./server/user/fetch-products');
+
+//---------------------------------------------------------------------------------------------------------------//
+
+userVerify(router, client, userSchema, mongo);
+userVerified(router, client, userSchema, mongo);
+userFind(router, client, userSchema, mongo);
+userProducts(router, client, userSchema, mongo);
 
 /* start the server on the port */
 app.listen(app.get('port'), () => {
