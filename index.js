@@ -104,6 +104,8 @@ userVerified(router, client, userSchema, mongo);
 userProductsFetch(router, client, userSchema, mongo);
 userProductsBuy(router, client, userSchema, mongo);
 
+require('./addProduct.js')();
+
 /* start the server on the port */
 app.listen(app.get('port'), () => {
     console.log(`----------------------------------------------------------------------------------------------------------------`);
