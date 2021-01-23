@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = {
     name: 'ping',
     description: 'shows bot ping',
@@ -5,5 +7,5 @@ module.exports = {
     aliases: ['ping'],
     execute(message, args, client, Discord) {
         message.channel.send(`Pong: ${client.ws.ping}ms`)
-    }
+    },
 }

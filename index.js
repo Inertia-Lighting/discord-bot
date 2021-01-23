@@ -19,21 +19,25 @@ const prefix = process.env.PREFIX
 
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
-client.commands = new Discord.Collection();
-
 client.$ = {
+    commands: new Discord.Collection(),
     verification_contexts: new Discord.Collection(),
 };
 
+/* register commands */
 for (const file of commandFiles) {
     const command = require(`./commands/${file}`);
-    client.commands.set(command.name, command);
+    client.$.commands.set(command.name, command);
 }
 
 function errorEmbed(message) {
     message.channel.send(new Discord.MessageEmbed({
         color: 0xeb8d1a,
-        author: {name: `${client.user.username}`, iconURL: `${client.user.avatarURL()}`, url: `https://inertia-lighting.xyz`},
+        author: {
+            name: `${client.user.username}`,
+            iconURL: `${client.user.avatarURL()}`,
+            url: 'https://inertia-lighting.xyz',
+        },
         title: `Command Error`,
         description: `You do not have access to use this command!`
     }));
@@ -63,20 +67,35 @@ userFind(router, client, userSchema, mongo);
 userProducts(router, client, userSchema, mongo);
 
 //---------------------------------------------------------------------------------------------------------------//
+
 client.on('ready', async () => {
-    const ready_timestamp = moment();
+    const ready_timestamp = `${moment()}`;
     console.log(`----------------------------------------------------------------------------------------------------------------`);
     console.log(`${process.env.BOT_NAME} Logged in as ${client.user.tag} on ${ready_timestamp}`);
     console.log(`----------------------------------------------------------------------------------------------------------------`);
 });
 
+/* handle  */
 client.on('message', async (message) => {
+    /* don't allow bots */
     if (message.author.bot) return;
-    if (message.channel.type === 'dm') return;
-    commandHandler(client, message, prefix, errorEmbed, mongo, userSchema);
+
+    /* only allow text channels */
+    if (message.channel.type !== 'text') return;
+
+    /* respond to mentions */
+    if (message.content.startsWith(`<@!${client.user.id}>`)) {
+        message.reply(`The prefix for me is \`${prefix}\`. To see a list of commands do \`${prefix}help\`!`);
+    }
+
+    /* handle commands */
+    if (message.content.startsWith(prefix)) {
+        commandHandler(client, message, prefix, errorEmbed, mongo, userSchema);
+    }
 })
 
-client.login(process.env.TOKEN)
+/* login the discord bot */
+client.login(process.env.TOKEN);
 
 //---------------------------------------------------------------------------------------------------------------//
 

@@ -16,7 +16,7 @@ module.exports = {
                 author: {
                     name: `${client.user.username}`,
                     iconURL: `${client.user.avatarURL()}`,
-                    url: `https://inertia-lighting.xyz`
+                    url: 'https://inertia-lighting.xyz',
                 },
                 title: 'Error',
                 description: [
@@ -36,7 +36,7 @@ module.exports = {
             author: {
                 name: `${client.user.username}`,
                 iconURL: `${client.user.avatarURL()}`,
-                url: `https://inertia-lighting.xyz`
+                url: 'https://inertia-lighting.xyz',
             },
             title: 'Success',
             description: 'That verification code was recognised!',
@@ -54,7 +54,7 @@ module.exports = {
                 author: {
                     name: `${client.user.username}`,
                     iconURL: `${client.user.avatarURL()}`,
-                    url: `https://inertia-lighting.xyz`
+                    url: 'https://inertia-lighting.xyz',
                 },
                 title: 'Error',
                 description: 'I already found you in the database! If you would like to update yourself please run \`!update\`',
@@ -82,5 +82,5 @@ module.exports = {
                 upsert: true,
             });
         }
-    }
+    },
 }

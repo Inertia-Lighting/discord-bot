@@ -41,5 +41,5 @@ module.exports = {
                 .setFooter(`Code executed by ${message.author.tag}`, message.author.displayAvatarURL({ format: 'png', dynamic: true }));
             message.channel.send(embed);
         }
-    }
+    },
 }
