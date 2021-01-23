@@ -3,6 +3,7 @@
 //---------------------------------------------------------------------------------------------------------------//
 
 const fs = require('fs');
+const path = require('path');
 const moment = require('moment-timezone');
 const Discord = require('discord.js');
 
@@ -20,7 +21,9 @@ const { commandHandler } = require('./handlers/commandHandler.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+const test = path.join(process.cwd(), './src/bot/commands/');
+console.log({ test });
+const commandFiles = fs.readdirSync(test).filter(file => file.endsWith('.js'));
 
 /* expose interface on client for internal usage */
 client.$ = {
