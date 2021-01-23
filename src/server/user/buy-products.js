@@ -6,9 +6,9 @@ const Discord = require('discord.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const mongo = require('../../mongo.js');
-const userSchema = require('../../schemas/userSchema.js');
-const productSchema = require('../../schemas/productSchema.js');
+const mongo = require('../../mongo/mongo.js');
+const userSchema = require('../../mongo/schemas/userSchema.js');
+const productSchema = require('../../mongo/schemas/productSchema.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 

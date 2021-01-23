@@ -2,8 +2,8 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const mongo = require('../../mongo.js');
-const userSchema = require('../../schemas/userSchema.js');
+const mongo = require('../../mongo/mongo.js');
+const userSchema = require('../../mongo/schemas/userSchema.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
