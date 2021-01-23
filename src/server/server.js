@@ -16,10 +16,10 @@ app.use('/', router);
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const { userVerify } = require('./src/server/user/verify');
-const { userVerified } = require('./src/server/user/verified');
-const { userProductsFetch } = require('./src/server/user/fetch-products');
-const { userProductsBuy } = require('./src/server/user/buy-products');
+const { userVerify } = require('./user/verify.js');
+const { userVerified } = require('./user/verified.js');
+const { userProductsFetch } = require('./user/fetch-products.js');
+const { userProductsBuy } = require('./user/buy-products.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 

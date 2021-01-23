@@ -21,9 +21,7 @@ const { commandHandler } = require('./handlers/commandHandler.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const test = path.join(process.cwd(), './src/bot/commands/');
-console.log({ test });
-const commandFiles = fs.readdirSync(test).filter(file => file.endsWith('.js'));
+const commandFiles = fs.readdirSync(path.join(process.cwd(), './src/bot/commands/')).filter(file => file.endsWith('.js'));
 
 /* expose interface on client for internal usage */
 client.$ = {
