@@ -16,8 +16,8 @@ module.exports = {
             message.channel.send(new Discord.MessageEmbed({
                 color: 0xFF0000,
                 author: {
+                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                     name: `${client.user.username}`,
-                    iconURL: `${client.user.avatarURL()}`,
                     url: 'https://inertia-lighting.xyz',
                 },
                 title: 'Error',
@@ -26,7 +26,7 @@ module.exports = {
                     'You need to provide the verification code that was given to you in the product hub!',
                     `Example: \`${prefix}verify CODE_HERE\``,
                 ].join('\n'),
-            }));
+            })).catch(console.warn);
             return;
         }
 
@@ -36,13 +36,13 @@ module.exports = {
         message.channel.send(new Discord.MessageEmbed({
             color: 0x00FF00,
             author: {
+                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                 name: `${client.user.username}`,
-                iconURL: `${client.user.avatarURL()}`,
                 url: 'https://inertia-lighting.xyz',
             },
             title: 'Success',
             description: 'That verification code was recognized!',
-        }));
+        })).catch(console.warn);
 
         await mongo(); // initialize connection to database
 
@@ -54,13 +54,13 @@ module.exports = {
             message.channel.send(new Discord.MessageEmbed({
                 color: 0xFF0000,
                 author: {
+                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                     name: `${client.user.username}`,
-                    iconURL: `${client.user.avatarURL()}`,
                     url: 'https://inertia-lighting.xyz',
                 },
                 title: 'Error',
                 description: 'I already found you in the database! If you would like to update yourself please run \`!update\`',
-            }));
+            })).catch(console.warn);
         } else {
             const member_roles = message.member.roles.cache;
             await userSchema.findOneAndUpdate({

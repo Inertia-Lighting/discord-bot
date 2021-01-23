@@ -117,6 +117,11 @@ async function userProductsBuy(router, client, userSchema, mongo) {
 
         const purchased_product = roblox_products.get(roblox_product_id);
 
+        console.log({
+            roblox_product_id,
+            purchased_product,
+        });
+
         await userSchema.findOneAndUpdate({
             'ROBLOX_ID': roblox_user_id,
         }, {
@@ -129,7 +134,7 @@ async function userProductsBuy(router, client, userSchema, mongo) {
         dm_channel.send(new Discord.MessageEmbed({
             color: 0x404040,
             author: {
-                iconURL: client.user.displayAvatarURL({ dynamic: true }),
+                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                 name: 'Inertia Lighting | Confirmed Purchase',
             },
             title: `Thank you for purchasing ${purchased_product.name}!`,

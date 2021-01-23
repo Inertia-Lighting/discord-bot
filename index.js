@@ -37,18 +37,18 @@ function errorEmbed(message) {
     message.channel.send(new Discord.MessageEmbed({
         color: 0xeb8d1a,
         author: {
+            iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
             name: `${client.user.username}`,
-            iconURL: `${client.user.avatarURL()}`,
             url: 'https://inertia-lighting.xyz',
         },
         title: `Command Error`,
         description: `You do not have access to use this command!`
-    }));
+    })).catch(console.warn);
 }
 
 //---------------------------------------------------------------------------------------------------------------//
 
-client.on('ready', async () => {
+client.on('ready', () => {
     const ready_timestamp = `${moment()}`;
     console.log(`----------------------------------------------------------------------------------------------------------------`);
     console.log(`${process.env.BOT_NAME} Logged in as ${client.user.tag} on ${ready_timestamp}`);
@@ -65,14 +65,14 @@ client.on('message', async (message) => {
 
     /* respond to mentions */
     if (message.content.startsWith(`<@!${client.user.id}>`)) {
-        message.reply(`The prefix for me is \`${prefix}\`. To see a list of commands do \`${prefix}help\`!`);
+        message.reply(`The prefix for me is \`${prefix}\`. To see a list of commands do \`${prefix}help\`!`).catch(console.warn);
     }
 
     /* handle commands */
     if (message.content.startsWith(prefix)) {
         commandHandler(client, message, prefix, errorEmbed, mongo, userSchema);
     }
-})
+});
 
 /* login the discord bot */
 client.login(process.env.TOKEN);

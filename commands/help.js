@@ -15,8 +15,8 @@ module.exports = {
                 message.channel.send(new Discord.MessageEmbed({
                     color: 0x43DE6C,
                     author: {
+                        iconURL: `${message.author.displayAvatarURL({ dynamic: true })}`,
                         name: `${message.author.tag}`,
-                        icon_url: message.author.displayAvatarURL()
                     },
                     description: [
                         `**Name:** ${specified_command.name}`,
@@ -24,9 +24,9 @@ module.exports = {
                         `**Description:** ${specified_command.description ?? 'n/a'}`,
                         `**Usage:** ${specified_command.usage ? `\`${prefix}${specified_command.name} ${specified_command.usage}\`` : 'n/a'}`
                     ].join('\n'),
-                }));
+                })).catch(console.warn);
             } else {
-                message.reply(`That's not a valid command!`);
+                message.reply(`That's not a valid command!`).catch(console.warn);
             }
         } else {
             /* display all commands */
@@ -34,15 +34,15 @@ module.exports = {
             message.channel.send(new Discord.MessageEmbed({
                 color: 0x43de6c,
                 author: {
+                    iconURL: `${message.author.displayAvatarURL({ dynamic: true })}`,
                     name: `${message.author.tag}`,
-                    icon_url: message.author.displayAvatarURL()
                 },
                 title: 'Here\'s a list of all my commands!',
                 description: [
                     `You can send \`${prefix}help [command name]\` to get info on a specific command!`,
                     `\`\`\`${all_commands_with_prefix.join('\n')}\`\`\``,
                 ].join('\n'),
-            }));
+            })).catch(console.warn);
         }
     },
 };

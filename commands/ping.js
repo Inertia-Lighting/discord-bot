@@ -8,6 +8,6 @@ module.exports = {
     staffOnly: true,
     aliases: ['ping'],
     execute(message, args, client, Discord) {
-        message.channel.send(`Pong: ${client.ws.ping}ms`)
+        message.channel.send(`Pong: ${client.ws.ping}ms`).catch(console.warn);
     },
 };

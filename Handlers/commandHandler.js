@@ -15,8 +15,8 @@ async function commandHandler(client, message, prefix, errorEmbed, mongo, userSc
         message.reply(new Discord.MessageEmbed({
             color: 0xFF0000,
             author: {
+                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                 name: `${client.user.name}`,
-                iconURL: `${client.user.avatarURL()}`,
                 url: 'https://inertia-lighting.xyz',
             },
             title: 'Command Error',
@@ -44,8 +44,8 @@ async function commandHandler(client, message, prefix, errorEmbed, mongo, userSc
         message.reply(new Discord.MessageEmbed({
             color: 0xFF0000,
             author: {
+                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                 name: `${client.user.name}`,
-                iconURL: `${client.user.avatarURL()}`,
                 url: 'https://inertia-lighting.xyz',
             },
             title: 'Command Error',
