@@ -18,13 +18,13 @@ const roblox_products = new Discord.Collection([
         code: 'Laser_Fixture',
         name: 'Laser Fixture',
         discord_role_id: '701758602624368741',
-        description: '',
+        description: 'n/a',
     }, {
         id: '1048656930',
         code: 'Follow_Spotlight',
         name: 'Follow Spotlight',
         discord_role_id: '703378159768436778',
-        description: '',
+        description: 'n/a',
     }, {
         id: '1048657587',
         code: 'JDC1',
@@ -72,7 +72,7 @@ const roblox_products = new Discord.Collection([
         code: 'Wash',
         name: 'Washes',
         discord_role_id: '673362639660908559',
-        description: '',
+        description: 'n/a',
     },
 ].map(item => ([item.id, item])));
 
@@ -117,17 +117,15 @@ async function userProductsBuy(router, client, userSchema, mongo) {
 
         const purchased_product = roblox_products.get(roblox_product_id);
 
-        console.log({
-            roblox_product_id,
-            purchased_product,
-        });
-
         await userSchema.findOneAndUpdate({
             'ROBLOX_ID': roblox_user_id,
         }, {
-            [purchased_product.code]: true,
+            $set: {
+                [`products.${purchased_product.code}`]: true,
+            },
         }, {
             upsert: true,
+            new: true,
         });
 
         /* dm the user */
