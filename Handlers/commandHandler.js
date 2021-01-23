@@ -2,13 +2,22 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const Discord = require('discord.js');
+async function commandHandler(Discord, client, message, command_prefix, mongo, userSchema) {
+    function errorEmbed(message) {
+        message.channel.send(new Discord.MessageEmbed({
+            color: 0xeb8d1a,
+            author: {
+                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                name: `${client.user.username}`,
+                url: 'https://inertia-lighting.xyz',
+            },
+            title: 'Command Error',
+            description: 'You do not have access to use this command!'
+        })).catch(console.warn);
+    }
 
-//---------------------------------------------------------------------------------------------------------------//
-
-async function commandHandler(client, message, prefix, errorEmbed, mongo, userSchema) {
     /* find command by command_name */
-    const args = message.content.slice(prefix.length).trim().split(/\s+/g);
+    const args = message.content.slice(command_prefix.length).trim().split(/\s+/g);
     const command_name = args.shift().toLowerCase();
     const command = client.$.commands.get(command_name) ?? client.$.commands.find(cmd => cmd.aliases?.includes(command_name));
     if (!command) {
@@ -37,7 +46,7 @@ async function commandHandler(client, message, prefix, errorEmbed, mongo, userSc
 
     /* command execution */
     try {
-        await command.execute(message, args, client, Discord, prefix, mongo, userSchema);
+        await command.execute(message, args, client, Discord, command_prefix, mongo, userSchema);
     } catch (error) {
         console.trace(error);
 

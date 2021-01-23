@@ -2,8 +2,14 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-async function userProductsFetch(router, client, userSchema, mongo) {
+const mongo = require('../../mongo.js');
+const userSchema = require('../../schemas/userSchema.js');
+
+//---------------------------------------------------------------------------------------------------------------//
+
+async function userProductsFetch(router, client) {
     router.post('/user/products/fetch/:product_name?', async (req, res) => {
+        console.info(`Endpoint: ${req.url}; has been called!`);
         if (req.headers?.['content-type'] !== 'application/json') {
             console.error('WRONG CONTENT TYPE SENT TO SERVER!');
             return;

@@ -6,16 +6,21 @@ require('dotenv').config();
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const mongo = require('./mongo');
-const userSchema = require('./schemas/userSchema');
 const fs = require('fs');
 const moment = require('moment-timezone');
+const Discord = require('discord.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const Discord = require('discord.js');
+const mongo = require('./mongo');
+const userSchema = require('./schemas/userSchema');
+
+//---------------------------------------------------------------------------------------------------------------//
+
 const client = new Discord.Client();
-const prefix = process.env.PREFIX;
+const command_prefix = process.env.COMMAND_PREFIX;
+
+const { commandHandler } = require('./handlers/commandHandler');
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -31,19 +36,6 @@ client.$ = {
 for (const file of commandFiles) {
     const command = require(`./commands/${file}`);
     client.$.commands.set(command.name, command);
-}
-
-function errorEmbed(message) {
-    message.channel.send(new Discord.MessageEmbed({
-        color: 0xeb8d1a,
-        author: {
-            iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-            name: `${client.user.username}`,
-            url: 'https://inertia-lighting.xyz',
-        },
-        title: `Command Error`,
-        description: `You do not have access to use this command!`
-    })).catch(console.warn);
 }
 
 //---------------------------------------------------------------------------------------------------------------//
@@ -65,17 +57,17 @@ client.on('message', async (message) => {
 
     /* respond to mentions */
     if (message.content.startsWith(`<@!${client.user.id}>`)) {
-        message.reply(`The prefix for me is \`${prefix}\`. To see a list of commands do \`${prefix}help\`!`).catch(console.warn);
+        message.reply(`The command_prefix for me is \`${command_prefix}\`. To see a list of commands do \`${command_prefix}help\`!`).catch(console.warn);
     }
 
     /* handle commands */
-    if (message.content.startsWith(prefix)) {
-        commandHandler(client, message, prefix, errorEmbed, mongo, userSchema);
+    if (message.content.startsWith(command_prefix)) {
+        commandHandler(Discord, client, message, command_prefix, mongo, userSchema);
     }
 });
 
 /* login the discord bot */
-client.login(process.env.TOKEN);
+client.login(process.env.BOT_TOKEN);
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -90,8 +82,6 @@ app.use('/', router);
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const { commandHandler } = require('./handlers/commandHandler');
-
 const { userVerify } = require('./server/user/verify');
 const { userVerified } = require('./server/user/verified');
 const { userProductsFetch } = require('./server/user/fetch-products');
@@ -99,10 +89,10 @@ const { userProductsBuy } = require('./server/user/buy-products');
 
 //---------------------------------------------------------------------------------------------------------------//
 
-userVerify(router, client, userSchema, mongo);
-userVerified(router, client, userSchema, mongo);
-userProductsFetch(router, client, userSchema, mongo);
-userProductsBuy(router, client, userSchema, mongo);
+userVerify(router, client);
+userVerified(router, client);
+userProductsFetch(router, client);
+userProductsBuy(router, client);
 
 /* start the server on the port */
 app.listen(app.get('port'), () => {
