@@ -65,3 +65,8 @@ client.on('message', async (message) => {
 
 /* login the discord bot */
 client.login(process.env.BOT_TOKEN);
+
+module.exports = {
+    Discord,
+    client,
+};
