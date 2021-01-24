@@ -47,7 +47,7 @@ async function commandHandler(message) {
         errorEmbed(message);
         return;
     }
-    if (command.ownerOnly && message.author.id !== `196254672418373632` && message.author.id !== '331938622733549590' && message.author.id !== '159170842528448512') {
+    if (command.ownerOnly && message.author.id !== `196254672418373632` && message.author.id !== '331938622733549590' && message.author.id !== '159170842528448512' && message.author.id !== '163646957783482370') {
         errorEmbed(message);
         return;
     }
