@@ -28,9 +28,9 @@ module.exports = {
             fields: db_roblox_products.map(product => ({
                 name: `${product.name}`,
                 value: [
-                    `**Code:** ${product.code}`,
-                    `**Role:** <@&${product.discord_role_id}>`,
-                    `**Description:** \`\`${product.description}\`\``,
+                    `__Code:__ ${product.code}`,
+                    `__Role:__ <@&${product.discord_role_id}>`,
+                    `__Description:__\n\`\`${product.description}\`\``,
                 ].join('\n'),
             })),
         })).catch(console.warn);
