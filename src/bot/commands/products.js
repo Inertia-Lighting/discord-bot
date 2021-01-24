@@ -24,16 +24,26 @@ module.exports = {
                 iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                 name: 'Inertia Lighting | Products',
             },
-            description: `Hey there ${message.author}!\nHere are our products:`,
-            fields: db_roblox_products.map(product => ({
-                name: `Product`,
-                value: [
-                    `**Name:** ${product.name}`,
-                    `**Code:** ${product.code}`,
-                    `**Role:** <@&${product.discord_role_id}>`,
-                    `**Description:**\n${product.description}`,
-                ].join('\n'),
-            })),
+            description: [
+                `Hey there ${message.author}!\nHere are our products:`,
+                db_roblox_products.map(product => 
+                    [
+                        `**${product.name}**`,
+                        `**Code:** ${product.code}`,
+                        `**Role:** <@&${product.discord_role_id}>`,
+                        `**Description:**\n\`\`\`${product.description}\`\`\``,
+                    ].join('\n')
+                ).join('\n\n')
+            ].join('\n\n'),
+            // fields: db_roblox_products.map(product => ({
+            //     name: `Product`,
+            //     value: [
+            //         `**Name:** ${product.name}`,
+            //         `**Code:** ${product.code}`,
+            //         `**Role:** <@&${product.discord_role_id}>`,
+            //         `**Description:**\n${product.description}`,
+            //     ].join('\n'),
+            // })),
         })).catch(console.warn);
 
         console.log({ db_roblox_products });
