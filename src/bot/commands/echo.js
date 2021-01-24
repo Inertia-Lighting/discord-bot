@@ -9,7 +9,7 @@ const { Discord, client } = require('../discord_client.js');
 module.exports = {
     name: 'echo',
     description: 'sends message',
-    staffOnly: true,
+    ownerOnly: true,
     aliases: ['echo'],
     async execute(message, args) {
         message.delete();

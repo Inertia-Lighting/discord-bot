@@ -10,7 +10,7 @@ const client = new Discord.Client({
     disableMentions: 'everyone',
     partials: [],
     presence: {
-        status: 'online',
+        status: 'dnd',
         type: 4,
         activity: {
             type: 'PLAYING',

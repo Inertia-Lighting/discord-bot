@@ -17,7 +17,6 @@ module.exports = {
     name: 'verify',
     description: 'verifies the user and adds them to the database',
     usage: 'CODE_HERE',
-    ownerOnly: false,
     aliases: ['verify', 'v'],
     async execute(message, args) {
         const verification_code_to_lookup = args[0];
