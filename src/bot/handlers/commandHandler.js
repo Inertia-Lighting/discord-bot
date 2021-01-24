@@ -2,7 +2,15 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-async function commandHandler(Discord, client, message, command_prefix) {
+const { Discord, client } = require('../discord_client.js');
+
+//---------------------------------------------------------------------------------------------------------------//
+
+const command_prefix = process.env.COMMAND_PREFIX;
+
+//---------------------------------------------------------------------------------------------------------------//
+
+async function commandHandler(message) {
     function errorEmbed(message) {
         message.channel.send(new Discord.MessageEmbed({
             color: 0xeb8d1a,
@@ -46,7 +54,7 @@ async function commandHandler(Discord, client, message, command_prefix) {
 
     /* command execution */
     try {
-        await command.execute(message, args, client, Discord, command_prefix);
+        await command.execute(message, args);
     } catch (error) {
         console.trace(error);
 

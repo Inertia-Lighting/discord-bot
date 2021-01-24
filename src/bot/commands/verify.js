@@ -9,6 +9,10 @@ const { Discord, client } = require('../discord_client.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
+const command_prefix = process.env.COMMAND_PREFIX;
+
+//---------------------------------------------------------------------------------------------------------------//
+
 module.exports = {
     name: 'verify',
     description: 'verifies the user and adds them to the database',
@@ -31,7 +35,7 @@ module.exports = {
                 description: [
                     'That verification code was not recognized!',
                     'You need to provide the verification code that was given to you in the product hub!',
-                    `Example: \`${prefix}verify CODE_HERE\``,
+                    `Example: \`${command_prefix}verify CODE_HERE\``,
                 ].join('\n'),
             })).catch(console.warn);
             return;

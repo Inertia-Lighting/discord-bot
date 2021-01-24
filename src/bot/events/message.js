@@ -30,7 +30,7 @@ module.exports = {
 
         /* handle commands */
         if (message.content.startsWith(command_prefix)) {
-            commandHandler(Discord, client, message, command_prefix);
+            commandHandler(message);
         }
     },
 };
