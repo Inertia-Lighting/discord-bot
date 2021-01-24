@@ -4,17 +4,10 @@
 
 const fs = require('fs');
 const path = require('path');
-const Discord = require('discord.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const client = new Discord.Client();
-
-/* expose interface on client for internal usage */
-client.$ = {
-    commands: new Discord.Collection(),
-    verification_contexts: new Discord.Collection(),
-};
+const { client } = require('../bot.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -37,13 +30,3 @@ for (const event_file of event_files) {
     const bot_event = require(path.join(event_files_path, event_file));
     client.on(bot_event.name, bot_event.handler);
 }
-
-/* login the discord bot */
-client.login(process.env.BOT_TOKEN);
-
-//---------------------------------------------------------------------------------------------------------------//
-
-module.exports = {
-    Discord,
-    client,
-};
