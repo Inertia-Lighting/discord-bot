@@ -2,11 +2,19 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
+const { Discord, client } = require('../discord_client.js');
+
+//---------------------------------------------------------------------------------------------------------------//
+
+const command_prefix = process.env.COMMAND_PREFIX;
+
+//---------------------------------------------------------------------------------------------------------------//
+
 module.exports = {
     name: 'help',
     description: 'Shows a list of commands for you to use.',
     usage: 'help',
-    execute(message, args, client, Discord, prefix) {
+    async execute(message, args) {
         if (args[0]) {
             /* display help for a specified command */
             const specified_command_name = args[0].toLowerCase();
@@ -22,7 +30,7 @@ module.exports = {
                         `**Name:** ${specified_command.name}`,
                         `**Aliases:** ${specified_command.aliases?.join(', ') ?? 'n/a'}`,
                         `**Description:** ${specified_command.description ?? 'n/a'}`,
-                        `**Usage:** ${specified_command.usage ? `\`${prefix}${specified_command.name} ${specified_command.usage}\`` : 'n/a'}`
+                        `**Usage:** ${specified_command.usage ? `\`${command_prefix}${specified_command.name} ${specified_command.usage}\`` : 'n/a'}`
                     ].join('\n'),
                 })).catch(console.warn);
             } else {
@@ -30,7 +38,7 @@ module.exports = {
             }
         } else {
             /* display all commands */
-            const all_commands_with_prefix = client.$.commands.map(command => `${prefix}${command.name}`);
+            const all_commands_with_prefix = client.$.commands.map(command => `${command_prefix}${command.name}`);
             message.channel.send(new Discord.MessageEmbed({
                 color: 0x43de6c,
                 author: {
@@ -39,7 +47,7 @@ module.exports = {
                 },
                 title: 'Here\'s a list of all my commands!',
                 description: [
-                    `You can send \`${prefix}help [command name]\` to get info on a specific command!`,
+                    `You can send \`${command_prefix}help [command name]\` to get info on a specific command!`,
                     `\`\`\`${all_commands_with_prefix.join('\n')}\`\`\``,
                 ].join('\n'),
             })).catch(console.warn);

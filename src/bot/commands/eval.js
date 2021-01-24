@@ -2,11 +2,15 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
+const { Discord, client } = require('../discord_client.js');
+
+//---------------------------------------------------------------------------------------------------------------//
+
 module.exports = {
     name: 'eval',
     description: 'very powerful command that is used by my bot owner',
     ownerOnly: true,
-    async execute(message, args, client, Discord) {
+    async execute(message, args) {
         message.delete();
         const clean = text => {
             if (typeof (text) === 'string') {return text.replace(/`/g, '`' + String.fromCharCode(8203)).replace(/@/g, '@' + String.fromCharCode(8203));}
