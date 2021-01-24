@@ -29,7 +29,7 @@ module.exports = {
                 name: `${product.name}`,
                 value: [
                     `**Code:** ${product.code}`,
-                    `**Role:** <@${product.discord_role_id}>`,
+                    `**Role:** <@&${product.discord_role_id}>`,
                     `**Description:** \`\`${product.description}\`\``,
                 ].join('\n'),
             })),
