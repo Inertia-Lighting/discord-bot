@@ -2,7 +2,7 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-async function commandHandler(Discord, client, message, command_prefix, mongo, userSchema) {
+async function commandHandler(Discord, client, message, command_prefix) {
     function errorEmbed(message) {
         message.channel.send(new Discord.MessageEmbed({
             color: 0xeb8d1a,
@@ -46,7 +46,7 @@ async function commandHandler(Discord, client, message, command_prefix, mongo, u
 
     /* command execution */
     try {
-        await command.execute(message, args, client, Discord, command_prefix, mongo, userSchema);
+        await command.execute(message, args, client, Discord, command_prefix);
     } catch (error) {
         console.trace(error);
 
