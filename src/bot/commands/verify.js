@@ -19,7 +19,7 @@ module.exports = {
     usage: 'CODE_HERE',
     ownerOnly: false,
     aliases: ['verify', 'v'],
-    async execute(message, args, client) {
+    async execute(message, args) {
         const verification_code_to_lookup = args[0];
         const verification_context = client.$.verification_contexts.get(verification_code_to_lookup);
 
