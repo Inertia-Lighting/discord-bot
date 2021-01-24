@@ -2,12 +2,16 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
+const { Discord, client } = require('../discord_client.js');
+
+//---------------------------------------------------------------------------------------------------------------//
+
 module.exports = {
     name: 'echo',
     description: 'sends message',
     staffOnly: true,
     aliases: ['echo'],
-    execute(message, args, client, Discord) {
+    async execute(message, args) {
         message.delete();
         message.channel.send(`${args.join(' ')}`).catch(console.warn);
     },

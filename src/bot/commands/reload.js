@@ -2,17 +2,22 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
+const { Discord, client } = require('../discord_client.js');
+
+//---------------------------------------------------------------------------------------------------------------//
+
 module.exports = {
     name: 'reload',
-    description: 'shows bot ping',
+    description: 'reloads commands',
     ownerOnly: true,
     aliases: ['reload', 'r'],
     usage: 'command_name',
-    execute(message, args, client, Discord) {
+    async execute(message, args) {
         if (args.length === 0) {
             message.channel.send(`You didn't pass any command to reload, ${message.author}!`);
             return;
         }
+
         const commandName = args[0].toLowerCase();
         const command = client.$.commands.get(commandName) || client.$.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 

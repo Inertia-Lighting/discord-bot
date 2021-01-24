@@ -1,8 +1,13 @@
 'use strict';
 
 //---------------------------------------------------------------------------------------------------------------//
+
 const mongo = require('../../mongo/mongo.js');
 const userSchema = require('../../mongo/schemas/userSchema.js');
+
+const { Discord, client } = require('../discord_client.js');
+
+//---------------------------------------------------------------------------------------------------------------//
 
 module.exports = {
     name: 'verify',
@@ -10,7 +15,7 @@ module.exports = {
     usage: 'CODE_HERE',
     ownerOnly: false,
     aliases: ['verify', 'v'],
-    async execute(message, args, client, Discord, prefix) {
+    async execute(message, args, client) {
         const verification_code_to_lookup = args[0];
         const verification_context = client.$.verification_contexts.get(verification_code_to_lookup);
 
