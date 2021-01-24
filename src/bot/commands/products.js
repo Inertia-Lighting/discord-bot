@@ -13,19 +13,28 @@ module.exports = {
     name: 'products',
     description: 'lists all of the products',
     aliases: ['products'],
-    async execute(message, args, client) {
+    async execute(message, args) {
         await mongo();
 
-        const db_roblox_products = (await productSchema.find({})).map(({
-            name,
-            code,
-            description,
-         }) => ({
-            name,
-            code,
-            description,
-        }));
-        
+        const db_roblox_products = await productSchema.find({});
+
+        message.channel.send(new Discord.MessageEmbed({
+            color: 0x404040,
+            author: {
+                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                name: 'Inertia Lighting | Products',
+            },
+            description: `Hey there ${message.author}!\nHere are our products:`,
+            fields: db_roblox_products.map(product => ({
+                name: `${product.name}`,
+                value: [
+                    `**Code:** ${product.code}`,
+                    `**Role:** <@${product.discord_role_id}>`,
+                    `**Description:** \`\`${product.description}\`\``,
+                ].join('\n'),
+            })),
+        })).catch(console.warn);
+
         console.log({ db_roblox_products });
     },
 };
