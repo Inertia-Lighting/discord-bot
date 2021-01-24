@@ -25,7 +25,7 @@ async function commandHandler(Discord, client, message, command_prefix) {
             color: 0xFF0000,
             author: {
                 iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                name: `${client.user.name}`,
+                name: `${client.user.username}`,
                 url: 'https://inertia-lighting.xyz',
             },
             title: 'Command Error',
@@ -54,7 +54,7 @@ async function commandHandler(Discord, client, message, command_prefix) {
             color: 0xFF0000,
             author: {
                 iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                name: `${client.user.name}`,
+                name: `${client.user.username}`,
                 url: 'https://inertia-lighting.xyz',
             },
             title: 'Command Error',

@@ -9,7 +9,7 @@ module.exports = {
     aliases: ['reload', 'r'],
     usage: 'command_name',
     execute(message, args, client, Discord) {
-        if (!args.lenght) {
+        if (args.length === 0) {
             message.channel.send(`You didn't pass any command to reload, ${message.author}!`);
             return;
         }
