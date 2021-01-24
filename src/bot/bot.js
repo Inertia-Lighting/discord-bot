@@ -4,24 +4,11 @@
 
 const fs = require('fs');
 const path = require('path');
-const moment = require('moment-timezone');
 const Discord = require('discord.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const mongo = require('../mongo/mongo.js');
-const userSchema = require('../mongo/schemas/userSchema.js');
-
-//---------------------------------------------------------------------------------------------------------------//
-
 const client = new Discord.Client();
-const command_prefix = process.env.COMMAND_PREFIX;
-
-const { commandHandler } = require('./handlers/commandHandler.js');
-
-//---------------------------------------------------------------------------------------------------------------//
-
-const commandFiles = fs.readdirSync(path.join(process.cwd(), './src/bot/commands/')).filter(file => file.endsWith('.js'));
 
 /* expose interface on client for internal usage */
 client.$ = {
@@ -29,42 +16,32 @@ client.$ = {
     verification_contexts: new Discord.Collection(),
 };
 
+//---------------------------------------------------------------------------------------------------------------//
+
+const command_files_path = path.join(process.cwd(), './src/bot/commands/');
+const command_files = fs.readdirSync(command_files_path).filter(file => file.endsWith('.js'));
+
 /* register commands */
-for (const file of commandFiles) {
-    const command = require(`./commands/${file}`);
-    client.$.commands.set(command.name, command);
+for (const command_file of command_files) {
+    const bot_command = require(path.join(command_files_path, command_file));
+    client.$.commands.set(bot_command.name, bot_command);
 }
 
 //---------------------------------------------------------------------------------------------------------------//
 
-client.on('ready', () => {
-    const ready_timestamp = `${moment()}`;
-    console.log(`----------------------------------------------------------------------------------------------------------------`);
-    console.log(`${process.env.BOT_NAME} Logged in as ${client.user.tag} on ${ready_timestamp}`);
-    console.log(`----------------------------------------------------------------------------------------------------------------`);
-});
+const event_files_path = path.join(process.cwd(), './src/bot/events/');
+const event_files = fs.readdirSync(event_files_path).filter(file => file.endsWith('.js'));
 
-/* handle messages */
-client.on('message', async (message) => {
-    /* don't allow bots */
-    if (message.author.bot) return;
-
-    /* only allow text channels */
-    if (message.channel.type !== 'text') return;
-
-    /* respond to mentions */
-    if (message.content.startsWith(`<@!${client.user.id}>`)) {
-        message.reply(`The command_prefix for me is \`${command_prefix}\`. To see a list of commands do \`${command_prefix}help\`!`).catch(console.warn);
-    }
-
-    /* handle commands */
-    if (message.content.startsWith(command_prefix)) {
-        commandHandler(Discord, client, message, command_prefix, mongo, userSchema);
-    }
-});
+/* register events */
+for (const event_file of event_files) {
+    const bot_event = require(path.join(event_files_path, event_file));
+    client.on(bot_event.name, bot_event.handler);
+}
 
 /* login the discord bot */
 client.login(process.env.BOT_TOKEN);
+
+//---------------------------------------------------------------------------------------------------------------//
 
 module.exports = {
     Discord,
