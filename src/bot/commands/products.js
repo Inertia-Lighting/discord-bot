@@ -23,7 +23,7 @@ module.exports = {
             author: {
                 iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                 name: 'Inertia Lighting | Products',
-                
+                color: 0x2f3136 
             },
             description: [
                 `Hey there ${message.author}!\n\n**Here are our products:**`,
