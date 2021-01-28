@@ -14,12 +14,12 @@
     "bot",
     "server"
   ],
-  "author": "Will F.",
+  "author": "Inertia Lighting",
   "license": "GNUGPLv3",
   "bugs": {
-    "url": "https://github.com/Will3126/inertia-bot-server/issues"
+    "url": "https://github.com/Inertia-Lighting/inertia-lighting-discord-bot/issues"
   },
-  "homepage": "https://github.com/Will3126/inertia-bot-server#readme",
+  "homepage": "https://github.com/Inertia-Lighting/inertia-lighting-discord-bot#readme",
   "dependencies": {
     "axios": "^0.21.1",
     "body-parser": "^1.19.0",
