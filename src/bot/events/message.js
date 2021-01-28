@@ -10,7 +10,7 @@ const { commandHandler } = require('../handlers/commandHandler.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const command_prefix = process.env.COMMAND_PREFIX;
+const command_prefix = process.env.BOT_COMMAND_PREFIX;
 
 //---------------------------------------------------------------------------------------------------------------//
 

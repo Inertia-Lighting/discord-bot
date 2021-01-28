@@ -2,14 +2,13 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const mongo = require('../../mongo/mongo.js');
-const userSchema = require('../../mongo/schemas/userSchema.js');
+const { go_mongo_db } = require('../../mongo/mongo.js');
 
 const { Discord, client } = require('../discord_client.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const command_prefix = process.env.COMMAND_PREFIX;
+const command_prefix = process.env.BOT_COMMAND_PREFIX;
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -54,10 +53,8 @@ module.exports = {
             description: 'That verification code was recognized!',
         })).catch(console.warn);
 
-        await mongo(); // initialize connection to database
-
-        const db_user_data = await userSchema.findOne({
-            _id: message.author.id,
+        const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
+            '_id': message.author.id,
         });
 
         if (db_user_data) {
@@ -73,11 +70,11 @@ module.exports = {
             })).catch(console.warn);
         } else {
             const member_roles = message.member.roles.cache;
-            await userSchema.findOneAndUpdate({
-                _id: message.author.id,
+            await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
+                '_id': message.author.id,
             }, {
-                ROBLOX_ID: verification_context.roblox_user_id,
-                products: {
+                'ROBLOX_ID': verification_context.roblox_user_id,
+                'products': {
                     'SGM_Q7_STROBE': member_roles.has('728050461566828554'),
                     'Laser_Fixture': member_roles.has('701758602624368741'),
                     'Follow_Spotlight': member_roles.has('703378159768436778'),
@@ -90,8 +87,6 @@ module.exports = {
                     'Blinders': member_roles.has('608432734578147338'),
                     'Wash': member_roles.has('673362639660908559'),
                 },
-            }, {
-                upsert: true,
             });
         }
     },

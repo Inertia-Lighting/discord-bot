@@ -2,16 +2,14 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const mongoose = require('mongoose');
+const { GoMongoDB } = require('go-mongo-db');
 
 //---------------------------------------------------------------------------------------------------------------//
 
-module.exports = async () => {
-    await mongoose.connect(process.env.MONGO_PATH, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        useFindAndModify: false,
-        keepAlive: true,
-    });
-    return mongoose;
+const go_mongo_db = new GoMongoDB(process.env.MONGO_CONNECTION_URL);
+
+//---------------------------------------------------------------------------------------------------------------//
+
+module.exports = {
+    go_mongo_db,
 };

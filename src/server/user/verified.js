@@ -2,8 +2,7 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const mongo = require('../../mongo/mongo.js');
-const userSchema = require('../../mongo/schemas/userSchema.js');
+const { go_mongo_db } = require('../../mongo/mongo.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -21,9 +20,14 @@ async function userVerified(router, client) {
 
         const { player_id: roblox_user_id } = req.body;
 
-        await mongo(); // initialize connection to database
+        if (!roblox_user_id) {
+            res.status(400).send(JSON.stringify({
+                'message': 'missing \`player_id\` in request body',
+            }, null, 2));
+            return;
+        }
 
-        const db_user_data = await userSchema.findOne({
+        const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
             'ROBLOX_ID': roblox_user_id,
         });
 

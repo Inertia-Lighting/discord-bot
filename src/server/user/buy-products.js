@@ -6,9 +6,7 @@ const Discord = require('discord.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const mongo = require('../../mongo/mongo.js');
-const userSchema = require('../../mongo/schemas/userSchema.js');
-const productSchema = require('../../mongo/schemas/productSchema.js');
+const { go_mongo_db } = require('../../mongo/mongo.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -27,9 +25,21 @@ async function userProductsBuy(router, client) {
             product_id: roblox_product_id,
         } = req.body;
 
-        await mongo(); // initialize connection to database
+        if (!roblox_user_id) {
+            res.status(400).send(JSON.stringify({
+                'message': 'missing \`player_id\` in request body',
+            }, null, 2));
+            return;
+        }
 
-        const db_user_data = await userSchema.findOne({
+        if (!roblox_product_id) {
+            res.status(400).send(JSON.stringify({
+                'message': 'missing \`product_id\` in request body',
+            }, null, 2));
+            return;
+        }
+
+        const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
             'ROBLOX_ID': roblox_user_id,
         });
 
@@ -48,19 +58,16 @@ async function userProductsBuy(router, client) {
         const dm_channel = await guild_member.createDM().catch(console.warn);
         if (!dm_channel) return;
 
-        const db_roblox_product_data = await productSchema.findOne({
+        const [ db_roblox_product_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_PRODUCTS_COLLECTION_NAME, {
             'id': roblox_product_id,
         });
 
-        await userSchema.findOneAndUpdate({
+        await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
             'ROBLOX_ID': roblox_user_id,
         }, {
             $set: {
                 [`products.${db_roblox_product_data.code}`]: true,
             },
-        }, {
-            upsert: true,
-            new: true,
         });
 
         /* dm the user */

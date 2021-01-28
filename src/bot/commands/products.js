@@ -2,8 +2,7 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const mongo = require('../../mongo/mongo.js');
-const productSchema = require('../../mongo/schemas/productSchema.js');
+const { go_mongo_db } = require('../../mongo/mongo.js');
 
 const { Discord, client } = require('../discord_client.js');
 
@@ -14,9 +13,9 @@ module.exports = {
     description: 'lists all of the products',
     aliases: ['products'],
     async execute(message, args) {
-        await mongo();
+        const db_roblox_products = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_PRODUCTS_COLLECTION_NAME, {});
 
-        const db_roblox_products = await productSchema.find({});
+        console.log({ db_roblox_products });
 
         message.channel.send(new Discord.MessageEmbed({
             color: 0x404040,
@@ -34,19 +33,8 @@ module.exports = {
                         `**Role:** <@&${product.discord_role_id}>`,
                         `**Description:**\n\`\`\`${product.description}\`\`\``,
                     ].join('\n')
-                ).join('\n')
+                ).join('\n'),
             ].join('\n\n'),
-            // fields: db_roblox_products.map(product => ({
-            //     name: `Product`,
-            //     value: [
-            //         `**Name:** ${product.name}`,
-            //         `**Code:** ${product.code}`,
-            //         `**Role:** <@&${product.discord_role_id}>`,
-            //         `**Description:**\n${product.description}`,
-            //     ].join('\n'),
-            // })),
         })).catch(console.warn);
-
-        console.log({ db_roblox_products });
     },
 };

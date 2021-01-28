@@ -6,7 +6,7 @@ const { Discord, client } = require('../discord_client.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const command_prefix = process.env.COMMAND_PREFIX;
+const command_prefix = process.env.BOT_COMMAND_PREFIX;
 
 //---------------------------------------------------------------------------------------------------------------//
 
