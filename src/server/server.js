@@ -18,6 +18,12 @@ app.set('port', process.env.SERVER_PORT);
 app.use(bodyParser.json()); // parse application/json
 app.use('/', router);
 
+router.get('/test', async (req, res) => {
+    res.json({
+        'message': `this is a test: ${Date.now()}`,
+    });
+});
+
 //---------------------------------------------------------------------------------------------------------------//
 
 const { userVerify } = require('./user/verify.js');
@@ -38,4 +44,3 @@ app.listen(app.get('port'), () => {
     console.log(`Started Bot Server On Port: ${app.get('port')}`);
     console.log(`----------------------------------------------------------------------------------------------------------------`);
 });
-
