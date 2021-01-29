@@ -30,7 +30,7 @@ async function commandHandler(message) {
     const command = client.$.commands.get(command_name) ?? client.$.commands.find(cmd => cmd.aliases?.includes(command_name));
     if (!command) {
         message.reply(new Discord.MessageEmbed({
-            color: 0xFF0000,
+            color: 0x2f3136,
             author: {
                 iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                 name: `${client.user.username}`,
@@ -59,14 +59,14 @@ async function commandHandler(message) {
         console.trace(error);
 
         message.reply(new Discord.MessageEmbed({
-            color: 0xFF0000,
+            color: 0x2f3136,
             author: {
                 iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                 name: `${client.user.username}`,
                 url: 'https://inertia-lighting.xyz',
             },
             title: 'Command Error',
-            description: `Looks like I ran into an error while trying to run ${command_name}`,
+            description: `Looks like I ran into an error while trying to run the command \`\`${command_name}\`\``,
         }));
     }
 }

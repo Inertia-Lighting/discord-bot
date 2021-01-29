@@ -23,7 +23,7 @@ module.exports = {
             if (typeof evaled !== 'string') {evaled = require('util').inspect(evaled);}
 
             const embed = new Discord.MessageEmbed()
-                .setColor('GREEN')
+                .setColor(0x2f3136)
                 .setTitle('Evaluation Successful')
                 .addFields(
                     { name: 'Input', value: `\`\`\`js\n${code}\`\`\`` },
@@ -37,7 +37,7 @@ module.exports = {
         catch (error) {
             console.error('Eval:', error);
             const embed = new Discord.MessageEmbed()
-                .setColor('RED')
+                .setColor(0x2f3136)
                 .setTitle('Evaluation Error')
                 .addFields(
                     { name: 'Input', value: `\`\`\`js\n${code}\`\`\`` },

@@ -23,7 +23,7 @@ module.exports = {
 
         if (!verification_context) {
             message.channel.send(new Discord.MessageEmbed({
-                color: 0xFF0000,
+                color: 0x36393F,
                 author: {
                     iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                     name: `${client.user.username}`,
@@ -43,7 +43,7 @@ module.exports = {
         client.$.verification_contexts.delete(verification_context.verification_code);
 
         message.channel.send(new Discord.MessageEmbed({
-            color: 0x00FF00,
+            color: 0x2f3136,
             author: {
                 iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                 name: `${client.user.username}`,
@@ -59,7 +59,7 @@ module.exports = {
 
         if (db_user_data) {
             message.channel.send(new Discord.MessageEmbed({
-                color: 0xFF0000,
+                color: 0x2f3136,
                 author: {
                     iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                     name: `${client.user.username}`,
