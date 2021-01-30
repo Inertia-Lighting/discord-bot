@@ -36,10 +36,18 @@ module.exports = {
     ownerOnly: true,
     usage: 'support',
     async execute(message, args) {
-        const bot_message = await message.reply([
-            '**How can I help you today?**',
-            support_categories.map(({ index, name, description }) => `**${index + 1} | ${name}**\n${description}`).join('\n\n'),
-            '**Type the number of the category that you need.**',
-        ].join('\n\n'));
+        const bot_message = await message.reply(new Discord.MessageEmbed({
+            color: 0xFF0000,
+            author: {
+                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                name: 'Inertia Lighting | User Document',
+            },
+            title: 'Are you happy @rossloika | Derpy#8484?',
+            description: [
+                '**How can I help you today?**',
+                support_categories.map(({ index, name, description }) => `**${index + 1} | ${name}**\n${description}`).join('\n\n'),
+                '**Type the number of the category that you need.**',
+            ].join('\n\n'),
+        }));
     },
 };
