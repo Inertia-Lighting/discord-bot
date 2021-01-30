@@ -36,7 +36,7 @@ module.exports = {
     ownerOnly: true,
     usage: 'support',
     async execute(message, args) {
-        const bot_message = await message.reply(`${message.author}`, new Discord.MessageEmbed({
+        const bot_message = await message.reply(new Discord.MessageEmbed({
             color: 0x00FF00,
             author: {
                 iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
