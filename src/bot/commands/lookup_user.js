@@ -7,10 +7,10 @@ const { go_mongo_db } = require('../../mongo/mongo.js');
 //---------------------------------------------------------------------------------------------------------------//
 
 module.exports = {
-    name: 'lookup_user',
-    description: 'looks up a specified user',
+    name: 'lookup',
+    description: 'looks up a specified user in the database',
     ownerOnly: true,
-    aliases: ['lookup_user'],
+    aliases: ['lookup'],
     async execute(message, command_args) {
         const lookup_discord_user_id = message.mentions.members.first()?.id;
         const lookup_roblox_user_id = command_args[0];
@@ -28,26 +28,19 @@ module.exports = {
             }),
         });
 
-        console.log({ user_db_data });
+        if (!user_db_data) {
+            message.reply('I couldn\'t find that user in the database!');
+            return;
+        }
 
-        // message.channel.send(new Discord.MessageEmbed({
-        //     color: 0x2f3136,
-        //     author: {
-        //         iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-        //         name: 'Inertia Lighting | Products',
-        //         color: 0x36393F 
-        //     },
-        //     description: [
-        //         `Hey there ${message.author}!\n\n**Here are our products:**`,
-        //         db_roblox_products.map(product => 
-        //             [
-        //                 `**Product** ${product.name}`,
-        //                 `**Code:** ${product.code}`,
-        //                 `**Role:** <@&${product.discord_role_id}>`,
-        //                 `**Description:**\n\`\`\`${product.description}\`\`\``,
-        //             ].join('\n')
-        //         ).join('\n'),
-        //     ].join('\n\n'),
-        // })).catch(console.warn);
+        message.channel.send(new Discord.MessageEmbed({
+            color: 0x2f3136,
+            author: {
+                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                name: 'Inertia Lighting | User Document',
+                color: 0x36393F,
+            },
+            description: `${'```'}json\n${JSON.stringify(user_db_data, null, 2)}\n${'```'}`,
+        })).catch(console.warn);
     },
 };
