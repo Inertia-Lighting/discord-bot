@@ -37,9 +37,9 @@ module.exports = {
     usage: 'support',
     async execute(message, args) {
         const bot_message = await message.reply([
-            `Hi there ${message.author}!\nHow can I help you today?`,
+            'How can I help you today?',
             `${'```'}\n`,
-            ...support_categories.map(({ index, name, description }) => `[ ${index + 1} ]\t${name}\n\t${description}`),
+            support_categories.map(({ index, name, description }) => `[ ${index + 1} ] | ${name}\n${description}`).join('\n\n'),
             `\n${'```'}`,
             'Type the number of the category that you need.',
         ].join('\n'));
