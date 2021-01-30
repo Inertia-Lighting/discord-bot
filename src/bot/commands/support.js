@@ -51,12 +51,15 @@ module.exports = {
 
         const message_collector_1 = bot_message.channel.createMessageCollector((msg) => msg.author.id === message.author.id);
         message_collector_1.on('collect', async (msg) => {
-            const matching_support_category = support_categories.find(support_category => support_category.human_index === msg.content);
+            const matching_support_category = support_categories.find(support_category => `${support_category.human_index}` === msg.content);
             if (matching_support_category) {
                 message_collector_1.stop();
                 msg.reply(`You selected ${matching_support_category.name}!`);
             } else if (msg.content === 'cancel') {
-                msg.reply(`Please type the category number of type \`cancel\``);
+                message_collector_1.stop();
+                msg.reply(`Canceled!`);
+            } else {
+                msg.reply(`Please type the category number or \`cancel\`.`);
             }
         });
     },
