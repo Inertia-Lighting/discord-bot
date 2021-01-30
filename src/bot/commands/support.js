@@ -36,13 +36,12 @@ module.exports = {
     ownerOnly: true,
     usage: 'support',
     async execute(message, args) {
-        const bot_message = await message.reply(new Discord.MessageEmbed({
-            color: 0xFF0000,
+        const bot_message = await message.reply(`${message.author}`, new Discord.MessageEmbed({
+            color: 0x00FF00,
             author: {
                 iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                name: 'Inertia Lighting | User Document',
+                name: 'Inertia Lighting | Support System',
             },
-            title: 'Are you happy @rossloika | Derpy#8484?',
             description: [
                 '**How can I help you today?**',
                 support_categories.map(({ index, name, description }) => `**${index + 1} | ${name}**\n${description}`).join('\n\n'),
