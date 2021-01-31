@@ -78,7 +78,7 @@ async function userProductsBuy(router, client) {
             },
         });
 
-        const guild = client.guilds.resolve();
+        const guild = client.guilds.resolve(guild_id);
         if (!guild) {
             console.error(`unable to find discord guild: ${guild_id};`);
             res.status(500).send(JSON.stringify({
