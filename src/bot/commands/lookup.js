@@ -11,8 +11,8 @@ const { Discord, client } = require('../discord_client.js');
 module.exports = {
     name: 'lookup',
     description: 'looks up a specified user in the database',
-    ownerOnly: true,
     aliases: ['lookup'],
+    permission_level: 'staff',
     async execute(message, command_args) {
         const lookup_discord_user_id = message.mentions.members.first()?.id;
         const lookup_roblox_user_id = command_args[0];

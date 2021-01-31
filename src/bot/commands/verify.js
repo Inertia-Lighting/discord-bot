@@ -17,6 +17,7 @@ module.exports = {
     description: 'verifies the user and adds them to the database',
     usage: 'CODE_HERE',
     aliases: ['verify', 'v'],
+    permission_level: 'staff',
     async execute(message, args) {
         const verification_code_to_lookup = args[0];
         const verification_context = client.$.verification_contexts.get(verification_code_to_lookup);

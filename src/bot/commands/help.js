@@ -14,6 +14,8 @@ module.exports = {
     name: 'help',
     description: 'Shows a list of commands for you to use.',
     usage: 'help',
+    aliases: ['help'],
+    permission_level: 'public',
     async execute(message, args) {
         if (args[0]) {
             /* display help for a specified command */

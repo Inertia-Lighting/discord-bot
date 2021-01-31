@@ -9,9 +9,9 @@ const { Discord, client } = require('../discord_client.js');
 module.exports = {
     name: 'reload',
     description: 'reloads commands',
-    ownerOnly: true,
-    aliases: ['reload', 'r'],
     usage: 'command_name',
+    aliases: ['reload', 'r'],
+    permission_level: 'admin',
     async execute(message, args) {
         if (args.length === 0) {
             message.channel.send(`You didn't pass any command to reload, ${message.author}!`);

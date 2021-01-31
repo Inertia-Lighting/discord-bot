@@ -33,8 +33,8 @@ const support_categories = new Discord.Collection([
 module.exports = {
     name: 'support',
     description: 'support tickets and stuff',
-    ownerOnly: true,
-    usage: 'support',
+    aliases: ['support'],
+    permission_level: 'staff',
     async execute(message, args) {
         const bot_message = await message.channel.send(`${message.author}`, new Discord.MessageEmbed({
             color: 0x223524,
