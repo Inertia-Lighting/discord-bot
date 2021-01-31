@@ -12,9 +12,9 @@ const command_prefix = process.env.BOT_COMMAND_PREFIX;
 
 const support_categories = new Discord.Collection([
     {
-        id: 'PRODUCT_ISSUES',
-        name: 'Product Issues',
-        description: 'Come here if you are having issues with any of our products.',
+        id: 'PRODUCT_PURCHASES',
+        name: 'Product Purchases',
+        description: 'Come here if you are having issues with purchasing our products.',
     }, {
         id: 'PRODUCT_TRANSFERS',
         name: 'Product Transfers',
@@ -36,7 +36,7 @@ const support_tickets_category_id = '805191315947913236';
 async function createSupportTicketChannel(guild, guild_member, support_category) {
     const support_tickets_category = guild.channels.resolve(support_tickets_category_id);
 
-    const support_channel_name = `${guild_member.id}-${support_category.id}`.toLowerCase();
+    const support_channel_name = `${support_category.id}-${guild_member.id}`.toLowerCase();
     const potential_open_ticket_channel = guild.channels.cache.find(ch => ch.parent?.id === support_tickets_category.id && ch.name === support_channel_name);
     const support_ticket_channel = potential_open_ticket_channel ?? await guild.channels.create(support_channel_name, {
         type: 'text',
@@ -74,15 +74,25 @@ module.exports = {
                 message_collector_1.stop();
                 collected_message.reply(`You selected ${matching_support_category.name}!`).catch(console.warn);
                 switch (matching_support_category.id) {
+                    case 'PRODUCT_PURCHASES':
+                        const support_channel = await createSupportTicketChannel(message.guild, message.member, matching_support_category);
+                        support_channel.send(`${message.author}, ${matching_support_category.name}!`);
+                        break;
                     case 'PRODUCT_ISSUES':
+                        const support_channel = await createSupportTicketChannel(message.guild, message.member, matching_support_category);
+                        support_channel.send(`${message.author}, ${matching_support_category.name}!`);
                         break;
                     case 'PRODUCT_TRANSFERS':
+                        const support_channel = await createSupportTicketChannel(message.guild, message.member, matching_support_category);
+                        support_channel.send(`${message.author}, ${matching_support_category.name}!`);
                         break;
                     case 'PARTNER_REQUESTS':
+                        const support_channel = await createSupportTicketChannel(message.guild, message.member, matching_support_category);
+                        support_channel.send(`${message.author}, ${matching_support_category.name}!`);
                         break;
                     case 'OTHER':
                         const support_channel = await createSupportTicketChannel(message.guild, message.member, matching_support_category);
-                        support_channel.send(`${message.author}, I will put you in touch with our staff in just a moment!`);
+                        support_channel.send(`${message.author}, Please tell us what you need help with today!`);
                         break;
                 }
             } else if (collected_message.content === 'cancel') {
