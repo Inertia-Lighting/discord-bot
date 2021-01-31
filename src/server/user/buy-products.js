@@ -72,7 +72,7 @@ async function userProductsBuy(router, client) {
 
         /* dm the user */
         dm_channel.send(new Discord.MessageEmbed({
-            color: 0x2f3136,
+            color: 0x00FF00,
             author: {
                 iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                 name: 'Inertia Lighting | Confirmed Purchase',

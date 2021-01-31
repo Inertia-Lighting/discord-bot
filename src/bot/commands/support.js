@@ -37,7 +37,7 @@ module.exports = {
     usage: 'support',
     async execute(message, args) {
         const bot_message = await message.channel.send(`${message.author}`, new Discord.MessageEmbed({
-            color: 0x00FF00,
+            color: 0x223524,
             author: {
                 iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                 name: 'Inertia Lighting | Support System',
@@ -57,9 +57,9 @@ module.exports = {
                 msg.reply(`You selected ${matching_support_category.name}!`);
             } else if (msg.content === 'cancel') {
                 message_collector_1.stop();
-                msg.reply(`Canceled!`);
+                msg.reply('Canceled!');
             } else {
-                msg.reply(`Please type the category number or \`cancel\`.`);
+                msg.reply('Please type the category number or \`cancel\`.');
             }
         });
     },

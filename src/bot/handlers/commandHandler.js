@@ -13,11 +13,10 @@ const command_prefix = process.env.BOT_COMMAND_PREFIX;
 async function commandHandler(message) {
     function errorEmbed(message) {
         message.channel.send(new Discord.MessageEmbed({
-            color: 0xeb8d1a,
+            color: 0xFF0000,
             author: {
                 iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                 name: `${client.user.username}`,
-                url: 'https://inertia-lighting.xyz',
             },
             title: 'Command Error',
             description: 'You do not have access to use this command!'
@@ -30,11 +29,10 @@ async function commandHandler(message) {
     const command = client.$.commands.get(command_name) ?? client.$.commands.find(cmd => cmd.aliases?.includes(command_name));
     if (!command) {
         message.reply(new Discord.MessageEmbed({
-            color: 0x2f3136,
+            color: 0xFF0000,
             author: {
                 iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                 name: `${client.user.username}`,
-                url: 'https://inertia-lighting.xyz',
             },
             title: 'Command Error',
             description: 'That is not a valid command!',
@@ -59,11 +57,10 @@ async function commandHandler(message) {
         console.trace(error);
 
         message.reply(new Discord.MessageEmbed({
-            color: 0x2f3136,
+            color: 0xFF0000,
             author: {
                 iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                 name: `${client.user.username}`,
-                url: 'https://inertia-lighting.xyz',
             },
             title: 'Command Error',
             description: `Looks like I ran into an error while trying to run the command \`\`${command_name}\`\``,

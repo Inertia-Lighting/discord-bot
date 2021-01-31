@@ -36,11 +36,10 @@ module.exports = {
         }
 
         message.channel.send(new Discord.MessageEmbed({
-            color: 0x2f3136,
+            color: 0x223524,
             author: {
                 iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                 name: 'Inertia Lighting | User Document',
-                color: 0x36393F,
             },
             description: `${'```'}json\n${JSON.stringify(user_db_data, null, 2)}\n${'```'}`,
         })).catch(console.warn);

@@ -18,11 +18,10 @@ module.exports = {
         console.log({ db_roblox_products });
 
         message.channel.send(new Discord.MessageEmbed({
-            color: 0x2f3136,
+            color: 0x223524,
             author: {
                 iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                 name: 'Inertia Lighting | Products',
-                color: 0x36393F 
             },
             description: [
                 `Hey there ${message.author}!\n\n**Here are our products:**`,

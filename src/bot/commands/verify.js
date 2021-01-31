@@ -23,11 +23,10 @@ module.exports = {
 
         if (!verification_context) {
             message.channel.send(new Discord.MessageEmbed({
-                color: 0x36393F,
+                color: 0xFF0000,
                 author: {
                     iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                     name: `${client.user.username}`,
-                    url: 'https://inertia-lighting.xyz',
                 },
                 title: 'Error',
                 description: [
@@ -43,11 +42,10 @@ module.exports = {
         client.$.verification_contexts.delete(verification_context.verification_code);
 
         message.channel.send(new Discord.MessageEmbed({
-            color: 0x2f3136,
+            color: 0x00FF00,
             author: {
                 iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                 name: `${client.user.username}`,
-                url: 'https://inertia-lighting.xyz',
             },
             title: 'Success',
             description: 'That verification code was recognized!',
@@ -59,11 +57,10 @@ module.exports = {
 
         if (db_user_data) {
             message.channel.send(new Discord.MessageEmbed({
-                color: 0x2f3136,
+                color: 0xFF0000,
                 author: {
                     iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                     name: `${client.user.username}`,
-                    url: 'https://inertia-lighting.xyz',
                 },
                 title: 'Error',
                 description: 'I already found you in the database! If you would like to update yourself please run \`!update\`',
