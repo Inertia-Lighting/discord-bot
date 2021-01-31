@@ -13,7 +13,9 @@ module.exports = {
     description: 'looks up a specified user in the database',
     aliases: ['lookup'],
     permission_level: 'staff',
-    async execute(message, command_args) {
+    async execute(message, args) {
+        const { command_args } = args;
+
         const lookup_discord_user_id = message.mentions.members.first()?.id;
         const lookup_roblox_user_id = command_args[0];
 

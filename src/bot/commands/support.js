@@ -6,10 +6,6 @@ const { Discord, client } = require('../discord_client.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const command_prefix = process.env.BOT_COMMAND_PREFIX;
-
-//---------------------------------------------------------------------------------------------------------------//
-
 const support_categories = new Discord.Collection([
     {
         id: 'PRODUCT_PURCHASES',
@@ -52,9 +48,16 @@ async function createSupportTicketChannel(guild, guild_member, support_category)
 module.exports = {
     name: 'support',
     description: 'support tickets and stuff',
-    aliases: ['support'],
+    aliases: ['support', 'close_ticket'],
     permission_level: 'staff',
     async execute(message, args) {
+        const { command_name } = args;
+
+        if (command_name === 'close_ticket') {
+            message.reply('command coming soon!');
+            return;
+        }
+
         const bot_message = await message.channel.send(`${message.author}`, new Discord.MessageEmbed({
             color: 0x959595,
             author: {

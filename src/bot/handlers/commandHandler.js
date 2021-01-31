@@ -11,11 +11,11 @@ const command_prefix = process.env.BOT_COMMAND_PREFIX;
 //---------------------------------------------------------------------------------------------------------------//
 
 async function commandHandler(message) {
-    const command_name = message.content.split(/\s+/g)[0].toLowerCase();
+    const command_name = message.content.split(/\s+/g)[0].replace(command_prefix, '').toLowerCase();
     const command_args = message.content.split(/\s+/g).slice(1);
 
     /* find command by command_name */
-    const command = client.$.commands.find(cmd => cmd.aliases?.includes(command_name.replace(command_prefix, '')));
+    const command = client.$.commands.find(cmd => cmd.aliases?.includes(command_name));
     if (!command) {
         message.reply(new Discord.MessageEmbed({
             color: 0xFF0000,
@@ -67,7 +67,11 @@ async function commandHandler(message) {
     /* command execution */
     if (user_is_allowed_to_run_command) {
         try {
-            await command.execute(message, command_args);
+            await command.execute(message, {
+                command_prefix,
+                command_name,
+                command_args,
+            });
         } catch (error) {
             console.trace(error);
             message.reply(new Discord.MessageEmbed({

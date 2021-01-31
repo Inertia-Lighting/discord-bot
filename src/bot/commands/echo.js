@@ -12,7 +12,9 @@ module.exports = {
     aliases: ['echo'],
     permission_level: 'admin',
     async execute(message, args) {
-        message.delete();
-        message.channel.send(`${args.join(' ')}`).catch(console.warn);
+        const { command_args } = args;
+
+        message.delete({ timeout: 500 }).catch(console.warn);
+        message.channel.send(`${command_args.join(' ')}`).catch(console.warn);
     },
 };
