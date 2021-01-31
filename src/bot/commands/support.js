@@ -37,7 +37,7 @@ module.exports = {
     permission_level: 'staff',
     async execute(message, args) {
         const bot_message = await message.channel.send(`${message.author}`, new Discord.MessageEmbed({
-            color: 0x223524,
+            color: 0x959595,
             author: {
                 iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                 name: 'Inertia Lighting | Support System',

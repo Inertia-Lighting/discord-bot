@@ -23,7 +23,7 @@ module.exports = {
             const specified_command = client.$.commands.get(specified_command_name) ?? client.$.commands.find(c => c.aliases?.includes(specified_command_name));
             if (specified_command) {
                 message.channel.send(new Discord.MessageEmbed({
-                    color: 0x223524,
+                    color: 0x959595,
                     author: {
                         iconURL: `${message.author.displayAvatarURL({ dynamic: true })}`,
                         name: `${message.author.tag}`,
@@ -43,7 +43,7 @@ module.exports = {
             /* display all commands */
             const all_commands_with_prefix = client.$.commands.map(command => `${command_prefix}${command.name}`);
             message.channel.send(new Discord.MessageEmbed({
-                color: 0x223524,
+                color: 0x959595,
                 author: {
                     iconURL: `${message.author.displayAvatarURL({ dynamic: true })}`,
                     name: `${message.author.tag}`,
