@@ -37,7 +37,7 @@ async function createSupportTicketChannel(guild, guild_member, support_category)
     const support_tickets_category = guild.channels.resolve(support_tickets_category_id);
 
     const support_channel_name = `${guild_member.id}-${support_category.id}`.toLowerCase();
-    const potential_open_ticket_channel = guild.channels.find(ch => ch.parent?.id === support_tickets_category.id && ch.name === support_channel_name);
+    const potential_open_ticket_channel = guild.channels.cache.find(ch => ch.parent?.id === support_tickets_category.id && ch.name === support_channel_name);
     const support_ticket_channel = potential_open_ticket_channel ?? await guild.channels.create(support_channel_name, {
         type: 'text',
         parent: support_tickets_category,
