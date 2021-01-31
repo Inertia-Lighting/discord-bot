@@ -40,6 +40,7 @@ async function createSupportTicketChannel(guild, guild_member, support_category)
     const potential_open_ticket_channel = guild.channels.cache.find(ch => ch.parent?.id === support_tickets_category.id && ch.name === support_channel_name);
     const support_ticket_channel = potential_open_ticket_channel ?? await guild.channels.create(support_channel_name, {
         type: 'text',
+        topic: 'Thank you for being patient!',
         parent: support_tickets_category,
     });
 
@@ -81,19 +82,19 @@ module.exports = {
 
                 switch (matching_support_category.id) {
                     case 'PRODUCT_PURCHASES':
-                        support_channel.send(`${message.author}, ${matching_support_category.name}!`);
+                        support_channel.send(`${message.author}, A qualified member of staff will be assigned to help you with **${matching_support_category.name}** shortly!`);
                         break;
                     case 'PRODUCT_ISSUES':
-                        support_channel.send(`${message.author}, ${matching_support_category.name}!`);
+                        support_channel.send(`${message.author}, A qualified member of staff will be assigned to help you with **${matching_support_category.name}** shortly!`);
                         break;
                     case 'PRODUCT_TRANSFERS':
-                        support_channel.send(`${message.author}, ${matching_support_category.name}!`);
+                        support_channel.send(`${message.author}, A qualified member of staff will be assigned to help you with **${matching_support_category.name}** shortly!`);
                         break;
                     case 'PARTNER_REQUESTS':
-                        support_channel.send(`${message.author}, ${matching_support_category.name}!`);
+                        support_channel.send(`${message.author}, A qualified member of staff will be assigned to help you with **${matching_support_category.name}** shortly!`);
                         break;
                     case 'OTHER':
-                        support_channel.send(`${message.author}, Please tell us what you need help with today!`);
+                        support_channel.send(`${message.author}, Please tell us what you need assistance with!`);
                         break;
                 }
             } else if (collected_message.content === 'cancel') {
