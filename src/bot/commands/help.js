@@ -33,7 +33,7 @@ module.exports = {
                         `**Aliases:** ${specified_command.aliases?.join(', ') ?? 'n/a'}`,
                         `**Description:** ${specified_command.description ?? 'n/a'}`,
                         `**Usage:** ${specified_command.usage ? `\`${command_prefix}${specified_command.name} ${specified_command.usage}\`` : 'n/a'}`,
-                        `**Public:** ${!(specified_command.staffOnly || specified_command.ownerOnly)}`,
+                        `**Public:** ${specified_command.permission_level === 'public'}`,
                     ].join('\n'),
                 })).catch(console.warn);
             } else {
