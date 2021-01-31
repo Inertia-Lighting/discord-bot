@@ -72,26 +72,27 @@ module.exports = {
             const matching_support_category = support_categories.find((support_category) => `${support_category.human_index}` === collected_message.content);
             if (matching_support_category) {
                 message_collector_1.stop();
-                collected_message.reply(`You selected ${matching_support_category.name}!`).catch(console.warn);
+
+                const support_channel = await createSupportTicketChannel(message.guild, message.member, matching_support_category);
+                collected_message.reply([
+                    `You selected ${matching_support_category.name}!`,
+                    `Go to ${support_channel} to continue.`,
+                ].join('\n')).catch(console.warn);
+
                 switch (matching_support_category.id) {
                     case 'PRODUCT_PURCHASES':
-                        const support_channel = await createSupportTicketChannel(message.guild, message.member, matching_support_category);
                         support_channel.send(`${message.author}, ${matching_support_category.name}!`);
                         break;
                     case 'PRODUCT_ISSUES':
-                        const support_channel = await createSupportTicketChannel(message.guild, message.member, matching_support_category);
                         support_channel.send(`${message.author}, ${matching_support_category.name}!`);
                         break;
                     case 'PRODUCT_TRANSFERS':
-                        const support_channel = await createSupportTicketChannel(message.guild, message.member, matching_support_category);
                         support_channel.send(`${message.author}, ${matching_support_category.name}!`);
                         break;
                     case 'PARTNER_REQUESTS':
-                        const support_channel = await createSupportTicketChannel(message.guild, message.member, matching_support_category);
                         support_channel.send(`${message.author}, ${matching_support_category.name}!`);
                         break;
                     case 'OTHER':
-                        const support_channel = await createSupportTicketChannel(message.guild, message.member, matching_support_category);
                         support_channel.send(`${message.author}, Please tell us what you need help with today!`);
                         break;
                 }
