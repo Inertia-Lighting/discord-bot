@@ -2,6 +2,7 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
+const { Timer } = require('../../utilities.js');
 const { Discord, client } = require('../discord_client.js');
 
 //---------------------------------------------------------------------------------------------------------------//
@@ -53,8 +54,10 @@ module.exports = {
     async execute(message, args) {
         const { command_name } = args;
 
-        if (command_name === 'close_ticket') {
-            message.reply('command coming soon!');
+        if (command_name === 'close_ticket' && message.channel.parent?.id === support_tickets_category_id) {
+            await message.reply('Closing support ticket!');
+            await Timer(2500);
+            message.channel.delete().catch(console.warn);
             return;
         }
 
