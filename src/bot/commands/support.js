@@ -54,10 +54,14 @@ module.exports = {
     async execute(message, args) {
         const { command_name } = args;
 
-        if (command_name === 'close_ticket' && message.channel.parent?.id === support_tickets_category_id) {
-            await message.reply('Closing support ticket!');
-            await Timer(2500);
-            message.channel.delete().catch(console.warn);
+        if (command_name === 'close_ticket') {
+            if (message.channel.parent?.id === support_tickets_category_id) {
+                await message.reply('Closing support ticket!');
+                await Timer(2500);
+                message.channel.delete().catch(console.warn);
+            } else {
+                message.reply('This channel is not a support ticket!');
+            }
             return;
         }
 
