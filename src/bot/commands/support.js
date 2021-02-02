@@ -52,15 +52,19 @@ module.exports = {
     aliases: ['support', 'close_ticket'],
     permission_level: 'staff',
     async execute(message, args) {
-        const { command_name } = args;
+        const { user_command_access_levels, command_name } = args;
 
         if (command_name === 'close_ticket') {
-            if (message.channel.parent?.id === support_tickets_category_id) {
-                await message.reply('Closing support ticket!');
-                await Timer(2500);
-                message.channel.delete().catch(console.warn);
+            if (user_command_access_levels.includes('staff')) {
+                if (message.channel.parent?.id === support_tickets_category_id) {
+                    await message.reply('Closing support ticket...');
+                    await Timer(2500);
+                    message.channel.delete().catch(console.warn);
+                } else {
+                    message.reply('This channel is not a support ticket.');
+                }
             } else {
-                message.reply('This channel is not a support ticket!');
+                message.reply('Sorry, only staff can close support tickets.');
             }
             return;
         }

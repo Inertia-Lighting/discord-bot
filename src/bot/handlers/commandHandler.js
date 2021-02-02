@@ -29,18 +29,14 @@ async function commandHandler(message) {
         return;
     }
 
-    /* command permissions */
-    if (command.staffOnly && !message.member.roles.cache.has('789342326978772992')) {
-        sendCommandAccessLevelError(message);
-        return;
-    }
-    if (command.ownerOnly && message.author.id !== `196254672418373632` && message.author.id !== '331938622733549590' && message.author.id !== '159170842528448512' && message.author.id !== '163646957783482370') {
-        sendCommandAccessLevelError(message);
-        return;
-    }
+    /* command validation */
+    if (typeof command.name !== 'string') throw new TypeError(`\`command.name\` is not a string for command: ${command}`);
+    if (typeof command.description !== 'string') throw new TypeError(`\`command.description\` is not a string for command: ${command}`);
+    if (!Array.isArray(command.aliases)) throw new TypeError(`\`command.aliases\` is not an array for command: ${command}`);
+    if (typeof command.permission_level !== 'string') throw new TypeError(`\`command.permission_level\` is not a string for command: ${command}`);
 
     /* command permissions */
-    let user_is_allowed_to_run_command;
+    const user_command_access_levels = ['public']; // valid levels: [ 'public', 'staff', 'admin' ]
     const guild_staff_role_id = '789342326978772992';
     const bot_admin_ids = [
         '331938622733549590', // Drawn
@@ -48,26 +44,18 @@ async function commandHandler(message) {
         '163646957783482370', // MidSpike
         '196254672418373632', // Will
     ];
-    switch (command.permission_level) {
-        case 'admin':
-            if (bot_admin_ids.includes(message.author.id)) user_is_allowed_to_run_command = true;
-            break;
-        case 'staff':
-            if (message.member.roles.cache.has(guild_staff_role_id)) user_is_allowed_to_run_command = true;
-            break;
-        case 'public':
-            user_is_allowed_to_run_command = true;
-            break;
-        default:
-            console.error(`command: ${command.name} is missing a valid \`command.permission_level\`!`);
-            user_is_allowed_to_run_command = false;
-            break;
+    if (message.member.roles.cache.has(guild_staff_role_id)) {
+        user_command_access_levels.push('staff');
+    }
+    if (bot_admin_ids.includes(message.author.id)) {
+        user_command_access_levels.push('admin');
     }
 
     /* command execution */
-    if (user_is_allowed_to_run_command) {
+    if (user_command_access_levels.includes(command.permission_level)) {
         try {
             await command.execute(message, {
+                user_command_access_levels,
                 command_prefix,
                 command_name,
                 command_args,
