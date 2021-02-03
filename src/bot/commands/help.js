@@ -6,10 +6,6 @@ const { Discord, client } = require('../discord_client.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const command_prefix = process.env.BOT_COMMAND_PREFIX;
-
-//---------------------------------------------------------------------------------------------------------------//
-
 module.exports = {
     name: 'help',
     description: 'Shows a list of commands for you to use.',
@@ -17,7 +13,7 @@ module.exports = {
     aliases: ['help'],
     permission_level: 'public',
     async execute(message, args) {
-        const { command_args } = args;
+        const { command_prefix, command_args } = args;
 
         const specified_command_name = `${command_args[0]}`.toLowerCase();
         if (specified_command_name.length > 0) {
@@ -43,7 +39,11 @@ module.exports = {
             }
         } else {
             /* display all commands */
-            const all_commands_with_prefix = client.$.commands.map(command => `${command_prefix}${command.name}`);
+            const all_commands_with_prefix = client.$.commands.map(command => 
+                command.aliases.map(command_alias => 
+                    `${command_prefix}${command_alias.replace('#{cp}', `${command_prefix}`)}`
+                ).join(' | ')
+            );
             message.channel.send(new Discord.MessageEmbed({
                 color: 0x959595,
                 author: {
