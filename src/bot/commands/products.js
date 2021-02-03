@@ -12,13 +12,14 @@ module.exports = {
     name: 'products',
     description: 'lists all of the products',
     aliases: ['products'],
+    permission_level: 'public',
     async execute(message, args) {
         const db_roblox_products = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_PRODUCTS_COLLECTION_NAME, {});
 
         console.log({ db_roblox_products });
 
         message.channel.send(new Discord.MessageEmbed({
-            color: 0x223524,
+            color: 0x959595,
             author: {
                 iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                 name: 'Inertia Lighting | Products',

@@ -11,9 +11,11 @@ const { Discord, client } = require('../discord_client.js');
 module.exports = {
     name: 'lookup',
     description: 'looks up a specified user in the database',
-    ownerOnly: true,
     aliases: ['lookup'],
-    async execute(message, command_args) {
+    permission_level: 'staff',
+    async execute(message, args) {
+        const { command_args } = args;
+
         const lookup_discord_user_id = message.mentions.members.first()?.id;
         const lookup_roblox_user_id = command_args[0];
 
@@ -36,7 +38,7 @@ module.exports = {
         }
 
         message.channel.send(new Discord.MessageEmbed({
-            color: 0x223524,
+            color: 0x959595,
             author: {
                 iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                 name: 'Inertia Lighting | User Document',
