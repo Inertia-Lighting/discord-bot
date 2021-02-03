@@ -34,5 +34,19 @@ module.exports = {
 
             await Timer(1_000); // prevent api abuse
         }
+
+        /* dm the user about the auto-verification */
+        const dm_channel = await member.user.createDM();
+        dm_channel.send(new Discord.MessageEmbed({
+            color: 0x00FF00,
+            author: {
+                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                name: 'Inertia Lighting | Auto-Verification',
+            },
+            description: [
+                `Hey there ${member.user}!`,
+                'You were auto-verified since you are already in our system!',
+            ].join('\n\n'),
+        })).catch(console.warn);
     },
 };
