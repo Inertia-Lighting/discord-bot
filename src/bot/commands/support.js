@@ -2,8 +2,18 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
+const fs = require('fs');
+const path = require('path');
+
+//---------------------------------------------------------------------------------------------------------------//
+
 const { Timer } = require('../../utilities.js');
 const { Discord, client } = require('../discord_client.js');
+
+//---------------------------------------------------------------------------------------------------------------//
+
+const support_tickets_category_id = '805191315947913236';
+const support_ticket_transcripts_channel_id = '806602125610057729';
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -29,7 +39,6 @@ const support_categories = new Discord.Collection([
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const support_tickets_category_id = '805191315947913236';
 async function createSupportTicketChannel(guild, guild_member, support_category) {
     const support_tickets_category = guild.channels.resolve(support_tickets_category_id);
 
@@ -64,7 +73,19 @@ module.exports = {
                     if (first_collected_message?.content === 'yes') {
                         await message.reply('Check your DMs for the transcript!');
                         const all_messages_in_channel = await message.channel.messages.fetch({ limit: 100 }); // 100 is the max
+
                         console.log({ all_messages_in_channel });
+
+                        const temp_file_path = path.join(process.cwd(), 'temporary', `transcript_${message.channel.name}.json`);
+                        fs.writeFileSync(temp_file_path, JSON.stringify(Array.from(all_messages_in_channel.values()).reverse(), null, 2), { flag: 'w' });
+
+                        const temp_file_read_stream = fs.createReadStream(temp_file_path);
+                        const message_attachment = new Discord.MessageAttachment(temp_file_read_stream);
+
+                        const support_ticket_transcripts_channel = client.channels.resolve(support_ticket_transcripts_channel_id);
+                        await support_ticket_transcripts_channel.send(`${message.channel.name}`, message_attachment).catch(console.warn);
+
+                        fs.unlinkSync(temp_file_path);
                     }
                     await message.reply('Closing support ticket in 5 seconds...');
                     await Timer(5000);
