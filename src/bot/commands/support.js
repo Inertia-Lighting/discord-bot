@@ -37,7 +37,7 @@ async function createSupportTicketChannel(guild, guild_member, support_category)
     const potential_open_ticket_channel = guild.channels.cache.find(ch => ch.parent?.id === support_tickets_category.id && ch.name === support_channel_name);
     const support_ticket_channel = potential_open_ticket_channel ?? await guild.channels.create(support_channel_name, {
         type: 'text',
-        topic: 'Thank you for being patient!',
+        topic: `@${guild_member.user.tag}, thank you for being patient!`,
         parent: support_tickets_category,
     });
 
@@ -57,8 +57,17 @@ module.exports = {
         if (command_name === 'close_ticket') {
             if (user_command_access_levels.includes('staff')) {
                 if (message.channel.parent?.id === support_tickets_category_id) {
-                    await message.reply('Closing support ticket...');
-                    await Timer(2500);
+                    await message.reply('Would you like to save the transcript for this support ticket before closing it?\n**( yes | no )**');
+                    const collection_filter = (msg) => msg.author.id === message.author.id && ['yes', 'no'].includes(msg.content);
+                    const collected_messages = await message.channel.awaitMessages(collection_filter, { max: 1 }).catch((collected_messages) => collected_messages);
+                    const first_collected_message = collected_messages.first();
+                    if (first_collected_message?.content === 'yes') {
+                        await message.reply('Check your DMs for the transcript!');
+                        const all_messages_in_channel = await message.channel.messages.fetch({ limit: 500 });
+                        console.log({ all_messages_in_channel });
+                    }
+                    await message.reply('Closing support ticket in 5 seconds...');
+                    await Timer(5000);
                     message.channel.delete().catch(console.warn);
                 } else {
                     message.reply('This channel is not a support ticket.');
