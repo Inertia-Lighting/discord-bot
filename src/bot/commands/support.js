@@ -174,10 +174,10 @@ module.exports = {
                             break;
                     }
 
-                    const message_collector_2 = bot_message.channel.createMessageCollector((msg) => msg.author.id === message.author.id, { max: 1 });
+                    const message_collector_2 = support_channel.createMessageCollector((msg) => msg.author.id === message.author.id, { max: 1 });
                     message_collector_2.on('collect', async () => {
                         await Timer(5000); // provide a noticeable delay for the user to type
-                        support_channel.send(`${message.author}, A qualified member of staff will be assigned to help you with **${matching_support_category.name}** shortly!`);
+                        support_channel.send(`${message.author}, A member of our staff will help you with **${matching_support_category.name}** soon!`);
                     });
                 } else if (collected_message.content === 'cancel') {
                     message_collector_1.stop();
