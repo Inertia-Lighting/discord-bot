@@ -63,7 +63,7 @@ module.exports = {
                     const first_collected_message = collected_messages.first();
                     if (first_collected_message?.content === 'yes') {
                         await message.reply('Check your DMs for the transcript!');
-                        const all_messages_in_channel = await message.channel.messages.fetch({ limit: 500 });
+                        const all_messages_in_channel = await message.channel.messages.fetch({ limit: 100 }); // 100 is the max
                         console.log({ all_messages_in_channel });
                     }
                     await message.reply('Closing support ticket in 5 seconds...');
