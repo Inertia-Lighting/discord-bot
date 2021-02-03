@@ -17,9 +17,11 @@ module.exports = {
     aliases: ['help'],
     permission_level: 'public',
     async execute(message, args) {
-        if (args[0]) {
+        const { command_args } = args;
+
+        const specified_command_name = `${command_args[0]}`.toLowerCase();
+        if (specified_command_name.length > 0) {
             /* display help for a specified command */
-            const specified_command_name = args[0].toLowerCase();
             const specified_command = client.$.commands.get(specified_command_name) ?? client.$.commands.find(c => c.aliases?.includes(specified_command_name));
             if (specified_command) {
                 message.channel.send(new Discord.MessageEmbed({
