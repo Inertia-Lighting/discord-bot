@@ -152,16 +152,14 @@ module.exports = {
                                     iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                                     name: `Inertia Lighting | ${matching_support_category.name}`,
                                 },
-                                title: 'Please fill out this template so that our staff can assist you.',
-                                description: [
-                                    '- **Organization Name:** ( Microsoft | Google | IBM | etc )',
-                                    '- **Organization Contact:** ( email-address@website.extension )',
-                                    '- **Organization Description:** ( description )',
-                                    '- **Reason For Request:** ( describe your issue )',
-                                    '- **Additional Information:** ( additional info | n/a )',
-                                ].join('\n'),
+                                title: 'Please fill out our partner request form.',
+                                description: 'https://inertia-lighting.xyz/partner-requests-form',
                             })).catch(console.log);
-                            break;
+                            await support_channel.send('Automatically closing support ticket in 2 minutes...');
+                            setTimeout(() => {
+                                support_channel.delete();
+                            }, 2 * 60_000); // 2 minutes
+                            return;
                         case 'OTHER':
                             await support_channel.send(new Discord.MessageEmbed({
                                 color: 0x959595,
