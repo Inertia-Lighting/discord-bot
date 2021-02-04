@@ -1,19 +1,16 @@
 {
-  "name": "inertia-bot-server",
+  "name": "inertia-lighting-discord-bot",
   "version": "2.0.0",
-  "description": "Inertia Lighting Bot & Server",
+  "description": "Inertia Lighting Discord Bot",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Will3126/inertia-bot-server.git"
+    "url": "git+https://github.com/Inertia-Lighting/inertia-lighting-discord-bot.git"
   },
-  "keywords": [
-    "bot",
-    "server"
-  ],
+  "keywords": [],
   "author": "Inertia Lighting",
   "license": "GNUGPLv3",
   "bugs": {
