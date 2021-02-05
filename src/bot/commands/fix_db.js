@@ -18,13 +18,12 @@ module.exports = {
 
             const new_user = { ...user };
 
-            // if (new_user['_id']) new_user['discord_user_id'] = new_user['_id'];
-            // if (new_user['ROBLOX_ID']) new_user['roblox_user_id'] = new_user['ROBLOX_ID'];
-
-            // delete new_user['_id'];
-            // delete new_user['ROBLOX_ID'];
+            if (new_user['_id'] && !new_user['discord_user_id']) new_user['discord_user_id'] = new_user['_id'];
+            if (new_user['ROBLOX_ID'] && !new_user['roblox_user_id']) new_user['roblox_user_id'] = new_user['ROBLOX_ID'];
 
             delete new_user['__v'];
+            delete new_user['_id'];
+            delete new_user['ROBLOX_ID'];
 
             await go_mongo_db.add(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, [
                 new_user,
@@ -37,8 +36,6 @@ module.exports = {
             console.log({ new_user });
 
             console.log('----------------------------------------------------------------------------------------------------------------');
-
-            break;
         }
     },
 };
