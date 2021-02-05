@@ -4,6 +4,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const moment = require('moment-timezone');
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -50,7 +51,7 @@ async function createSupportTicketChannel(guild, guild_member, support_category)
     const potential_open_ticket_channel = guild.channels.cache.find(ch => ch.parent?.id === support_tickets_category.id && ch.name === support_channel_name);
     const support_ticket_channel = potential_open_ticket_channel ?? await guild.channels.create(support_channel_name, {
         type: 'text',
-        topic: `@${guild_member.user.tag}, thank you for being patient!`,
+        topic: `${guild_member} | ${support_category.name} | Opened on ${moment().format('ddd MMM DD YYYY [at] HH:mm:ss [GMT]ZZ')}`,
         parent: support_tickets_category,
     });
 
