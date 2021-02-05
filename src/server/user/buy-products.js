@@ -143,7 +143,9 @@ async function userProductsBuy(router, client) {
                 }
                 await Timer(1_000); // prevent api abuse
             }
-        } catch {
+        } catch (error) {
+            console.trace(error);
+
             console.error(`Unable to add role: ${db_roblox_product_data.discord_role_id}; to discord user: ${guild_member.user.id};`);
             res.status(500).send(JSON.stringify({
                 'message': `Unable to add role: ${db_roblox_product_data.discord_role_id}; to discord user: ${guild_member.user.id};`,
