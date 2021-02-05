@@ -7,6 +7,7 @@ const Discord = require('discord.js');
 //---------------------------------------------------------------------------------------------------------------//
 
 const { go_mongo_db } = require('../../mongo/mongo.js');
+const { Timer } = require('../../utilities.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -132,21 +133,15 @@ async function userProductsBuy(router, client) {
         /* try to add the role to the guild member */
         try {
             /* give the specified product role to the customer */
-            if (!guild_member.roles.cache.has(db_roblox_product_data.discord_role_id)) {
-                await guild_member.roles.add(db_roblox_product_data.discord_role_id);
-            }
+            await guild_member.roles.add(db_roblox_product_data.discord_role_id);
 
             /* give various customer roles to the customer */
             for (const role_id of new_customer_role_ids) {
-                if (!guild_member.roles.cache.has(role_id)) {
-                    await guild_member.roles.add(role_id);
-                }
+                await guild_member.roles.add(role_id).catch(console.trace);
                 await Timer(1_000); // prevent api abuse
             }
         } catch (error) {
-            console.trace(error);
-
-            console.error(`Unable to add role: ${db_roblox_product_data.discord_role_id}; to discord user: ${guild_member.user.id};`);
+            console.trace(`Unable to add role: ${db_roblox_product_data.discord_role_id}; to discord user: ${guild_member.user.id};`, error);
             res.status(500).send(JSON.stringify({
                 'message': `Unable to add role: ${db_roblox_product_data.discord_role_id}; to discord user: ${guild_member.user.id};`,
             }, null, 2));
