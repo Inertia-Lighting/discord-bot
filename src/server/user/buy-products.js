@@ -132,11 +132,15 @@ async function userProductsBuy(router, client) {
         /* try to add the role to the guild member */
         try {
             /* give the specified product role to the customer */
-            await guild_member.roles.add(db_roblox_product_data.discord_role_id);
+            if (!guild_member.roles.cache.has(db_roblox_product_data.discord_role_id)) {
+                await guild_member.roles.add(db_roblox_product_data.discord_role_id);
+            }
 
             /* give various customer roles to the customer */
             for (const role_id of new_customer_role_ids) {
-                await guild_member.roles.add(role_id).catch(console.warn);
+                if (!guild_member.roles.cache.has(role_id)) {
+                    await guild_member.roles.add(role_id);
+                }
                 await Timer(1_000); // prevent api abuse
             }
         } catch {
