@@ -8,14 +8,28 @@ const { Discord, client } = require('../discord_client.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
+const new_user_role_ids = [
+    '601945352848801794', // "Users"
+];
+
+//---------------------------------------------------------------------------------------------------------------//
+
 module.exports = {
     name: 'guildMemberAdd',
     async handler(member) {
+        /* give roles to new users */
+        for (const role_id of new_user_role_ids) {
+            await member.roles.add(role_id).catch(console.warn);
+            await Timer(1_000); // prevent api abuse
+        }
+
+        /* fetch user data from the database */
         const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
-            '_id': member.id,
+            'discord_user_id': member.id,
         });
 
-        if (!db_user_data) return; // don't continue if they aren't in the database
+        /* don't continue if the user isn't in the database */
+        if (!db_user_data) return;
 
         /* fetch an up-to-date copy of the products and their info */
         const db_roblox_products = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_PRODUCTS_COLLECTION_NAME, {});

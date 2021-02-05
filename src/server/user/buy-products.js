@@ -14,6 +14,12 @@ const guild_id = process.env.BOT_GUILD_ID;
 
 //---------------------------------------------------------------------------------------------------------------//
 
+const new_customer_role_ids = [
+    '655920592205119498', // "Customer"
+];
+
+//---------------------------------------------------------------------------------------------------------------//
+
 async function userProductsBuy(router, client) {
     router.post('/user/products/buy', async (req, res) => {
         console.info(`Endpoint: ${req.url}; has been called!`);
@@ -45,7 +51,7 @@ async function userProductsBuy(router, client) {
 
         /* find the user in the database */
         const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
-            'ROBLOX_ID': roblox_user_id,
+            'roblox_user_id': roblox_user_id,
         });
 
         if (!db_user_data) {
@@ -71,7 +77,7 @@ async function userProductsBuy(router, client) {
 
         /* add the product for the user in the database */
         await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
-            'ROBLOX_ID': roblox_user_id,
+            'roblox_user_id': roblox_user_id,
         }, {
             $set: {
                 [`products.${db_roblox_product_data.code}`]: true,
@@ -87,7 +93,7 @@ async function userProductsBuy(router, client) {
             return;
         }
 
-        const guild_member = await guild.members.fetch(db_user_data._id).catch(console.warn);
+        const guild_member = await guild.members.fetch(db_user_data.discord_user_id).catch(console.warn);
         if (!guild_member) {
             console.error(`unable to find discord user: ${guild_member.user.id}; in guild!`);
             res.status(404).send(JSON.stringify({
@@ -125,7 +131,14 @@ async function userProductsBuy(router, client) {
 
         /* try to add the role to the guild member */
         try {
+            /* give the specified product role to the customer */
             await guild_member.roles.add(db_roblox_product_data.discord_role_id);
+
+            /* give various customer roles to the customer */
+            for (const role_id of new_customer_role_ids) {
+                await guild_member.roles.add(role_id).catch(console.warn);
+                await Timer(1_000); // prevent api abuse
+            }
         } catch {
             console.error(`Unable to add role: ${db_roblox_product_data.discord_role_id}; to discord user: ${guild_member.user.id};`);
             res.status(500).send(JSON.stringify({

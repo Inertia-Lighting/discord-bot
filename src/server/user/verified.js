@@ -28,7 +28,7 @@ async function userVerified(router, client) {
         }
 
         const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
-            'ROBLOX_ID': roblox_user_id,
+            'roblox_user_id': roblox_user_id,
         });
 
         if (db_user_data) {

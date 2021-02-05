@@ -55,7 +55,7 @@ module.exports = {
         })).catch(console.warn);
 
         const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
-            '_id': message.author.id,
+            'discord_user_id': message.author.id,
         });
 
         if (db_user_data) {
@@ -71,10 +71,10 @@ module.exports = {
         } else {
             const member_roles = message.member.roles.cache;
             await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
-                '_id': message.author.id,
+                'discord_user_id': message.author.id,
             }, {
                 $set: {
-                    'ROBLOX_ID': verification_context.roblox_user_id,
+                    'roblox_user_id': verification_context.roblox_user_id,
                     'products': {
                         'SGM_Q7_STROBE': member_roles.has('728050461566828554'),
                         'Laser_Fixture': member_roles.has('701758602624368741'),

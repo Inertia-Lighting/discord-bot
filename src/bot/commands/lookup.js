@@ -26,9 +26,9 @@ module.exports = {
 
         const [ user_db_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
             ...(lookup_discord_user_id ? {
-                '_id': lookup_discord_user_id,
+                'discord_user_id': lookup_discord_user_id,
             } : {
-                'ROBLOX_ID': lookup_roblox_user_id,
+                'roblox_user_id': lookup_roblox_user_id,
             }),
         });
 
