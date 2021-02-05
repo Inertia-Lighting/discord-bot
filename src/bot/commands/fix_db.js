@@ -3,6 +3,7 @@
 //---------------------------------------------------------------------------------------------------------------//
 
 const { go_mongo_db } = require('../../mongo/mongo.js');
+const { object_sort } = require('../../utilities.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -26,7 +27,7 @@ module.exports = {
             delete new_user['ROBLOX_ID'];
 
             await go_mongo_db.add(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, [
-                new_user,
+                object_sort(new_user),
             ]);
 
             await go_mongo_db.remove(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {

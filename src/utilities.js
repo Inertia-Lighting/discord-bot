@@ -23,9 +23,19 @@ function string_ellipses(string_to_ellipses='', output_length_limit=Number.MAX_S
     return `${shortened_string}${shortened_string.length < string_to_ellipses.length ? ellipses : ''}`;
 }
 
+/**
+ * Sorts an object based on it's keys (using Array.sort()) and returns the new sorted object
+ * @param {Object} object_of_things 
+ * @returns {Object} 
+ */
+function object_sort(object_of_things) {
+    return Object.keys(object_of_things).sort().reduce((r, k) => (r[k] = object_of_things[k], r), {});
+}
+
 //---------------------------------------------------------------------------------------------------------------//
 
 module.exports = {
     Timer,
     string_ellipses,
+    object_sort,
 };
