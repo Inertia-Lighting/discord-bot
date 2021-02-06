@@ -10,7 +10,7 @@ module.exports = {
     name: 'ping',
     description: 'shows bot ping',
     aliases: ['ping'],
-    permission_level: 'public',
+    permission_level: 'admin',
     async execute(message, args) {
         message.channel.send(`Pong: ${client.ws.ping}ms`).catch(console.warn);
     },

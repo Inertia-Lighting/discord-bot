@@ -12,7 +12,7 @@ module.exports = {
     name: 'lookup',
     description: 'looks up a specified user in the database',
     aliases: ['lookup'],
-    permission_level: 'staff',
+    permission_level: 'admin',
     async execute(message, args) {
         const { command_args } = args;
 

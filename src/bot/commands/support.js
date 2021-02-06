@@ -64,7 +64,7 @@ module.exports = {
     name: 'support',
     description: 'support tickets and stuff',
     aliases: ['support', 'close_ticket'],
-    permission_level: 'staff',
+    permission_level: 'admin',
     async execute(message, args) {
         const { user_command_access_levels, command_name } = args;
 
