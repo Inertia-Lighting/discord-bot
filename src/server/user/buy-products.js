@@ -2,6 +2,7 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
+const moment = require('moment-timezone');
 const Discord = require('discord.js');
 
 //---------------------------------------------------------------------------------------------------------------//
@@ -23,7 +24,8 @@ const new_customer_role_ids = [
 
 async function userProductsBuy(router, client) {
     router.post('/user/products/buy', async (req, res) => {
-        console.info(`Endpoint: ${req.url}; has been called!`);
+        console.info(`Endpoint: ${req.url}; was called at ${moment()}!`);
+
         if (req.headers?.['content-type'] !== 'application/json') {
             console.error('WRONG CONTENT TYPE SENT TO SERVER!');
             return;

@@ -2,6 +2,7 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
+const moment = require('moment-timezone');
 const axios = require('axios');
 
 //---------------------------------------------------------------------------------------------------------------//
@@ -12,7 +13,8 @@ const { go_mongo_db } = require('../../mongo/mongo.js');
 
 async function userVerify(router, client) {
     router.post('/user/verify', async (req, res) => {
-        console.info(`Endpoint: ${req.url}; has been called!`);
+        console.info(`Endpoint: ${req.url}; was called at ${moment()}!`);
+
         if (req.headers?.['content-type'] !== 'application/json') {
             console.error('WRONG CONTENT TYPE SENT TO SERVER!');
             return;
