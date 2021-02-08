@@ -28,8 +28,8 @@ router.get('/test', async (req, res) => {
 
 const { userVerify } = require('./user/verify.js');
 const { userVerified } = require('./user/verified.js');
-const { userProductsFetch } = require('./user/fetch-products.js');
-const { userProductsBuy } = require('./user/buy-products.js');
+const { userProductsFetch } = require('./user/products/fetch.js');
+const { userProductsBuy } = require('./user/products/buy.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
