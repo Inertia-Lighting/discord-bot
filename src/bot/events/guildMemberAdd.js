@@ -36,8 +36,6 @@ module.exports = {
 
         /* iterate over all products in the user (includes non-owned products) */
         for (const [ product_code, user_owns_product ] of Object.entries(db_user_data.products ?? {})) {
-            console.log(`${member.displayName}`, { product_code, user_owns_product });
-
             /* find the product info from the recently fetched products */
             const product = db_roblox_products.find(product => product.code === product_code);
 
