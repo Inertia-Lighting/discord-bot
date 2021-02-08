@@ -26,17 +26,12 @@ router.get('/test', async (req, res) => {
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const { userVerify } = require('./user/verify.js');
-const { userVerified } = require('./user/verified.js');
-const { userProductsFetch } = require('./user/products/fetch.js');
-const { userProductsBuy } = require('./user/products/buy.js');
+require('./user/verify.js')(router, client);
+require('./user/verified.js')(router, client);
+require('./user/products/fetch.js')(router, client);
+require('./user/products/buy.js')(router, client);
 
 //---------------------------------------------------------------------------------------------------------------//
-
-userVerify(router, client);
-userVerified(router, client);
-userProductsFetch(router, client);
-userProductsBuy(router, client);
 
 /* start the server on the port */
 app.listen(app.get('port'), () => {

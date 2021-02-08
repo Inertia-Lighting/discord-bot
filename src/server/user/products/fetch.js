@@ -7,7 +7,7 @@ const { go_mongo_db } = require('../../../mongo/mongo.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
-async function userProductsFetch(router, client) {
+module.exports = (router, client) => {
     router.post('/user/products/fetch/:product_name?', async (req, res) => {
         console.info(`Endpoint: ${req.url}; was called at ${moment()}!`);
 
@@ -52,10 +52,4 @@ async function userProductsFetch(router, client) {
             res.status(200).send(JSON.stringify(db_user_data.products, null, 2));
         }
     });
-}
-
-//---------------------------------------------------------------------------------------------------------------//
-
-module.exports = {
-    userProductsFetch,
 };

@@ -7,7 +7,7 @@ const { go_mongo_db } = require('../../mongo/mongo.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
-async function userVerified(router, client) {
+module.exports = (router, client) => {
     router.post('/user/verified', async (req, res) => {
         console.info(`Endpoint: ${req.url}; was called at ${moment()}!`);
 
@@ -39,10 +39,4 @@ async function userVerified(router, client) {
             res.status(404).send('user not found');
         }
     });
-}
-
-//---------------------------------------------------------------------------------------------------------------//
-
-module.exports = {
-    userVerified,
 };

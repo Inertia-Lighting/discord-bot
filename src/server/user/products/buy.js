@@ -22,7 +22,7 @@ const new_customer_role_ids = [
 
 //---------------------------------------------------------------------------------------------------------------//
 
-async function userProductsBuy(router, client) {
+module.exports = (router, client) => {
     router.post('/user/products/buy', async (req, res) => {
         console.info(`Endpoint: ${req.url}; was called at ${moment()}!`);
 
@@ -156,10 +156,4 @@ async function userProductsBuy(router, client) {
             'message': `player: ${roblox_user_id}; user: ${guild_member.user.id}; bought product: ${roblox_product_id}; successfully!`,
         }, null, 2));
     });
-}
-
-//---------------------------------------------------------------------------------------------------------------//
-
-module.exports = {
-    userProductsBuy,
 };
