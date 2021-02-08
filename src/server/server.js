@@ -19,9 +19,10 @@ app.use(bodyParser.json()); // parse application/json
 app.use('/', router);
 
 router.get('/test', async (req, res) => {
-    res.json({
+    res.set('Content-Type', 'application/json');
+    res.send(JSON.stringify({
         'message': `this is a test: ${Date.now()}`,
-    });
+    }, null, 2));
 });
 
 //---------------------------------------------------------------------------------------------------------------//
