@@ -92,10 +92,28 @@ module.exports = {
                     bot_message.delete({ timeout: 500 }).catch(console.warn);
 
                     const support_channel = await createSupportTicketChannel(message.guild, message.member, matching_support_category);
+
                     collected_message.reply([
                         `You selected ${matching_support_category.name}!`,
                         `Go to ${support_channel} to continue.`,
                     ].join('\n')).catch(console.warn);
+
+                    const [ user_db_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
+                        'discord_user_id': message.author.id,
+                    }, {
+                        projection: {
+                            '_id': false,
+                        },
+                    });
+
+                    await support_channel.send(new Discord.MessageEmbed({
+                        color: 0x959595,
+                        author: {
+                            iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                            name: 'Inertia Lighting | User Document',
+                        },
+                        description: `${'```'}json\n${JSON.stringify(user_db_data, null, 2)}\n${'```'}`,
+                    })).catch(console.warn);
 
                     switch (matching_support_category.id) {
                         case 'PRODUCT_PURCHASES':
@@ -174,23 +192,6 @@ module.exports = {
                             })).catch(console.log);
                             break;
                     }
-
-                    const [ user_db_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
-                        'discord_user_id': message.author.id,
-                    }, {
-                        projection: {
-                            '_id': false,
-                        },
-                    });
-
-                    await support_channel.send(new Discord.MessageEmbed({
-                        color: 0x959595,
-                        author: {
-                            iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                            name: 'Inertia Lighting | User Document',
-                        },
-                        description: `${'```'}json\n${JSON.stringify(user_db_data, null, 2)}\n${'```'}`,
-                    })).catch(console.warn);
 
                     const message_collector_2 = support_channel.createMessageCollector((msg) => msg.author.id === message.author.id, { max: 1 });
                     message_collector_2.on('collect', async () => {
