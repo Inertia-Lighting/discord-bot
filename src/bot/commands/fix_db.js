@@ -21,6 +21,7 @@ module.exports = {
 
             if (new_user['_id'] && !new_user['discord_user_id']) new_user['discord_user_id'] = new_user['_id'];
             if (new_user['ROBLOX_ID'] && !new_user['roblox_user_id']) new_user['roblox_user_id'] = new_user['ROBLOX_ID'];
+            if (new_user['blacklisted'] && !new_user['blacklisted']) new_user['blacklisted'] = false
 
             delete new_user['__v'];
             delete new_user['_id'];
