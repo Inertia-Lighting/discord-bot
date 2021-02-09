@@ -112,7 +112,7 @@ module.exports = {
                             iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                             name: 'Inertia Lighting | User Document',
                         },
-                        description: `${'```'}json\n${JSON.stringify(user_db_data, null, 2)}\n${'```'}`,
+                        description: `${'```'}json\n${JSON.stringify(user_db_data ?? 'user not found in database', null, 2)}\n${'```'}`,
                     })).catch(console.warn);
 
                     switch (matching_support_category.id) {
