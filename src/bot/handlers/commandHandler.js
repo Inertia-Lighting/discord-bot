@@ -54,7 +54,6 @@ async function commandHandler(message) {
     if (bot_admin_ids.includes(message.author.id)) {
         user_command_access_levels.push('admin');
     }
-
     if (!user_command_access_levels.includes(command.permission_level)) {
         message.channel.send(new Discord.MessageEmbed({
             color: 0xFF0000,
@@ -68,18 +67,14 @@ async function commandHandler(message) {
         return;
     }
 
+    /* command cooldown */
     const command_cooldown_in_ms = command.cooldown ?? 5_000;
     const last_command_epoch_for_user = command_cooldown_tracker.get(message.author.id)?.last_command_epoch ?? Date.now() - command_cooldown_in_ms;
     const current_command_epoch = Date.now();
-
-    /* set the latest command epoch for the user */
-    command_cooldown_tracker.set(message.author.id, {
-        last_command_epoch: current_command_epoch,
-    });
-
-    /* prevent users from spamming commands */
+    command_cooldown_tracker.set(message.author.id, { last_command_epoch: current_command_epoch });
     if (current_command_epoch - last_command_epoch_for_user < command_cooldown_in_ms) {
         message.reply('Stop spamming commands!').catch(console.warn);
+        return;
     }
 
     /* command execution */
