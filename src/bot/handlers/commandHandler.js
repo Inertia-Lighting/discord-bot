@@ -10,6 +10,10 @@ const command_prefix = process.env.BOT_COMMAND_PREFIX;
 
 //---------------------------------------------------------------------------------------------------------------//
 
+const command_cooldown_tracker = new Discord.Collection();
+
+//---------------------------------------------------------------------------------------------------------------//
+
 async function commandHandler(message) {
     const command_name = message.content.split(/\s+/g)[0].replace(command_prefix, '').toLowerCase();
     const command_args = message.content.split(/\s+/g).slice(1);
@@ -50,29 +54,7 @@ async function commandHandler(message) {
     if (bot_admin_ids.includes(message.author.id)) {
         user_command_access_levels.push('admin');
     }
-
-    /* command execution */
-    if (user_command_access_levels.includes(command.permission_level)) {
-        try {
-            await command.execute(message, {
-                user_command_access_levels,
-                command_prefix,
-                command_name,
-                command_args,
-            });
-        } catch (error) {
-            console.trace(error);
-            message.reply(new Discord.MessageEmbed({
-                color: 0xFF0000,
-                author: {
-                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                    name: `${client.user.username}`,
-                },
-                title: 'Command Error',
-                description: `It looks like I ran into an error while trying to run the command: \`\`${command_name}\`\`!`,
-            }));
-        }
-    } else {
+    if (!user_command_access_levels.includes(command.permission_level)) {
         message.channel.send(new Discord.MessageEmbed({
             color: 0xFF0000,
             author: {
@@ -81,6 +63,38 @@ async function commandHandler(message) {
             },
             title: 'Command Access Level Error',
             description: 'You do not have the required permissions to use this command!',
+        })).catch(console.warn);
+        return;
+    }
+
+    /* command cooldown */
+    const command_cooldown_in_ms = command.cooldown ?? 5_000;
+    const last_command_epoch_for_user = command_cooldown_tracker.get(message.author.id)?.last_command_epoch ?? Date.now() - command_cooldown_in_ms;
+    const current_command_epoch = Date.now();
+    command_cooldown_tracker.set(message.author.id, { last_command_epoch: current_command_epoch });
+    if (current_command_epoch - last_command_epoch_for_user < command_cooldown_in_ms && !user_command_access_levels.includes('staff')) {
+        message.reply('Stop spamming commands!').catch(console.warn);
+        return;
+    }
+
+    /* command execution */
+    try {
+        await command.execute(message, {
+            user_command_access_levels,
+            command_prefix,
+            command_name,
+            command_args,
+        });
+    } catch (error) {
+        console.trace(error);
+        message.reply(new Discord.MessageEmbed({
+            color: 0xFF0000,
+            author: {
+                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                name: `${client.user.username}`,
+            },
+            title: 'Command Error',
+            description: `It looks like I ran into an error while trying to run the command: \`\`${command_name}\`\`!`,
         })).catch(console.warn);
     }
 }
