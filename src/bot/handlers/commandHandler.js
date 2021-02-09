@@ -72,7 +72,7 @@ async function commandHandler(message) {
     const last_command_epoch_for_user = command_cooldown_tracker.get(message.author.id)?.last_command_epoch ?? Date.now() - command_cooldown_in_ms;
     const current_command_epoch = Date.now();
     command_cooldown_tracker.set(message.author.id, { last_command_epoch: current_command_epoch });
-    if (current_command_epoch - last_command_epoch_for_user < command_cooldown_in_ms) {
+    if (current_command_epoch - last_command_epoch_for_user < command_cooldown_in_ms && !user_command_access_levels.includes('staff')) {
         message.reply('Stop spamming commands!').catch(console.warn);
         return;
     }
