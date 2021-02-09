@@ -30,6 +30,10 @@ module.exports = {
             } : {
                 'roblox_user_id': lookup_roblox_user_id,
             }),
+        }, {
+            projections: {
+                '_id': false,
+            },
         });
 
         if (!user_db_data) {
@@ -43,7 +47,7 @@ module.exports = {
                 iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                 name: 'Inertia Lighting | User Document',
             },
-            description: `${'```'}json\n${JSON.stringify(user_db_data, null, 2)}\n${'```'}`,
+            description: `${'```'}json\n${JSON.stringify(user_db_data ?? 'user not found in database', null, 2)}\n${'```'}`,
         })).catch(console.warn);
     },
 };
