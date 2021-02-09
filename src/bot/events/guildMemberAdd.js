@@ -31,6 +31,22 @@ module.exports = {
         /* don't continue if the user isn't in the database */
         if (!db_user_data) return;
 
+        if (db_user_data.blacklisted) {
+            const dm_channel = await member.user.createDM();
+            dm_channel.send(new Discord.MessageEmbed({
+                color: 0x00FF00,
+                author: {
+                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                    name: 'Inertia Lighting | Blacklist',
+                },
+                description: [
+                    `Hey there ${member.user}!`,
+                    'It looks like you are blacklisted! If you would like to appeal please open a ticket!',
+                ].join('\n\n'),
+            }))
+            return;
+        }
+
         /* fetch an up-to-date copy of the products and their info */
         const db_roblox_products = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_PRODUCTS_COLLECTION_NAME, {});
 

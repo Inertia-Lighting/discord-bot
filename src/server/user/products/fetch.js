@@ -40,6 +40,14 @@ module.exports = (router, client) => {
             return;
         }
 
+        if (db_user_data.blacklisted) {
+            console.error(`roblox player: ${roblox_user_id}; blacklisted`);
+            res.status(404).send(JSON.stringify({
+                'message': 'roblox player is blacklisted',
+            }, null, 2));
+            return;
+        }
+
         if (!db_user_data.products) {
             console.error(`roblox_user_id: ${roblox_user_id}; does not have \`db_user_data.products\` defined!`);
             db_user_data.products = {}; // fix the possibility of this not being an object

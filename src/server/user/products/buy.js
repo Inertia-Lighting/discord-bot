@@ -65,6 +65,14 @@ module.exports = (router, client) => {
             return;
         }
 
+        if (db_user_data.blacklisted) {
+            console.error(`roblox player: ${roblox_user_id}; blacklisted`);
+            res.status(404).send(JSON.stringify({
+                'message': 'roblox player is blacklisted',
+            }, null, 2));
+            return;
+        }
+
         /* find the product in the database */
         const [ db_roblox_product_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_PRODUCTS_COLLECTION_NAME, {
             'id': roblox_product_id,

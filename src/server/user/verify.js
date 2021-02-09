@@ -56,6 +56,14 @@ module.exports = (router, client) => {
             return;
         }
 
+        if (db_user_data.blacklisted) {
+            console.error(`roblox player: ${roblox_user_id}; blacklisted`);
+            res.status(404).send(JSON.stringify({
+                'message': 'roblox player is blacklisted',
+            }, null, 2));
+            return;
+        }
+
         const potential_old_verification_context = client.$.verification_contexts.find(item => item.roblox_user_id === roblox_user_id);
 
         const verification_code = potential_old_verification_context?.verification_code ?? (new Buffer.from(`${Date.now()}`.slice(7))).toString('base64');
