@@ -87,19 +87,15 @@ module.exports = (router, client) => {
                 [`products.${db_roblox_product_data.code}`]: true,
             },
         });
-        const buy_log_channel = await client.channels.cache.fetch('738225472185434112').catch(console.warn);
-        const { data: roblox_user } = await axios.get(`https://api.roblox.com/users/${encodeURIComponent(roblox_user_id)}`);
+        const buy_log_channel = client.channels.resolve('738225472185434112').catch(console.warn);
         if (!buy_log_channel) {
             console.error(`unable to find buy log channel 738225472185434112;`);
-            res.status(500).send(JSON.stringify({
-                'message': `unable to find buy log channel 738225472185434112;`,
-            }, null, 2));
             return;
         } else {
             buy_log_channel.send(new Discord.MessageEmbed({
                 color: 0x959595,
                 title: '__**Inertia Lighting Buy Logs**__',
-                description: `${roblox_user.Name}(${roblox_user.Id}) has bought ${db_roblox_product_data.name}`
+                description: `${roblox_user_id} has bought ${db_roblox_product_data.name}`
             }));
         }
 
