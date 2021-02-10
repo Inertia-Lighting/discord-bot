@@ -25,22 +25,27 @@ const support_categories = new Discord.Collection([
         id: 'PRODUCT_PURCHASES',
         name: 'Product Purchases',
         description: 'Come here if you are having issues with purchasing our products.',
+        qualified_support_role_ids: ['809151858253103186'],
     }, {
         id: 'PRODUCT_ISSUES',
         name: 'Product Issues',
         description: 'Come here if you are having issues with a product that was successfully purchased.',
+        qualified_support_role_ids: ['807385031051575306'],
     }, {
         id: 'PRODUCT_TRANSFERS',
         name: 'Product Transfers',
         description: 'Come here if you want to transfer any of your products to another account.',
+        qualified_support_role_ids: ['807385028568154113'],
     }, {
         id: 'PARTNER_REQUESTS',
         name: 'Partner Requests',
         description: 'Come here if you want to request a partnership with Inertia Lighting.',
+        qualified_support_role_ids: ['807385032754462761'],
     }, {
         id: 'OTHER',
         name: 'Other Issues',
         description: 'Come here if none of the other categories match your issue.',
+        qualified_support_role_ids: ['809151496490057728'],
     },
 ].map((item, index) => ([ item.id, { ...{ human_index: index + 1 }, ...item } ])));
 
@@ -196,7 +201,8 @@ module.exports = {
                     const message_collector_2 = support_channel.createMessageCollector((msg) => msg.author.id === message.author.id, { max: 1 });
                     message_collector_2.on('collect', async () => {
                         await Timer(5000); // provide a noticeable delay for the user to type
-                        support_channel.send(`${message.author}, A member of our staff will help you with **${matching_support_category.name}** soon!`);
+                        const qualified_support_role_mentions = matching_support_category.qualified_support_role_ids.map(role_id => `<@&${role_id}>`).join(', ');
+                        support_channel.send(`${message.author}, Our ${qualified_support_role_mentions} staff will help you with **${matching_support_category.name}** soon!`);
                     });
                 } else if (collected_message.content === 'cancel') {
                     message_collector_1.stop();
