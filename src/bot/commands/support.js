@@ -98,10 +98,14 @@ module.exports = {
 
                     const support_channel = await createSupportTicketChannel(message.guild, message.member, matching_support_category);
 
+                    /* respond to the user with a mention to the support ticket channel */
                     collected_message.reply([
                         `You selected ${matching_support_category.name}!`,
                         `Go to ${support_channel} to continue.`,
                     ].join('\n')).catch(console.warn);
+
+                    /* ping the user so they know where to go */
+                    support_channel.send(`${message.author}, welcome to your support ticket!`);
 
                     const [ user_db_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
                         'discord_user_id': message.author.id,
@@ -200,9 +204,9 @@ module.exports = {
 
                     const message_collector_2 = support_channel.createMessageCollector((msg) => msg.author.id === message.author.id, { max: 1 });
                     message_collector_2.on('collect', async () => {
-                        await Timer(5000); // provide a noticeable delay for the user to type
+                        await Timer(1000); // provide a noticeable delay for the user to type
                         const qualified_support_role_mentions = matching_support_category.qualified_support_role_ids.map(role_id => `<@&${role_id}>`).join(', ');
-                        support_channel.send(`${message.author}, Our ${qualified_support_role_mentions} staff will help you with **${matching_support_category.name}** soon!`);
+                        support_channel.send(`${message.author}, Our ${qualified_support_role_mentions} staff will help you with your issue soon!`);
                     });
                 } else if (collected_message.content === 'cancel') {
                     message_collector_1.stop();
