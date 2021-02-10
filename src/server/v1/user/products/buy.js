@@ -161,9 +161,9 @@ module.exports = (router, client) => {
                 name: 'Inertia Lighting | Confirmed Purchase',
             },
             description: [
-                `Roblox User: \`${roblox_user_id}\`;`,
-                `Discord User: \`${guild_member.user.id}\`;`,
-                `Bought product: \`${db_roblox_product_data.code}\`;`,
+                `**Discord user:** <@${guild_member.user.id}>;`,
+                `**Roblox user:** \`${roblox_user_id}\`;`,
+                `**Bought product:** \`${db_roblox_product_data.code}\`;`,
             ].join('\n'),
         }))?.catch(console.warn);
 
