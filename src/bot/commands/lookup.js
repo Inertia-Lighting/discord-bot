@@ -24,6 +24,7 @@ module.exports = {
             return;
         }
 
+        /* send the user document */
         const [ user_db_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
             ...(lookup_discord_user_id ? {
                 'discord_user_id': lookup_discord_user_id,
@@ -35,13 +36,7 @@ module.exports = {
                 '_id': false,
             },
         });
-
-        if (!user_db_data) {
-            message.reply('I couldn\'t find that user in the database!');
-            return;
-        }
-
-        message.channel.send(new Discord.MessageEmbed({
+        await message.channel.send(new Discord.MessageEmbed({
             color: 0x959595,
             author: {
                 iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,

@@ -107,6 +107,7 @@ module.exports = {
                     /* ping the user so they know where to go */
                     support_channel.send(`${message.author}, welcome to your support ticket!`);
 
+                    /* send the user document */
                     const [ user_db_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
                         'discord_user_id': message.author.id,
                     }, {
@@ -114,7 +115,6 @@ module.exports = {
                             '_id': false,
                         },
                     });
-
                     await support_channel.send(new Discord.MessageEmbed({
                         color: 0x959595,
                         author: {
@@ -122,6 +122,23 @@ module.exports = {
                             name: 'Inertia Lighting | User Document',
                         },
                         description: `${'```'}json\n${JSON.stringify(user_db_data ?? 'user not found in database', null, 2)}\n${'```'}`,
+                    })).catch(console.warn);
+
+                    /* send the blacklisted user document */
+                    const [ blacklisted_user_db_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME, {
+                        'discord_user_id': message.author.id,
+                    }, {
+                        projection: {
+                            '_id': false,
+                        },
+                    });
+                    await message.channel.send(new Discord.MessageEmbed({
+                        color: 0x959595,
+                        author: {
+                            iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                            name: 'Inertia Lighting | Blacklisted User Document',
+                        },
+                        description: `${'```'}json\n${JSON.stringify(blacklisted_user_db_data ?? 'user not found in blacklist database', null, 2)}\n${'```'}`,
                     })).catch(console.warn);
 
                     switch (matching_support_category.id) {
