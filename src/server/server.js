@@ -27,6 +27,7 @@ router.get('/test', async (req, res) => {
 
 //---------------------------------------------------------------------------------------------------------------//
 
+require('./user/blacklisted.js')(router, client);
 require('./user/verify.js')(router, client);
 require('./user/verified.js')(router, client);
 require('./user/products/fetch.js')(router, client);
