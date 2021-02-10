@@ -132,14 +132,16 @@ module.exports = {
                             '_id': false,
                         },
                     });
-                    await support_channel.send(new Discord.MessageEmbed({
-                        color: 0x959595,
-                        author: {
-                            iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                            name: 'Inertia Lighting | Blacklisted User Document',
-                        },
-                        description: `${'```'}json\n${JSON.stringify(blacklisted_user_db_data ?? 'user not found in blacklist database', null, 2)}\n${'```'}`,
-                    })).catch(console.warn);
+                    if (blacklisted_user_db_data) { // only send it if they are blacklisted
+                        await support_channel.send(new Discord.MessageEmbed({
+                            color: 0x959595,
+                            author: {
+                                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                                name: 'Inertia Lighting | Blacklisted User Document',
+                            },
+                            description: `${'```'}json\n${JSON.stringify(blacklisted_user_db_data, null, 2)}\n${'```'}`,
+                        })).catch(console.warn);
+                    }
 
                     switch (matching_support_category.id) {
                         case 'PRODUCT_PURCHASES':
