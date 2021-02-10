@@ -23,7 +23,7 @@ const new_customer_role_ids = [
 //---------------------------------------------------------------------------------------------------------------//
 
 module.exports = (router, client) => {
-    router.post('/user/products/buy', async (req, res) => {
+    router.post('/v1/user/products/buy', async (req, res) => {
         console.info(`Endpoint: ${req.url}; was called at ${moment()}!`);
 
         if (req.headers?.['content-type'] !== 'application/json') {

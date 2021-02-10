@@ -12,7 +12,7 @@ const { go_mongo_db } = require('../../mongo/mongo.js');
 //---------------------------------------------------------------------------------------------------------------//
 
 module.exports = (router, client) => {
-    router.post('/user/verify', async (req, res) => {
+    router.post('/v1/user/verify', async (req, res) => {
         console.info(`Endpoint: ${req.url}; was called at ${moment()}!`);
 
         if (req.headers?.['content-type'] !== 'application/json') {
