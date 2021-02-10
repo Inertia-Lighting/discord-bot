@@ -87,7 +87,7 @@ module.exports = (router, client) => {
                 [`products.${db_roblox_product_data.code}`]: true,
             },
         });
-        const buy_log_channel = await client.channels.cache.fetch('738225472185434112');
+        const buy_log_channel = await client.channels.cache.fetch('738225472185434112').catch(console.warn);
         const { data: roblox_user } = await axios.get(`https://api.roblox.com/users/${encodeURIComponent(roblox_user_id)}`);
         if (!buy_log_channel) {
             console.error(`unable to find buy log channel 738225472185434112;`);
