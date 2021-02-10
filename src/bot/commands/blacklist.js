@@ -123,7 +123,7 @@ module.exports = {
                 }
                 break;
             case 'lookup':
-                const blacklisted_user_db_data = (await findUserInUsersDatabase(lookup_discord_user_id, lookup_roblox_user_id)) ?? {}; // force the result to be an object
+                const blacklisted_user_db_data = await lookupUserInBlacklistedUsersDatabase(lookup_discord_user_id, lookup_roblox_user_id);
                 message.channel.send(new Discord.MessageEmbed({
                     color: 0x959595,
                     author: {
