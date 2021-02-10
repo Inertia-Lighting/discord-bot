@@ -78,6 +78,10 @@ async function lookupUserInBlacklistedUsersDatabase(discord_user_id=undefined, r
         } : {
             'roblox_user_id': roblox_user_id,
         }),
+    }, {
+        projections: {
+            '_id': false,
+        },
     });
     return blacklisted_user_db_data;
 }
@@ -101,7 +105,7 @@ module.exports = {
             case 'add':
                 const added_successfully = await addUserToBlacklistedUsersDatabase(user_db_data, {
                     epoch: Date.now(),
-                    reason: command_args.slice(2),
+                    reason: command_args.slice(2).join(' ').trim() || 'no reason was specified',
                     staff_member_id: message.author.id,
                 });
                 if (added_successfully) {
