@@ -33,7 +33,7 @@ async function findUserInUsersDatabase(discord_user_id=undefined, roblox_user_id
  */
 async function addUserToBlacklistedUsersDatabase({ discord_user_id, roblox_user_id }, { epoch, reason, staff_member_id }) {
     if (discord_user_id && roblox_user_id) {
-        await go_mongo_db.add(process.env.MONGO_DATABASE_NAME, process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME, [
+        await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME, [
             {
                 'discord_user_id': discord_user_id,
                 'roblox_user_id': roblox_user_id,
@@ -41,7 +41,9 @@ async function addUserToBlacklistedUsersDatabase({ discord_user_id, roblox_user_
                 'reason': reason,
                 'staff_member_id': staff_member_id,
             },
-        ]);
+        ], {
+            upsert: true,
+        });
         return true; // user was added to blacklist
     } else {
         return false; // user was not added to blacklist
@@ -144,7 +146,7 @@ module.exports = {
                         'Please use one of the following sub-commands:',
                         '\`\`\`',
                         ...[
-                            'add <discord_user_mention | roblox_player_id>',
+                            'add <discord_user_mention | roblox_player_id> [reason]',
                             'remove <discord_user_mention | roblox_player_id>',
                             'lookup <discord_user_mention | roblox_player_id>',
                         ].map(sub_command => `${command_prefix}${command_name} ${sub_command}`),

@@ -38,14 +38,14 @@ module.exports = (router, client) => {
             } : {
                 'roblox_user_id': roblox_user_id,
             }),
+        }, {
+            projection: {
+                '_id': false,
+            },
         });
 
         if (db_blacklisted_user_data) {
-            res.status(200).send(JSON.stringify({
-                'epoch': db_blacklisted_user_data.epoch,
-                'reason': db_blacklisted_user_data.reason,
-                'staff_member_id': db_blacklisted_user_data.staff_member_id,
-            }, null, 2));
+            res.status(200).send(JSON.stringify(db_blacklisted_user_data, null, 2));
         } else {
             res.status(404).send(JSON.stringify({
                 'message': 'the specified user was not found in the blacklist',
