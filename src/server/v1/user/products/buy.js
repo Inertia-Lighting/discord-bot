@@ -4,7 +4,6 @@
 
 const moment = require('moment-timezone');
 const Discord = require('discord.js');
-const axios = require('axios');
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -14,6 +13,10 @@ const { Timer } = require('../../../../utilities.js');
 //---------------------------------------------------------------------------------------------------------------//
 
 const guild_id = process.env.BOT_GUILD_ID;
+
+//---------------------------------------------------------------------------------------------------------------//
+
+const user_purchases_logging_channel_id = '738225472185434112';
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -87,19 +90,8 @@ module.exports = (router, client) => {
                 [`products.${db_roblox_product_data.code}`]: true,
             },
         });
-        const buy_log_channel = client.channels.resolve('738225472185434112').catch(console.warn);
-        if (!buy_log_channel) {
-            console.error(`unable to find buy log channel 738225472185434112;`);
-            return;
-        } else {
-            buy_log_channel.send(new Discord.MessageEmbed({
-                color: 0x959595,
-                title: '__**Inertia Lighting Buy Logs**__',
-                description: `${roblox_user_id} has bought ${db_roblox_product_data.name}`
-            }));
-        }
 
-        const guild = client.guilds.resolve(guild_id);
+        const guild = await client.guilds.fetch(guild_id).catch(console.warn);
         if (!guild) {
             console.error(`unable to find discord guild: ${guild_id};`);
             res.status(500).send(JSON.stringify({
@@ -117,18 +109,34 @@ module.exports = (router, client) => {
             return;
         }
 
-        /* open dms with the user */
-        const dm_channel = await guild_member.user.createDM().catch(console.warn);
-        if (!dm_channel) {
-            console.error(`unable to dm discord user: ${guild_member.user.id};`);
+        /* try to add the role to the guild member */
+        try {
+            await guild_member.roles.add(db_roblox_product_data.discord_role_id);
+        } catch (error) {
+            console.trace(`Unable to add role: ${db_roblox_product_data.discord_role_id}; to discord user: ${guild_member.user.id};`, error);
             res.status(500).send(JSON.stringify({
-                'message': `unable to dm discord user: ${guild_member.user.id};`,
+                'message': `Unable to add role: ${db_roblox_product_data.discord_role_id}; to discord user: ${guild_member.user.id};`,
             }, null, 2));
             return;
         }
 
-        /* dm the user */
-        dm_channel.send(new Discord.MessageEmbed({
+        /* try to add the customer roles to the guild member */
+        try {
+            for (const customer_role_id of new_customer_role_ids) {
+                await guild_member.roles.add(customer_role_id).catch(console.trace);
+                await Timer(1_000); // prevent api abuse
+            }
+        } catch (error) {
+            console.trace(`Unable to add: \`new_customer_roles\`; to discord user: ${guild_member.user.id};`, error);
+            res.status(500).send(JSON.stringify({
+                'message': `Unable to add: \`new_customer_roles\`; to discord user: ${guild_member.user.id};`,
+            }, null, 2));
+            return;
+        }
+
+        /* dm the user a confirmation of their purchase */
+        const user_dm_channel = await guild_member.user.createDM().catch(console.warn);
+        user_dm_channel?.send(new Discord.MessageEmbed({
             color: 0x00FF00,
             author: {
                 iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
@@ -142,27 +150,20 @@ module.exports = (router, client) => {
                     value: `${db_roblox_product_data.description}`,
                 },
             ],
-        })).catch(console.warn);
+        }))?.catch(console.warn);
 
-        /* try to add the role to the guild member */
-        try {
-            /* give the specified product role to the customer */
-            await guild_member.roles.add(db_roblox_product_data.discord_role_id);
+        /* log to the logging channel */
+        const user_purchases_logging_channel = await client.channels.fetch(user_purchases_logging_channel_id);
+        user_purchases_logging_channel?.send(new Discord.MessageEmbed({
+            color: 0x00FF00,
+            author: {
+                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                name: 'Inertia Lighting | Confirmed Purchase',
+            },
+            description: `Roblox User: \`${roblox_user_id}\`; Discord User: ${guild_member.user.id}; bought product: \`${db_roblox_product_data.code}\`;`,
+        }))?.catch(console.warn);
 
-            /* give various customer roles to the customer */
-            for (const role_id of new_customer_role_ids) {
-                await guild_member.roles.add(role_id).catch(console.trace);
-                await Timer(1_000); // prevent api abuse
-            }
-        } catch (error) {
-            console.trace(`Unable to add role: ${db_roblox_product_data.discord_role_id}; to discord user: ${guild_member.user.id};`, error);
-            res.status(500).send(JSON.stringify({
-                'message': `Unable to add role: ${db_roblox_product_data.discord_role_id}; to discord user: ${guild_member.user.id};`,
-            }, null, 2));
-            return;
-        }
-
-        /* respond to the game server */
+        /* respond with success to the game server */
         console.log(`player: ${roblox_user_id}; user: ${guild_member.user.id}; bought product: ${roblox_product_id}; successfully!`);
         res.status(200).send(JSON.stringify({
             'message': `player: ${roblox_user_id}; user: ${guild_member.user.id}; bought product: ${roblox_product_id}; successfully!`,
