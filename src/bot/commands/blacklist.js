@@ -72,18 +72,14 @@ async function removeUserFromBlacklistedUsersDatabase({ discord_user_id, roblox_
  * @returns {Promise<any>} blacklisted_user_db_data
  */
 async function lookupUserInBlacklistedUsersDatabase(discord_user_id=undefined, roblox_user_id=undefined) {
-    if (discord_user_id || roblox_user_id) {
-        await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME, {
-            ...(discord_user_id ? {
-                'discord_user_id': discord_user_id,
-            } : {
-                'roblox_user_id': roblox_user_id,
-            }),
-        });
-        return true; // user was added to blacklist
-    } else {
-        return false; // user was not added to blacklist
-    }
+    const [ blacklisted_user_db_data ] = go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME, {
+        ...(discord_user_id ? {
+            'discord_user_id': discord_user_id,
+        } : {
+            'roblox_user_id': roblox_user_id,
+        }),
+    });
+    return blacklisted_user_db_data;
 }
 
 //---------------------------------------------------------------------------------------------------------------//
