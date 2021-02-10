@@ -160,13 +160,17 @@ module.exports = (router, client) => {
                 iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                 name: 'Inertia Lighting | Confirmed Purchase',
             },
-            description: `Roblox User: \`${roblox_user_id}\`; Discord User: ${guild_member.user.id}; bought product: \`${db_roblox_product_data.code}\`;`,
+            description: [
+                `Roblox User: \`${roblox_user_id}\`;`,
+                `Discord User: \`${guild_member.user.id}\`;`,
+                `Bought product: \`${db_roblox_product_data.code}\`;`,
+            ].join('\n'),
         }))?.catch(console.warn);
 
         /* respond with success to the game server */
-        console.log(`player: ${roblox_user_id}; user: ${guild_member.user.id}; bought product: ${roblox_product_id}; successfully!`);
+        console.log(`roblox_user_id: ${roblox_user_id}; discord_user_id: ${guild_member.user.id}; bought product: ${roblox_product_id}; successfully!`);
         res.status(200).send(JSON.stringify({
-            'message': `player: ${roblox_user_id}; user: ${guild_member.user.id}; bought product: ${roblox_product_id}; successfully!`,
+            'message': `roblox_user_id: ${roblox_user_id}; discord_user_id: ${guild_member.user.id}; bought product: ${roblox_product_id}; successfully!`,
         }, null, 2));
     });
 };
