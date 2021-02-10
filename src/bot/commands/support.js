@@ -132,7 +132,7 @@ module.exports = {
                             '_id': false,
                         },
                     });
-                    await message.channel.send(new Discord.MessageEmbed({
+                    await support_channel.send(new Discord.MessageEmbed({
                         color: 0x959595,
                         author: {
                             iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
