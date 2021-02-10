@@ -7,8 +7,8 @@ const Discord = require('discord.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const { go_mongo_db } = require('../../../mongo/mongo.js');
-const { Timer } = require('../../../utilities.js');
+const { go_mongo_db } = require('../../../../mongo/mongo.js');
+const { Timer } = require('../../../../utilities.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
