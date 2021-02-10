@@ -31,7 +31,7 @@ module.exports = {
                 'roblox_user_id': lookup_roblox_user_id,
             }),
         }, {
-            projections: {
+            projection: {
                 '_id': false,
             },
         });

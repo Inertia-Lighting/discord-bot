@@ -79,7 +79,7 @@ async function lookupUserInBlacklistedUsersDatabase(discord_user_id=undefined, r
             'roblox_user_id': roblox_user_id,
         }),
     }, {
-        projections: {
+        projection: {
             '_id': false,
         },
     });
