@@ -72,7 +72,7 @@ async function removeUserFromBlacklistedUsersDatabase({ discord_user_id, roblox_
  * @returns {Promise<any>} blacklisted_user_db_data
  */
 async function lookupUserInBlacklistedUsersDatabase(discord_user_id=undefined, roblox_user_id=undefined) {
-    const [ blacklisted_user_db_data ] = go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME, {
+    const [ blacklisted_user_db_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME, {
         ...(discord_user_id ? {
             'discord_user_id': discord_user_id,
         } : {
