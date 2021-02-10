@@ -27,11 +27,11 @@ router.get('/test', async (req, res) => {
 
 //---------------------------------------------------------------------------------------------------------------//
 
-require('./user/blacklisted.js')(router, client);
-require('./user/verify.js')(router, client);
-require('./user/verified.js')(router, client);
-require('./user/products/fetch.js')(router, client);
-require('./user/products/buy.js')(router, client);
+require('./v1/user/blacklisted.js')(router, client);
+require('./v1/user/verify.js')(router, client);
+require('./v1/user/verified.js')(router, client);
+require('./v1/user/products/fetch.js')(router, client);
+require('./v1/user/products/buy.js')(router, client);
 
 //---------------------------------------------------------------------------------------------------------------//
 
