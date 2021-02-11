@@ -37,7 +37,7 @@ module.exports = {
             },
         });
         await message.channel.send(new Discord.MessageEmbed({
-            color: 0x446df1,
+            color: 0x60A0FF,
             author: {
                 iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                 name: 'Inertia Lighting | User Document',

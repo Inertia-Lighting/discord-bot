@@ -21,7 +21,7 @@ module.exports = {
             const specified_command = client.$.commands.get(specified_command_name) ?? client.$.commands.find(c => c.aliases?.includes(specified_command_name));
             if (specified_command) {
                 message.channel.send(new Discord.MessageEmbed({
-                    color: 0x446df1,
+                    color: 0x60A0FF,
                     author: {
                         iconURL: `${message.author.displayAvatarURL({ dynamic: true })}`,
                         name: `${message.author.tag}`,
@@ -45,7 +45,7 @@ module.exports = {
                 ).join(' | ')
             );
             message.channel.send(new Discord.MessageEmbed({
-                color: 0x446df1,
+                color: 0x60A0FF,
                 author: {
                     iconURL: `${message.author.displayAvatarURL({ dynamic: true })}`,
                     name: `${message.author.tag}`,

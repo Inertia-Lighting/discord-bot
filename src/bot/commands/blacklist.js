@@ -130,7 +130,7 @@ module.exports = {
             case 'lookup':
                 const blacklisted_user_db_data = await lookupUserInBlacklistedUsersDatabase(lookup_discord_user_id, lookup_roblox_user_id);
                 message.channel.send(new Discord.MessageEmbed({
-                    color: 0x959595,
+                    color: 0x60A0FF,
                     author: {
                         iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                         name: 'Inertia Lighting | Blacklisted User Document',
@@ -140,7 +140,7 @@ module.exports = {
                 break;
             default:
                 message.reply(new Discord.MessageEmbed({
-                    color: 0x959595,
+                    color: 0x60A0FF,
                     author: {
                         iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                         name: 'Inertia Lighting | Blacklist System',
