@@ -157,9 +157,9 @@ module.exports = {
                         'Please use one of the following sub-commands:',
                         '\`\`\`',
                         ...[
-                            'add <discord_user_mention | roblox_player_id> [reason]',
-                            'remove <discord_user_mention | roblox_player_id>',
-                            'lookup <discord_user_mention | roblox_player_id>',
+                            'add <user_mention | roblox_id> [reason]',
+                            'remove <user_mention | roblox_id>',
+                            'lookup <user_mention | roblox_id>',
                         ].map(sub_command => `${command_prefix}${command_name} ${sub_command}`),
                         '\`\`\`',
                     ].join('\n'),
