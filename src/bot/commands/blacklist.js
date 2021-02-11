@@ -50,7 +50,6 @@ async function addUserToBlacklistedUsersDatabase({ discord_user_id, roblox_user_
         });
         return true; // user was added to blacklist
     } else {
-        console.trace('missing \`discord_user_id\` or \`roblox_user_id\`!');
         return false; // user was not added to blacklist
     }
 }
