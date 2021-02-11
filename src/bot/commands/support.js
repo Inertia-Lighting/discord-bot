@@ -77,7 +77,7 @@ module.exports = {
 
         if (command_name === 'support') {
             const bot_message = await message.channel.send(`${message.author}`, new Discord.MessageEmbed({
-                color: 0x959595,
+                color: 0x446df1,
                 author: {
                     iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                     name: 'Inertia Lighting | Support System',
@@ -116,7 +116,7 @@ module.exports = {
                         },
                     });
                     await support_channel.send(new Discord.MessageEmbed({
-                        color: 0x959595,
+                        color: 0x446df1,
                         author: {
                             iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                             name: 'Inertia Lighting | User Document',
@@ -134,7 +134,7 @@ module.exports = {
                     });
                     if (blacklisted_user_db_data) { // only send it if they are blacklisted
                         await support_channel.send(new Discord.MessageEmbed({
-                            color: 0x959595,
+                            color: 0x446df1,
                             author: {
                                 iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                                 name: 'Inertia Lighting | Blacklisted User Document',
@@ -146,7 +146,7 @@ module.exports = {
                     switch (matching_support_category.id) {
                         case 'PRODUCT_PURCHASES':
                             await support_channel.send(new Discord.MessageEmbed({
-                                color: 0x959595,
+                                color: 0x446df1,
                                 author: {
                                     iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                                     name: `Inertia Lighting | ${matching_support_category.name}`,
@@ -162,7 +162,7 @@ module.exports = {
                             break;
                         case 'PRODUCT_ISSUES':
                             await support_channel.send(new Discord.MessageEmbed({
-                                color: 0x959595,
+                                color: 0x446df1,
                                 author: {
                                     iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                                     name: `Inertia Lighting | ${matching_support_category.name}`,
@@ -180,7 +180,7 @@ module.exports = {
                             break;
                         case 'PRODUCT_TRANSFERS':
                             await support_channel.send(new Discord.MessageEmbed({
-                                color: 0x959595,
+                                color: 0x446df1,
                                 author: {
                                     iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                                     name: `Inertia Lighting | ${matching_support_category.name}`,
@@ -196,7 +196,7 @@ module.exports = {
                             break;
                         case 'PARTNER_REQUESTS':
                             await support_channel.send(new Discord.MessageEmbed({
-                                color: 0x959595,
+                                color: 0x446df1,
                                 author: {
                                     iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                                     name: `Inertia Lighting | ${matching_support_category.name}`,
@@ -211,7 +211,7 @@ module.exports = {
                             return;
                         case 'OTHER':
                             await support_channel.send(new Discord.MessageEmbed({
-                                color: 0x959595,
+                                color: 0x446df1,
                                 author: {
                                     iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                                     name: `Inertia Lighting | ${matching_support_category.name}`,
