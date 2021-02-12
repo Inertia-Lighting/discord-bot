@@ -25,6 +25,13 @@ module.exports = (router, client) => {
 
         const { player_id: roblox_user_id } = req.body;
 
+        if (endpoint_api_token !== process.env.API_TOKEN_FOR_VERIFYING) {
+            res.status(403).send(JSON.stringify({
+                'message': '\`api_token\` was not recognized!',
+            }, null, 2));
+            return;
+        }
+
         if (!roblox_user_id) {
             res.status(400).send(JSON.stringify({
                 'message': 'missing \`player_id\` in request body',
