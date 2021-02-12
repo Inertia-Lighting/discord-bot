@@ -12,7 +12,7 @@ const { Discord, client } = require('../discord_client.js');
 
 async function generateUserAPIToken() {
     const non_encrypted_token = uuid_v4();
-    const encrypted_token = bcrypt.hashSync(non_encrypted_token, process.env.BCRYPT_SALT_1);
+    const encrypted_token = bcrypt.hashSync(non_encrypted_token, bcrypt.genSaltSync(parseInt(process.env.BCRYPT_SALT_LENGTH)));
     return {
         non_encrypted_token,
         encrypted_token,
