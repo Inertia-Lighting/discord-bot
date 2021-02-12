@@ -40,7 +40,14 @@ module.exports = (router, client) => {
         const {
             player_id: roblox_user_id,
             product_id: roblox_product_id,
+            api_token: endpoint_api_token,
         } = req.body;
+
+        if (endpoint_api_token !== process.env.API_TOKEN_FOR_PURCHASES) {
+            res.status(403).send(JSON.stringify({
+                'message': '\`api_token\` was not recognized!',
+            }, null, 2));
+        }
 
         if (!roblox_user_id) {
             res.status(400).send(JSON.stringify({
