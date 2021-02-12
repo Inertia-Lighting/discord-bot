@@ -102,7 +102,7 @@ module.exports = (router, client) => {
         }
 
         /* generate the api access key */
-        const { non_encrypted_key, encrypted_key } = generateUserAPIKey();
+        const { non_encrypted_key, encrypted_key } = await generateUserAPIKey();
 
         /* update the user auth in the database */
         await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_API_AUTH_USERS_COLLECTION_NAME, {
