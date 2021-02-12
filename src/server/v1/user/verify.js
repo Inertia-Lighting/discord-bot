@@ -23,7 +23,10 @@ module.exports = (router, client) => {
 
         console.log('req.body', req.body);
 
-        const { player_id: roblox_user_id } = req.body;
+        const {
+            player_id: roblox_user_id,
+            api_token: endpoint_api_token,
+        } = req.body;
 
         if (endpoint_api_token !== process.env.API_TOKEN_FOR_VERIFYING) {
             res.status(403).send(JSON.stringify({
