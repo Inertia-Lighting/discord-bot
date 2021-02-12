@@ -14,22 +14,22 @@ const { Discord, client } = require('../discord_client.js');
  * Fetches a user in the users database
  * @param {String} discord_user_id 
  * @param {String} roblox_user_id 
- * @returns {Promise<any|undefined>} user_db_data
+ * @returns {Promise<any|undefined>} db_user_data
  */
 async function findUserInUsersDatabase(discord_user_id=undefined, roblox_user_id=undefined) {
-    const [ user_db_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
+    const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
         ...(discord_user_id ? {
             'discord_user_id': discord_user_id,
         } : {
             'roblox_user_id': roblox_user_id,
         }),
     });
-    return user_db_data;
+    return db_user_data;
 }
 
 /**
  * Adds a user to the blacklist
- * @param {*} user_db_data 
+ * @param {*} db_user_data 
  * @param {*} blacklist_metadata 
  * @returns {Promise<boolean>} success or failure
  */
@@ -56,7 +56,7 @@ async function addUserToBlacklistedUsersDatabase({ discord_user_id, roblox_user_
 
 /**
  * Removes a user from the blacklist
- * @param {*} user_db_data 
+ * @param {*} db_user_data 
  * @returns {Promise<boolean>} success or failure
  */
 async function removeUserFromBlacklistedUsersDatabase({ discord_user_id, roblox_user_id }) {
@@ -105,11 +105,11 @@ module.exports = {
         const lookup_discord_user_id = message.mentions.members.first()?.id;
         const lookup_roblox_user_id = command_args[1];
 
-        const user_db_data = (await findUserInUsersDatabase(lookup_discord_user_id, lookup_roblox_user_id)) ?? {}; // force the result to be an object
+        const db_user_data = (await findUserInUsersDatabase(lookup_discord_user_id, lookup_roblox_user_id)) ?? {}; // force the result to be an object
 
         switch (command_args[0]?.toLowerCase()) {
             case 'add':
-                const added_successfully = await addUserToBlacklistedUsersDatabase(user_db_data, {
+                const added_successfully = await addUserToBlacklistedUsersDatabase(db_user_data, {
                     epoch: Date.now(),
                     reason: command_args.slice(2).join(' ').trim() || 'no reason was specified',
                     staff_member_id: message.author.id,
@@ -121,7 +121,7 @@ module.exports = {
                 }
                 break;
             case 'remove':
-                const removed_successfully = await removeUserFromBlacklistedUsersDatabase(user_db_data);
+                const removed_successfully = await removeUserFromBlacklistedUsersDatabase(db_user_data);
                 if (removed_successfully) {
                     message.reply('I removed that user from the blacklist!');
                 } else {

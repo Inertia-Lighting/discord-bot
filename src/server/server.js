@@ -27,6 +27,8 @@ router.get('/test', async (req, res) => {
 
 //---------------------------------------------------------------------------------------------------------------//
 
+require('./v1/auth/keys/generate.js')(router, client);
+
 require('./v1/user/blacklisted.js')(router, client);
 require('./v1/user/verify.js')(router, client);
 require('./v1/user/verified.js')(router, client);

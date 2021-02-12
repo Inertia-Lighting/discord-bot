@@ -5,6 +5,8 @@
 const bcrypt = require('bcryptjs');
 const { v4: uuid_v4 } = require('uuid');
 
+//---------------------------------------------------------------------------------------------------------------//
+
 const { go_mongo_db } = require('../../mongo/mongo.js');
 const { Discord, client } = require('../discord_client.js');
 
@@ -12,7 +14,7 @@ const { Discord, client } = require('../discord_client.js');
 
 async function generateUserAPIToken() {
     const non_encrypted_token = uuid_v4();
-    const encrypted_token = bcrypt.hashSync(non_encrypted_token, bcrypt.genSaltSync(parseInt(process.env.BCRYPT_SALT_LENGTH)));
+    const encrypted_token = bcrypt.hashSync(non_encrypted_token, bcrypt.genSaltSync(parseInt(process.env.USER_API_TOKEN_BCRYPT_SALT_LENGTH)));
     return {
         non_encrypted_token,
         encrypted_token,
@@ -30,11 +32,11 @@ module.exports = {
     async execute(message, args) {
         const { command_prefix, command_name, command_args } = args;
 
-        const [ user_db_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
+        const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
             'discord_user_id': message.author.id,
         });
 
-        if (!user_db_data) {
+        if (!db_user_data) {
             message.reply(`Please \`${command_prefix}verify\` before using this command!`);
             return;
         }
@@ -63,10 +65,10 @@ module.exports = {
                     message.reply('I was unable to DM you!');
                 }
                 await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_API_AUTH_USERS_COLLECTION_NAME, {
-                    'discord_user_id': user_db_data.discord_user_id,
+                    'discord_user_id': db_user_data.discord_user_id,
                 }, {
                     $set: {
-                        'roblox_user_id': user_db_data.roblox_user_id,
+                        'roblox_user_id': db_user_data.roblox_user_id,
                         'encrypted_api_token': encrypted_token,
                     },
                 }, {
