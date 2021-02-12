@@ -47,6 +47,7 @@ module.exports = (router, client) => {
             res.status(403).send(JSON.stringify({
                 'message': '\`api_token\` was not recognized!',
             }, null, 2));
+            return;
         }
 
         if (!roblox_user_id) {
