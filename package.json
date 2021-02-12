@@ -19,6 +19,7 @@
   "homepage": "https://github.com/Inertia-Lighting/inertia-lighting-discord-bot#readme",
   "dependencies": {
     "axios": "^0.21.1",
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "discord.js": "^12.5.1",
     "dotenv": "^8.2.0",
@@ -27,7 +28,7 @@
     "go-mongo-db": "github:Inertia-Lighting/go-mongo-db",
     "moment-timezone": "^0.5.32",
     "mongoose": "^5.11.9",
-    "path": "^0.12.7"
-  },
-  "devDependencies": {}
+    "path": "^0.12.7",
+    "uuid": "^8.3.2"
+  }
 }
