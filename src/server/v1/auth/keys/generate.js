@@ -110,7 +110,7 @@ module.exports = (router, client) => {
         }, {
             $set: {
                 ['api_access.version']: 1,
-                ['api_access.enabled']: db_user_auth_data.api_access.enabled ?? true,
+                ['api_access.enabled']: db_user_auth_data.api_access?.enabled ?? true,
                 ['api_access.encrypted_key']: encrypted_key,
             },
         });
