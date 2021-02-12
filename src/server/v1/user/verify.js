@@ -33,17 +33,6 @@ module.exports = (router, client) => {
             return;
         }
 
-        const { data: roblox_user } = await axios.get(`https://api.roblox.com/users/${encodeURIComponent(roblox_user_id)}`);
-
-        console.log({ roblox_user });
-
-        if (!roblox_user) {
-            res.status(404).send(JSON.stringify({
-                'message': 'a roblox user could not be found for \`roblox_user_id\`',
-            }, null, 2));
-            return;
-        }
-
         const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
             'roblox_user_id': roblox_user_id,
         });
