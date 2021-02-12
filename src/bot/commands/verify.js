@@ -41,9 +41,10 @@ module.exports = {
             return;
         }
 
-        /* remove the verification code b/c it is no longer needed */
+        /* quickly remove the verification context b/c it is no longer needed */
         client.$.verification_contexts.delete(verification_context.verification_code);
 
+        /* inform the user that the verification code was accepted */
         message.channel.send(new Discord.MessageEmbed({
             color: 0x00FF00,
             author: {
@@ -54,44 +55,28 @@ module.exports = {
             description: 'That verification code was recognized!',
         })).catch(console.warn);
 
-        const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
+        const member_roles = message.member.roles.cache;
+        await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
             'discord_user_id': message.author.id,
+            'roblox_user_id': verification_context.roblox_user_id,
+        }, {
+            $set: {
+                'products': {
+                    'SGM_Q7_STROBE': member_roles.has('728050461566828554'),
+                    'Laser_Fixture': member_roles.has('701758602624368741'),
+                    'Follow_Spotlight': member_roles.has('703378159768436778'),
+                    'JDC1': member_roles.has('651875390226169896'),
+                    'C_Lights': member_roles.has('601909655165337600'),
+                    'LED_Bars': member_roles.has('616358700642467856'),
+                    'MagicPanels': member_roles.has('679585419192434699'),
+                    'House_Lights': member_roles.has('704504968748466226'),
+                    'Pars': member_roles.has('655225947951333376'),
+                    'Blinders': member_roles.has('608432734578147338'),
+                    'Wash': member_roles.has('673362639660908559'),
+                },
+            },
+        }, {
+            upsert: true,
         });
-
-        if (db_user_data) {
-            message.channel.send(new Discord.MessageEmbed({
-                color: 0xFF0000,
-                author: {
-                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                    name: `${client.user.username}`,
-                },
-                title: 'Error',
-                description: 'I already found you in the database! If you would like to update yourself please run \`!update\`',
-            })).catch(console.warn);
-        } else {
-            const member_roles = message.member.roles.cache;
-            await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
-                'discord_user_id': message.author.id,
-            }, {
-                $set: {
-                    'roblox_user_id': verification_context.roblox_user_id,
-                    'products': {
-                        'SGM_Q7_STROBE': member_roles.has('728050461566828554'),
-                        'Laser_Fixture': member_roles.has('701758602624368741'),
-                        'Follow_Spotlight': member_roles.has('703378159768436778'),
-                        'JDC1': member_roles.has('651875390226169896'),
-                        'C_Lights': member_roles.has('601909655165337600'),
-                        'LED_Bars': member_roles.has('616358700642467856'),
-                        'MagicPanels': member_roles.has('679585419192434699'),
-                        'House_Lights': member_roles.has('704504968748466226'),
-                        'Pars': member_roles.has('655225947951333376'),
-                        'Blinders': member_roles.has('608432734578147338'),
-                        'Wash': member_roles.has('673362639660908559'),
-                    },
-                },
-            }, {
-                upsert: true,
-            });
-        }
     },
 };
