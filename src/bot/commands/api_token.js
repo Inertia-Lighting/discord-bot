@@ -30,7 +30,7 @@ module.exports = {
         const { command_prefix, command_name, command_args } = args;
 
         const [ user_db_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
-            'discord_user_id': lookup_discord_user_id,
+            'discord_user_id': message.author.id,
         });
 
         if (!user_db_data) {
