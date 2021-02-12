@@ -6,6 +6,7 @@ const bcrypt = require('bcryptjs');
 const { v4: uuid_v4 } = require('uuid');
 
 const { go_mongo_db } = require('../../mongo/mongo.js');
+const { Discord, client } = require('../discord_client.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
