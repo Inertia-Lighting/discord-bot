@@ -3,7 +3,6 @@
 //---------------------------------------------------------------------------------------------------------------//
 
 const moment = require('moment-timezone');
-const axios = require('axios');
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -30,18 +29,6 @@ module.exports = (router, client) => {
             res.status(400).send(JSON.stringify({
                 'message': 'missing \`player_id\` in request body',
             }, null, 2));
-            return;
-        }
-
-        const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
-            'roblox_user_id': roblox_user_id,
-        });
-
-        if (db_user_data) {
-            res.status(200).send(JSON.stringify({
-                'user_can_verify': false,
-                'message': 'that \`roblox_user_id\` is already in the database',
-            }));
             return;
         }
 
