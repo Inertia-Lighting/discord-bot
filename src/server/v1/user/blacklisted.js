@@ -43,7 +43,7 @@ module.exports = (router, client) => {
                     'message': '\`api_endpoint_token\` was not recognized!',
                 }, null, 2));
             }
-        } else if (api_access_key) {
+        } else if (game_owner_api_access_key) {
             const [ db_user_auth_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_API_AUTH_USERS_COLLECTION_NAME, {
                 ...(discord_user_id ? {
                     'discord_user_id': discord_user_id,
