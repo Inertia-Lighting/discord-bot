@@ -32,7 +32,7 @@ module.exports = (router, client) => {
         /* check if required information is present */
         if (!(roblox_user_id || discord_user_id)) {
             return res.status(400).send(JSON.stringify({
-                'message': 'missing \`player_id\` in request body',
+                'message': 'missing \`player_id\` or \`discord_id\` in request body',
             }, null, 2));
         }
 
