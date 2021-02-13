@@ -67,6 +67,24 @@ async function commandHandler(message) {
         return;
     }
 
+    /* command blacklist */
+    const [ db_blacklisted_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME, {
+        'discord_user_id': message.author.id,
+    });
+    if (db_blacklisted_user_data) {
+        const blacklist_formatted_timestamp = moment(db_blacklisted_user_data.epoch).tz('America/New_York').format('YYYY[-]MM[-]DD [at] hh:mm A [GMT]ZZ');
+        message.reply(new Discord.MessageEmbed({
+            color: 0xFF0000,
+            author: {
+                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                name: `${client.user.username}`,
+            },
+            title: 'Blacklist System',
+            description: `${message.author}, you were blacklisted by <@${db_blacklisted_user_data.staff_member_id}> on ${blacklist_formatted_timestamp} for: \`\`\`\n${db_blacklisted_user_data.reason}\n\`\`\``,
+        }));
+        return;
+    }
+
     /* command cooldown */
     const command_cooldown_in_ms = command.cooldown ?? 5_000;
     const last_command_epoch_for_user = command_cooldown_tracker.get(message.author.id)?.last_command_epoch ?? Date.now() - command_cooldown_in_ms;
