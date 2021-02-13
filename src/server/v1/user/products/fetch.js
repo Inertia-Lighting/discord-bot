@@ -25,6 +25,7 @@ module.exports = (router, client) => {
             api_endpoint_token: api_endpoint_token,
             api_access_key: game_owner_api_access_key,
             player_id: roblox_user_id,
+            discord_id: discord_user_id,
         } = req.body;
 
         /* check if required information is present */
