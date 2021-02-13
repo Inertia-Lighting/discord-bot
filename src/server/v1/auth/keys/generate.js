@@ -12,12 +12,12 @@ const { go_mongo_db } = require('../../../../mongo/mongo.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
-async function generateReproducibleSalt(roblox_user_id, reproducible_salt_secret) {
-    const repeated_roblox_user_id = roblox_user_id.repeat(10);
+async function generateReproducibleSalt(game_owner_id, reproducible_salt_secret) {
+    const repeated_game_owner_id = game_owner_id.repeat(10);
 
     let salt = '';
     for (let i = 0; i < reproducible_salt_secret.length; i++) {
-        salt += repeated_roblox_user_id[reproducible_salt_secret[i]];
+        salt += repeated_game_owner_id[reproducible_salt_secret[i]];
     }
 
     return salt;
@@ -38,67 +38,63 @@ module.exports = (router, client) => {
     router.post('/v1/auth/keys/generate', async (req, res) => {
         console.info(`Endpoint: ${req.url}; was called at ${moment()}!`);
 
-        if (req.headers?.['content-type'] !== 'application/json') {
-            console.error('WRONG CONTENT TYPE SENT TO SERVER!');
-            return;
-        }
-
         res.set('Content-Type', 'application/json');
 
+        if (req.headers?.['content-type'] !== 'application/json') {
+            return res.status(415).send(JSON.stringify({
+                'message': '\`content-type\` must be \`application/json\`!',
+            }, null, 2));
+        }
+
+        // console.log('req.body', req.body);
+
         const {
-            player_id: roblox_user_id,
-            player_api_token: roblox_user_api_token,
             game_api_salt: reproducible_game_api_salt,
+            game_owner_id: game_owner_id,
+            game_owner_api_token: game_owner_api_token,
         } = req.body;
 
-        if (!roblox_user_id) {
-            res.status(400).send(JSON.stringify({
-                'message': 'missing \`player_id\` in request body',
-            }, null, 2));
-            return;
-        }
-
-        if (!roblox_user_api_token) {
-            res.status(400).send(JSON.stringify({
-                'message': 'missing \`player_api_token\` in request body',
-            }, null, 2));
-            return;
-        }
-
         if (!reproducible_game_api_salt) {
-            res.status(400).send(JSON.stringify({
+            return res.status(400).send(JSON.stringify({
                 'message': 'missing \`game_api_salt\` in request body',
             }, null, 2));
-            return;
         }
 
-        /* find the user auth in the database */
+        if (!game_owner_id) {
+            return res.status(400).send(JSON.stringify({
+                'message': 'missing \`game_owner_id\` in request body',
+            }, null, 2));
+        }
+
+        if (!game_owner_api_token) {
+            return res.status(400).send(JSON.stringify({
+                'message': 'missing \`game_owner_api_token\` in request body',
+            }, null, 2));
+        }
+
+        const reproducible_server_api_salt = await generateReproducibleSalt(game_owner_id, process.env.USER_API_TOKEN_SALT_SECRET);
+        if (reproducible_game_api_salt !== reproducible_server_api_salt) {
+            return res.status(403).send(JSON.stringify({
+                'message': '\`game_api_salt\` was not recognized!',
+            }, null, 2));
+        }
+
         const [ db_user_auth_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_API_AUTH_USERS_COLLECTION_NAME, {
-            'roblox_user_id': roblox_user_id,
+            'roblox_user_id': game_owner_id,
         });
 
         if (!db_user_auth_data) {
-            console.error(`roblox player: ${roblox_user_id}; not found in auth database`);
-            res.status(404).send(JSON.stringify({
+            console.error(`roblox player: ${game_owner_id}; not found in auth database`);
+            return res.status(404).send(JSON.stringify({
                 'message': 'roblox player not found in auth database',
             }, null, 2));
-            return;
         }
 
-        const roblox_user_api_token_exists = bcrypt.compareSync(roblox_user_api_token, db_user_auth_data.encrypted_api_token);
-        if (!roblox_user_api_token_exists) {
-            res.status(403).send(JSON.stringify({
-                'message': '\`player_api_token\` was not recognized!',
+        const game_owner_api_token_is_valid = bcrypt.compareSync(game_owner_api_token, db_user_auth_data.encrypted_api_token);
+        if (!game_owner_api_token_is_valid) {
+            return res.status(403).send(JSON.stringify({
+                'message': '\`game_owner_api_token\` was not recognized!',
             }, null, 2));
-            return;
-        }
-
-        const reproducible_server_api_salt = await generateReproducibleSalt(roblox_user_id, process.env.USER_API_TOKEN_SALT_SECRET);
-        if (reproducible_game_api_salt !== reproducible_server_api_salt) {
-            res.status(403).send(JSON.stringify({
-                'message': '\`game_api_salt\` was not recognized!',
-            }, null, 2));
-            return;
         }
 
         /* generate the api access key */
@@ -106,7 +102,7 @@ module.exports = (router, client) => {
 
         /* update the user auth in the database */
         await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_API_AUTH_USERS_COLLECTION_NAME, {
-            'roblox_user_id': roblox_user_id,
+            'roblox_user_id': game_owner_id,
         }, {
             $set: {
                 ['api_access.version']: 1,
@@ -116,7 +112,7 @@ module.exports = (router, client) => {
         });
 
         /* respond with success to the game server */
-        res.status(200).send(JSON.stringify({
+        return res.status(200).send(JSON.stringify({
             access_key: non_encrypted_key,
         }, null, 2));
     });

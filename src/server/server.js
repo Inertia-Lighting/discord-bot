@@ -33,7 +33,7 @@ require('./v1/user/blacklisted.js')(router, client);
 require('./v1/user/verify.js')(router, client);
 require('./v1/user/verified.js')(router, client);
 require('./v1/user/products/fetch.js')(router, client);
-require('./v1/user/products/buy.js')(router, client);
+require('./v1/user/products/purchase.js')(router, client);
 
 //---------------------------------------------------------------------------------------------------------------//
 

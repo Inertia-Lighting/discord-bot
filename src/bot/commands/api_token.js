@@ -37,13 +37,12 @@ module.exports = {
         });
 
         if (!db_user_data) {
-            message.reply(`Please \`${command_prefix}verify\` before using this command!`);
-            return;
+            return await message.reply(`Please \`${command_prefix}verify\` before using this command!`).catch(console.warn);
         }
 
         switch (`${command_args[0]}`.toLowerCase()) {
             case 'help':
-                message.reply(`\`${command_prefix}${command_name} help\` coming soon!`);
+                message.reply(`\`${command_prefix}${command_name} help\` coming soon!`).catch(console.warn);
                 break;
             case 'generate':
                 const { non_encrypted_token, encrypted_token } = await generateUserAPIToken();
@@ -62,7 +61,7 @@ module.exports = {
                         ].join('\n'),
                     }));
                 } catch {
-                    message.reply('I was unable to DM you!');
+                    message.reply('I was unable to DM you!').catch(console.warn);
                 }
                 await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_API_AUTH_USERS_COLLECTION_NAME, {
                     'discord_user_id': db_user_data.discord_user_id,
@@ -91,7 +90,7 @@ module.exports = {
                         ].map(sub_command => `${command_prefix}${command_name} ${sub_command}`),
                         '\`\`\`',
                     ].join('\n'),
-                }));
+                })).catch(console.warn);
                 break;
         }
     },

@@ -11,22 +11,54 @@ module.exports = (router, client) => {
     router.post('/v1/user/products/fetch/:product_name?', async (req, res) => {
         console.info(`Endpoint: ${req.url}; was called at ${moment()}!`);
 
-        if (req.headers?.['content-type'] !== 'application/json') {
-            console.error('WRONG CONTENT TYPE SENT TO SERVER!');
-            return;
-        }
-
         res.set('Content-Type', 'application/json');
 
-        console.log('req.body', req.body);
+        if (req.headers?.['content-type'] !== 'application/json') {
+            return res.status(415).send(JSON.stringify({
+                'message': '\`content-type\` must be \`application/json\`!',
+            }, null, 2));
+        }
 
-        const { player_id: roblox_user_id } = req.body;
+        // console.log('req.body', req.body);
 
+        const {
+            api_endpoint_token: api_endpoint_token,
+            api_access_key: game_owner_api_access_key,
+            player_id: roblox_user_id,
+        } = req.body;
+
+        /* check if required information is present */
         if (!roblox_user_id) {
-            res.status(400).send(JSON.stringify({
+            return res.status(400).send(JSON.stringify({
                 'message': 'missing \`player_id\` in request body',
             }, null, 2));
-            return;
+        }
+
+        /* check if the request was properly authenticated */
+        if (api_endpoint_token) {
+            if (api_endpoint_token !== process.env.API_TOKEN_FOR_USER_PRODUCTS_FETCH) {
+                return res.status(403).send(JSON.stringify({
+                    'message': '\`api_endpoint_token\` was not recognized!',
+                }, null, 2));
+            }
+        } else if (api_access_key) {
+            const [ db_user_auth_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_API_AUTH_USERS_COLLECTION_NAME, {
+                ...(discord_user_id ? {
+                    'discord_user_id': discord_user_id,
+                } : {
+                    'roblox_user_id': roblox_user_id,
+                }),
+            });
+            const game_owner_api_access_key_is_valid = bcrypt.compareSync(`${game_owner_api_access_key}`, `${db_user_auth_data?.api_access?.encrypted_key}`);
+            if (!game_owner_api_access_key_is_valid) {
+                return res.status(403).send(JSON.stringify({
+                    'message': '\`api_access_key\` was not recognized!',
+                }, null, 2));
+            }
+        } else {
+            return res.status(400).send(JSON.stringify({
+                'message': 'missing \`api_endpoint_token\` or \`api_access_key\` in request body',
+            }, null, 2));
         }
 
         const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
@@ -34,10 +66,9 @@ module.exports = (router, client) => {
         });
 
         if (!db_user_data) {
-            res.status(404).send(JSON.stringify({
+            return res.status(404).send(JSON.stringify({
                 'message': 'a roblox user could not be found for \`roblox_user_id\`',
             }, null, 2));
-            return;
         }
 
         if (!db_user_data.products) {
@@ -47,9 +78,9 @@ module.exports = (router, client) => {
 
         const specified_product_name = req.params['product_name'];
         if (specified_product_name) {
-            res.status(200).send(JSON.stringify(db_user_data.products[specified_product_name], null, 2));
+            return res.status(200).send(JSON.stringify(db_user_data.products[specified_product_name], null, 2));
         } else {
-            res.status(200).send(JSON.stringify(db_user_data.products, null, 2));
+            return res.status(200).send(JSON.stringify(db_user_data.products, null, 2));
         }
     });
 };

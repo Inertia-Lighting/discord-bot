@@ -14,15 +14,9 @@ const { Timer } = require('../../../../utilities.js');
 
 const guild_id = process.env.BOT_GUILD_ID;
 
-//---------------------------------------------------------------------------------------------------------------//
+const user_purchases_logging_channel_id = process.env.BOT_LOGGING_PURCHASES_CHANNEL_ID;
 
-const user_purchases_logging_channel_id = '809182732135038977';
-
-//---------------------------------------------------------------------------------------------------------------//
-
-const new_customer_role_ids = [
-    '655920592205119498', // "Customer"
-];
+const new_customer_role_ids = process.env.BOT_NEW_CUSTOMER_AUTO_ROLE_IDS.split(',');
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -30,38 +24,45 @@ module.exports = (router, client) => {
     router.post('/v1/user/products/buy', async (req, res) => {
         console.info(`Endpoint: ${req.url}; was called at ${moment()}!`);
 
-        if (req.headers?.['content-type'] !== 'application/json') {
-            console.error('WRONG CONTENT TYPE SENT TO SERVER!');
-            return;
-        }
-
         res.set('Content-Type', 'application/json');
 
-        const {
-            player_id: roblox_user_id,
-            product_id: roblox_product_id,
-            api_token: endpoint_api_token,
-        } = req.body;
-
-        if (endpoint_api_token !== process.env.API_TOKEN_FOR_PURCHASES) {
-            res.status(403).send(JSON.stringify({
-                'message': '\`api_token\` was not recognized!',
+        if (req.headers?.['content-type'] !== 'application/json') {
+            res.status(415).send(JSON.stringify({
+                'message': '\`content-type\` must be \`application/json\`!',
             }, null, 2));
             return;
         }
 
+        // console.log('req.body', req.body);
+
+        const {
+            api_endpoint_token: api_endpoint_token,
+            player_id: roblox_user_id,
+            product_id: roblox_product_id,
+        } = req.body;
+
         if (!roblox_user_id) {
-            res.status(400).send(JSON.stringify({
+            return res.status(400).send(JSON.stringify({
                 'message': 'missing \`player_id\` in request body',
             }, null, 2));
-            return;
         }
 
         if (!roblox_product_id) {
-            res.status(400).send(JSON.stringify({
+            return res.status(400).send(JSON.stringify({
                 'message': 'missing \`product_id\` in request body',
             }, null, 2));
-            return;
+        }
+
+        if (!api_endpoint_token) {
+            return res.status(400).send(JSON.stringify({
+                'message': 'missing \`player_id\` in request body',
+            }, null, 2));
+        }
+
+        if (api_endpoint_token !== process.env.API_TOKEN_FOR_USER_PRODUCTS_PURCHASE) {
+            return res.status(403).send(JSON.stringify({
+                'message': '\`api_endpoint_token\` was not recognized!',
+            }, null, 2));
         }
 
         /* find the user in the database */
@@ -71,10 +72,9 @@ module.exports = (router, client) => {
 
         if (!db_user_data) {
             console.error(`roblox player: ${roblox_user_id}; not found in database`);
-            res.status(404).send(JSON.stringify({
+            return res.status(404).send(JSON.stringify({
                 'message': 'roblox player not found in database',
             }, null, 2));
-            return;
         }
 
         /* find the product in the database */
@@ -84,10 +84,9 @@ module.exports = (router, client) => {
 
         if (!db_roblox_product_data) {
             console.error(`roblox product: ${roblox_product_id}; not found in database`);
-            res.status(404).send(JSON.stringify({
+            return res.status(404).send(JSON.stringify({
                 'message': `roblox product: ${roblox_product_id}; not found in database`,
             }, null, 2));
-            return;
         }
 
         /* add the product for the user in the database */
@@ -102,19 +101,17 @@ module.exports = (router, client) => {
         const guild = await client.guilds.fetch(guild_id).catch(console.warn);
         if (!guild) {
             console.error(`unable to find discord guild: ${guild_id};`);
-            res.status(500).send(JSON.stringify({
+            return res.status(500).send(JSON.stringify({
                 'message': `unable to find discord guild: ${guild_id};`,
             }, null, 2));
-            return;
         }
 
         const guild_member = await guild.members.fetch(db_user_data.discord_user_id).catch(console.warn);
         if (!guild_member) {
             console.error(`unable to find discord user: ${guild_member.user.id}; in guild!`);
-            res.status(404).send(JSON.stringify({
+            return res.status(404).send(JSON.stringify({
                 'message': `unable to find discord user: ${guild_member.user.id}; in guild!`,
             }, null, 2));
-            return;
         }
 
         /* try to add the role to the guild member */
@@ -122,10 +119,9 @@ module.exports = (router, client) => {
             await guild_member.roles.add(db_roblox_product_data.discord_role_id);
         } catch (error) {
             console.trace(`Unable to add role: ${db_roblox_product_data.discord_role_id}; to discord user: ${guild_member.user.id};`, error);
-            res.status(500).send(JSON.stringify({
+            return res.status(500).send(JSON.stringify({
                 'message': `Unable to add role: ${db_roblox_product_data.discord_role_id}; to discord user: ${guild_member.user.id};`,
             }, null, 2));
-            return;
         }
 
         /* try to add the customer roles to the guild member */
@@ -136,10 +132,9 @@ module.exports = (router, client) => {
             }
         } catch (error) {
             console.trace(`Unable to add: \`new_customer_roles\`; to discord user: ${guild_member.user.id};`, error);
-            res.status(500).send(JSON.stringify({
+            return res.status(500).send(JSON.stringify({
                 'message': `Unable to add: \`new_customer_roles\`; to discord user: ${guild_member.user.id};`,
             }, null, 2));
-            return;
         }
 
         /* dm the user a confirmation of their purchase */
@@ -177,7 +172,7 @@ module.exports = (router, client) => {
 
         /* respond with success to the game server */
         console.log(`roblox_user_id: ${roblox_user_id}; discord_user_id: ${guild_member.user.id}; bought product: ${roblox_product_id}; successfully!`);
-        res.status(200).send(JSON.stringify({
+        return res.status(200).send(JSON.stringify({
             'message': `roblox_user_id: ${roblox_user_id}; discord_user_id: ${guild_member.user.id}; bought product: ${roblox_product_id}; successfully!`,
         }, null, 2));
     });
