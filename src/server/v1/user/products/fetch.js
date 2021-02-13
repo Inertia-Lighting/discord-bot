@@ -58,8 +58,19 @@ module.exports = (router, client) => {
                 }, null, 2));
             }
 
-            const game_owner_encrypted_api_access_key = db_user_auth_data?.api_access?.encrypted_key;
-            const game_owner_api_access_key_is_valid = bcrypt.compareSync(`${game_owner_api_access_key}`, `${game_owner_encrypted_api_access_key}`);
+            if (!db_user_auth_data.api_access) {
+                return res.status(403).send(JSON.stringify({
+                    'message': '\`db_user_auth_data.api_access\` could not be found for \`player_id\` or \`discord_id\`!',
+                }, null, 2));
+            }
+
+            if (!db_user_auth_data.api_access.enabled) {
+                return res.status(403).send(JSON.stringify({
+                    'message': '\`db_user_auth_data.api_access.enabled\` is not \`true\` for \`player_id\` or \`discord_id\`!',
+                }, null, 2));
+            }
+
+            const game_owner_api_access_key_is_valid = bcrypt.compareSync(`${game_owner_api_access_key}`, `${db_user_auth_data.api_access.encrypted_key}`);
             if (!game_owner_api_access_key_is_valid) {
                 return res.status(403).send(JSON.stringify({
                     'message': '\`api_access_key\` was not recognized!',
