@@ -100,7 +100,7 @@ module.exports = (router, client) => {
         /* prevent non-auth-users from continuing */
         if (!db_user_auth_data) {
             console.error(`roblox player: ${game_owner_id}; not found in auth database`);
-            return res.status(404).send(JSON.stringify({
+            return res.status(403).send(JSON.stringify({
                 'message': 'roblox player not found in auth database',
             }, null, 2));
         }
@@ -129,7 +129,7 @@ module.exports = (router, client) => {
 
         /* respond with an access_key for the game owner to the game server */
         return res.status(200).send(JSON.stringify({
-            access_key: non_encrypted_key,
+            'access_key': non_encrypted_key,
         }, null, 2));
     });
 };
