@@ -72,6 +72,7 @@ module.exports = (router, client) => {
             }, null, 2));
         }
 
+        /* verify a reproducible salt from the game */
         const reproducible_server_api_salt = await generateReproducibleSalt(game_owner_id, process.env.USER_API_TOKEN_SALT_SECRET);
         if (reproducible_game_api_salt !== reproducible_server_api_salt) {
             return res.status(403).send(JSON.stringify({
@@ -79,10 +80,24 @@ module.exports = (router, client) => {
             }, null, 2));
         }
 
+        /* fetch user-blacklist-info */
+        const [ db_blacklisted_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME, {
+            'roblox_user_id': game_owner_id,
+        });
+
+        /* prevent blacklisted game owners from generating an access_key */
+        if (db_blacklisted_user_data) {
+            return res.status(403).send(JSON.stringify({
+                'message': '\`game_owner_id\` is blacklisted!',
+            }, null, 2));
+        }
+
+        /* fetch user-auth-info */
         const [ db_user_auth_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_API_AUTH_USERS_COLLECTION_NAME, {
             'roblox_user_id': game_owner_id,
         });
 
+        /* prevent non-auth-users from continuing */
         if (!db_user_auth_data) {
             console.error(`roblox player: ${game_owner_id}; not found in auth database`);
             return res.status(404).send(JSON.stringify({
@@ -90,6 +105,7 @@ module.exports = (router, client) => {
             }, null, 2));
         }
 
+        /* verify the game owner's api_token */
         const game_owner_api_token_is_valid = bcrypt.compareSync(game_owner_api_token, db_user_auth_data.encrypted_api_token);
         if (!game_owner_api_token_is_valid) {
             return res.status(403).send(JSON.stringify({
@@ -97,10 +113,10 @@ module.exports = (router, client) => {
             }, null, 2));
         }
 
-        /* generate the api access key */
+        /* generate an api access key for the game owner */
         const { non_encrypted_key, encrypted_key } = await generateUserAPIKey();
 
-        /* update the user auth in the database */
+        /* update the user-auth-info in the database */
         await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_API_AUTH_USERS_COLLECTION_NAME, {
             'roblox_user_id': game_owner_id,
         }, {
@@ -111,7 +127,7 @@ module.exports = (router, client) => {
             },
         });
 
-        /* respond with success to the game server */
+        /* respond with an access_key for the game owner to the game server */
         return res.status(200).send(JSON.stringify({
             access_key: non_encrypted_key,
         }, null, 2));
