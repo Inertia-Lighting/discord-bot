@@ -30,7 +30,7 @@ module.exports = (router, client) => {
         } = req.body;
 
         /* check if required information is present */
-        if (!roblox_user_id) {
+        if (!(roblox_user_id || discord_user_id)) {
             return res.status(400).send(JSON.stringify({
                 'message': 'missing \`player_id\` in request body',
             }, null, 2));
@@ -64,17 +64,21 @@ module.exports = (router, client) => {
         }
 
         const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
-            'roblox_user_id': roblox_user_id,
+            ...(discord_user_id ? {
+                'discord_user_id': discord_user_id,
+            } : {
+                'roblox_user_id': roblox_user_id,
+            }),
         });
 
         if (!db_user_data) {
             return res.status(404).send(JSON.stringify({
-                'message': 'a roblox user could not be found for \`roblox_user_id\`',
+                'message': 'a roblox user could not be found for \`player_id\` or \`discord_id\`',
             }, null, 2));
         }
 
         if (!db_user_data.products) {
-            console.error(`roblox_user_id: ${roblox_user_id}; does not have \`db_user_data.products\` defined!`);
+            console.error(`roblox_user_id: ${roblox_user_id}; discord_user_id: ${discord_user_id}; does not have \`db_user_data.products\` defined!`);
             db_user_data.products = {}; // fix the possibility of this not being an object
         }
 
