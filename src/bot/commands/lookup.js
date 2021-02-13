@@ -25,7 +25,7 @@ module.exports = {
         }
 
         /* send the user document */
-        const [ user_db_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
+        const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
             ...(lookup_discord_user_id ? {
                 'discord_user_id': lookup_discord_user_id,
             } : {
@@ -42,7 +42,7 @@ module.exports = {
                 iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                 name: 'Inertia Lighting | User Document',
             },
-            description: `${'```'}json\n${JSON.stringify(user_db_data ?? 'user not found in database', null, 2)}\n${'```'}`,
+            description: `${'```'}json\n${JSON.stringify(db_user_data ?? 'user not found in database', null, 2)}\n${'```'}`,
         })).catch(console.warn);
     },
 };

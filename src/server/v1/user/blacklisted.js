@@ -3,6 +3,7 @@
 //---------------------------------------------------------------------------------------------------------------//
 
 const moment = require('moment-timezone');
+const bcrypt = require('bcryptjs');
 const { go_mongo_db } = require('../../../mongo/mongo.js');
 
 //---------------------------------------------------------------------------------------------------------------//
@@ -11,25 +12,55 @@ module.exports = (router, client) => {
     router.post('/v1/user/blacklisted', async (req, res) => {
         console.info(`Endpoint: ${req.url}; was called at ${moment()}!`);
 
-        if (req.headers?.['content-type'] !== 'application/json') {
-            console.error('WRONG CONTENT TYPE SENT TO SERVER!');
-            return;
-        }
-
         res.set('Content-Type', 'application/json');
 
-        console.log('req.body', req.body);
+        if (req.headers?.['content-type'] !== 'application/json') {
+            return res.status(415).send(JSON.stringify({
+                'message': '\`content-type\` must be \`application/json\`!',
+            }, null, 2));
+        }
+
+        // console.log('req.body', req.body);
 
         const {
+            api_endpoint_token: api_endpoint_token,
+            api_access_key: game_owner_api_access_key,
             player_id: roblox_user_id,
             discord_id: discord_user_id,
         } = req.body;
 
+        /* check if required information is present */
         if (!(roblox_user_id || discord_user_id)) {
-            res.status(400).send(JSON.stringify({
+            return res.status(400).send(JSON.stringify({
                 'message': 'missing \`player_id\` or \`discord_id\` in request body',
             }, null, 2));
-            return;
+        }
+
+        /* check if the request was properly authenticated */
+        if (api_endpoint_token) {
+            if (api_endpoint_token !== process.env.API_TOKEN_FOR_USER_BLACKLISTED) {
+                return res.status(403).send(JSON.stringify({
+                    'message': '\`api_endpoint_token\` was not recognized!',
+                }, null, 2));
+            }
+        } else if (game_owner_api_access_key) {
+            const [ db_user_auth_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_API_AUTH_USERS_COLLECTION_NAME, {
+                ...(discord_user_id ? {
+                    'discord_user_id': discord_user_id,
+                } : {
+                    'roblox_user_id': roblox_user_id,
+                }),
+            });
+            const game_owner_api_access_key_is_valid = bcrypt.compareSync(`${game_owner_api_access_key}`, `${db_user_auth_data?.api_access?.encrypted_key}`);
+            if (!game_owner_api_access_key_is_valid) {
+                return res.status(403).send(JSON.stringify({
+                    'message': '\`api_access_key\` was not recognized!',
+                }, null, 2));
+            }
+        } else {
+            return res.status(400).send(JSON.stringify({
+                'message': 'missing \`api_endpoint_token\` or \`api_access_key\` in request body',
+            }, null, 2));
         }
 
         const [ db_blacklisted_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME, {
@@ -45,10 +76,10 @@ module.exports = (router, client) => {
         });
 
         if (db_blacklisted_user_data) {
-            res.status(200).send(JSON.stringify(db_blacklisted_user_data, null, 2));
+            return res.status(200).send(JSON.stringify(db_blacklisted_user_data, null, 2));
         } else {
-            res.status(404).send(JSON.stringify({
-                'message': 'the specified user was not found in the blacklist',
+            return res.status(404).send(JSON.stringify({
+                'message': 'the specified user was not found in the blacklist database',
             }, null, 2));
         }
     });
