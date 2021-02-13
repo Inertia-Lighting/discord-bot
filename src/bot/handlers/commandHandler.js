@@ -81,10 +81,9 @@ async function commandHandler(message) {
             color: 0xFF0000,
             author: {
                 iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                name: `${client.user.username}`,
+                name: `${client.user.username} | Blacklist System`,
             },
-            title: 'Blacklist System',
-            description: `${message.author}, you were blacklisted by <@${db_blacklisted_user_data.staff_member_id}> on ${blacklist_formatted_timestamp} for: \`\`\`\n${db_blacklisted_user_data.reason}\n\`\`\``,
+            description: `${message.author}, you cannot use commands because you were blacklisted by <@${db_blacklisted_user_data.staff_member_id}> on ${blacklist_formatted_timestamp} for: \`\`\`\n${db_blacklisted_user_data.reason}\n\`\`\``,
         }));
         return;
     }
