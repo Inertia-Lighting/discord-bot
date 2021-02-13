@@ -4,6 +4,8 @@
 
 const { Discord, client } = require('../discord_client.js');
 
+const { go_mongo_db } = require('../../mongo/mongo.js');
+
 //---------------------------------------------------------------------------------------------------------------//
 
 const command_prefix = process.env.BOT_COMMAND_PREFIX;
