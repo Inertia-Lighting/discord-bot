@@ -23,7 +23,7 @@ app.use('/', router);
 
 /* request logging */
 router.use(async (req, res, next) => {
-    const request_timestamp = moment().tz.tz('America/New_York').format('YYYY[-]MM[-]DD | hh:mm:ss A | [GMT]ZZ');
+    const request_timestamp = moment().tz('America/New_York').format('YYYY[-]MM[-]DD | hh:mm:ss A | [GMT]ZZ');
     console.info(`${request_timestamp} | [${req.method}] ${req.url} | ${req.ip}`);
     next(); // continue the request
 });
