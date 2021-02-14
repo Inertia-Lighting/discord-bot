@@ -114,7 +114,7 @@ module.exports = (router, client) => {
         /* determine whether or not the access_key has expired yet */
         const current_epoch = moment().valueOf();
         const current_key_expiration_epoch = db_user_auth_data.api_access?.expiration_epoch ?? current_epoch;
-        const current_key_has_expired = current_epoch - current_key_expiration_epoch >= 0;
+        const current_key_has_expired = current_epoch >= current_key_expiration_epoch;
 
         /* (fetch / generate) the (current / new) key and it's expiration epoch */
         const updated_access_key = current_key_has_expired ? new_api_access_key : db_user_auth_data.api_access?.key;
