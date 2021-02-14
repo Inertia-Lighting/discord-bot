@@ -24,12 +24,7 @@ async function generateReproducibleSalt(game_owner_id, reproducible_salt_secret)
 }
 
 async function generateUserAPIKey() {
-    const non_encrypted_key = uuid_v4();
-    const encrypted_key = bcrypt.hashSync(non_encrypted_key, bcrypt.genSaltSync(parseInt(process.env.USER_API_ACCESS_KEY_BCRYPT_SALT_LENGTH)));
-    return {
-        non_encrypted_key,
-        encrypted_key,
-    };
+    return uuid_v4();
 }
 
 //---------------------------------------------------------------------------------------------------------------//
@@ -114,7 +109,16 @@ module.exports = (router, client) => {
         }
 
         /* generate an api access key for the game owner */
-        const { non_encrypted_key, encrypted_key } = await generateUserAPIKey();
+        const new_api_access_key = await generateUserAPIKey();
+
+        /* determine whether or not the access_key has expired yet */
+        const current_epoch = moment().valueOf();
+        const current_key_expiration_epoch = db_user_auth_data.api_access?.encrypted_key_expiration_epoch ?? current_epoch;
+        const current_key_has_expired = current_epoch - current_key_expiration_epoch >= 0;
+
+        /* (fetch / generate) the (current / new) key and it's expiration epoch */
+        const updated_access_key = current_key_has_expired ? new_api_access_key : db_user_auth_data.api_access?.key;
+        const updated_access_key_expiration_epoch = current_key_has_expired ? moment().add(12, 'hours').valueOf() : current_key_expiration_epoch;
 
         /* update the user-auth-info in the database */
         await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_API_AUTH_USERS_COLLECTION_NAME, {
@@ -123,13 +127,15 @@ module.exports = (router, client) => {
             $set: {
                 ['api_access.version']: 1,
                 ['api_access.enabled']: db_user_auth_data.api_access?.enabled ?? true,
-                ['api_access.encrypted_key']: encrypted_key,
+                ['api_access.expiration_epoch']: updated_access_key_expiration_epoch,
+                ['api_access.key']: updated_access_key,
             },
         });
 
         /* respond with an access_key for the game owner to the game server */
         return res.status(200).send(JSON.stringify({
-            'access_key': non_encrypted_key,
+            'access_key': updated_access_key,
+            'access_key_expiration_epoch': updated_access_key_expiration_epoch,
         }, null, 2));
     });
 };
