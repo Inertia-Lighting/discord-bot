@@ -3,12 +3,11 @@
 //---------------------------------------------------------------------------------------------------------------//
 
 const moment = require('moment-timezone');
-const { go_mongo_db } = require('../../../mongo/mongo.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
 module.exports = (router, client) => {
-    router.post('/v1/user/verified', async (req, res) => {
+    router.post('/v1/user/verification/verify', async (req, res) => {
         console.info(`Endpoint: ${req.url}; was called at ${moment()}!`);
 
         res.set('Content-Type', 'application/json');
@@ -38,24 +37,30 @@ module.exports = (router, client) => {
             }, null, 2));
         }
 
-        if (api_endpoint_token !== process.env.API_TOKEN_FOR_USER_VERIFIED) {
+        if (api_endpoint_token !== process.env.API_TOKEN_FOR_USER_VERIFY) {
             return res.status(403).send(JSON.stringify({
                 'message': '\`api_endpoint_token\` was not recognized!',
             }, null, 2));
         }
 
-        const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
-            'roblox_user_id': roblox_user_id,
+        const potential_old_verification_context = client.$.verification_contexts.find(item => item.roblox_user_id === roblox_user_id);
+
+        const verification_code = potential_old_verification_context?.verification_code ?? (new Buffer.from(`${Date.now()}`.slice(7))).toString('base64');
+
+        // console.log({
+        //     potential_old_verification_context,
+        //     roblox_user_id,
+        //     verification_code,
+        // });
+
+        client.$.verification_contexts.set(verification_code, {
+            verification_code: verification_code,
+            roblox_user_id: roblox_user_id,
         });
 
-        if (db_user_data) {
-            return res.status(200).send(JSON.stringify({
-                verified: true,
-            }, null, 2));
-        } else {
-            return res.status(404).send(JSON.stringify({
-                verified: false,
-            }, null, 2));
-        }
+        return res.status(200).send(JSON.stringify({
+            'user_can_verify': true,
+            'verification_code': verification_code,
+        }));
     });
 };
