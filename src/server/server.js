@@ -23,9 +23,9 @@ app.use('/', router);
 
 /* request logging */
 router.use(async (req, res, next) => {
-    const request_timestamp = moment().tz('America/New_York').format('YYYY[-]MM[-]DD | hh:mm:ss A | [GMT]ZZ');
+    const request_timestamp = moment().tz('America/New_York').format('YYYY[-]MM[-]DD hh:mm:ss A [GMT]ZZ');
     const request_origin = req.header('x-forwarded-for') || req.connection.remoteAddress;
-    console.info(`${request_timestamp} | [${req.method}] ${req.url} | ${request_origin}`);
+    console.info(`[ ${request_timestamp} ] | [${req.method}] ${req.url} | ${request_origin}`);
     next(); // continue the request
 });
 
