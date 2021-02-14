@@ -2,7 +2,6 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const moment = require('moment-timezone');
 const Discord = require('discord.js');
 
 //---------------------------------------------------------------------------------------------------------------//
@@ -22,8 +21,6 @@ const new_customer_role_ids = process.env.BOT_NEW_CUSTOMER_AUTO_ROLE_IDS.split('
 
 module.exports = (router, client) => {
     router.post('/v1/user/products/purchase', async (req, res) => {
-        console.info(`Endpoint: ${req.url}; was called at ${moment()}!`);
-
         res.set('Content-Type', 'application/json');
 
         if (req.headers?.['content-type'] !== 'application/json') {

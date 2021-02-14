@@ -2,6 +2,7 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
+const moment = require('moment-timezone');
 const express = require('express');
 const bodyParser = require('body-parser');
 const router = express.Router();
@@ -17,6 +18,17 @@ app.set('port', process.env.SERVER_PORT);
 
 app.use(bodyParser.json()); // parse application/json
 app.use('/', router);
+
+//---------------------------------------------------------------------------------------------------------------//
+
+/* request logging */
+router.use(async (req, res, next) => {
+    const request_timestamp = moment().tz.tz('America/New_York').format('YYYY[-]MM[-]DD | hh:mm:ss A | [GMT]ZZ');
+    console.info(`${request_timestamp} | [${req.method}] ${req.url} | ${req.ip}`);
+    next(); // continue the request
+});
+
+//---------------------------------------------------------------------------------------------------------------//
 
 router.get('/test', async (req, res) => {
     res.set('Content-Type', 'application/json');

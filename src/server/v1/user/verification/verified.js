@@ -2,15 +2,12 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const moment = require('moment-timezone');
 const { go_mongo_db } = require('../../../../mongo/mongo.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
 module.exports = (router, client) => {
     router.post('/v1/user/verification/verified', async (req, res) => {
-        console.info(`Endpoint: ${req.url}; was called at ${moment()}!`);
-
         res.set('Content-Type', 'application/json');
 
         if (req.headers?.['content-type'] !== 'application/json') {

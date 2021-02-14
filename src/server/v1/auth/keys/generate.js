@@ -31,8 +31,6 @@ async function generateUserAPIKey() {
 
 module.exports = (router, client) => {
     router.post('/v1/auth/keys/generate', async (req, res) => {
-        console.info(`Endpoint: ${req.url}; was called at ${moment()}!`);
-
         res.set('Content-Type', 'application/json');
 
         if (req.headers?.['content-type'] !== 'application/json') {

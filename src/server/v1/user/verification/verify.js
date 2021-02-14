@@ -2,14 +2,8 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const moment = require('moment-timezone');
-
-//---------------------------------------------------------------------------------------------------------------//
-
 module.exports = (router, client) => {
     router.post('/v1/user/verification/verify', async (req, res) => {
-        console.info(`Endpoint: ${req.url}; was called at ${moment()}!`);
-
         res.set('Content-Type', 'application/json');
 
         if (req.headers?.['content-type'] !== 'application/json') {
@@ -61,7 +55,6 @@ module.exports = (router, client) => {
         });
 
         return res.status(200).send(JSON.stringify({
-            'user_can_verify': true,
             'verification_code': verification_code,
         }));
     });

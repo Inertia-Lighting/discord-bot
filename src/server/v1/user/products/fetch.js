@@ -2,7 +2,6 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const moment = require('moment-timezone');
 const bcrypt = require('bcryptjs');
 const { go_mongo_db } = require('../../../../mongo/mongo.js');
 
@@ -10,8 +9,6 @@ const { go_mongo_db } = require('../../../../mongo/mongo.js');
 
 module.exports = (router, client) => {
     router.post('/v1/user/products/fetch/:specific_product_code?', async (req, res) => {
-        console.info(`Endpoint: ${req.url}; was called at ${moment()}!`);
-
         res.set('Content-Type', 'application/json');
 
         if (req.headers?.['content-type'] !== 'application/json') {
