@@ -2,7 +2,7 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const bcrypt = require('bcryptjs');
+const moment = require('moment-timezone');
 const { go_mongo_db } = require('../../../../mongo/mongo.js');
 
 //---------------------------------------------------------------------------------------------------------------//
@@ -56,7 +56,7 @@ module.exports = (router, client) => {
             }
 
             if (!db_user_auth_data.api_access) {
-                return res.status(403).send(JSON.stringify({
+                return res.status(500).send(JSON.stringify({
                     'message': '\`db_user_auth_data.api_access\` could not be found for \`discord_user_id\` or \`roblox_user_id\`!',
                 }, null, 2));
             }
@@ -67,7 +67,29 @@ module.exports = (router, client) => {
                 }, null, 2));
             }
 
-            const game_owner_api_access_key_is_valid = bcrypt.compareSync(`${game_owner_api_access_key}`, `${db_user_auth_data.api_access.encrypted_key}`);
+            if (!db_user_auth_data.api_access.key) {
+                return res.status(500).send(JSON.stringify({
+                    'message': '\`db_user_auth_data.api_access.key\` does not exist for \`discord_user_id\` or \`roblox_user_id\`!',
+                }, null, 2));
+            }
+
+            if (!db_user_auth_data.api_access.expiration_epoch) {
+                return res.status(500).send(JSON.stringify({
+                    'message': '\`db_user_auth_data.api_access.expiration_epoch\` does not exist for \`discord_user_id\` or \`roblox_user_id\`!',
+                }, null, 2));
+            }
+
+            /* determine whether or not the access_key has expired yet */
+            const current_epoch = moment().valueOf();
+            const game_owner_api_access_key_has_expired = current_epoch >= db_user_auth_data.api_access.expiration_epoch;
+
+            if (game_owner_api_access_key_has_expired) {
+                return res.status(403).send(JSON.stringify({
+                    'message': '\`api_access_key\` has expired!',
+                }, null, 2));
+            }
+
+            const game_owner_api_access_key_is_valid = game_owner_api_access_key === db_user_auth_data.api_access.key;
             if (!game_owner_api_access_key_is_valid) {
                 return res.status(403).send(JSON.stringify({
                     'message': '\`api_access_key\` was not recognized!',
