@@ -9,7 +9,7 @@ const { go_mongo_db } = require('../../../../mongo/mongo.js');
 //---------------------------------------------------------------------------------------------------------------//
 
 module.exports = (router, client) => {
-    router.post('/v1/user/products/fetch/:product_name?', async (req, res) => {
+    router.post('/v1/user/products/fetch/:specific_product_code?', async (req, res) => {
         console.info(`Endpoint: ${req.url}; was called at ${moment()}!`);
 
         res.set('Content-Type', 'application/json');
@@ -25,14 +25,14 @@ module.exports = (router, client) => {
         const {
             api_endpoint_token: api_endpoint_token,
             api_access_key: game_owner_api_access_key,
-            player_id: roblox_user_id,
-            discord_id: discord_user_id,
+            discord_user_id: discord_user_id,
+            roblox_user_id: roblox_user_id,
         } = req.body;
 
         /* check if required information is present */
         if (!(roblox_user_id || discord_user_id)) {
             return res.status(400).send(JSON.stringify({
-                'message': 'missing \`player_id\` or \`discord_id\` in request body',
+                'message': 'missing \`discord_user_id\` or \`roblox_user_id\` in request body',
             }, null, 2));
         }
 
@@ -54,19 +54,19 @@ module.exports = (router, client) => {
 
             if (!db_user_auth_data) {
                 return res.status(403).send(JSON.stringify({
-                    'message': '\`db_user_auth_data\` could not be found for \`player_id\` or \`discord_id\`!',
+                    'message': '\`db_user_auth_data\` could not be found for \`discord_user_id\` or \`roblox_user_id\`!',
                 }, null, 2));
             }
 
             if (!db_user_auth_data.api_access) {
                 return res.status(403).send(JSON.stringify({
-                    'message': '\`db_user_auth_data.api_access\` could not be found for \`player_id\` or \`discord_id\`!',
+                    'message': '\`db_user_auth_data.api_access\` could not be found for \`discord_user_id\` or \`roblox_user_id\`!',
                 }, null, 2));
             }
 
             if (!db_user_auth_data.api_access.enabled) {
                 return res.status(403).send(JSON.stringify({
-                    'message': '\`db_user_auth_data.api_access.enabled\` is not \`true\` for \`player_id\` or \`discord_id\`!',
+                    'message': '\`db_user_auth_data.api_access.enabled\` is not \`true\` for \`discord_user_id\` or \`roblox_user_id\`!',
                 }, null, 2));
             }
 
@@ -92,20 +92,22 @@ module.exports = (router, client) => {
 
         if (!db_user_data) {
             return res.status(404).send(JSON.stringify({
-                'message': 'a roblox user could not be found for \`player_id\` or \`discord_id\`',
+                'message': 'a roblox user could not be found for \`discord_user_id\` or \`roblox_user_id\`',
             }, null, 2));
         }
 
         if (!db_user_data.products) {
-            console.error(`roblox_user_id: ${roblox_user_id}; discord_user_id: ${discord_user_id}; does not have \`db_user_data.products\` defined!`);
+            console.error(`discord_user_id: ${discord_user_id}; roblox_user_id: ${roblox_user_id}; does not have \`db_user_data.products\` defined!`);
             db_user_data.products = {}; // fix the possibility of this not being an object
         }
 
-        const specified_product_name = req.params['product_name'];
-        if (specified_product_name) {
-            return res.status(200).send(JSON.stringify(db_user_data.products[specified_product_name], null, 2));
-        } else {
-            return res.status(200).send(JSON.stringify(db_user_data.products, null, 2));
-        }
+        const specified_product_code = req.params['specific_product_code'];
+        return res.status(200).send(JSON.stringify({
+            ...(specified_product_code ? {
+                [specified_product_code]: db_user_data.products[specified_product_code],
+            } : {
+                ...db_user_data.products,
+            }),
+        }, null, 2));
     });
 };

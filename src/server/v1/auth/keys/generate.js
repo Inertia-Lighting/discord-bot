@@ -49,18 +49,17 @@ module.exports = (router, client) => {
             game_owner_api_token: game_owner_api_token,
         } = req.body;
 
+        /* check if required information is present */
         if (!reproducible_game_api_salt) {
             return res.status(400).send(JSON.stringify({
                 'message': 'missing \`game_api_salt\` in request body',
             }, null, 2));
         }
-
         if (!game_owner_id) {
             return res.status(400).send(JSON.stringify({
                 'message': 'missing \`game_owner_id\` in request body',
             }, null, 2));
         }
-
         if (!game_owner_api_token) {
             return res.status(400).send(JSON.stringify({
                 'message': 'missing \`game_owner_api_token\` in request body',

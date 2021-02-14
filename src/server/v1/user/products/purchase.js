@@ -21,7 +21,7 @@ const new_customer_role_ids = process.env.BOT_NEW_CUSTOMER_AUTO_ROLE_IDS.split('
 //---------------------------------------------------------------------------------------------------------------//
 
 module.exports = (router, client) => {
-    router.post('/v1/user/products/buy', async (req, res) => {
+    router.post('/v1/user/products/purchase', async (req, res) => {
         console.info(`Endpoint: ${req.url}; was called at ${moment()}!`);
 
         res.set('Content-Type', 'application/json');
@@ -37,28 +37,29 @@ module.exports = (router, client) => {
 
         const {
             api_endpoint_token: api_endpoint_token,
-            player_id: roblox_user_id,
-            product_id: roblox_product_id,
+            roblox_product_id: roblox_product_id,
+            discord_user_id: discord_user_id,
+            roblox_user_id: roblox_user_id,
         } = req.body;
 
-        if (!roblox_user_id) {
+        /* check if required information is present */
+        if (!(roblox_user_id || discord_user_id)) {
             return res.status(400).send(JSON.stringify({
-                'message': 'missing \`player_id\` in request body',
+                'message': 'missing \`discord_user_id\` or \`roblox_user_id\` in request body',
             }, null, 2));
         }
-
         if (!roblox_product_id) {
             return res.status(400).send(JSON.stringify({
-                'message': 'missing \`product_id\` in request body',
+                'message': 'missing \`roblox_product_id\` in request body',
             }, null, 2));
         }
-
         if (!api_endpoint_token) {
             return res.status(400).send(JSON.stringify({
-                'message': 'missing \`player_id\` in request body',
+                'message': 'missing \`api_endpoint_token\` in request body',
             }, null, 2));
         }
 
+        /* check if the request was properly authenticated */
         if (api_endpoint_token !== process.env.API_TOKEN_FOR_USER_PRODUCTS_PURCHASE) {
             return res.status(403).send(JSON.stringify({
                 'message': '\`api_endpoint_token\` was not recognized!',
@@ -67,13 +68,17 @@ module.exports = (router, client) => {
 
         /* find the user in the database */
         const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
-            'roblox_user_id': roblox_user_id,
+            ...(discord_user_id ? {
+                'discord_user_id': discord_user_id,
+            } : {
+                'roblox_user_id': roblox_user_id,
+            }),
         });
 
         if (!db_user_data) {
-            console.error(`roblox player: ${roblox_user_id}; not found in database`);
+            console.error(`discord_user_id: ${discord_user_id}; roblox_user_id: ${roblox_user_id}; not found in database`);
             return res.status(404).send(JSON.stringify({
-                'message': 'roblox player not found in database',
+                'message': `discord_user_id: ${discord_user_id}; roblox_user_id: ${roblox_user_id}; not found in database`,
             }, null, 2));
         }
 
@@ -91,7 +96,11 @@ module.exports = (router, client) => {
 
         /* add the product for the user in the database */
         await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
-            'roblox_user_id': roblox_user_id,
+            ...(discord_user_id ? {
+                'discord_user_id': discord_user_id,
+            } : {
+                'roblox_user_id': roblox_user_id,
+            }),
         }, {
             $set: {
                 [`products.${db_roblox_product_data.code}`]: true,

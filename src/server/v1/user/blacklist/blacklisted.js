@@ -23,14 +23,14 @@ module.exports = (router, client) => {
 
         const {
             api_endpoint_token: api_endpoint_token,
-            player_id: roblox_user_id,
-            discord_id: discord_user_id,
+            discord_user_id: discord_user_id,
+            roblox_user_id: roblox_user_id,
         } = req.body;
 
         /* check if required information is present */
         if (!(roblox_user_id || discord_user_id)) {
             return res.status(400).send(JSON.stringify({
-                'message': 'missing \`player_id\` or \`discord_id\` in request body',
+                'message': 'missing \`roblox_user_id\` or \`discord_user_id\` in request body',
             }, null, 2));
         }
 
