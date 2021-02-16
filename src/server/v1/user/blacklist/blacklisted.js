@@ -2,16 +2,12 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const moment = require('moment-timezone');
-const bcrypt = require('bcryptjs');
-const { go_mongo_db } = require('../../../mongo/mongo.js');
+const { go_mongo_db } = require('../../../../mongo/mongo.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
 module.exports = (router, client) => {
-    router.post('/v1/user/blacklisted', async (req, res) => {
-        console.info(`Endpoint: ${req.url}; was called at ${moment()}!`);
-
+    router.post('/v1/user/blacklist/blacklisted', async (req, res) => {
         res.set('Content-Type', 'application/json');
 
         if (req.headers?.['content-type'] !== 'application/json') {
@@ -24,15 +20,14 @@ module.exports = (router, client) => {
 
         const {
             api_endpoint_token: api_endpoint_token,
-            api_access_key: game_owner_api_access_key,
-            player_id: roblox_user_id,
-            discord_id: discord_user_id,
+            discord_user_id: discord_user_id,
+            roblox_user_id: roblox_user_id,
         } = req.body;
 
         /* check if required information is present */
         if (!(roblox_user_id || discord_user_id)) {
             return res.status(400).send(JSON.stringify({
-                'message': 'missing \`player_id\` or \`discord_id\` in request body',
+                'message': 'missing \`roblox_user_id\` or \`discord_user_id\` in request body',
             }, null, 2));
         }
 
@@ -43,23 +38,9 @@ module.exports = (router, client) => {
                     'message': '\`api_endpoint_token\` was not recognized!',
                 }, null, 2));
             }
-        } else if (game_owner_api_access_key) {
-            const [ db_user_auth_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_API_AUTH_USERS_COLLECTION_NAME, {
-                ...(discord_user_id ? {
-                    'discord_user_id': discord_user_id,
-                } : {
-                    'roblox_user_id': roblox_user_id,
-                }),
-            });
-            const game_owner_api_access_key_is_valid = bcrypt.compareSync(`${game_owner_api_access_key}`, `${db_user_auth_data?.api_access?.encrypted_key}`);
-            if (!game_owner_api_access_key_is_valid) {
-                return res.status(403).send(JSON.stringify({
-                    'message': '\`api_access_key\` was not recognized!',
-                }, null, 2));
-            }
         } else {
             return res.status(400).send(JSON.stringify({
-                'message': 'missing \`api_endpoint_token\` or \`api_access_key\` in request body',
+                'message': 'missing \`api_endpoint_token\` in request body',
             }, null, 2));
         }
 

@@ -37,13 +37,22 @@ async function addUserToBlacklistedUsersDatabase({ discord_user_id, roblox_user_
     if (discord_user_id && roblox_user_id) {
         await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME, {
             'discord_user_id': discord_user_id,
+            'roblox_user_id': roblox_user_id,
         }, {
             $set: {
-                'discord_user_id': discord_user_id,
-                'roblox_user_id': roblox_user_id,
                 'epoch': epoch,
                 'reason': reason,
                 'staff_member_id': staff_member_id,
+            },
+        }, {
+            upsert: true,
+        });
+        await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_API_AUTH_USERS_COLLECTION_NAME, {
+            'discord_user_id': discord_user_id,
+            'roblox_user_id': roblox_user_id,
+        }, {
+            $set: {
+                ['api_access.enabled']: false,
             },
         }, {
             upsert: true,
@@ -64,6 +73,16 @@ async function removeUserFromBlacklistedUsersDatabase({ discord_user_id, roblox_
         await go_mongo_db.remove(process.env.MONGO_DATABASE_NAME, process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME, {
             'discord_user_id': discord_user_id,
             'roblox_user_id': roblox_user_id,
+        });
+        await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_API_AUTH_USERS_COLLECTION_NAME, {
+            'discord_user_id': discord_user_id,
+            'roblox_user_id': roblox_user_id,
+        }, {
+            $set: {
+                ['api_access.enabled']: true,
+            },
+        }, {
+            upsert: true,
         });
         return true; // user was removed from blacklist
     } else {
