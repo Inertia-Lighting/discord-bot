@@ -24,9 +24,9 @@ async function generateUserAPIToken() {
 //---------------------------------------------------------------------------------------------------------------//
 
 module.exports = {
-    name: 'api_token',
+    name: 'identity_token',
     description: 'n/a',
-    aliases: ['api_token'],
+    aliases: ['identity_token'],
     cooldown: 60_000,
     permission_level: 'staff',
     async execute(message, args) {
@@ -42,7 +42,19 @@ module.exports = {
 
         switch (`${command_args[0]}`.toLowerCase()) {
             case 'help':
-                message.reply(`\`${command_prefix}${command_name} help\` coming soon!`).catch(console.warn);
+                message.channel.send(new Discord.MessageEmbed({
+                    color: 0x60A0FF,
+                    author: {
+                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                        name: 'Inertia Lighting | Identity Token System',
+                    },
+                    fields: [
+                        {
+                            name: 'What are Identity Tokens?',
+                            value: 'Identity Tokens are like passwords, we use them to verify your identity with our systems; just like how your computer uses a password to verify that it is you!',
+                        }
+                    ],
+                })).catch(console.warn);
                 break;
             case 'generate':
                 const { non_encrypted_token, encrypted_token } = await generateUserAPIToken();
@@ -52,7 +64,7 @@ module.exports = {
                         color: 0x60A0FF,
                         author: {
                             iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                            name: 'Inertia Lighting | API Token System',
+                            name: 'Inertia Lighting | Identity Token System',
                         },
                         description: [
                             'The following token must be kept private and must be used in games with our products:',
@@ -61,8 +73,12 @@ module.exports = {
                         ].join('\n'),
                     }));
                 } catch {
-                    message.reply('I was unable to DM you!').catch(console.warn);
+                    await message.reply('I was unable to DM you!').catch(console.warn);
+                    return; // don't continue if the user can't be messaged via DMs
                 }
+
+                await message.reply('I sent you your Identity Token via DMs!').catch(console.warn);
+
                 await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_API_AUTH_USERS_COLLECTION_NAME, {
                     'discord_user_id': db_user_data.discord_user_id,
                 }, {
@@ -73,13 +89,14 @@ module.exports = {
                 }, {
                     upsert: true,
                 });
+
                 break;
             default:
                 message.channel.send(new Discord.MessageEmbed({
                     color: 0x60A0FF,
                     author: {
                         iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                        name: 'Inertia Lighting | API Token System',
+                        name: 'Inertia Lighting | Identity Token System',
                     },
                     description: [
                         'Please use one of the following sub-commands:',
