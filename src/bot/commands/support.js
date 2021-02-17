@@ -244,7 +244,8 @@ module.exports = {
 
                     const message_collector_2_filter = (msg) => msg.author.id === message.author.id && msg.content === 'done';
                     const message_collector_2 = support_channel.createMessageCollector(message_collector_2_filter, { max: 1 });
-                    message_collector_2.on('collect', () => {
+                    message_collector_2.on('collect', async (msg) => {
+                        await msg.delete({ timeout: 500 }).catch(console.warn);
                         const qualified_support_role_mentions = matching_support_category.qualified_support_role_ids.map(role_id => `<@&${role_id}>`).join(', ');
                         support_channel.send(`${message.author}, Our ${qualified_support_role_mentions} staff will help you with your issue soon!`).catch(console.warn);
                     });
