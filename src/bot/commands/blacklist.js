@@ -121,10 +121,6 @@ async function checkIfStaffMemberIsAllowedToBlacklistUser(guild, staff_member_id
     const staff_member = await guild.members.fetch(staff_member_id);
     if (!staff_member) return false;
 
-    /* check that the staff member exists in the guild */
-    const staff_member = await guild.members.fetch(staff_member_id);
-    if (!staff_member) return false;
-    
     /* check if the member exists in the guild */
     const member_being_blacklisted = await guild.members.fetch(user_id);
     if (!member_being_blacklisted) return true; // no need to check role hierarchy if the user isn't in the guild
