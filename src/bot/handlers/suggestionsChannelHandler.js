@@ -17,11 +17,20 @@ async function suggestionsChannelHandler(message) {
 
     /* suggestion cooldown */
     const suggestion_cooldown_in_ms = 10_000; // 10 seconds
-    const last_suggestion_epoch_for_user = suggestion_cooldown_tracker.get(message.author.id)?.last_suggestion_epoch ?? Date.now() - suggestion_cooldown_in_ms;
+    const suggestion_cooldown_for_user = suggestion_cooldown_tracker.get(message.author.id);
+    const last_suggestion_epoch_for_user = suggestion_cooldown_for_user?.last_suggestion_epoch ?? Date.now() - suggestion_cooldown_in_ms;
     const current_suggestion_epoch = Date.now();
-    suggestion_cooldown_tracker.set(message.author.id, { last_suggestion_epoch: current_suggestion_epoch });
+    suggestion_cooldown_tracker.set(message.author.id, {
+        cooldown_count: ((suggestion_cooldown_for_user.cooldown_count ?? 0) + 1),
+        last_suggestion_epoch: current_suggestion_epoch,
+    });
     if (current_suggestion_epoch - last_suggestion_epoch_for_user < suggestion_cooldown_in_ms) {
-        message.reply('Please don\'t spam suggestions!').catch(console.warn);
+        if (suggestion_cooldown_for_user.cooldown_count === 1) {
+            await message.reply('Please don\'t spam suggestions!').catch(console.warn);
+            await message.delete({ timeout: 2000 });
+        } else {
+            /* don't send any more cooldown messages */
+        }
         return;
     }
 
