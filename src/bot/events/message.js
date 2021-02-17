@@ -6,11 +6,14 @@ const { Discord, client } = require('../discord_client.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
+const { suggestionsChannelHandler } = require('../handlers/suggestionsChannelHandler.js');
 const { commandHandler } = require('../handlers/commandHandler.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
 const command_prefix = process.env.BOT_COMMAND_PREFIX;
+
+const suggestions_channel_id = process.env.BOT_SUGGESTIONS_CHANNEL_ID;
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -22,6 +25,11 @@ module.exports = {
 
         /* only allow text channels */
         if (message.channel.type !== 'text') return;
+
+        if (message.channel.id === suggestions_channel_id) {
+            suggestionsChannelHandler(message);
+            return
+        }
 
         /* respond to mentions */
         // if (message.content.startsWith(`<@!${client.user.id}>`)) {
