@@ -257,7 +257,7 @@ module.exports = {
                 }
             });
             message_collector_1.on('end', () => {
-                active_message_collectors_1.remove(message.author.id);
+                active_message_collectors_1.delete(message.author.id);
             });
             active_message_collectors_1.set(message.author.id, message_collector_1);
         } else if (command_name === 'close_ticket') {
