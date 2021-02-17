@@ -113,6 +113,29 @@ async function lookupUserInBlacklistedUsersDatabase(discord_user_id=undefined, r
 
 //---------------------------------------------------------------------------------------------------------------//
 
+async function checkIfStaffMemberIsAllowedToBlacklistUser(guild, staff_member_id, user_id) {
+    /* don't let staff blacklist themselves */
+    if (staff_member_id === user_id) return false;
+
+    /* check that the staff member exists in the guild */
+    const staff_member = await guild.members.fetch(staff_member_id);
+    if (!staff_member) return false;
+
+    /* check that the staff member exists in the guild */
+    const staff_member = await guild.members.fetch(staff_member_id);
+    if (!staff_member) return false;
+    
+    /* check if the member exists in the guild */
+    const member_being_blacklisted = await guild.members.fetch(user_id);
+    if (!member_being_blacklisted) return true; // no need to check role hierarchy if the user isn't in the guild
+
+    /* check the role hierarchy since they exist in the guild */
+    const staff_member_role_hierarchy_is_greater = staff_member.roles.highest.comparePositionTo(member_being_blacklisted.roles.highest) > 0;
+    return staff_member_role_hierarchy_is_greater;
+}
+
+//---------------------------------------------------------------------------------------------------------------//
+
 module.exports = {
     name: 'blacklist',
     description: 'blacklists a specified user in the database',
@@ -121,6 +144,8 @@ module.exports = {
     async execute(message, args) {
         const { command_prefix, command_name, command_args } = args;
 
+        const staff_member_id = message.author.id;
+
         const lookup_discord_user_id = message.mentions.members.first()?.id;
         const lookup_roblox_user_id = command_args[1];
 
@@ -128,10 +153,16 @@ module.exports = {
 
         switch (command_args[0]?.toLowerCase()) {
             case 'add':
+                const staff_member_can_add_user_to_blacklist = await checkIfStaffMemberIsAllowedToBlacklistUser(staff_member_id, db_user_data.discord_user_id);
+                if (!staff_member_can_add_user_to_blacklist) {
+                    message.reply('You aren\'t allowed to blacklist that user!');
+                    return;
+                }
+
                 const added_successfully = await addUserToBlacklistedUsersDatabase(db_user_data, {
                     epoch: Date.now(),
                     reason: command_args.slice(2).join(' ').trim() || 'no reason was specified',
-                    staff_member_id: message.author.id,
+                    staff_member_id: staff_member_id,
                 });
                 if (added_successfully) {
                     message.reply('I added that user to the blacklist!');
@@ -140,6 +171,11 @@ module.exports = {
                 }
                 break;
             case 'remove':
+                const staff_member_can_remove_user_from_blacklist = await checkIfStaffMemberIsAllowedToBlacklistUser(staff_member_id, db_user_data.discord_user_id);
+                if (!staff_member_can_remove_user_from_blacklist) {
+                    message.reply('You aren\'t allowed to un-blacklist that user!');
+                    return;
+                }
                 const removed_successfully = await removeUserFromBlacklistedUsersDatabase(db_user_data);
                 if (removed_successfully) {
                     message.reply('I removed that user from the blacklist!');
