@@ -43,7 +43,7 @@ async function commandHandler(message) {
     if (!Array.isArray(command.aliases)) throw new TypeError(`\`command.aliases\` is not an array for command: ${command}`);
     if (typeof command.permission_level !== 'string') throw new TypeError(`\`command.permission_level\` is not a string for command: ${command}`);
 
-    /* command permissions */
+    /* command permission preparation */
     const user_command_access_levels = ['public']; // valid levels: [ 'public', 'staff', 'admin' ]
     const guild_staff_role_id = '789342326978772992';
     const bot_admin_ids = [
@@ -58,14 +58,29 @@ async function commandHandler(message) {
     if (bot_admin_ids.includes(message.author.id)) {
         user_command_access_levels.push('admin');
     }
+
+    /* prevent non-staff from using anything until bot is made public */
+    if (!user_command_access_levels.includes('staff')) {
+        message.channel.send(new Discord.MessageEmbed({
+            color: 0xFF0000,
+            author: {
+                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                name: `${client.user.username} | Beta System`,
+            },
+            title: 'You used the wrong command prefix!',
+            description: 'Use \`!\` instead of \`il!\`',
+        })).catch(console.warn);
+        return;
+    }
+
+    /* command permission checking */
     if (!user_command_access_levels.includes(command.permission_level)) {
         message.channel.send(new Discord.MessageEmbed({
             color: 0xFF0000,
             author: {
                 iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                name: `${client.user.username}`,
+                name: `${client.user.username} | Command Access System`,
             },
-            title: 'Command Access Level Error',
             description: 'You do not have the required permissions to use this command!',
         })).catch(console.warn);
         return;
