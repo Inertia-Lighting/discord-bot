@@ -95,7 +95,7 @@ module.exports = {
                     support_categories.map(({ human_index, name, description }) => `**${human_index} | ${name}**\n${description}`).join('\n\n'),
                     '**Type the number of the category that you need or \`cancel\`.**',
                 ].join('\n\n'),
-            }));
+            })).catch(console.warn);
 
             const message_collector_1 = bot_message.channel.createMessageCollector((msg) => msg.author.id === message.author.id);
             message_collector_1.on('collect', async (collected_message) => {
@@ -113,7 +113,7 @@ module.exports = {
                     ].join('\n')).catch(console.warn);
 
                     /* ping the user so they know where to go */
-                    support_channel.send(`${message.author}, welcome to your support ticket!`);
+                    support_channel.send(`${message.author}, welcome to your support ticket!`).catch(console.warn);
 
                     /* send the user document */
                     const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
@@ -174,7 +174,7 @@ module.exports = {
                                     '\n',
                                     'Type \`done\` when you are finished typing.',
                                 ].join('\n'),
-                            })).catch(console.log);
+                            })).catch(console.warn);
                             break;
                         case 'PRODUCT_ISSUES':
                             await support_channel.send(new Discord.MessageEmbed({
@@ -194,7 +194,7 @@ module.exports = {
                                     '\n',
                                     'Type \`done\` when you are finished typing.',
                                 ].join('\n'),
-                            })).catch(console.log);
+                            })).catch(console.warn);
                             break;
                         case 'PRODUCT_TRANSFERS':
                             await support_channel.send(new Discord.MessageEmbed({
@@ -212,7 +212,7 @@ module.exports = {
                                     '\n',
                                     'Type \`done\` when you are finished typing.',
                                 ].join('\n'),
-                            })).catch(console.log);
+                            })).catch(console.warn);
                             break;
                         case 'PARTNER_REQUESTS':
                             await support_channel.send(new Discord.MessageEmbed({
@@ -223,8 +223,8 @@ module.exports = {
                                 },
                                 title: 'Please fill out our partner request form.',
                                 description: 'https://inertia-lighting.xyz/partner-requests-form',
-                            })).catch(console.log);
-                            await support_channel.send('Automatically closing support ticket in 2 minutes...');
+                            })).catch(console.warn);
+                            await support_channel.send('Automatically closing support ticket in 2 minutes...').catch(console.warn);
                             setTimeout(() => {
                                 support_channel.delete();
                             }, 2 * 60_000); // 2 minutes
@@ -238,7 +238,7 @@ module.exports = {
                                 },
                                 title: 'Please tell us about your issue.',
                                 description: 'Type \`done\` when you are finished typing.',
-                            })).catch(console.log);
+                            })).catch(console.warn);
                             break;
                     }
 
@@ -246,7 +246,7 @@ module.exports = {
                     const message_collector_2 = support_channel.createMessageCollector(message_collector_2_filter, { max: 1 });
                     message_collector_2.on('collect', () => {
                         const qualified_support_role_mentions = matching_support_category.qualified_support_role_ids.map(role_id => `<@&${role_id}>`).join(', ');
-                        support_channel.send(`${message.author}, Our ${qualified_support_role_mentions} staff will help you with your issue soon!`);
+                        support_channel.send(`${message.author}, Our ${qualified_support_role_mentions} staff will help you with your issue soon!`).catch(console.warn);
                     });
                 } else if (collected_message.content === 'cancel') {
                     message_collector_1.stop();
@@ -263,7 +263,7 @@ module.exports = {
         } else if (command_name === 'close_ticket') {
             if (user_command_access_levels.includes('staff')) {
                 if (message.channel.parent?.id === support_tickets_category_id) {
-                    await message.reply('Would you like to save the transcript for this support ticket before closing it?\n**( yes | no )**');
+                    await message.reply('Would you like to save the transcript for this support ticket before closing it?\n**( yes | no )**').catch(console.warn);
 
                     const collection_filter = (msg) => msg.author.id === message.author.id && ['yes', 'no'].includes(msg.content);
                     const collected_messages = await message.channel.awaitMessages(collection_filter, { max: 1 }).catch((collected_messages) => collected_messages);
@@ -284,14 +284,14 @@ module.exports = {
                         fs.unlinkSync(temp_file_path);
                     }
 
-                    await message.reply('Closing support ticket in 5 seconds...');
+                    await message.reply('Closing support ticket in 5 seconds...').catch(console.warn);
                     await Timer(5000);
                     message.channel.delete().catch(console.warn);
                 } else {
-                    message.reply('This channel is not a support ticket.');
+                    message.reply('This channel is not a support ticket.').catch(console.warn);
                 }
             } else {
-                message.reply('Sorry, only staff can close support tickets.');
+                message.reply('Sorry, only staff can close support tickets.').catch(console.warn);
             }
         }
     },
