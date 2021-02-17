@@ -19,21 +19,24 @@ async function suggestionsChannelHandler(message) {
     const suggestion_cooldown_in_ms = 10_000; // 10 seconds
     const suggestion_cooldown_tracker_for_user = suggestion_cooldown_tracker.get(message.author.id);
     const last_suggestion_epoch_for_user = suggestion_cooldown_tracker_for_user?.last_suggestion_epoch ?? Date.now() - suggestion_cooldown_in_ms;
-    const current_suggestion_cooldown_count_for_user = ((suggestion_cooldown_tracker_for_user?.cooldown_count ?? 0) + 1);
+    const last_suggestion_cooldown_count_for_user = suggestion_cooldown_tracker_for_user?.cooldown_count ?? 0;
     const current_suggestion_cooldown_epoch = Date.now();
     suggestion_cooldown_tracker.set(message.author.id, {
-        cooldown_count: current_suggestion_cooldown_count_for_user,
+        cooldown_count: last_suggestion_cooldown_count_for_user + 1,
         last_suggestion_epoch: current_suggestion_cooldown_epoch,
     });
     if (current_suggestion_cooldown_epoch - last_suggestion_epoch_for_user < suggestion_cooldown_in_ms) {
         console.log({ current_suggestion_cooldown_count_for_user });
         if (current_suggestion_cooldown_count_for_user === 1) {
-            await message.reply('Please don\'t spam suggestions!').catch(console.warn);
-        } else {
-            /* don't send any more cooldown messages */
+            /* this will only send the first time a message breaks the cooldown */
+            const bot_cooldown_message = await message.reply('Please don\'t spam suggestions!').catch(console.warn);
+            bot_cooldown_message.delete({ timeout: 2_500 });
         }
-        await message.delete({ timeout: 2_500 });
+        /* remove the user's message since they are spamming */
+        await message.delete({ timeout: 500 });
         return;
+    } else {
+        suggestion_cooldown_tracker.delete(message.author.id);
     }
 
     /* suggestion text */
