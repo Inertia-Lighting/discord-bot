@@ -26,12 +26,13 @@ async function suggestionsChannelHandler(message) {
         last_suggestion_epoch: current_suggestion_cooldown_epoch,
     });
     if (current_suggestion_cooldown_epoch - last_suggestion_epoch_for_user < suggestion_cooldown_in_ms) {
+        console.log({ current_suggestion_cooldown_count_for_user });
         if (current_suggestion_cooldown_count_for_user === 1) {
             await message.reply('Please don\'t spam suggestions!').catch(console.warn);
-            await message.delete({ timeout: 2_500 });
         } else {
             /* don't send any more cooldown messages */
         }
+        await message.delete({ timeout: 2_500 });
         return;
     }
 
