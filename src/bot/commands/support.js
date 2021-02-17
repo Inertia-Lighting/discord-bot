@@ -67,6 +67,10 @@ async function createSupportTicketChannel(guild, guild_member, support_category)
 
 //---------------------------------------------------------------------------------------------------------------//
 
+const active_message_collectors_1 = new Discord.Collection();
+
+//---------------------------------------------------------------------------------------------------------------//
+
 module.exports = {
     name: 'support',
     description: 'support tickets and stuff',
@@ -76,6 +80,10 @@ module.exports = {
         const { user_command_access_levels, command_name } = args;
 
         if (command_name === 'support') {
+            if (active_message_collectors_1.has(message.author.id)) {
+                return; // don't allow multiple message_collector_1 to exist
+            }
+
             const bot_message = await message.channel.send(`${message.author}`, new Discord.MessageEmbed({
                 color: 0x60A0FF,
                 author: {
@@ -157,12 +165,14 @@ module.exports = {
                                     iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                                     name: `Inertia Lighting | ${matching_support_category.name}`,
                                 },
-                                title: 'Please fill out this template so that our staff can assist you.',
                                 description: [
+                                    '**Please fill out this template so that our staff can assist you.**',
                                     '- **Product(s):** ( C-Lights, Magic Panels, etc )',
                                     '- **Purchase Date(s):** ( 1970-1-1 )',
                                     '- **Proof Of Purchase(s):** ( https://www.roblox.com/transactions )',
                                     '- **Issue:** ( describe your issue )',
+                                    '\n',
+                                    'Type \`done\` when you are finished typing.',
                                 ].join('\n'),
                             })).catch(console.log);
                             break;
@@ -173,14 +183,16 @@ module.exports = {
                                     iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                                     name: `Inertia Lighting | ${matching_support_category.name}`,
                                 },
-                                title: 'Please fill out this template so that our staff can assist you.',
                                 description: [
+                                    '**Please fill out this template so that our staff can assist you.**',
                                     '- **Product(s):** ( C-Lights, Magic Panels, etc )',
                                     '- **Read Setup Guide:** ( yes | maybe | no )',
                                     '- **Game Is Published:** ( yes | idk |  no )',
                                     '- **HTTPS Enabled In Game:** ( yes | idk | no )',
                                     '- **Roblox Studio Output:** ( how to enable output: https://prnt.sc/y6hnau )',
                                     '- **Issue:** ( describe your issue )',
+                                    '\n',
+                                    'Type \`done\` when you are finished typing.',
                                 ].join('\n'),
                             })).catch(console.log);
                             break;
@@ -191,12 +203,14 @@ module.exports = {
                                     iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                                     name: `Inertia Lighting | ${matching_support_category.name}`,
                                 },
-                                title: 'Please fill out this template so that our staff can assist you.',
                                 description: [
+                                    '**Please fill out this template so that our staff can assist you.**',
                                     '- **Product(s):** ( C-Lights, Magic Panels, etc )',
                                     '- **Reason:** ( new account | gift for someone | other )',
                                     '- **New Roblox Account:** ( copy the URL of the profile page for the account )',
                                     '- **Issue:** ( describe your issue )',
+                                    '\n',
+                                    'Type \`done\` when you are finished typing.',
                                 ].join('\n'),
                             })).catch(console.log);
                             break;
@@ -223,13 +237,14 @@ module.exports = {
                                     name: `Inertia Lighting | ${matching_support_category.name}`,
                                 },
                                 title: 'Please tell us about your issue.',
+                                description: 'Type \`done\` when you are finished typing.',
                             })).catch(console.log);
                             break;
                     }
 
-                    const message_collector_2 = support_channel.createMessageCollector((msg) => msg.author.id === message.author.id, { max: 1 });
-                    message_collector_2.on('collect', async () => {
-                        await Timer(1000); // provide a noticeable delay for the user to type
+                    const message_collector_2_filter = (msg) => msg.author.id === message.author.id && msg.content === 'done';
+                    const message_collector_2 = support_channel.createMessageCollector(message_collector_2_filter, { max: 1 });
+                    message_collector_2.on('collect', () => {
                         const qualified_support_role_mentions = matching_support_category.qualified_support_role_ids.map(role_id => `<@&${role_id}>`).join(', ');
                         support_channel.send(`${message.author}, Our ${qualified_support_role_mentions} staff will help you with your issue soon!`);
                     });
@@ -241,6 +256,10 @@ module.exports = {
                     collected_message.reply('Please type the category number or \`cancel\`.').catch(console.warn);
                 }
             });
+            message_collector_1.on('end', () => {
+                active_message_collectors_1.remove(message.author.id);
+            });
+            active_message_collectors_1.set(message.author.id, message_collector_1);
         } else if (command_name === 'close_ticket') {
             if (user_command_access_levels.includes('staff')) {
                 if (message.channel.parent?.id === support_tickets_category_id) {
