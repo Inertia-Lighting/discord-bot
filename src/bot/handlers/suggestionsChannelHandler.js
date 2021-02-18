@@ -9,10 +9,13 @@ const { Discord, client } = require('../discord_client.js');
 //---------------------------------------------------------------------------------------------------------------//
 
 async function suggestionsChannelHandler(message) {
+    if (message.author.system || message.author.bot) return;
+    if (message.content.length === 0) return;
+
     const suggestions_channel = message.channel;
 
     /* suggestion text */
-    const suggestion_text = string_ellipses(message.cleanContent, 1000);
+    const suggestion_text = string_ellipses(message.content, 1000);
 
     /* suggestion embed */
     const bot_suggestion_message = await suggestions_channel.send(new Discord.MessageEmbed({
