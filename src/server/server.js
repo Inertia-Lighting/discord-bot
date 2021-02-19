@@ -28,7 +28,6 @@ router.use(async (req, res, next) => {
     console.info(
         `${request_timestamp} | ${req.method} ${req.url} | ${request_origin}`,
         (process.env.SERVER_ADVANCED_LOGGING === 'enabled' ? {
-            'req.headers': req.headers,
             'req.body': req.body,
         } : ''),
         '\n',
