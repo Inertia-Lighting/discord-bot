@@ -24,8 +24,17 @@ app.use('/', router);
 /* request logging */
 router.use(async (req, res, next) => {
     const request_timestamp = moment().tz('America/New_York').format('YYYY[-]MM[-]DD hh:mm:ss A [GMT]ZZ');
-    const request_origin = req.header('x-forwarded-for') || req.connection.remoteAddress;
-    console.info(`${request_timestamp} | ${req.method} ${req.url} | ${request_origin}`);
+    const request_origin = (req.header('x-forwarded-for') || req.connection.remoteAddress).split(', ')[0];
+    console.info(
+        `${request_timestamp} | ${req.method} ${req.url} | ${request_origin}`,
+        (process.env.SERVER_ADVANCED_LOGGING === 'enabled' ? {
+            'req.headers': req.headers,
+            'req.body': req.body,
+        } : ''),
+        '\n',
+        '----------------------------------------------------------------------------------------------------------------',
+        '\n',
+    );
     next(); // continue the request
 });
 
