@@ -3,8 +3,7 @@
 //---------------------------------------------------------------------------------------------------------------//
 
 const Discord = require('discord.js');
-
-//---------------------------------------------------------------------------------------------------------------//
+const bcrypt = require('bcryptjs');
 
 const { go_mongo_db } = require('../../../../mongo/mongo.js');
 const { Timer } = require('../../../../utilities.js');
@@ -40,24 +39,25 @@ module.exports = (router, client) => {
         } = req.body;
 
         /* check if required information is present */
-        if (!(roblox_user_id || discord_user_id)) {
+        if (!(roblox_user_id || discord_user_id) || typeof (roblox_user_id ?? discord_user_id) !== 'string') {
             return res.status(400).send(JSON.stringify({
-                'message': 'missing \`discord_user_id\` or \`roblox_user_id\` in request body',
+                'message': 'missing (string) \`discord_user_id\` or (string) \`roblox_user_id\` in request body',
             }, null, 2));
         }
-        if (!roblox_product_id) {
+        if (!roblox_product_id || typeof roblox_product_id !== 'string') {
             return res.status(400).send(JSON.stringify({
-                'message': 'missing \`roblox_product_id\` in request body',
+                'message': 'missing (string) \`roblox_product_id\` in request body',
             }, null, 2));
         }
-        if (!api_endpoint_token) {
+        if (!api_endpoint_token || typeof api_endpoint_token !== 'string') {
             return res.status(400).send(JSON.stringify({
-                'message': 'missing \`api_endpoint_token\` in request body',
+                'message': 'missing (string) \`api_endpoint_token\` in request body',
             }, null, 2));
         }
 
         /* check if the request was properly authenticated */
-        if (api_endpoint_token !== process.env.API_TOKEN_FOR_USER_PRODUCTS_PURCHASE) {
+        const api_endpoint_token_is_valid = bcrypt.compareSync(api_endpoint_token, process.env.API_HASHED_TOKEN_FOR_USER_PRODUCTS_PURCHASE);
+        if (!api_endpoint_token_is_valid) {
             return res.status(403).send(JSON.stringify({
                 'message': '\`api_endpoint_token\` was not recognized!',
             }, null, 2));

@@ -2,6 +2,10 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
+const bcrypt = require('bcryptjs');
+
+//---------------------------------------------------------------------------------------------------------------//
+
 module.exports = (router, client) => {
     router.post('/v1/user/verification/verify', async (req, res) => {
         res.set('Content-Type', 'application/json');
@@ -20,19 +24,20 @@ module.exports = (router, client) => {
         } = req.body;
 
         /* check if required information is present */
-        if (!roblox_user_id) {
+        if (!roblox_user_id || typeof api_endpoint_token !== 'string') {
             return res.status(400).send(JSON.stringify({
-                'message': 'missing \`roblox_user_id\` in request body',
+                'message': 'missing (string) \`roblox_user_id\` in request body',
             }, null, 2));
         }
-        if (!api_endpoint_token) {
+        if (!api_endpoint_token || typeof api_endpoint_token !== 'string') {
             return res.status(400).send(JSON.stringify({
-                'message': 'missing \`api_endpoint_token\` in request body',
+                'message': 'missing (string) \`api_endpoint_token\` in request body',
             }, null, 2));
         }
 
         /* check if the request was properly authenticated */
-        if (api_endpoint_token !== process.env.API_TOKEN_FOR_USER_VERIFY) {
+        const api_endpoint_token_is_valid = bcrypt.compareSync(api_endpoint_token, process.env.API_HASHED_TOKEN_FOR_USER_VERIFY);
+        if (!api_endpoint_token_is_valid) {
             return res.status(403).send(JSON.stringify({
                 'message': '\`api_endpoint_token\` was not recognized!',
             }, null, 2));
