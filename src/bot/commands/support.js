@@ -47,7 +47,10 @@ const support_categories = new Discord.Collection([
         description: 'Come here if none of the other categories match your issue.',
         qualified_support_role_ids: ['809151496490057728'],
     },
-].map((item, index) => ([ item.id, { ...{ human_index: index + 1 }, ...item } ])));
+].map((item, index) => {
+    const updated_item = { ...item, human_index: index + 1 };
+    return [ item.id, updated_item ]; // map entry
+}));
 
 //---------------------------------------------------------------------------------------------------------------//
 
