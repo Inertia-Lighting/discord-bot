@@ -3,8 +3,7 @@
 //---------------------------------------------------------------------------------------------------------------//
 
 const Discord = require('discord.js');
-
-//---------------------------------------------------------------------------------------------------------------//
+const bcrypt = require('bcryptjs');
 
 const { go_mongo_db } = require('../../../../mongo/mongo.js');
 const { Timer } = require('../../../../utilities.js');
@@ -57,7 +56,8 @@ module.exports = (router, client) => {
         }
 
         /* check if the request was properly authenticated */
-        if (api_endpoint_token !== process.env.API_TOKEN_FOR_USER_PRODUCTS_PURCHASE) {
+        const api_endpoint_token_is_valid = bcrypt.compareSync(api_endpoint_token, process.env.API_HASHED_TOKEN_FOR_USER_PRODUCTS_PURCHASE);
+        if (!api_endpoint_token_is_valid) {
             return res.status(403).send(JSON.stringify({
                 'message': '\`api_endpoint_token\` was not recognized!',
             }, null, 2));

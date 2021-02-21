@@ -2,6 +2,10 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
+const bcrypt = require('bcryptjs');
+
+//---------------------------------------------------------------------------------------------------------------//
+
 module.exports = (router, client) => {
     router.post('/v1/user/verification/verify', async (req, res) => {
         res.set('Content-Type', 'application/json');
@@ -32,7 +36,8 @@ module.exports = (router, client) => {
         }
 
         /* check if the request was properly authenticated */
-        if (api_endpoint_token !== process.env.API_TOKEN_FOR_USER_VERIFY) {
+        const api_endpoint_token_is_valid = bcrypt.compareSync(api_endpoint_token, process.env.API_HASHED_TOKEN_FOR_USER_VERIFY);
+        if (!api_endpoint_token_is_valid) {
             return res.status(403).send(JSON.stringify({
                 'message': '\`api_endpoint_token\` was not recognized!',
             }, null, 2));
