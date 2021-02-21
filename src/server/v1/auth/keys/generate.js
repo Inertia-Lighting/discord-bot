@@ -48,19 +48,19 @@ module.exports = (router, client) => {
         } = req.body;
 
         /* check if required information is present */
-        if (!reproducible_game_api_salt) {
+        if (!reproducible_game_api_salt || typeof reproducible_game_api_salt !== 'string') {
             return res.status(400).send(JSON.stringify({
-                'message': 'missing \`game_api_salt\` in request body',
+                'message': 'missing (string) \`game_api_salt\` in request body',
             }, null, 2));
         }
-        if (!game_owner_id) {
+        if (!game_owner_id || typeof game_owner_id !== 'string') {
             return res.status(400).send(JSON.stringify({
-                'message': 'missing \`game_owner_id\` in request body',
+                'message': 'missing (string) \`game_owner_id\` in request body',
             }, null, 2));
         }
-        if (!game_owner_api_token) {
+        if (!game_owner_api_token || typeof game_owner_api_token !== 'string') {
             return res.status(400).send(JSON.stringify({
-                'message': 'missing \`game_owner_api_token\` in request body',
+                'message': 'missing (string) \`game_owner_api_token\` in request body',
             }, null, 2));
         }
 

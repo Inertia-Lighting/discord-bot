@@ -24,14 +24,14 @@ module.exports = (router, client) => {
         } = req.body;
 
         /* check if required information is present */
-        if (!roblox_user_id) {
+        if (!roblox_user_id || typeof api_endpoint_token !== 'string') {
             return res.status(400).send(JSON.stringify({
-                'message': 'missing \`roblox_user_id\` in request body',
+                'message': 'missing (string) \`roblox_user_id\` in request body',
             }, null, 2));
         }
-        if (!api_endpoint_token) {
+        if (!api_endpoint_token || typeof api_endpoint_token !== 'string') {
             return res.status(400).send(JSON.stringify({
-                'message': 'missing \`api_endpoint_token\` in request body',
+                'message': 'missing (string) \`api_endpoint_token\` in request body',
             }, null, 2));
         }
 
