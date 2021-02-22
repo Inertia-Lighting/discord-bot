@@ -113,7 +113,17 @@ async function lookupUserInBlacklistedUsersDatabase(discord_user_id=undefined, r
 
 //---------------------------------------------------------------------------------------------------------------//
 
+/**
+ * Check if the staff member is allowed to blacklist the potential user.
+ * @param {Guild} guild 
+ * @param {String} staff_member_id 
+ * @param {String?} user_id 
+ */
 async function checkIfStaffMemberIsAllowedToBlacklistUser(guild, staff_member_id, user_id) {
+    if (!staff_member_id) throw new Error('\`staff_member_id\` was undefined!');
+
+    if (!user_id) return false; // in the event that a user was not found in the users database, then they can't be blacklisted
+
     /* don't let staff blacklist themselves */
     if (staff_member_id === user_id) return false;
 
@@ -172,6 +182,7 @@ module.exports = {
                     message.reply('You aren\'t allowed to un-blacklist that user!');
                     return;
                 }
+
                 const removed_successfully = await removeUserFromBlacklistedUsersDatabase(db_user_data);
                 if (removed_successfully) {
                     message.reply('I removed that user from the blacklist!');
