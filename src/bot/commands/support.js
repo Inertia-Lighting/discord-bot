@@ -15,6 +15,7 @@ const { Discord, client } = require('../discord_client.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
+const bot_command_prefix = process.env.BOT_COMMAND_PREFIX;
 const support_tickets_category_id = process.env.BOT_SUPPORT_TICKETS_CATEGORY_ID;
 const support_tickets_transcripts_channel_id = process.env.BOT_SUPPORT_TICKETS_TRANSCRIPTS_CHANNEL_ID;
 
@@ -73,7 +74,7 @@ async function createSupportTicketChannel(guild, guild_member, support_category)
     const potential_open_ticket_channel = guild.channels.cache.find(ch => ch.parent?.id === support_tickets_category.id && ch.name === support_channel_name);
     const support_ticket_channel = potential_open_ticket_channel ?? await guild.channels.create(support_channel_name, {
         type: 'text',
-        topic: `${guild_member} | ${support_category.name} | Opened on ${moment().format('ddd MMM DD YYYY [at] HH:mm:ss [GMT]ZZ')} | Close using \`close_ticket\``,
+        topic: `${guild_member} | ${support_category.name} | Opened on ${moment().format('ddd MMM DD YYYY [at] HH:mm:ss [GMT]ZZ')} | Close using \`${bot_command_prefix}close_ticket\``,
         parent: support_tickets_category,
         permissionOverwrites: [
             ...support_tickets_category.permissionOverwrites.values(), // clone the parent channel permissions
