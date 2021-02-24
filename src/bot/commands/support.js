@@ -15,8 +15,8 @@ const { Discord, client } = require('../discord_client.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const support_tickets_category_id = '805191315947913236';
-const support_ticket_transcripts_channel_id = '806602125610057729';
+const support_tickets_category_id = process.env.BOT_SUPPORT_TICKETS_CATEGORY_ID;
+const support_tickets_transcripts_channel_id = process.env.BOT_SUPPORT_TICKETS_TRANSCRIPTS_CHANNEL_ID;
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -25,27 +25,37 @@ const support_categories = new Discord.Collection([
         id: 'PRODUCT_PURCHASES',
         name: 'Product Purchases',
         description: 'Come here if you are having issues with purchasing our products.',
-        qualified_support_role_ids: ['809151858253103186'],
+        qualified_support_role_ids: [
+            process.env.BOT_SUPPORT_STAFF_PRODUCT_PURCHASES_ROLE_ID,
+        ],
     }, {
         id: 'PRODUCT_ISSUES',
         name: 'Product Issues',
         description: 'Come here if you are having issues with a product that was successfully purchased.',
-        qualified_support_role_ids: ['807385031051575306'],
+        qualified_support_role_ids: [
+            process.env.BOT_SUPPORT_STAFF_PRODUCT_ISSUES_ROLE_ID,
+        ],
     }, {
         id: 'PRODUCT_TRANSFERS',
         name: 'Product Transfers',
         description: 'Come here if you want to transfer any of your products to another account.',
-        qualified_support_role_ids: ['807385028568154113'],
+        qualified_support_role_ids: [
+            process.env.BOT_SUPPORT_STAFF_PRODUCT_TRANSFERS_ROLE_ID,
+        ],
     }, {
         id: 'PARTNER_REQUESTS',
         name: 'Partner Requests',
         description: 'Come here if you want to request a partnership with Inertia Lighting.',
-        qualified_support_role_ids: ['807385032754462761'],
+        qualified_support_role_ids: [
+            process.env.BOT_SUPPORT_STAFF_PARTNER_REQUESTS_ROLE_ID,
+        ],
     }, {
         id: 'OTHER',
         name: 'Other Issues',
         description: 'Come here if none of the other categories match your issue.',
-        qualified_support_role_ids: ['809151496490057728'],
+        qualified_support_role_ids: [
+            process.env.BOT_SUPPORT_STAFF_OTHER_ROLE_ID,
+        ],
     },
 ].map((item, index) => {
     const updated_item = { ...item, human_index: index + 1 };
@@ -61,7 +71,7 @@ async function createSupportTicketChannel(guild, guild_member, support_category)
     const potential_open_ticket_channel = guild.channels.cache.find(ch => ch.parent?.id === support_tickets_category.id && ch.name === support_channel_name);
     const support_ticket_channel = potential_open_ticket_channel ?? await guild.channels.create(support_channel_name, {
         type: 'text',
-        topic: `${guild_member} | ${support_category.name} | Opened on ${moment().format('ddd MMM DD YYYY [at] HH:mm:ss [GMT]ZZ')}`,
+        topic: `${guild_member} | ${support_category.name} | Opened on ${moment().format('ddd MMM DD YYYY [at] HH:mm:ss [GMT]ZZ')} | Close using \`close_ticket\``,
         parent: support_tickets_category,
     });
 
@@ -282,7 +292,7 @@ module.exports = {
                         const temp_file_read_stream = fs.createReadStream(temp_file_path);
                         const message_attachment = new Discord.MessageAttachment(temp_file_read_stream);
 
-                        const support_ticket_transcripts_channel = client.channels.resolve(support_ticket_transcripts_channel_id);
+                        const support_ticket_transcripts_channel = client.channels.resolve(support_tickets_transcripts_channel_id);
                         await support_ticket_transcripts_channel.send(`${message.channel.name}`, message_attachment).catch(console.warn);
 
                         fs.unlinkSync(temp_file_path);
