@@ -59,8 +59,8 @@ async function commandHandler(message) {
         user_command_access_levels.push('admin');
     }
 
-    /* prevent non-staff from using anything until bot is made public */
-    if (!user_command_access_levels.includes('staff')) {
+    /* prevent non-staff from using non-public commands until all of the bot is made public */
+    if (command.permission_level !== 'public' && !user_command_access_levels.includes('staff')) {
         message.channel.send(new Discord.MessageEmbed({
             color: 0xFF0000,
             author: {

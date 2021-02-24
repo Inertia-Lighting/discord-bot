@@ -11,7 +11,7 @@ module.exports = {
     description: 'Shows a list of commands for you to use.',
     usage: 'help',
     aliases: ['help'],
-    permission_level: 'public',
+    permission_level: 'staff',
     async execute(message, args) {
         const { command_prefix, command_args } = args;
 
@@ -35,7 +35,7 @@ module.exports = {
                     ].join('\n'),
                 })).catch(console.warn);
             } else {
-                message.reply(`That's not a valid command!`).catch(console.warn);
+                message.reply('That\'s not a valid command!').catch(console.warn);
             }
         } else {
             /* display all commands */

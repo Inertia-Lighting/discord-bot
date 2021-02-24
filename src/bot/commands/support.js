@@ -88,7 +88,7 @@ module.exports = {
     name: 'support',
     description: 'support tickets and stuff',
     aliases: ['support', 'close_ticket'],
-    permission_level: 'admin',
+    permission_level: 'public',
     async execute(message, args) {
         const { user_command_access_levels, command_name } = args;
 
@@ -276,11 +276,12 @@ module.exports = {
             active_message_collectors_1.set(message.author.id, message_collector_1);
         } else if (command_name === 'close_ticket') {
             if (user_command_access_levels.includes('staff')) {
-                if (message.channel.parent?.id === support_tickets_category_id) {
+                if (message.channel.parent?.id === support_tickets_category_id && message.channel.id !== support_tickets_transcripts_channel_id) {
                     await message.reply('Would you like to save the transcript for this support ticket before closing it?\n**( yes | no )**').catch(console.warn);
 
                     const collection_filter = (msg) => msg.author.id === message.author.id && ['yes', 'no'].includes(msg.content);
                     const collected_messages = await message.channel.awaitMessages(collection_filter, { max: 1 }).catch((collected_messages) => collected_messages);
+
                     const first_collected_message = collected_messages.first();
                     if (first_collected_message?.content === 'yes') {
                         const all_messages_in_channel = await message.channel.messages.fetch({ limit: 100 }); // 100 is the max
