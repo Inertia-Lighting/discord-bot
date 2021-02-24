@@ -76,6 +76,7 @@ async function createSupportTicketChannel(guild, guild_member, support_category)
         topic: `${guild_member} | ${support_category.name} | Opened on ${moment().format('ddd MMM DD YYYY [at] HH:mm:ss [GMT]ZZ')} | Close using \`close_ticket\``,
         parent: support_tickets_category,
         permissionOverwrites: [
+            ...support_tickets_category.permissionOverwrites.values(), // clone the parent channel permissions
             {
                 id: guild_member.id,
                 allow: [ 'VIEW_CHANNEL' ],
