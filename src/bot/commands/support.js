@@ -146,13 +146,22 @@ module.exports = {
                             '_id': false,
                         },
                     });
+
+                    function to_key_value_string(key, value, depth = 1) {
+                        key.replace(/_/g, ' ');
+                        if (typeof (value) === 'object')
+                            return `**${key}:**\n` + Object.entries(value).map((nestedValue) =>
+                                '<:emji:664284735870074959>'.repeat(depth) + to_key_value_string(nestedValue[0], nestedValue[1], depth + 1)).join('\n');
+                        return `**${key}:** ${typeof(value) === 'boolean' ? (value ? '<:approved:813023668211810334>' : '<:declined:813023668187824158>') : value}`;
+                    }
+
                     await support_channel.send(new Discord.MessageEmbed({
                         color: 0x60A0FF,
                         author: {
                             iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                             name: 'Inertia Lighting | User Document',
                         },
-                        description: `${'```'}json\n${JSON.stringify(db_user_data ?? 'user not found in database', null, 2)}\n${'```'}`,
+                        description: db_user_data ? Object.entries(db_user_data).map((value) => to_key_value_string(value[0], value[1])).join('\n') : 'user not found in database',
                     })).catch(console.warn);
 
                     /* send the blacklisted user document */
