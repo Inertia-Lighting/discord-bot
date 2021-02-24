@@ -235,7 +235,7 @@ module.exports = {
                                     name: `Inertia Lighting | ${matching_support_category.name}`,
                                 },
                                 title: 'Please fill out our partner request form.',
-                                description: 'https://inertia-lighting.xyz/partner-requests-form',
+                                description: 'https://inertia.lighting/partner-requests-form',
                             })).catch(console.warn);
                             await support_channel.send('Automatically closing support ticket in 2 minutes...').catch(console.warn);
                             setTimeout(() => {
