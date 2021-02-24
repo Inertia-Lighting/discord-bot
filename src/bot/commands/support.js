@@ -67,12 +67,20 @@ const support_categories = new Discord.Collection([
 async function createSupportTicketChannel(guild, guild_member, support_category) {
     const support_tickets_category = guild.channels.resolve(support_tickets_category_id);
 
+    if (!support_tickets_category) throw new Error('Can\'t find the support ticket category!');
+
     const support_channel_name = `${support_category.id}-${guild_member.id}`.toLowerCase();
     const potential_open_ticket_channel = guild.channels.cache.find(ch => ch.parent?.id === support_tickets_category.id && ch.name === support_channel_name);
     const support_ticket_channel = potential_open_ticket_channel ?? await guild.channels.create(support_channel_name, {
         type: 'text',
         topic: `${guild_member} | ${support_category.name} | Opened on ${moment().format('ddd MMM DD YYYY [at] HH:mm:ss [GMT]ZZ')} | Close using \`close_ticket\``,
         parent: support_tickets_category,
+        permissionOverwrites: [
+            {
+                id: guild_member.id,
+                allow: [ 'VIEW_CHANNEL' ],
+            },
+        ],
     });
 
     return support_ticket_channel;

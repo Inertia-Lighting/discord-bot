@@ -11,6 +11,7 @@ const { go_mongo_db } = require('../../mongo/mongo.js');
 //---------------------------------------------------------------------------------------------------------------//
 
 const command_prefix = process.env.BOT_COMMAND_PREFIX;
+const guild_staff_role_id = process.env.BOT_STAFF_ROLE_ID;
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -44,8 +45,7 @@ async function commandHandler(message) {
     if (typeof command.permission_level !== 'string') throw new TypeError(`\`command.permission_level\` is not a string for command: ${command}`);
 
     /* command permission preparation */
-    const user_command_access_levels = ['public']; // valid levels: [ 'public', 'staff', 'admin' ]
-    const guild_staff_role_id = '789342326978772992';
+    const user_command_access_levels = [ 'public' ]; // valid levels: [ 'public', 'staff', 'admin' ]
     const bot_admin_ids = [
         '331938622733549590', // Drawn
         '159170842528448512', // Ross
