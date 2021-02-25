@@ -163,22 +163,20 @@ module.exports = {
                             '_id': false,
                         },
                     });
-                    if (blacklisted_user_db_data) { // only send it if they are blacklisted
-                        await support_channel.send(new Discord.MessageEmbed({
-                            color: 0x60A0FF,
-                            author: {
-                                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                                name: 'Inertia Lighting | Blacklisted User Document',
-                            },
-                            description: (blacklisted_user_db_data ? [
-                                `**User:** <@${blacklisted_user_db_data.discord_user_id}>`,
-                                `**Roblox Id:** \`${blacklisted_user_db_data.roblox_user_id}\``,
-                                `**Staff:** <@${blacklisted_user_db_data.staff_member_id}>`,
-                                `**Date:** \`${moment(blacklisted_user_db_data.epoch).tz('America/New_York').format('YYYY[-]MM[-]DD | hh:mm A | [GMT]ZZ')}\``,
-                                `**Reason:** \`\`\`\n${blacklisted_user_db_data.reason}\n\`\`\``,
-                            ].join('\n') : '\`\`\`\nuser not found in blacklist database\n\`\`\`'),
-                        })).catch(console.warn);
-                    }
+                    await support_channel.send(new Discord.MessageEmbed({
+                        color: 0x60A0FF,
+                        author: {
+                            iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                            name: 'Inertia Lighting | Blacklisted User Document',
+                        },
+                        description: (blacklisted_user_db_data ? [
+                            `**User:** <@${blacklisted_user_db_data.discord_user_id}>`,
+                            `**Roblox Id:** \`${blacklisted_user_db_data.roblox_user_id}\``,
+                            `**Staff:** <@${blacklisted_user_db_data.staff_member_id}>`,
+                            `**Date:** \`${moment(blacklisted_user_db_data.epoch).tz('America/New_York').format('YYYY[-]MM[-]DD | hh:mm A | [GMT]ZZ')}\``,
+                            `**Reason:** ${'```'}\n${blacklisted_user_db_data.reason}\n${'```'}`,
+                        ].join('\n') : `${'```'}\nUser is not blacklisted!\n${'```'}`),
+                    })).catch(console.warn);
 
                     switch (matching_support_category.id) {
                         case 'PRODUCT_PURCHASES':

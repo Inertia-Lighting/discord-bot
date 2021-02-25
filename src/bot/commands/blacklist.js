@@ -203,8 +203,8 @@ module.exports = {
                         `**Roblox Id:** \`${blacklisted_user_db_data.roblox_user_id}\``,
                         `**Staff:** <@${blacklisted_user_db_data.staff_member_id}>`,
                         `**Date:** \`${moment(blacklisted_user_db_data.epoch).tz('America/New_York').format('YYYY[-]MM[-]DD | hh:mm A | [GMT]ZZ')}\``,
-                        `**Reason:** \`\`\`\n${blacklisted_user_db_data.reason}\n\`\`\``,
-                    ].join('\n') : '\`\`\`\nuser not found in blacklist database\n\`\`\`'),
+                        `**Reason:** ${'```'}\n${blacklisted_user_db_data.reason}\n${'```'}`,
+                    ].join('\n') : `${'```'}\nUser is not blacklisted!\n${'```'}`),
                 })).catch(console.warn);
                 break;
             default:
