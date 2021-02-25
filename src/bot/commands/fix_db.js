@@ -13,7 +13,11 @@ module.exports = {
     aliases: ['fix_db'],
     permission_level: 'admin',
     async execute(message, args) {
-        const all_users = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {});
+        /* empty the new database */
+        await go_mongo_db.remove(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {});
+
+        /* copy all documents from the old database */
+        const all_users = await go_mongo_db.find('test', 'users', {});
         for (const user of all_users) {
             console.log({ user });
 
@@ -42,17 +46,18 @@ module.exports = {
             delete new_user['discord_user_id'];
             delete new_user['roblox_user_id'];
 
+            /* add the modified document to the new database */
             await go_mongo_db.add(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, [
                 object_sort(new_user),
             ]);
 
-            await go_mongo_db.remove(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
-                '_id': user['_id'],
-            });
+            // await go_mongo_db.remove(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
+            //     '_id': user['_id'],
+            // });
 
-            await go_mongo_db.remove(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
-                'discord_user_id': user['discord_user_id'],
-            });
+            // await go_mongo_db.remove(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
+            //     'discord_user_id': user['discord_user_id'],
+            // });
 
             console.log({ new_user });
 
