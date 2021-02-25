@@ -74,7 +74,7 @@ module.exports = (router, client) => {
 
         /* fetch user-blacklist-info */
         const [ db_blacklisted_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME, {
-            'roblox_user_id': game_owner_id,
+            'identity.roblox_user_id': game_owner_id,
         });
 
         /* prevent blacklisted game owners from generating an access_key */
@@ -86,7 +86,7 @@ module.exports = (router, client) => {
 
         /* fetch user-auth-info */
         const [ db_user_auth_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_API_AUTH_USERS_COLLECTION_NAME, {
-            'roblox_user_id': game_owner_id,
+            'identity.roblox_user_id': game_owner_id,
         });
 
         /* prevent non-auth-users from continuing */
@@ -119,7 +119,7 @@ module.exports = (router, client) => {
 
         /* update the user-auth-info in the database */
         await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_API_AUTH_USERS_COLLECTION_NAME, {
-            'roblox_user_id': game_owner_id,
+            'identity.roblox_user_id': game_owner_id,
         }, {
             $set: {
                 ['api_access.version']: 1,

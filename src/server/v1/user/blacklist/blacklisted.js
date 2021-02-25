@@ -49,9 +49,9 @@ module.exports = (router, client) => {
 
         const [ db_blacklisted_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME, {
             ...(discord_user_id ? {
-                'discord_user_id': discord_user_id,
+                'identity.discord_user_id': discord_user_id,
             } : {
-                'roblox_user_id': roblox_user_id,
+                'identity.roblox_user_id': roblox_user_id,
             }),
         }, {
             projection: {
