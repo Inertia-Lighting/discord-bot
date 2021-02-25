@@ -140,7 +140,7 @@ module.exports = {
 
                     /* send the user document */
                     const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
-                        'discord_user_id': message.author.id,
+                        'identity.discord_user_id': message.author.id,
                     }, {
                         projection: {
                             '_id': false,
@@ -157,7 +157,7 @@ module.exports = {
 
                     /* send the blacklisted user document */
                     const [ blacklisted_user_db_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME, {
-                        'discord_user_id': message.author.id,
+                        'identity.discord_user_id': message.author.id,
                     }, {
                         projection: {
                             '_id': false,

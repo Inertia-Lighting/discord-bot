@@ -88,7 +88,7 @@ async function commandHandler(message) {
 
     /* command blacklist */
     const [ db_blacklisted_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME, {
-        'discord_user_id': message.author.id,
+        'identity.discord_user_id': message.author.id,
     });
     if (db_blacklisted_user_data) {
         const blacklist_formatted_timestamp = moment(db_blacklisted_user_data.epoch).tz('America/New_York').format('YYYY[-]MM[-]DD [at] hh:mm A [GMT]ZZ');

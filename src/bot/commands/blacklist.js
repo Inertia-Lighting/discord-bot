@@ -12,16 +12,16 @@ const { Discord, client } = require('../discord_client.js');
 
 /**
  * Fetches a user in the users database
- * @param {String} discord_user_id 
- * @param {String} roblox_user_id 
+ * @param {String} discord_user_id
+ * @param {String} roblox_user_id
  * @returns {Promise<any|undefined>} db_user_data
  */
 async function findUserInUsersDatabase(discord_user_id=undefined, roblox_user_id=undefined) {
     const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
         ...(discord_user_id ? {
-            'discord_user_id': discord_user_id,
+            'identity.discord_user_id': discord_user_id,
         } : {
-            'roblox_user_id': roblox_user_id,
+            'identity.roblox_user_id': roblox_user_id,
         }),
     });
     return db_user_data;
@@ -29,15 +29,15 @@ async function findUserInUsersDatabase(discord_user_id=undefined, roblox_user_id
 
 /**
  * Adds a user to the blacklist
- * @param {*} db_user_data 
- * @param {*} blacklist_metadata 
+ * @param {*} db_user_data
+ * @param {*} blacklist_metadata
  * @returns {Promise<boolean>} success or failure
  */
 async function addUserToBlacklistedUsersDatabase({ discord_user_id, roblox_user_id }, { epoch, reason, staff_member_id }) {
     if (discord_user_id && roblox_user_id) {
         await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME, {
-            'discord_user_id': discord_user_id,
-            'roblox_user_id': roblox_user_id,
+            'identity.discord_user_id': discord_user_id,
+            'identity.roblox_user_id': roblox_user_id,
         }, {
             $set: {
                 'epoch': epoch,
@@ -48,8 +48,8 @@ async function addUserToBlacklistedUsersDatabase({ discord_user_id, roblox_user_
             upsert: true,
         });
         await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_API_AUTH_USERS_COLLECTION_NAME, {
-            'discord_user_id': discord_user_id,
-            'roblox_user_id': roblox_user_id,
+            'identity.discord_user_id': discord_user_id,
+            'identity.roblox_user_id': roblox_user_id,
         }, {
             $set: {
                 ['api_access.enabled']: false,
@@ -65,18 +65,18 @@ async function addUserToBlacklistedUsersDatabase({ discord_user_id, roblox_user_
 
 /**
  * Removes a user from the blacklist
- * @param {*} db_user_data 
+ * @param {*} db_user_data
  * @returns {Promise<boolean>} success or failure
  */
 async function removeUserFromBlacklistedUsersDatabase({ discord_user_id, roblox_user_id }) {
     if (discord_user_id && roblox_user_id) {
         await go_mongo_db.remove(process.env.MONGO_DATABASE_NAME, process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME, {
-            'discord_user_id': discord_user_id,
-            'roblox_user_id': roblox_user_id,
+            'identity.discord_user_id': discord_user_id,
+            'identity.roblox_user_id': roblox_user_id,
         });
         await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_API_AUTH_USERS_COLLECTION_NAME, {
-            'discord_user_id': discord_user_id,
-            'roblox_user_id': roblox_user_id,
+            'identity.discord_user_id': discord_user_id,
+            'identity.roblox_user_id': roblox_user_id,
         }, {
             $set: {
                 ['api_access.enabled']: true,
@@ -92,16 +92,16 @@ async function removeUserFromBlacklistedUsersDatabase({ discord_user_id, roblox_
 
 /**
  * Looks up a user in the blacklist
- * @param {String} discord_user_id 
- * @param {String} roblox_user_id 
+ * @param {String} discord_user_id
+ * @param {String} roblox_user_id
  * @returns {Promise<any>} blacklisted_user_db_data
  */
 async function lookupUserInBlacklistedUsersDatabase(discord_user_id=undefined, roblox_user_id=undefined) {
     const [ blacklisted_user_db_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME, {
         ...(discord_user_id ? {
-            'discord_user_id': discord_user_id,
+            'identity.discord_user_id': discord_user_id,
         } : {
-            'roblox_user_id': roblox_user_id,
+            'identity.roblox_user_id': roblox_user_id,
         }),
     }, {
         projection: {
@@ -115,9 +115,9 @@ async function lookupUserInBlacklistedUsersDatabase(discord_user_id=undefined, r
 
 /**
  * Check if the staff member is allowed to blacklist the potential user.
- * @param {Guild} guild 
- * @param {String} staff_member_id 
- * @param {String?} user_id 
+ * @param {Guild} guild
+ * @param {String} staff_member_id
+ * @param {String?} user_id
  */
 async function checkIfStaffMemberIsAllowedToBlacklistUser(guild, staff_member_id, user_id) {
     if (!staff_member_id) throw new Error('\`staff_member_id\` was undefined!');
