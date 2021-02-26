@@ -39,7 +39,7 @@ module.exports = {
             } else {
                 message.reply('That\'s not a valid command!').catch(console.warn);
             }
-        } else {commands_visible_to_user
+        } else {
             /* display all commands visible to the user */
             const commands_visible_to_user_with_prefix = commands_visible_to_user.map(command => 
                 command.aliases.map(command_alias => 
