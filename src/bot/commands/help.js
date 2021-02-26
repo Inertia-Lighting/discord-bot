@@ -9,9 +9,9 @@ const { Discord, client } = require('../discord_client.js');
 module.exports = {
     name: 'help',
     description: 'shows a list of commands for you to use.',
-    usage: 'help',
+    usage: '[command_name]',
     aliases: ['help'],
-    permission_level: 'staff',
+    permission_level: 'public',
     async execute(message, args) {
         const { user_permission_levels, command_prefix, command_args } = args;
 

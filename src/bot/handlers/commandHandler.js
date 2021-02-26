@@ -59,19 +59,19 @@ async function commandHandler(message) {
         user_permission_levels.push('admin');
     }
 
-    /* prevent non-staff from using non-public commands until all of the bot is made public */
-    if (command.permission_level !== 'public' && !user_permission_levels.includes('staff')) {
-        message.channel.send(new Discord.MessageEmbed({
-            color: 0xFF0000,
-            author: {
-                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                name: `${client.user.username} | Beta System`,
-            },
-            title: 'You used the wrong command prefix!',
-            description: 'Use \`!\` instead of \`il!\`',
-        })).catch(console.warn);
-        return;
-    }
+    /* inform all users that this bot is in-development */
+    message.channel.send(new Discord.MessageEmbed({
+        color: 0xFFFF00,
+        author: {
+            iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+            name: `${client.user.username} | In-Development`,
+        },
+        title: 'You may have used the wrong command prefix!',
+        description: [
+            '\`il!\` is for our in-development bot.',
+            'Please use \`!\` instead of \`il!\` for our non-development bot.',
+        ].join('\n'),
+    })).catch(console.warn);
 
     /* command permission checking */
     if (!user_permission_levels.includes(command.permission_level)) {

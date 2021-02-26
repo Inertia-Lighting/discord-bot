@@ -12,7 +12,7 @@ module.exports = {
     name: 'products',
     description: 'lists all of the products',
     aliases: ['products'],
-    permission_level: 'admin',
+    permission_level: 'public',
     async execute(message, args) {
         const db_roblox_products = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_PRODUCTS_COLLECTION_NAME, {});
 
