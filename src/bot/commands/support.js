@@ -100,7 +100,7 @@ module.exports = {
     aliases: ['support', 'close_ticket'],
     permission_level: 'public',
     async execute(message, args) {
-        const { user_permission_levels, command_name } = args;
+        const { user_command_access_levels, command_name } = args;
 
         if (command_name === 'support') {
             if (active_message_collectors_1.has(message.author.id)) {
@@ -283,7 +283,7 @@ module.exports = {
             });
             active_message_collectors_1.set(message.author.id, message_collector_1);
         } else if (command_name === 'close_ticket') {
-            if (user_permission_levels.includes('staff')) {
+            if (user_command_access_levels.includes('staff')) {
                 if (message.channel.parent?.id === support_tickets_category_id && message.channel.id !== support_tickets_transcripts_channel_id) {
                     await message.reply('Would you like to save the transcript for this support ticket before closing it?\n**( yes | no )**').catch(console.warn);
 
