@@ -159,7 +159,7 @@ module.exports = {
 
         switch (command_args[0]?.toLowerCase()) {
             case 'add':
-                const staff_member_can_add_user_to_blacklist = await checkIfStaffMemberIsAllowedToBlacklistUser(message.guild, staff_member_id, db_user_data.identity.discord_user_id);
+                const staff_member_can_add_user_to_blacklist = await checkIfStaffMemberIsAllowedToBlacklistUser(message.guild, staff_member_id, db_user_data?.identity?.discord_user_id);
                 if (!staff_member_can_add_user_to_blacklist) {
                     message.reply('You aren\'t allowed to blacklist that user!');
                     return;
@@ -177,7 +177,7 @@ module.exports = {
                 }
                 break;
             case 'remove':
-                const staff_member_can_remove_user_from_blacklist = await checkIfStaffMemberIsAllowedToBlacklistUser(message.guild, staff_member_id, db_user_data.identity.discord_user_id);
+                const staff_member_can_remove_user_from_blacklist = await checkIfStaffMemberIsAllowedToBlacklistUser(message.guild, staff_member_id, db_user_data?.identity?.discord_user_id);
                 if (!staff_member_can_remove_user_from_blacklist) {
                     message.reply('You aren\'t allowed to un-blacklist that user!');
                     return;
