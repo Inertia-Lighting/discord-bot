@@ -1,12 +1,19 @@
 @ECHO OFF
 
-title Inertia Lighting Discord Bot API Server
+title Installing Dependencies
+call npm install
 
+title Listing Outdated Dependencies
+call npm outdated
+
+echo Creating Directories
 if not exist ".\temporary" mkdir ".\temporary"
 
-:start_bot
-node .\index.js --trace-warnings
+:start_program
+title Inertia Lighting Discord Bot API Server
+echo Starting Discord Bot API Server
+node --trace-warnings .\index.js
 timeout /T 5 /NOBREAK
-goto :start_bot
+goto :start_program
 
 pause
