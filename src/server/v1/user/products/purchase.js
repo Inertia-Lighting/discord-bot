@@ -66,9 +66,9 @@ module.exports = (router, client) => {
         /* find the user in the database */
         const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
             ...(discord_user_id ? {
-                'discord_user_id': discord_user_id,
+                'identity.discord_user_id': discord_user_id,
             } : {
-                'roblox_user_id': roblox_user_id,
+                'identity.roblox_user_id': roblox_user_id,
             }),
         });
 
@@ -94,9 +94,9 @@ module.exports = (router, client) => {
         /* add the product for the user in the database */
         await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
             ...(discord_user_id ? {
-                'discord_user_id': discord_user_id,
+                'identity.discord_user_id': discord_user_id,
             } : {
-                'roblox_user_id': roblox_user_id,
+                'identity.roblox_user_id': roblox_user_id,
             }),
         }, {
             $set: {
@@ -112,7 +112,7 @@ module.exports = (router, client) => {
             }, null, 2));
         }
 
-        const guild_member = await guild.members.fetch(db_user_data.discord_user_id).catch(console.warn);
+        const guild_member = await guild.members.fetch(db_user_data.identity.discord_user_id).catch(console.warn);
         if (!guild_member) {
             console.error(`unable to find discord user: ${guild_member.user.id}; in guild!`);
             return res.status(404).send(JSON.stringify({

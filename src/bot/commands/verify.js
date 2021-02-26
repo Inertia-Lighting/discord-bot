@@ -57,8 +57,8 @@ module.exports = {
 
         const member_roles = message.member.roles.cache;
         await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
-            'discord_user_id': message.author.id,
-            'roblox_user_id': verification_context.roblox_user_id,
+            'identity.discord_user_id': message.author.id,
+            'identity.roblox_user_id': verification_context.roblox_user_id,
         }, {
             $set: {
                 'products': {

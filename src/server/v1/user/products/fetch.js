@@ -46,9 +46,9 @@ module.exports = (router, client) => {
         } else if (game_owner_api_access_key && typeof game_owner_api_access_key === 'string') {
             const [ db_user_auth_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_API_AUTH_USERS_COLLECTION_NAME, {
                 ...(discord_user_id ? {
-                    'discord_user_id': discord_user_id,
+                    'identity.discord_user_id': discord_user_id,
                 } : {
-                    'roblox_user_id': roblox_user_id,
+                    'identity.roblox_user_id': roblox_user_id,
                 }),
             });
 
@@ -106,9 +106,9 @@ module.exports = (router, client) => {
 
         const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
             ...(discord_user_id ? {
-                'discord_user_id': discord_user_id,
+                'identity.discord_user_id': discord_user_id,
             } : {
-                'roblox_user_id': roblox_user_id,
+                'identity.roblox_user_id': roblox_user_id,
             }),
         });
 

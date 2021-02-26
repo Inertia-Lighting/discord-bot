@@ -25,7 +25,7 @@ module.exports = {
 
         /* fetch user data from the database */
         const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
-            'discord_user_id': member.id,
+            'identity.discord_user_id': member.id,
         });
 
         /* don't continue if the user isn't in the database */
