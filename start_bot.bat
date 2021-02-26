@@ -1,6 +1,6 @@
 @ECHO OFF
 
-title Main Inertia Server Under Development
+title Inertia Lighting Discord Bot API Server
 
 if not exist ".\temporary" mkdir ".\temporary"
 
