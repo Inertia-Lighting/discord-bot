@@ -1,7 +1,12 @@
 # Inertia Lighting Discord Bot
 
-## This code was made for Inertia Lighting.
+## About
 
-### Any attempt to use it without explicit permission is prohibited.
+This code was made for Inertia Lighting.
 
-#### Assume that all works contained in this repository are copyrighted and protected under law.
+Any attempt to use it without explicit permission is prohibited.
+
+Assume that all works contained in this repository are copyrighted and protected under law.
+
+## Copyright
+Copyright &copy; Inertia Lighting | All Rights Reserved
