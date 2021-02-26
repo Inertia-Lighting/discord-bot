@@ -17,7 +17,7 @@ module.exports = {
     description: 'verifies the user and adds them to the database',
     usage: 'CODE_HERE',
     aliases: ['verify'],
-    permission_level: 'admin',
+    permission_level: 'staff',
     async execute(message, args) {
         const { command_args } = args;
 
