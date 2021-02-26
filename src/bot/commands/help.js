@@ -8,17 +8,19 @@ const { Discord, client } = require('../discord_client.js');
 
 module.exports = {
     name: 'help',
-    description: 'Shows a list of commands for you to use.',
+    description: 'shows a list of commands for you to use.',
     usage: 'help',
     aliases: ['help'],
     permission_level: 'staff',
     async execute(message, args) {
-        const { command_prefix, command_args } = args;
+        const { user_permission_levels, command_prefix, command_args } = args;
 
-        if (command_args[0]) {
-            /* display help for a specified command */
-            const specified_command_name = `${command_args[0]}`.toLowerCase();
-            const specified_command = client.$.commands.get(specified_command_name) ?? client.$.commands.find(c => c.aliases?.includes(specified_command_name));
+        const commands_visible_to_user = client.$.commands.filter(cmd => user_permission_levels.includes(cmd.permission_level));
+
+        const specified_command_alias = command_args[0];
+        if (specified_command_alias?.length > 0) {
+            /* display help for a specified command alias */
+            const specified_command = commands_visible_to_user.find(cmd => cmd.aliases.includes(specified_command_alias.toLowerCase()));
             if (specified_command) {
                 message.channel.send(new Discord.MessageEmbed({
                     color: 0x60A0FF,
@@ -28,18 +30,18 @@ module.exports = {
                     },
                     description: [
                         `**Name:** ${specified_command.name}`,
-                        `**Aliases:** ${specified_command.aliases?.join(', ') ?? 'n/a'}`,
+                        `**Aliases:** ${specified_command.aliases.join(', ') ?? 'n/a'}`,
                         `**Description:** ${specified_command.description ?? 'n/a'}`,
                         `**Usage:** ${specified_command.usage ? `\`${command_prefix}${specified_command.name} ${specified_command.usage}\`` : 'n/a'}`,
-                        `**Public:** ${specified_command.permission_level === 'public'}`,
+                        `**Permission Level:** \`${specified_command.permission_level}\``,
                     ].join('\n'),
                 })).catch(console.warn);
             } else {
                 message.reply('That\'s not a valid command!').catch(console.warn);
             }
-        } else {
-            /* display all commands */
-            const all_commands_with_prefix = client.$.commands.map(command => 
+        } else {commands_visible_to_user
+            /* display all commands visible to the user */
+            const commands_visible_to_user_with_prefix = commands_visible_to_user.map(command => 
                 command.aliases.map(command_alias => 
                     `${command_prefix}${command_alias.replace('#{cp}', `${command_prefix}`)}`
                 ).join(' | ')
@@ -50,10 +52,10 @@ module.exports = {
                     iconURL: `${message.author.displayAvatarURL({ dynamic: true })}`,
                     name: `${message.author.tag}`,
                 },
-                title: 'Here\'s a list of all my commands!',
+                title: 'Here\'s a list of all commands that you may use!',
                 description: [
                     `You can send \`${command_prefix}help [command name]\` to get info on a specific command!`,
-                    `\`\`\`${all_commands_with_prefix.join('\n')}\`\`\``,
+                    `\`\`\`${commands_visible_to_user_with_prefix.join('\n')}\`\`\``,
                 ].join('\n'),
             })).catch(console.warn);
         }
