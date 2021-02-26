@@ -170,8 +170,8 @@ module.exports = {
                             name: 'Inertia Lighting | Blacklisted User Document',
                         },
                         description: (blacklisted_user_db_data ? [
-                            `**User:** <@${blacklisted_user_db_data.discord_user_id}>`,
-                            `**Roblox Id:** \`${blacklisted_user_db_data.roblox_user_id}\``,
+                            `**User:** <@${blacklisted_user_db_data.identity.discord_user_id}>`,
+                            `**Roblox Id:** \`${blacklisted_user_db_data.identity.roblox_user_id}\``,
                             `**Staff:** <@${blacklisted_user_db_data.staff_member_id}>`,
                             `**Date:** \`${moment(blacklisted_user_db_data.epoch).tz('America/New_York').format('YYYY[-]MM[-]DD | hh:mm A | [GMT]ZZ')}\``,
                             `**Reason:** ${'```'}\n${blacklisted_user_db_data.reason}\n${'```'}`,

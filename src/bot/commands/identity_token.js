@@ -80,10 +80,10 @@ module.exports = {
                 await message.reply('I sent you your Identity Token via DMs!').catch(console.warn);
 
                 await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_API_AUTH_USERS_COLLECTION_NAME, {
-                    'identity.discord_user_id': db_user_data.discord_user_id,
+                    'identity.discord_user_id': db_user_data.identity.discord_user_id,
                 }, {
                     $set: {
-                        'identity.roblox_user_id': db_user_data.roblox_user_id,
+                        'identity.roblox_user_id': db_user_data.identity.roblox_user_id,
                         'encrypted_api_token': encrypted_token,
                     },
                 }, {

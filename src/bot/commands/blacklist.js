@@ -33,7 +33,7 @@ async function findUserInUsersDatabase(discord_user_id=undefined, roblox_user_id
  * @param {*} blacklist_metadata
  * @returns {Promise<boolean>} success or failure
  */
-async function addUserToBlacklistedUsersDatabase({ discord_user_id, roblox_user_id }, { epoch, reason, staff_member_id }) {
+async function addUserToBlacklistedUsersDatabase({ identity: { discord_user_id, roblox_user_id } }, { epoch, reason, staff_member_id }) {
     if (discord_user_id && roblox_user_id) {
         await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME, {
             'identity.discord_user_id': discord_user_id,
@@ -68,7 +68,7 @@ async function addUserToBlacklistedUsersDatabase({ discord_user_id, roblox_user_
  * @param {*} db_user_data
  * @returns {Promise<boolean>} success or failure
  */
-async function removeUserFromBlacklistedUsersDatabase({ discord_user_id, roblox_user_id }) {
+async function removeUserFromBlacklistedUsersDatabase({ identity: { discord_user_id, roblox_user_id } }) {
     if (discord_user_id && roblox_user_id) {
         await go_mongo_db.remove(process.env.MONGO_DATABASE_NAME, process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME, {
             'identity.discord_user_id': discord_user_id,
@@ -159,7 +159,7 @@ module.exports = {
 
         switch (command_args[0]?.toLowerCase()) {
             case 'add':
-                const staff_member_can_add_user_to_blacklist = await checkIfStaffMemberIsAllowedToBlacklistUser(message.guild, staff_member_id, db_user_data.discord_user_id);
+                const staff_member_can_add_user_to_blacklist = await checkIfStaffMemberIsAllowedToBlacklistUser(message.guild, staff_member_id, db_user_data.identity.discord_user_id);
                 if (!staff_member_can_add_user_to_blacklist) {
                     message.reply('You aren\'t allowed to blacklist that user!');
                     return;
@@ -177,7 +177,7 @@ module.exports = {
                 }
                 break;
             case 'remove':
-                const staff_member_can_remove_user_from_blacklist = await checkIfStaffMemberIsAllowedToBlacklistUser(message.guild, staff_member_id, db_user_data.discord_user_id);
+                const staff_member_can_remove_user_from_blacklist = await checkIfStaffMemberIsAllowedToBlacklistUser(message.guild, staff_member_id, db_user_data.identity.discord_user_id);
                 if (!staff_member_can_remove_user_from_blacklist) {
                     message.reply('You aren\'t allowed to un-blacklist that user!');
                     return;
@@ -199,8 +199,8 @@ module.exports = {
                         name: 'Inertia Lighting | Blacklisted User Document',
                     },
                     description: (blacklisted_user_db_data ? [
-                        `**User:** <@${blacklisted_user_db_data.discord_user_id}>`,
-                        `**Roblox Id:** \`${blacklisted_user_db_data.roblox_user_id}\``,
+                        `**User:** <@${blacklisted_user_db_data.identity.discord_user_id}>`,
+                        `**Roblox Id:** \`${blacklisted_user_db_data.identity.roblox_user_id}\``,
                         `**Staff:** <@${blacklisted_user_db_data.staff_member_id}>`,
                         `**Date:** \`${moment(blacklisted_user_db_data.epoch).tz('America/New_York').format('YYYY[-]MM[-]DD | hh:mm A | [GMT]ZZ')}\``,
                         `**Reason:** ${'```'}\n${blacklisted_user_db_data.reason}\n${'```'}`,
