@@ -45,7 +45,7 @@ async function commandHandler(message) {
     if (typeof command.permission_level !== 'string') throw new TypeError(`\`command.permission_level\` is not a string for command: ${command}`);
 
     /* command permission preparation */
-    const user_command_access_levels = [ 'public' ]; // valid levels: [ 'public', 'staff', 'admin' ]
+    const user_permission_levels = [ 'public' ]; // valid levels: [ 'public', 'staff', 'admin' ]
     const bot_admin_ids = [
         '331938622733549590', // Drawn
         '159170842528448512', // Ross
@@ -53,14 +53,14 @@ async function commandHandler(message) {
         '196254672418373632', // Will
     ];
     if (message.member.roles.cache.has(guild_staff_role_id)) {
-        user_command_access_levels.push('staff');
+        user_permission_levels.push('staff');
     }
     if (bot_admin_ids.includes(message.author.id)) {
-        user_command_access_levels.push('admin');
+        user_permission_levels.push('admin');
     }
 
     /* prevent non-staff from using non-public commands until all of the bot is made public */
-    if (command.permission_level !== 'public' && !user_command_access_levels.includes('staff')) {
+    if (command.permission_level !== 'public' && !user_permission_levels.includes('staff')) {
         message.channel.send(new Discord.MessageEmbed({
             color: 0xFF0000,
             author: {
@@ -74,7 +74,7 @@ async function commandHandler(message) {
     }
 
     /* command permission checking */
-    if (!user_command_access_levels.includes(command.permission_level)) {
+    if (!user_permission_levels.includes(command.permission_level)) {
         message.channel.send(new Discord.MessageEmbed({
             color: 0xFF0000,
             author: {
@@ -108,7 +108,7 @@ async function commandHandler(message) {
     const last_command_epoch_for_user = command_cooldown_tracker.get(message.author.id)?.last_command_epoch ?? Date.now() - command_cooldown_in_ms;
     const current_command_epoch = Date.now();
     command_cooldown_tracker.set(message.author.id, { last_command_epoch: current_command_epoch });
-    if (current_command_epoch - last_command_epoch_for_user < command_cooldown_in_ms && !user_command_access_levels.includes('staff')) {
+    if (current_command_epoch - last_command_epoch_for_user < command_cooldown_in_ms && !user_permission_levels.includes('staff')) {
         message.reply('Stop spamming commands!').catch(console.warn);
         return;
     }
@@ -116,7 +116,7 @@ async function commandHandler(message) {
     /* command execution */
     try {
         await command.execute(message, {
-            user_command_access_levels,
+            user_permission_levels,
             command_prefix,
             command_name,
             command_args,
