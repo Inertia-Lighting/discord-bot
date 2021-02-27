@@ -263,14 +263,14 @@ module.exports = {
                             break;
                     }
 
-                    const message_collector_2_filter = (msg) => msg.author.id === message.author.id && msg.content === 'done';
+                    const message_collector_2_filter = (msg) => msg.author.id === message.author.id && msg.content.toLowerCase() === 'done';
                     const message_collector_2 = support_channel.createMessageCollector(message_collector_2_filter, { max: 1 });
                     message_collector_2.on('collect', async (msg) => {
                         await msg.delete({ timeout: 500 }).catch(console.warn);
                         const qualified_support_role_mentions = matching_support_category.qualified_support_role_ids.map(role_id => `<@&${role_id}>`).join(', ');
                         support_channel.send(`${message.author}, Our ${qualified_support_role_mentions} staff will help you with your issue soon!`).catch(console.warn);
                     });
-                } else if (collected_message.content === 'cancel') {
+                } else if (collected_message.content.toLowerCase() === 'cancel') {
                     message_collector_1.stop();
                     bot_message.delete({ timeout: 500 }).catch(console.warn);
                     collected_message.reply('Canceled!').catch(console.warn);
@@ -287,11 +287,10 @@ module.exports = {
                 if (message.channel.parent?.id === support_tickets_category_id && message.channel.id !== support_tickets_transcripts_channel_id) {
                     await message.reply('Would you like to save the transcript for this support ticket before closing it?\n**( yes | no )**').catch(console.warn);
 
-                    const collection_filter = (msg) => msg.author.id === message.author.id && ['yes', 'no'].includes(msg.content);
+                    const collection_filter = (msg) => msg.author.id === message.author.id && ['yes', 'no'].includes(msg.content.toLowerCase());
                     const collected_messages = await message.channel.awaitMessages(collection_filter, { max: 1 }).catch((collected_messages) => collected_messages);
 
-                    const first_collected_message = collected_messages.first();
-                    if (first_collected_message?.content === 'yes') {
+                    if (collected_messages.first()?.content?.toLowerCase() === 'yes') {
                         const all_messages_in_channel = await message.channel.messages.fetch({ limit: 100 }); // 100 is the max
                         const all_messages_in_channel_processed = Array.from(all_messages_in_channel.values()).reverse();
 
