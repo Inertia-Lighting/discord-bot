@@ -18,12 +18,9 @@ module.exports = {
     async execute(message, args) {
         const db_roblox_products = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_PRODUCTS_COLLECTION_NAME, {});
 
-        console.log({ db_roblox_products });
-
         const db_roblox_products_chunks = array_chunks(db_roblox_products, 5);
 
-        console.log({ db_roblox_products_chunks });
-
+        /* send embeds containing 5 products per embed */
         for (const db_roblox_products_chunk of db_roblox_products_chunks) {
             await message.channel.send(new Discord.MessageEmbed({
                 color: 0x60A0FF,
