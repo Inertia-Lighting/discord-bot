@@ -4,6 +4,8 @@
 
 const { go_mongo_db } = require('../../mongo/mongo.js');
 
+const { array_chunks, Timer } =require('../../utilities.js');
+
 const { Discord, client } = require('../discord_client.js');
 
 //---------------------------------------------------------------------------------------------------------------//
@@ -18,15 +20,18 @@ module.exports = {
 
         console.log({ db_roblox_products });
 
-        message.channel.send(new Discord.MessageEmbed({
-            color: 0x60A0FF,
-            author: {
-                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                name: 'Inertia Lighting | Products',
-            },
-            description: [
-                `Hey there ${message.author}!\n\n**Here are our products:**`,
-                db_roblox_products.map(product => 
+        const db_roblox_products_chunks = array_chunks(db_roblox_products, 5);
+
+        console.log({ db_roblox_products_chunks });
+
+        for (const db_roblox_products_chunk of db_roblox_products_chunks) {
+            await message.channel.send(new Discord.MessageEmbed({
+                color: 0x60A0FF,
+                author: {
+                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                    name: 'Inertia Lighting | Products',
+                },
+                description: db_roblox_products_chunk.map(product => 
                     [
                         `**Product** ${product.name}`,
                         `**Code:** ${product.code}`,
@@ -34,7 +39,9 @@ module.exports = {
                         `**Description:**\n\`\`\`${product.description}\`\`\``,
                     ].join('\n')
                 ).join('\n'),
-            ].join('\n\n'),
-        })).catch(console.warn);
+            })).catch(console.warn);
+
+            await Timer(250);
+        }
     },
 };

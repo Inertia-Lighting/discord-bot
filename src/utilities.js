@@ -32,6 +32,21 @@ function object_sort(object_of_things) {
     return Object.keys(object_of_things).sort().reduce((r, k) => (r[k] = object_of_things[k], r), {});
 }
 
+/**
+ * Splits a large array into an array of chunks
+ * @param {Array<*>} array_of_things 
+ * @param {Number} chunk_size 
+ * @returns {Array<Array<*>>} 
+ */
+function array_chunks(array_of_things, chunk_size) {
+    const array_of_things_clone = [ ...array_of_things ];
+    let chunks = [];
+    while (array_of_things_clone.length) {
+        chunks.push(array_of_things_clone.splice(0, chunk_size));
+    }
+    return chunks;
+}
+
 //---------------------------------------------------------------------------------------------------------------//
 
 module.exports = {
