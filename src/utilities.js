@@ -53,4 +53,5 @@ module.exports = {
     Timer,
     string_ellipses,
     object_sort,
+    array_chunks,
 };
