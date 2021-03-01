@@ -16,7 +16,7 @@ module.exports = {
     name: 'verify',
     description: 'verifies the user and adds them to the database',
     usage: 'CODE_HERE',
-    aliases: ['verify'],
+    aliases: ['verify', 'link'],
     permission_level: 'staff',
     async execute(message, args) {
         const { command_args } = args;
@@ -51,8 +51,8 @@ module.exports = {
                 iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                 name: `${client.user.username}`,
             },
-            title: 'Success',
-            description: 'That verification code was recognized!',
+            title: 'You have successfully linked your account!',
+            description: 'You may now return to the product hub.',
         })).catch(console.warn);
 
         const db_roblox_products = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_PRODUCTS_COLLECTION_NAME, {});
