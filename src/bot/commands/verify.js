@@ -55,25 +55,19 @@ module.exports = {
             description: 'That verification code was recognized!',
         })).catch(console.warn);
 
-        const member_roles = message.member.roles.cache;
+        const db_roblox_products = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_PRODUCTS_COLLECTION_NAME, {});
+
+        const updated_products = {};
+        for (const db_roblox_product of db_roblox_products) {
+            updated_products[db_roblox_product.code] = message.member.roles.cache.has(db_roblox_product.discord_role_id);
+        }
+
         await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
             'identity.discord_user_id': message.author.id,
             'identity.roblox_user_id': verification_context.roblox_user_id,
         }, {
             $set: {
-                'products': {
-                    'SGM_Q7_STROBE': member_roles.has('728050461566828554'),
-                    'Laser_Fixture': member_roles.has('701758602624368741'),
-                    'Follow_Spotlight': member_roles.has('703378159768436778'),
-                    'JDC1': member_roles.has('651875390226169896'),
-                    'C_Lights': member_roles.has('601909655165337600'),
-                    'LED_Bars': member_roles.has('616358700642467856'),
-                    'MagicPanels': member_roles.has('679585419192434699'),
-                    'House_Lights': member_roles.has('704504968748466226'),
-                    'Pars': member_roles.has('655225947951333376'),
-                    'Blinders': member_roles.has('608432734578147338'),
-                    'Wash': member_roles.has('673362639660908559'),
-                },
+                'products': updated_products,
             },
         }, {
             upsert: true,
