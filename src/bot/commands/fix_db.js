@@ -34,12 +34,6 @@ module.exports = {
             if (new_user['discord_user_id'] && !new_user['identity']['discord_user_id']) new_user['identity']['discord_user_id'] = new_user['discord_user_id'];
             if (new_user['roblox_user_id'] && !new_user['identity']['roblox_user_id']) new_user['identity']['roblox_user_id'] = new_user['roblox_user_id'];
 
-            delete new_user['__v'];
-            delete new_user['_id'];
-            delete new_user['ROBLOX_ID'];
-            delete new_user['discord_user_id'];
-            delete new_user['roblox_user_id'];
-
             if (!new_user['products']) new_user['products'] = {};
             if (new_user['products']['Laser_Fixture']) new_user['products']['LASER_FIXTURE'] = new_user['products']['Laser_Fixture'];
             if (new_user['products']['Follow_Spotlight']) new_user['products']['FOLLOW_SPOTLIGHT'] = new_user['products']['Follow_Spotlight'];
@@ -51,15 +45,14 @@ module.exports = {
             if (new_user['products']['Blinders']) new_user['products']['BLINDERS'] = new_user['products']['Blinders'];
             if (new_user['products']['Wash']) new_user['products']['WASHES'] = new_user['products']['Wash'];
 
-            delete new_user['products']['Laser_Fixture'];
-            delete new_user['products']['Follow_Spotlight'];
-            delete new_user['products']['C_Lights'];
-            delete new_user['products']['LED_Bars'];
-            delete new_user['products']['MagicPanels'];
-            delete new_user['products']['House_Lights'];
-            delete new_user['products']['Pars'];
-            delete new_user['products']['Blinders'];
-            delete new_user['products']['Wash'];
+            new_user['products']['SOURCE_4'] = false;
+            new_user['products']['VISUALS'] = false;
+
+            delete new_user['__v'];
+            delete new_user['_id'];
+            delete new_user['ROBLOX_ID'];
+            delete new_user['discord_user_id'];
+            delete new_user['roblox_user_id'];
 
             /* add the modified document to the new database */
             await go_mongo_db.add(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, [
@@ -77,6 +70,7 @@ module.exports = {
             console.log({ new_user });
 
             console.log('----------------------------------------------------------------------------------------------------------------');
+            break;
         }
     },
 };
