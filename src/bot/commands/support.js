@@ -193,7 +193,7 @@ module.exports = {
                                     '- **Proof Of Purchase(s):** ( https://www.roblox.com/transactions )',
                                     '- **Issue:** ( describe your issue )',
                                     '\n',
-                                    'Type \`done\` when you are finished typing.',
+                                    '**Type \`done\` when you are ready for our support staff.**',
                                 ].join('\n'),
                             })).catch(console.warn);
                             break;
@@ -213,7 +213,7 @@ module.exports = {
                                     '- **Roblox Studio Output:** ( how to enable output: https://prnt.sc/y6hnau )',
                                     '- **Issue:** ( describe your issue )',
                                     '\n',
-                                    'Type \`done\` when you are finished typing.',
+                                    '**Type \`done\` when you are ready for our support staff.**',
                                 ].join('\n'),
                             })).catch(console.warn);
                             break;
@@ -231,7 +231,7 @@ module.exports = {
                                     '- **New Roblox Account:** ( copy the URL of the profile page for the account )',
                                     '- **Issue:** ( describe your issue )',
                                     '\n',
-                                    'Type \`done\` when you are finished typing.',
+                                    '**Type \`done\` when you are ready for our support staff.**',
                                 ].join('\n'),
                             })).catch(console.warn);
                             break;
@@ -258,7 +258,7 @@ module.exports = {
                                     name: `Inertia Lighting | ${matching_support_category.name}`,
                                 },
                                 title: 'Please tell us about your issue.',
-                                description: 'Type \`done\` when you are finished typing.',
+                                description: '**Type \`done\` when you are ready for our support staff.**',
                             })).catch(console.warn);
                             break;
                     }
