@@ -21,6 +21,18 @@ const support_tickets_transcripts_channel_id = process.env.BOT_SUPPORT_TICKETS_T
 
 //---------------------------------------------------------------------------------------------------------------//
 
+/**
+ * @typedef {'PRODUCT_PURCHASES'|'PRODUCT_ISSUES'|'PRODUCT_TRANSFERS'|'PARTNER_REQUESTS'|'OTHER'} SupportCategoryId
+ * @typedef {{
+ *  id: SupportCategoryId,
+ *  human_index: Number,
+ *  name: String,
+ *  description: String,
+ *  qualified_support_role_ids: Discord.Snowflake[],
+ * }} SupportCategory
+ * @typedef {Discord.Collection<SupportCategoryId, SupportCategory>} SupportCategories
+ */
+
 const support_categories = new Discord.Collection([
     {
         id: 'PRODUCT_PURCHASES',
@@ -65,6 +77,13 @@ const support_categories = new Discord.Collection([
 
 //---------------------------------------------------------------------------------------------------------------//
 
+/**
+ * Creates a support ticket channel
+ * @param {Discord.Guild} guild 
+ * @param {Discord.GuildMember} guild_member 
+ * @param {SupportCategory} support_category 
+ * @returns {Promise<Discord.TextChannel>} 
+ */
 async function createSupportTicketChannel(guild, guild_member, support_category) {
     const support_tickets_category = guild.channels.resolve(support_tickets_category_id);
 
@@ -86,6 +105,36 @@ async function createSupportTicketChannel(guild, guild_member, support_category)
     });
 
     return support_ticket_channel;
+}
+
+/**
+ * Closes a support ticket channel
+ * @param {Discord.TextChannel} support_channel 
+ * @param {Boolean} save_transcript 
+ * @returns {Promise<Discord.TextChannel>} 
+ */
+async function closeSupportTicketChannel(support_channel, save_transcript) {
+    if (save_transcript) {
+        const all_messages_in_channel = await support_channel.messages.fetch({ limit: 100 }); // 100 is the max
+        const all_messages_in_channel_processed = Array.from(all_messages_in_channel.values()).reverse();
+
+        const temp_file_path = path.join(process.cwd(), 'temporary', `transcript_${support_channel.name}.json`);
+        fs.writeFileSync(temp_file_path, JSON.stringify(all_messages_in_channel_processed, null, 2), { flag: 'w' });
+
+        const temp_file_read_stream = fs.createReadStream(temp_file_path);
+        const message_attachment = new Discord.MessageAttachment(temp_file_read_stream);
+
+        const support_ticket_transcripts_channel = client.channels.resolve(support_tickets_transcripts_channel_id);
+        await support_ticket_transcripts_channel.send(`${support_channel.name}`, message_attachment).catch(console.warn);
+
+        fs.unlinkSync(temp_file_path);
+    }
+
+    await Timer(5000); // wait 5 seconds before deleting the channel
+
+    await support_channel.delete().catch(console.warn);
+
+    return support_channel;
 }
 
 //---------------------------------------------------------------------------------------------------------------//
@@ -121,22 +170,23 @@ module.exports = {
             })).catch(console.warn);
 
             const message_collector_1 = bot_message.channel.createMessageCollector((msg) => msg.author.id === message.author.id);
-            message_collector_1.on('collect', async (collected_message) => {
-                const matching_support_category = support_categories.find((support_category) => `${support_category.human_index}` === collected_message.content);
+            message_collector_1.on('collect', async (collected_message_1) => {
+                const matching_support_category = support_categories.find((support_category) => `${support_category.human_index}` === collected_message_1.content);
                 if (matching_support_category) {
                     message_collector_1.stop();
-                    bot_message.delete({ timeout: 500 }).catch(console.warn);
+
+                    await bot_message.delete({ timeout: 500 }).catch(console.warn);
 
                     const support_channel = await createSupportTicketChannel(message.guild, message.member, matching_support_category);
 
                     /* respond to the user with a mention to the support ticket channel */
-                    collected_message.reply([
+                    await collected_message_1.reply([
                         `You selected ${matching_support_category.name}!`,
                         `Go to ${support_channel} to continue.`,
                     ].join('\n')).catch(console.warn);
 
                     /* ping the user so they know where to go */
-                    support_channel.send(`${message.author}, welcome to your support ticket!`).catch(console.warn);
+                    await support_channel.send(`${message.author}, welcome to your support ticket!`).catch(console.warn);
 
                     /* send the user document */
                     // const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
@@ -194,6 +244,7 @@ module.exports = {
                                     '- **Issue:** ( describe your issue )',
                                     '\n',
                                     '**Type \`done\` when you are ready for our support staff.**',
+                                    '**Type \`cancel\` if you wish to close this ticket.**',
                                 ].join('\n'),
                             })).catch(console.warn);
                             break;
@@ -214,6 +265,7 @@ module.exports = {
                                     '- **Issue:** ( describe your issue )',
                                     '\n',
                                     '**Type \`done\` when you are ready for our support staff.**',
+                                    '**Type \`cancel\` if you wish to close this ticket.**',
                                 ].join('\n'),
                             })).catch(console.warn);
                             break;
@@ -232,6 +284,7 @@ module.exports = {
                                     '- **Issue:** ( describe your issue )',
                                     '\n',
                                     '**Type \`done\` when you are ready for our support staff.**',
+                                    '**Type \`cancel\` if you wish to close this ticket.**',
                                 ].join('\n'),
                             })).catch(console.warn);
                             break;
@@ -246,7 +299,8 @@ module.exports = {
                                 description: 'https://inertia.lighting/partner-requests-form',
                             })).catch(console.warn);
                             await support_channel.send('Automatically closing support ticket in 2 minutes...').catch(console.warn);
-                            setTimeout(() => {
+                            setTimeout(async () => {
+                                await closeSupportTicketChannel(support_channel, false);
                                 support_channel.delete();
                             }, 2 * 60_000); // 2 minutes
                             return;
@@ -258,24 +312,36 @@ module.exports = {
                                     name: `Inertia Lighting | ${matching_support_category.name}`,
                                 },
                                 title: 'Please tell us about your issue.',
-                                description: '**Type \`done\` when you are ready for our support staff.**',
+                                description: [
+                                    '**Type \`done\` when you are ready for our support staff.**',
+                                    '**Type \`cancel\` if you wish to close this ticket.**',
+                                ].join('\n'),
                             })).catch(console.warn);
                             break;
                     }
 
-                    const message_collector_2_filter = (msg) => msg.author.id === message.author.id && msg.content.toLowerCase() === 'done';
+                    const message_collector_2_filter = (msg) => msg.author.id === message.author.id && ['done', 'cancel'].includes(msg.content.toLowerCase());
                     const message_collector_2 = support_channel.createMessageCollector(message_collector_2_filter, { max: 1 });
-                    message_collector_2.on('collect', async (msg) => {
-                        await msg.delete({ timeout: 500 }).catch(console.warn);
-                        const qualified_support_role_mentions = matching_support_category.qualified_support_role_ids.map(role_id => `<@&${role_id}>`).join(', ');
-                        support_channel.send(`${message.author}, Our ${qualified_support_role_mentions} staff will help you with your issue soon!`).catch(console.warn);
+                    message_collector_2.on('collect', async (collected_message_2) => {
+                        switch (collected_message_2.content.toLowerCase()) {
+                            case 'done':
+                                await collected_message_2.delete({ timeout: 500 }).catch(console.warn);
+                                const qualified_support_role_mentions = matching_support_category.qualified_support_role_ids.map(role_id => `<@&${role_id}>`).join(', ');
+                                await support_channel.send(`${message.author}, Our ${qualified_support_role_mentions} staff will help you with your issue soon!`).catch(console.warn);
+                                break;
+                            case 'cancel':
+                                await collected_message_2.delete({ timeout: 500 }).catch(console.warn);
+                                await support_channel.send(`${message.author}, Cancelling support ticket...`).catch(console.warn);
+                                await closeSupportTicketChannel(support_channel, false);
+                                break;
+                        }
                     });
-                } else if (collected_message.content.toLowerCase() === 'cancel') {
+                } else if (['cancel'].includes(collected_message_1.content.toLowerCase())) {
                     message_collector_1.stop();
-                    bot_message.delete({ timeout: 500 }).catch(console.warn);
-                    collected_message.reply('Canceled!').catch(console.warn);
+                    await bot_message.delete({ timeout: 500 }).catch(console.warn);
+                    await collected_message_1.reply('Canceled!').catch(console.warn);
                 } else {
-                    collected_message.reply('Please type the category number or \`cancel\`.').catch(console.warn);
+                    await collected_message_1.reply('Please type the category number or \`cancel\`.').catch(console.warn);
                 }
             });
             message_collector_1.on('end', () => {
@@ -284,36 +350,24 @@ module.exports = {
             active_message_collectors_1.set(message.author.id, message_collector_1);
         } else if (command_name === 'close_ticket') {
             if (user_permission_levels.includes('staff')) {
-                if (message.channel.parent?.id === support_tickets_category_id && message.channel.id !== support_tickets_transcripts_channel_id) {
+                const channel_exists_in_support_tickets_category = message.channel.parent?.id === support_tickets_category_id;
+                const channel_is_not_transcripts_channel = message.channel.id !== support_tickets_transcripts_channel_id;
+                if (channel_exists_in_support_tickets_category && channel_is_not_transcripts_channel) {
                     await message.reply('Would you like to save the transcript for this support ticket before closing it?\n**( yes | no )**').catch(console.warn);
 
                     const collection_filter = (msg) => msg.author.id === message.author.id && ['yes', 'no'].includes(msg.content.toLowerCase());
                     const collected_messages = await message.channel.awaitMessages(collection_filter, { max: 1 }).catch((collected_messages) => collected_messages);
 
-                    if (collected_messages.first()?.content?.toLowerCase() === 'yes') {
-                        const all_messages_in_channel = await message.channel.messages.fetch({ limit: 100 }); // 100 is the max
-                        const all_messages_in_channel_processed = Array.from(all_messages_in_channel.values()).reverse();
+                    const save_transcript = ['yes'].includes(collected_messages.first()?.content?.toLowerCase());
 
-                        const temp_file_path = path.join(process.cwd(), 'temporary', `transcript_${message.channel.name}.json`);
-                        fs.writeFileSync(temp_file_path, JSON.stringify(all_messages_in_channel_processed, null, 2), { flag: 'w' });
+                    await support_channel.send(`${message.author}, Closing support ticket in 5 seconds...`).catch(console.warn);
 
-                        const temp_file_read_stream = fs.createReadStream(temp_file_path);
-                        const message_attachment = new Discord.MessageAttachment(temp_file_read_stream);
-
-                        const support_ticket_transcripts_channel = client.channels.resolve(support_tickets_transcripts_channel_id);
-                        await support_ticket_transcripts_channel.send(`${message.channel.name}`, message_attachment).catch(console.warn);
-
-                        fs.unlinkSync(temp_file_path);
-                    }
-
-                    await message.reply('Closing support ticket in 5 seconds...').catch(console.warn);
-                    await Timer(5000);
-                    message.channel.delete().catch(console.warn);
+                    await closeSupportTicketChannel(message.channel, save_transcript);
                 } else {
                     message.reply('This channel is not a support ticket.').catch(console.warn);
                 }
             } else {
-                message.reply('Sorry, only staff can close support tickets.').catch(console.warn);
+                message.reply('Sorry, only staff can close active support tickets.').catch(console.warn);
             }
         }
     },
