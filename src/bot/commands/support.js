@@ -353,16 +353,18 @@ module.exports = {
                 const channel_exists_in_support_tickets_category = message.channel.parent?.id === support_tickets_category_id;
                 const channel_is_not_transcripts_channel = message.channel.id !== support_tickets_transcripts_channel_id;
                 if (channel_exists_in_support_tickets_category && channel_is_not_transcripts_channel) {
+                    const support_channel = message.channel;
+
                     await message.reply('Would you like to save the transcript for this support ticket before closing it?\n**( yes | no )**').catch(console.warn);
 
                     const collection_filter = (msg) => msg.author.id === message.author.id && ['yes', 'no'].includes(msg.content.toLowerCase());
-                    const collected_messages = await message.channel.awaitMessages(collection_filter, { max: 1 }).catch((collected_messages) => collected_messages);
+                    const collected_messages = await support_channel.awaitMessages(collection_filter, { max: 1 }).catch((collected_messages) => collected_messages);
 
                     const save_transcript = ['yes'].includes(collected_messages.first()?.content?.toLowerCase());
 
                     await support_channel.send(`${message.author}, Closing support ticket in 5 seconds...`).catch(console.warn);
 
-                    await closeSupportTicketChannel(message.channel, save_transcript);
+                    await closeSupportTicketChannel(support_channel, save_transcript);
                 } else {
                     message.reply('This channel is not a support ticket.').catch(console.warn);
                 }
