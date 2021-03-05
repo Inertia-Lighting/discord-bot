@@ -346,6 +346,7 @@ module.exports = {
 
             /* automatically cancels a support-ticket selection screen */
             setTimeout(() => {
+                bot_message.delete({ timeout: 500 }).catch(console.warn);
                 message_collector_1.stop();
             }, 5 * 60_000); // 5 minutes
         } else if (command_name === 'close_ticket') {
