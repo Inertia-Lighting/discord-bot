@@ -242,9 +242,6 @@ module.exports = {
                                     '- **Purchase Date(s):** ( 1970-1-1 )',
                                     '- **Proof Of Purchase(s):** ( https://www.roblox.com/transactions )',
                                     '- **Issue:** ( describe your issue )',
-                                    '\n',
-                                    '**Type \`done\` when you are ready for our support staff.**',
-                                    '**Type \`cancel\` if you wish to close this ticket.**',
                                 ].join('\n'),
                             })).catch(console.warn);
                             break;
@@ -263,9 +260,6 @@ module.exports = {
                                     '- **HTTPS Enabled In Game:** ( yes | idk | no )',
                                     '- **Roblox Studio Output:** ( how to enable output: https://prnt.sc/y6hnau )',
                                     '- **Issue:** ( describe your issue )',
-                                    '\n',
-                                    '**Type \`done\` when you are ready for our support staff.**',
-                                    '**Type \`cancel\` if you wish to close this ticket.**',
                                 ].join('\n'),
                             })).catch(console.warn);
                             break;
@@ -282,9 +276,6 @@ module.exports = {
                                     '- **Reason:** ( new account | gift for someone | other )',
                                     '- **New Roblox Account:** ( copy the URL of the profile page for the account )',
                                     '- **Issue:** ( describe your issue )',
-                                    '\n',
-                                    '**Type \`done\` when you are ready for our support staff.**',
-                                    '**Type \`cancel\` if you wish to close this ticket.**',
                                 ].join('\n'),
                             })).catch(console.warn);
                             break;
@@ -298,11 +289,6 @@ module.exports = {
                                 title: 'Please fill out our partner request form.',
                                 description: 'https://inertia.lighting/partner-requests-form',
                             })).catch(console.warn);
-                            await support_channel.send('Automatically closing support ticket in 2 minutes...').catch(console.warn);
-                            setTimeout(async () => {
-                                await closeSupportTicketChannel(support_channel, false);
-                                support_channel.delete();
-                            }, 2 * 60_000); // 2 minutes
                             return;
                         case 'OTHER':
                             await support_channel.send(new Discord.MessageEmbed({
@@ -312,25 +298,34 @@ module.exports = {
                                     name: `Inertia Lighting | ${matching_support_category.name}`,
                                 },
                                 title: 'Please tell us about your issue.',
-                                description: [
-                                    '**Type \`done\` when you are ready for our support staff.**',
-                                    '**Type \`cancel\` if you wish to close this ticket.**',
-                                ].join('\n'),
                             })).catch(console.warn);
                             break;
                     }
 
-                    const message_collector_2_filter = (msg) => msg.author.id === message.author.id && ['done', 'cancel'].includes(msg.content.toLowerCase());
-                    const message_collector_2 = support_channel.createMessageCollector(message_collector_2_filter, { max: 1 });
+                    const choices_embed = await support_channel.send(new Discord.MessageEmbed({
+                        color: 0x60A0FF,
+                        description: [
+                            '**Type \`done\` when you are ready for our support staff.**',
+                            '**Type \`cancel\` if you wish to close this ticket.**',
+                        ].join('\n'),
+                    })).catch(console.warn);
+
+                    const message_collector_2_filter = (msg) => msg.author.id === message.author.id;
+                    const message_collector_2 = support_channel.createMessageCollector(message_collector_2_filter);
                     message_collector_2.on('collect', async (collected_message_2) => {
+                        async function cleanupMessageCollector() {
+                            message_collector_2.stop();
+                            await choices_embed.delete({ timeout: 500 }).catch(console.warn);
+                            await collected_message_2.delete({ timeout: 500 }).catch(console.warn);
+                        }
                         switch (collected_message_2.content.toLowerCase()) {
                             case 'done':
-                                await collected_message_2.delete({ timeout: 500 }).catch(console.warn);
+                                await cleanupMessageCollector();
                                 const qualified_support_role_mentions = matching_support_category.qualified_support_role_ids.map(role_id => `<@&${role_id}>`).join(', ');
                                 await support_channel.send(`${message.author}, Our ${qualified_support_role_mentions} staff will help you with your issue soon!`).catch(console.warn);
                                 break;
                             case 'cancel':
-                                await collected_message_2.delete({ timeout: 500 }).catch(console.warn);
+                                await cleanupMessageCollector();
                                 await support_channel.send(`${message.author}, Cancelling support ticket...`).catch(console.warn);
                                 await closeSupportTicketChannel(support_channel, false);
                                 break;
