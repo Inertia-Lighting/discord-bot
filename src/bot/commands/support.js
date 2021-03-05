@@ -343,6 +343,11 @@ module.exports = {
                 active_message_collectors_1.delete(message.author.id);
             });
             active_message_collectors_1.set(message.author.id, message_collector_1);
+
+            /* automatically cancels a support-ticket selection screen */
+            setTimeout(() => {
+                message_collector_1.stop();
+            }, 5 * 60_000); // 5 minutes
         } else if (command_name === 'close_ticket') {
             if (user_permission_levels.includes('staff')) {
                 const channel_exists_in_support_tickets_category = message.channel.parent?.id === support_tickets_category_id;
