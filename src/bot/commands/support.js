@@ -274,8 +274,8 @@ module.exports = {
                                     '**Please fill out this template so that our staff can assist you.**',
                                     '- **Product(s):** ( C-Lights, Magic Panels, etc )',
                                     '- **Reason:** ( new account | gift for someone | other )',
-                                    '- **New Roblox Account:** ( copy the URL of the profile page for the account )',
-                                    '- **Issue:** ( describe your issue )',
+                                    '- **New Roblox Account:** ( copy the URL of the profile page for the account | n/a )',
+                                    '- **New Discord Account:** ( @mention the account | n/a )',
                                 ].join('\n'),
                             })).catch(console.warn);
                             break;
