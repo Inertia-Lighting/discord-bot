@@ -166,7 +166,7 @@ module.exports = {
                     '**How can I help you today?**',
                     support_categories.map(({ human_index, name, description }) => `**${human_index} | ${name}**\n${description}`).join('\n\n'),
                     '**Type the number of the category that you need or \`cancel\`.**',
-                    '*Picking the wrong category will result in longer wait times*',
+                    '*Picking the wrong category will result in longer wait times!*',
                 ].join('\n\n'),
             })).catch(console.warn);
 
