@@ -166,6 +166,7 @@ module.exports = {
                     '**How can I help you today?**',
                     support_categories.map(({ human_index, name, description }) => `**${human_index} | ${name}**\n${description}`).join('\n\n'),
                     '**Type the number of the category that you need or \`cancel\`.**',
+                    '*Picking the wrong category will result in longer wait times*',
                 ].join('\n\n'),
             })).catch(console.warn);
 
@@ -242,6 +243,7 @@ module.exports = {
                                     '- **Purchase Date(s):** ( 1970-1-1 )',
                                     '- **Proof Of Purchase(s):** ( https://www.roblox.com/transactions )',
                                     '- **Issue:** ( describe your issue )',
+                                    '**If you don\'t fill out the template properly, your ticket will be ignored!**',
                                 ].join('\n'),
                             })).catch(console.warn);
                             break;
@@ -260,6 +262,7 @@ module.exports = {
                                     '- **HTTPS Enabled In Game:** ( yes | idk | no )',
                                     '- **Roblox Studio Output:** ( how to enable output: https://prnt.sc/y6hnau )',
                                     '- **Issue:** ( describe your issue )',
+                                    '**If you don\'t fill out the template properly, your ticket will be ignored!**',
                                 ].join('\n'),
                             })).catch(console.warn);
                             break;
@@ -276,6 +279,7 @@ module.exports = {
                                     '- **Reason:** ( new account | gift for someone | other )',
                                     '- **New Roblox Account:** ( copy the URL of the profile page for the account | n/a )',
                                     '- **New Discord Account:** ( @mention the account | n/a )',
+                                    '**If you don\'t fill out the template properly, your ticket will be ignored!**',
                                 ].join('\n'),
                             })).catch(console.warn);
                             break;
