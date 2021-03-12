@@ -81,7 +81,7 @@ module.exports = (router, client) => {
 
         /* find the product in the database */
         const [ db_roblox_product_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_PRODUCTS_COLLECTION_NAME, {
-            'id': roblox_product_id,
+            'roblox_product_id': roblox_product_id,
         });
 
         if (!db_roblox_product_data) {
