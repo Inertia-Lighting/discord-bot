@@ -27,7 +27,6 @@
     "fs": "0.0.1-security",
     "go-mongo-db": "github:Inertia-Lighting/go-mongo-db",
     "moment-timezone": "^0.5.32",
-    "mongoose": "^5.11.9",
     "path": "^0.12.7",
     "uuid": "^8.3.2"
   }
