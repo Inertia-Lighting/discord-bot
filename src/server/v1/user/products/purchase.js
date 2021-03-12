@@ -85,9 +85,17 @@ module.exports = (router, client) => {
         });
 
         if (!db_roblox_product_data) {
-            console.error(`roblox product: ${roblox_product_id}; not found in database`);
+            console.error(`roblox_product_id: ${roblox_product_id}; not found in database`);
             return res.status(404).send(JSON.stringify({
-                'message': `roblox product: ${roblox_product_id}; not found in database`,
+                'message': `roblox_product_id: ${roblox_product_id}; not found in database`,
+            }, null, 2));
+        }
+
+        /* check if the user already owns the product */
+        if (db_user_data.products[db_roblox_product_data.code]) {
+            console.error(`roblox_product_id: ${roblox_product_id}; already belongs to discord_user_id: ${discord_user_id}; roblox_user_id: ${roblox_user_id};`);
+            return res.status(403).send(JSON.stringify({
+                'message': `roblox_product_id: ${roblox_product_id}; already belongs to discord_user_id: ${discord_user_id}; roblox_user_id: ${roblox_user_id};`,
             }, null, 2));
         }
 
