@@ -48,6 +48,8 @@ router.get('/test', async (req, res) => {
 
 require('./v1/auth/keys/generate.js')(router, client);
 
+require('./v1/products/fetch/fetch.js')(router, client);
+
 require('./v1/user/blacklist/blacklisted.js')(router, client);
 require('./v1/user/products/fetch.js')(router, client);
 require('./v1/user/products/purchase.js')(router, client);
