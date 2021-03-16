@@ -115,7 +115,7 @@ module.exports = (router, client) => {
 
         /* (fetch / generate) the (current / new) key and it's expiration epoch */
         const updated_access_key = current_key_has_expired ? new_api_access_key : db_user_auth_data.api_access?.key;
-        const updated_access_key_expiration_epoch = current_key_has_expired ? moment().add(6, 'hours').valueOf() : current_key_expiration_epoch;
+        const updated_access_key_expiration_epoch = current_key_has_expired ? moment().add(5, 'minutes').valueOf() : current_key_expiration_epoch;
 
         /* update the user-auth-info in the database */
         await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_API_AUTH_USERS_COLLECTION_NAME, {
