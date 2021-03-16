@@ -293,7 +293,7 @@ module.exports = {
                                 title: 'Please fill out our partner request form.',
                                 description: 'https://inertia.lighting/partner-requests-form',
                             })).catch(console.warn);
-                            return;
+                            break;
                         case 'OTHER':
                             await support_channel.send(new Discord.MessageEmbed({
                                 color: 0x60A0FF,
