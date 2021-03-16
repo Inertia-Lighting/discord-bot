@@ -192,12 +192,12 @@ module.exports = {
                     await support_channel.send(`${message.author}, welcome to your support ticket!`).catch(console.warn);
 
                     /* send the user document */
-                    /** @TODO Change database and collection for update Catalyst */
+                    /** @TODO Change stuff for update Catalyst */
                     const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_OLD_DATABASE_NAME, process.env.MONGO_OLD_USERS_COLLECTION_NAME, {
-                        'identity.discord_user_id': message.author.id,
+                        '_id': message.author.id,
+                        // 'identity.discord_user_id': message.author.id,
                     }, {
                         projection: {
-                            /** @TODO uncomment for update Catalyst */
                             // '_id': false,
                         },
                     });
