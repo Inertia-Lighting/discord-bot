@@ -55,14 +55,16 @@ const support_categories = new Discord.Collection([
         qualified_support_role_ids: [
             process.env.BOT_SUPPORT_STAFF_PRODUCT_TRANSFERS_ROLE_ID,
         ],
-    }, {
-        id: 'PARTNER_REQUESTS',
-        name: 'Partner Requests',
-        description: 'Come here if you want to request a partnership with Inertia Lighting.',
-        qualified_support_role_ids: [
-            process.env.BOT_SUPPORT_STAFF_PARTNER_REQUESTS_ROLE_ID,
-        ],
-    }, {
+    },
+    // {
+    //     id: 'PARTNER_REQUESTS',
+    //     name: 'Partner Requests',
+    //     description: 'Come here if you want to request a partnership with Inertia Lighting.',
+    //     qualified_support_role_ids: [
+    //         process.env.BOT_SUPPORT_STAFF_PARTNER_REQUESTS_ROLE_ID,
+    //     ],
+    // },
+    {
         id: 'OTHER',
         name: 'Other Issues',
         description: 'Come here if none of the other categories match your issue.',
