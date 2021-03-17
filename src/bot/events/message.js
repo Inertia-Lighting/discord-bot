@@ -26,15 +26,19 @@ module.exports = {
         /* only allow text channels */
         if (message.channel.type !== 'text') return;
 
+        /* handle messages sent in the suggestions channel */
         if (message.channel.id === suggestions_channel_id) {
             suggestionsChannelHandler(message);
             return
         }
 
-        /* respond to mentions */
-        // if (message.content.startsWith(`<@!${client.user.id}>`)) {
-        //     message.reply(`The command_prefix for me is \`${command_prefix}\`. To see a list of commands do \`${command_prefix}help\`!`).catch(console.warn);
-        // }
+        /* respond to mentions of this bot */
+        if (message.content.startsWith(`<@!${client.user.id}>`)) {
+            message.reply([
+                `The command_prefix for me is \`${command_prefix}\`.`,
+                `To see a list of commands do \`${command_prefix}help\`!`,
+            ].join('\n')).catch(console.warn);
+        }
 
         /* handle commands */
         if (message.content.startsWith(command_prefix)) {
