@@ -21,11 +21,16 @@ module.exports = {
         const member_lookup_query = message.mentions.members.first()?.id ?? command_args[0];
         const member = message.guild.members.resolve(member_lookup_query) ?? message.member;
 
+        /* fetch the user document */
+        /** @TODO Update Catalyst */
         const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
-            'identity.discord_user_id': member.user.id,
+            '_id': member.user.id,
+            /** @TODO Update Catalyst */
+            // 'identity.discord_user_id': member.user.id,
         }, {
             projection: {
-                '_id': false,
+                /** @TODO Update Catalyst */
+                // '_id': false,
             },
         });
 
@@ -35,7 +40,9 @@ module.exports = {
             const user_product_codes = Object.entries(db_user_data.products).filter(entry => entry[1]).map(entry => entry[0]);
             const user_products = db_roblox_products.filter(product => user_product_codes.includes(product.code));
 
-            const { data: roblox_user } = await axios.get(`https://users.roblox.com/v1/users/${encodeURIComponent(db_user_data.identity.roblox_user_id)}`);
+            const { data: roblox_user } = await axios.get(`https://users.roblox.com/v1/users/${encodeURIComponent(db_user_data.ROBLOX_ID)}`);
+            /** @TODO Update Catalyst */
+            // const { data: roblox_user } = await axios.get(`https://users.roblox.com/v1/users/${encodeURIComponent(db_user_data.identity.roblox_user_id)}`);
 
             await message.channel.send(new Discord.MessageEmbed({
                 color: 0x60A0FF,
@@ -46,7 +53,9 @@ module.exports = {
                 fields: [
                     {
                         name: 'Discord',
-                        value: `<@${db_user_data.identity.discord_user_id}>`,
+                        value: `<@${db_user_data._id}>`,
+                        /** @TODO Update Catalyst */
+                        // value: `<@${db_user_data.identity.discord_user_id}>`,
                     }, {
                         name: 'Roblox',
                         value: `[${roblox_user.displayName}](https://roblox.com/users/${roblox_user.id}/profile)`,
@@ -57,7 +66,7 @@ module.exports = {
                 ],
             })).catch(console.warn);
         } else {
-            message.reply('You aren\'t in our database!');
+            message.reply('The person you looked up isn\'t in our database!');
         }
     },
 };

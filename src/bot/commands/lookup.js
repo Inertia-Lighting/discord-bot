@@ -13,6 +13,7 @@ module.exports = {
     description: 'looks up a specified user in the database',
     aliases: ['lookup'],
     permission_level: 'staff',
+    cooldown: 5_000,
     async execute(message, args) {
         const { command_args } = args;
 
@@ -20,22 +21,30 @@ module.exports = {
         const lookup_roblox_user_id = command_args[0];
 
         if (!(lookup_discord_user_id || lookup_roblox_user_id)) {
-            message.reply('provide a \`roblox_user_id\` or a discord user @mention!');
+            message.reply('provide a \`roblox_user_id\` or a discord user @mention!').catch(console.warn);
             return;
         }
 
-        /* send the user document */
-        const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
+        /* fetch the user document */
+        /** @TODO Update Catalyst */
+        const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_OLD_DATABASE_NAME, process.env.MONGO_OLD_USERS_COLLECTION_NAME, {
             ...(lookup_discord_user_id ? {
-                'identity.discord_user_id': lookup_discord_user_id,
+                '_id': lookup_discord_user_id,
+                /** @TODO Update Catalyst */
+                // 'identity.discord_user_id': lookup_discord_user_id,
             } : {
-                'identity.roblox_user_id': lookup_roblox_user_id,
+                'ROBLOX_ID': lookup_roblox_user_id,
+                /** @TODO Update Catalyst */
+                // 'identity.roblox_user_id': lookup_roblox_user_id,
             }),
         }, {
             projection: {
-                '_id': false,
+                /** @TODO Update Catalyst */
+                // '_id': false,
             },
         });
+
+        /* send the user document */
         await message.channel.send(new Discord.MessageEmbed({
             color: 0x60A0FF,
             author: {
