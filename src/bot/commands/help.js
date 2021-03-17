@@ -12,6 +12,7 @@ module.exports = {
     usage: '[command_name]',
     aliases: ['help'],
     permission_level: 'public',
+    cooldown: 2_500,
     async execute(message, args) {
         const { user_permission_levels, command_prefix, command_args } = args;
 

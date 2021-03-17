@@ -18,6 +18,7 @@ module.exports = {
     usage: 'CODE_HERE',
     aliases: ['verify', 'link'],
     permission_level: 'staff',
+    cooldown: 5_000,
     async execute(message, args) {
         const { command_args } = args;
 

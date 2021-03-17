@@ -27,8 +27,8 @@ module.exports = {
     name: 'identity_token',
     description: 'n/a',
     aliases: ['identity_token'],
-    cooldown: 60_000,
     permission_level: 'staff',
+    cooldown: 60_000,
     async execute(message, args) {
         const { command_prefix, command_name, command_args } = args;
 

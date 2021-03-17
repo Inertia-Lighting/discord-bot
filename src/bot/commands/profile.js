@@ -15,6 +15,7 @@ module.exports = {
     description: 'displays your profile',
     aliases: ['profile'],
     permission_level: 'staff',
+    cooldown: 5_000,
     async execute(message, args) {
         const { command_args } = args;
 

@@ -13,7 +13,7 @@ module.exports = {
     description: 'looks up a specified user in the database',
     aliases: ['lookup'],
     permission_level: 'staff',
-    cooldown: 5_000,
+    cooldown: 2_500,
     async execute(message, args) {
         const { command_args } = args;
 

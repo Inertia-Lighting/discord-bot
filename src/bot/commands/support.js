@@ -150,6 +150,7 @@ module.exports = {
     description: 'support tickets and stuff',
     aliases: ['support', 'close_ticket'],
     permission_level: 'public',
+    cooldown: 10_000,
     async execute(message, args) {
         const { user_permission_levels, command_name } = args;
 

@@ -12,6 +12,7 @@ module.exports = {
     description: 'n/a',
     aliases: ['fix_db'],
     permission_level: 'admin',
+    cooldown: 60_000,
     async execute(message, args) {
         /* empty the new database */
         await go_mongo_db.remove(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {});
