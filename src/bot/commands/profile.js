@@ -39,7 +39,9 @@ module.exports = {
             const db_roblox_products = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_PRODUCTS_COLLECTION_NAME, {});
 
             const user_product_codes = Object.entries(db_user_data.products).filter(entry => entry[1]).map(entry => entry[0]);
-            const user_products = db_roblox_products.filter(product => user_product_codes.includes(product.code));
+            const user_products = db_roblox_products.filter(product => user_product_codes.includes(product.old_code));
+            /** @TODO Update Catalyst */
+            // const user_products = db_roblox_products.filter(product => user_product_codes.includes(product.code));
 
             const { data: roblox_user } = await axios.get(`https://users.roblox.com/v1/users/${encodeURIComponent(db_user_data.ROBLOX_ID)}`);
             /** @TODO Update Catalyst */
