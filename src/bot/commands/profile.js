@@ -24,7 +24,7 @@ module.exports = {
 
         /* fetch the user document */
         /** @TODO Update Catalyst */
-        const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
+        const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_OLD_DATABASE_NAME, process.env.MONGO_OLD_USERS_COLLECTION_NAME, {
             '_id': member.user.id,
             /** @TODO Update Catalyst */
             // 'identity.discord_user_id': member.user.id,
