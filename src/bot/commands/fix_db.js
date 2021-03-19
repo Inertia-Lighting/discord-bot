@@ -18,9 +18,9 @@ module.exports = {
         await go_mongo_db.remove(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {});
 
         /* copy all documents from the old database */
-        const all_users = await go_mongo_db.find('test', 'users', {});
+        const all_users = await go_mongo_db.find(process.env.MONGO_OLD_DATABASE_NAME, process.env.MONGO_OLD_USERS_COLLECTION_NAME, {});
         for (const user of all_users) {
-            console.log({ user });
+            // console.log({ user });
 
             const new_user = { ...user };
 
@@ -69,17 +69,10 @@ module.exports = {
                 object_sort(new_user),
             ]);
 
-            // await go_mongo_db.remove(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
-            //     '_id': user['_id'],
-            // });
-
-            // await go_mongo_db.remove(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
-            //     'discord_user_id': user['discord_user_id'],
-            // });
-
-            console.log({ new_user });
-
-            console.log('----------------------------------------------------------------------------------------------------------------');
+            // console.log({ new_user });
+            // console.log('----------------------------------------------------------------------------------------------------------------');
         }
+
+        message.reply('The new database was updated!');
     },
 };
