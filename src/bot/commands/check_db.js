@@ -15,7 +15,7 @@ module.exports = {
     cooldown: 60_000,
     async execute(message, args) {
         /* fetch all documents from the users collection */
-        const all_users = await go_mongo_db.find(process.env.MONGO_OLD_DATABASE_NAME, process.env.MONGO_OLD_USERS_COLLECTION_NAME, {});
+        const all_users = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {});
 
         /* iterate over all users */
         for (const user of all_users) {
