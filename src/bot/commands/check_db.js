@@ -29,13 +29,13 @@ module.exports = {
             /* check for multiple users with the same identifier */
             if (matching_users_by_identifiers.length === 1) continue;
 
-            message.channel.send([
+            await message.channel.send([
                 'User:',
                 `${'```'}\n${JSON.stringify(user.identity, null, 2)}\n${'```'}`,
                 'has identifiers that are present in the users collection more than once!',
             ].join('\n'));
 
-            await Timer(500);
+            await Timer(1000);
         }
 
         message.reply('Done checking the database!');
