@@ -12,12 +12,47 @@ const { go_mongo_db } = require('../../../../mongo/mongo.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
-async function generateReproducibleSalt(game_owner_id, reproducible_salt_secret) {
+async function generateGameSalt(game_owner_id, reproducible_salt_secret) {
     const repeated_game_owner_id = game_owner_id.repeat(10);
 
     let salt = '';
     for (let i = 0; i < reproducible_salt_secret.length; i++) {
         salt += repeated_game_owner_id[reproducible_salt_secret[i]];
+    }
+
+    return salt;
+}
+
+/**
+ * Generates a salt to be used in this endpoint
+ * @param {String} game_owner_id the game/group owner id
+ * @param {String} game_place_id the game place id
+ * @param {String} salt_secret_1 is a 10 digit number stored inside of a string
+ * @param {String} salt_secret_2 is a 10 digit number stored inside of a string
+ * @returns {Promise<String>} 
+ */
+ async function generateGameSalt(game_owner_id, game_place_id, salt_secret_1, salt_secret_2) {
+    if (typeof game_owner_id !== 'string') return new TypeError('game_owner_id was not a string');
+    if (typeof game_place_id !== 'string') return new TypeError('game_place_id was not a string');
+    if (typeof salt_secret_1 !== 'string') return new TypeError('salt_secret_1 was not a string');
+    if (typeof salt_secret_2 !== 'string') return new TypeError('salt_secret_2 was not a string');
+
+    /* prepare the salt */
+    let salt = '';
+
+    /* generate the game owner section of the salt */
+    const repeated_game_owner_id = game_owner_id.repeat(10);
+    for (let i = 0; i < salt_secret_1.length; i++) {
+        salt += repeated_game_owner_id[salt_secret_1[i]];
+    }
+
+    /* place a hyphen in the middle of the salt */
+    salt += '-';
+
+    /* generate the game place section of the salt */
+    const repeated_game_place_id = game_place_id.repeat(10);
+    for (let i = 0; i < salt_secret_2.length; i++) {
+        salt += repeated_game_place_id[salt_secret_2[i]];
     }
 
     return salt;
@@ -42,13 +77,19 @@ module.exports = (router, client) => {
         // console.log('req.body', req.body);
 
         const {
-            game_api_salt: reproducible_game_api_salt,
-            game_owner_id: game_owner_id,
             game_owner_api_token: game_owner_api_token,
+            game_api_salt: game_api_salt,
+            game_owner_id: game_owner_id,
+            game_place_id: game_place_id,
         } = req.body;
 
         /* check if required information is present */
-        if (!reproducible_game_api_salt || typeof reproducible_game_api_salt !== 'string') {
+        if (!game_owner_api_token || typeof game_owner_api_token !== 'string') {
+            return res.status(400).send(JSON.stringify({
+                'message': 'missing (string) \`game_owner_api_token\` in request body',
+            }, null, 2));
+        }
+        if (!game_api_salt || typeof game_api_salt !== 'string') {
             return res.status(400).send(JSON.stringify({
                 'message': 'missing (string) \`game_api_salt\` in request body',
             }, null, 2));
@@ -58,17 +99,17 @@ module.exports = (router, client) => {
                 'message': 'missing (string) \`game_owner_id\` in request body',
             }, null, 2));
         }
-        if (!game_owner_api_token || typeof game_owner_api_token !== 'string') {
+        if (!game_place_id || typeof game_place_id !== 'string') {
             return res.status(400).send(JSON.stringify({
-                'message': 'missing (string) \`game_owner_api_token\` in request body',
+                'message': 'missing (string) \`game_place_id\` in request body',
             }, null, 2));
         }
 
         /* verify a reproducible salt from the game */
-        const reproducible_server_api_salt = await generateReproducibleSalt(game_owner_id, process.env.USER_API_TOKEN_SALT_SECRET);
-        if (reproducible_game_api_salt !== reproducible_server_api_salt) {
+        const reproduced_game_api_salt = await generateGameSalt(game_owner_id, game_place_id, process.env.USER_API_TOKEN_SALT_SECRET_1, process.env.USER_API_TOKEN_SALT_SECRET_2);
+        if (game_api_salt !== reproduced_game_api_salt) {
             return res.status(403).send(JSON.stringify({
-                'message': '\`game_api_salt\` was not recognized!',
+                'message': '\`game_api_salt\` was not recognized or is invalid!',
             }, null, 2));
         }
 
