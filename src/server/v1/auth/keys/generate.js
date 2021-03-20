@@ -12,23 +12,12 @@ const { go_mongo_db } = require('../../../../mongo/mongo.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
-async function generateGameSalt(game_owner_id, reproducible_salt_secret) {
-    const repeated_game_owner_id = game_owner_id.repeat(10);
-
-    let salt = '';
-    for (let i = 0; i < reproducible_salt_secret.length; i++) {
-        salt += repeated_game_owner_id[reproducible_salt_secret[i]];
-    }
-
-    return salt;
-}
-
 /**
  * Generates a salt to be used in this endpoint
  * @param {String} game_owner_id the game/group owner id
  * @param {String} game_place_id the game place id
- * @param {String} salt_secret_1 is a 10 digit number stored inside of a string
- * @param {String} salt_secret_2 is a 10 digit number stored inside of a string
+ * @param {String} salt_secret_1 is a 64 digit number stored inside of a string
+ * @param {String} salt_secret_2 is a 64 digit number stored inside of a string
  * @returns {Promise<String>} 
  */
  async function generateGameSalt(game_owner_id, game_place_id, salt_secret_1, salt_secret_2) {
@@ -41,7 +30,7 @@ async function generateGameSalt(game_owner_id, reproducible_salt_secret) {
     let salt = '';
 
     /* generate the game owner section of the salt */
-    const repeated_game_owner_id = game_owner_id.repeat(10);
+    const repeated_game_owner_id = game_owner_id.repeat(64);
     for (let i = 0; i < salt_secret_1.length; i++) {
         salt += repeated_game_owner_id[salt_secret_1[i]];
     }
@@ -50,7 +39,7 @@ async function generateGameSalt(game_owner_id, reproducible_salt_secret) {
     salt += '-';
 
     /* generate the game place section of the salt */
-    const repeated_game_place_id = game_place_id.repeat(10);
+    const repeated_game_place_id = game_place_id.repeat(64);
     for (let i = 0; i < salt_secret_2.length; i++) {
         salt += repeated_game_place_id[salt_secret_2[i]];
     }
