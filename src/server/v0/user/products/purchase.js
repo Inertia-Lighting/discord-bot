@@ -120,7 +120,7 @@ module.exports = (router, client) => {
             }, null, 2));
         }
 
-        const guild_member = await guild.members.fetch(db_user_data.identity.discord_user_id).catch(console.warn);
+        const guild_member = await guild.members.fetch(db_user_data._id).catch(console.warn);
         if (!guild_member) {
             console.error(`unable to find discord user: ${guild_member.user.id}; in guild!`);
             return res.status(404).send(JSON.stringify({
