@@ -17,7 +17,7 @@ module.exports = {
     description: 'verifies the user and adds them to the database',
     usage: 'CODE_HERE',
     aliases: ['verify', 'link'],
-    permission_level: 'staff',
+    permission_level: 'public',
     cooldown: 5_000,
     async execute(message, args) {
         const { command_args } = args;
@@ -35,7 +35,7 @@ module.exports = {
                 title: 'Error',
                 description: [
                     'That verification code was not recognized!',
-                    'You need to provide the verification code that was given to you in the product hub!',
+                    `You need to provide the verification code that was given to you in the ${process.env.ROBLOX_PRODUCT_HUB_URL}!`,
                     `Example: \`${command_prefix}verify CODE_HERE\``,
                 ].join('\n'),
             })).catch(console.warn);
