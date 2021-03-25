@@ -2,7 +2,6 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const moment = require('moment-timezone');
 const bcrypt = require('bcryptjs');
 
 const { go_mongo_db } = require('../../../../mongo/mongo.js');
