@@ -35,7 +35,7 @@ module.exports = {
                 title: 'Error',
                 description: [
                     'That verification code was not recognized!',
-                    `You need to provide the verification code that was given to you in the ${process.env.ROBLOX_PRODUCT_HUB_URL}!`,
+                    `You need to provide the verification code that was given to you in the [Product Hub](${process.env.ROBLOX_PRODUCT_HUB_URL})!`,
                     `Example: \`${command_prefix}verify CODE_HERE\``,
                 ].join('\n'),
             })).catch(console.warn);
