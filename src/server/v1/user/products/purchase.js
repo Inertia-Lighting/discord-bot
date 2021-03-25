@@ -128,7 +128,7 @@ module.exports = (router, client) => {
             }, null, 2));
         }
 
-        /* try to add the role to the guild member */
+        /* try to add the role to the guild member! */
         try {
             await guild_member.roles.add(db_roblox_product_data.discord_role_id);
         } catch (error) {
