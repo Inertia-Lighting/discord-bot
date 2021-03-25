@@ -38,7 +38,7 @@ module.exports = {
 
             public_roblox_products_with_prices.push(public_roblox_product);
 
-            await Timer(250); // prevent api abuse
+            await Timer(125); // prevent api abuse
         }
 
         /* split the products into a 2-dimensional array of chunks */
@@ -56,7 +56,7 @@ module.exports = {
                     [
                         `**Product** ${product.name}`,
                         `**Code:** ${product.code}`,
-                        `**Price:** ${product.price_in_robux}`,
+                        `**Price:** ${product.price_in_robux} <:robux:759699085439139871>`,
                         `**Role:** <@&${product.discord_role_id}>`,
                         `**Description:**\n\`\`\`${product.description}\`\`\``,
                     ].join('\n')
