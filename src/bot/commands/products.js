@@ -56,7 +56,7 @@ module.exports = {
                     [
                         `**Product** ${product.name}`,
                         `**Code:** ${product.code}`,
-                        `**Price:** ${product.price_in_robux} <:robux:759699085439139871>`,
+                        `**Price:** <:robux:759699085439139871> ${product.price_in_robux}`,
                         `**Role:** <@&${product.discord_role_id}>`,
                         `**Description:**\n\`\`\`${product.description}\`\`\``,
                     ].join('\n')
