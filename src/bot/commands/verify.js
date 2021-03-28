@@ -60,19 +60,12 @@ module.exports = {
 
         const updated_products = {};
         for (const db_roblox_product of db_roblox_products) {
-            /** @TODO Update Catalyst */
-            // updated_products[db_roblox_product.code] = message.member.roles.cache.has(db_roblox_product.discord_role_id);
-            updated_products[db_roblox_product.old_code] = message.member.roles.cache.has(db_roblox_product.discord_role_id);
+            updated_products[db_roblox_product.code] = message.member.roles.cache.has(db_roblox_product.discord_role_id);
         }
 
-        /** @TODO Update Catalyst */
-        // await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
-        await go_mongo_db.update(process.env.MONGO_OLD_DATABASE_NAME, process.env.MONGO_OLD_USERS_COLLECTION_NAME, {
-            /** @TODO Update Catalyst */
-            // 'identity.discord_user_id': message.author.id,
-            // 'identity.roblox_user_id': verification_context.roblox_user_id,
-            '_id': message.author.id,
-            'ROBLOX_ID': verification_context.roblox_user_id,
+        await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
+            'identity.discord_user_id': message.author.id,
+            'identity.roblox_user_id': verification_context.roblox_user_id,
         }, {
             $set: {
                 'products': updated_products,
