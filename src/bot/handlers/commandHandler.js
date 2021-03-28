@@ -59,20 +59,6 @@ async function commandHandler(message) {
         user_permission_levels.push('admin');
     }
 
-    /* inform all users that this bot is in-development */
-    // message.channel.send(new Discord.MessageEmbed({
-    //     color: 0xFFFF00,
-    //     author: {
-    //         iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-    //         name: `${client.user.username} | In-Development`,
-    //     },
-    //     title: 'You may have used the wrong command prefix!',
-    //     description: [
-    //         '\`il!\` is for our in-development bot.',
-    //         'Please use \`!\` instead of \`il!\` for our non-development bot.',
-    //     ].join('\n'),
-    // })).catch(console.warn);
-
     /* command permission checking */
     if (!user_permission_levels.includes(command.permission_level)) {
         message.channel.send(new Discord.MessageEmbed({
