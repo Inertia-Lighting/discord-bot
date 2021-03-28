@@ -33,5 +33,6 @@ module.exports = {
         }
         const matching_qs_topics = mapped_qs_topics.filter(qs_topic => qs_topic.similarity_score > 0.75);
         message.reply(matching_qs_topics);
+        console.log(matching_qs_topics);
     }
 }
