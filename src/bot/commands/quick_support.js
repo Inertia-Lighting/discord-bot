@@ -21,7 +21,7 @@ module.exports = {
     aliases: ['quick_support', 'qs'],
     permission_level: 'staff',
     async execute(message, args) {
-        const { discord_command, command_args } = args;
+        const { command_prefix, command_name, command_args } = args;
 
         const search_query = command_args.join(' ').trim().toLowerCase();
 
@@ -69,7 +69,7 @@ module.exports = {
                 description: [
                     'Couldn\'t find a matching quick support topic!',
                     'Here are a few quick support topics that you can lookup:',
-                    `\`\`\`\n${example_qs_topics.map(example_qs_topic => `${discord_command} ${example_qs_topic}`).join('\n')}\n\`\`\``,
+                    `\`\`\`\n${example_qs_topics.map(example_qs_topic => `${command_prefix}${command_name} ${example_qs_topic}`).join('\n')}\n\`\`\``,
                 ].join('\n'),
             }));
         }
