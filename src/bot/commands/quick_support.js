@@ -21,7 +21,7 @@ module.exports = {
     aliases: ['quick_support', 'qs'],
     permission_level: 'staff',
     async execute(message, args) {
-        const { command_args } = args;
+        const { discord_command, command_args } = args;
 
         const search_query = command_args.join(' ').trim().toLowerCase();
 
@@ -46,7 +46,7 @@ module.exports = {
                 similarity_score: similarity_score,
             });
         }
-        const [ best_matching_qs_topic ] = mapped_qs_topics.filter(qs_topic => qs_topic.similarity_score > 0.55);
+        const [best_matching_qs_topic] = mapped_qs_topics.filter(qs_topic => qs_topic.similarity_score > 0.55);
         if (best_matching_qs_topic) {
             message.channel.send(new Discord.MessageEmbed({
                 color: 0x60A0FF,
@@ -58,6 +58,7 @@ module.exports = {
                 description: `${best_matching_qs_topic.support_contents}`,
             }));
         } else {
+            const example_qs_topics = qs_topics.slice(3).map(qs_topic => qs_topic.searchable_query);
             message.channel.send(new Discord.MessageEmbed({
                 color: 0xFFFF00,
                 author: {
@@ -65,7 +66,11 @@ module.exports = {
                     name: 'Inertia Lighting | Quick Support System',
                 },
                 title: 'Improper Command Usage!',
-                description: 'Couldn\'t find a matching quick support topic!',
+                description: [
+                    'Couldn\'t find a matching quick support topic!',
+                    'Here are a few quick support topics that you can lookup:',
+                    `\`\`\`\n${example_qs_topics.map(example_qs_topic => `${discord_command} ${example_qs_topic}`).join('\n')}\n\`\`\``,
+                ].join('\n'),
             }));
         }
     }
