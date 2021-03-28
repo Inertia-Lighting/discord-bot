@@ -85,6 +85,7 @@ module.exports = {
                     $set: {
                         'identity.roblox_user_id': db_user_data.identity.roblox_user_id,
                         'encrypted_api_token': encrypted_token,
+                        'api_access': {}, // this is required by our schema validation
                     },
                 }, {
                     upsert: true,

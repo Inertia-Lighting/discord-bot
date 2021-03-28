@@ -152,7 +152,6 @@ module.exports = (router, client) => {
             'identity.roblox_user_id': game_owner_id,
         }, {
             $set: {
-                ['api_access.version']: 1,
                 ['api_access.enabled']: db_user_auth_data.api_access?.enabled ?? true,
                 ['api_access.expiration_epoch']: updated_access_key_expiration_epoch,
                 ['api_access.key']: updated_access_key,
