@@ -68,7 +68,7 @@ module.exports = {
                 title: 'Improper Command Usage!',
                 description: [
                     'Couldn\'t find a matching quick support topic!',
-                    'Here are a few quick support topics that you can lookup:',
+                    '\nHere are a few quick support topics that you can lookup:',
                     `\`\`\`\n${example_qs_topics.map(example_qs_topic => `${command_prefix}${command_name} ${example_qs_topic}`).join('\n')}\n\`\`\``,
                 ].join('\n'),
             }));
