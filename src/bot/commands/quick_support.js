@@ -1,6 +1,7 @@
 const stringSimilarity = require('string-similarity');
 const { Discord, client } = require('../discord_client.js');
 
+/* searchable_query should be lowercase! */
 const qs_topics = [
     {
         searchable_query: 'roblox studio output',
@@ -22,7 +23,7 @@ module.exports = {
     async execute(message, args) {
         const { command_args } = args;
 
-        const search_query = command_args.join(' ').trim();
+        const search_query = command_args.join(' ').trim().toLowerCase();
 
         if (search_query.length === 0) {
             message.channel.send(new Discord.MessageEmbed({
