@@ -3,10 +3,10 @@ const { Discord, client } = require('../discord_client.js');
 
 const qs_topics = [
     {
-        searchable_query: 'studio_output',
+        searchable_query: 'roblox studio output',
         support_contents: 'To open the output window in Roblox Studio, click on the View tab and then click on Ouput.',
     }, {
-        searchable_query: 'roblox_output',
+        searchable_query: 'roblox game output',
         support_contents: 'To open the Developer Console (Output) in Roblox, press F9 or type /console in the Chat.',
     }, {
         searchable_query: 'templates',
@@ -31,8 +31,10 @@ module.exports = {
                 similarity_score: similarity_score,
             });
         }
-        const matching_qs_topics = mapped_qs_topics.filter(qs_topic => qs_topic.similarity_score > 0.75);
-        message.reply(matching_qs_topics);
-        console.log(matching_qs_topics);
+        const [ best_matching_qs_topic ] = mapped_qs_topics.filter(qs_topic => qs_topic.similarity_score > 0.65);
+        console.log(best_matching_qs_topic);
+        if (best_matching_qs_topic) {
+            message.reply(best_matching_qs_topic.support_contents);
+        }
     }
 }
