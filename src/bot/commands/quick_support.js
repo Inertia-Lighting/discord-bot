@@ -58,7 +58,7 @@ module.exports = {
                 description: `${best_matching_qs_topic.support_contents}`,
             }));
         } else {
-            const example_qs_topics = qs_topics.slice(3).map(qs_topic => qs_topic.searchable_query);
+            const example_qs_topics = qs_topics.slice(0, 3).map(qs_topic => qs_topic.searchable_query);
             message.channel.send(new Discord.MessageEmbed({
                 color: 0xFFFF00,
                 author: {
