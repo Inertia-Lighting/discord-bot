@@ -5,19 +5,19 @@ const { Discord, client } = require('../discord_client.js');
 const qs_topics = [
     {
         searchable_query: 'roblox studio output',
-        support_contents: 'To open the output window in Roblox Studio, click on the View tab and then click on Ouput.',
+        support_contents: 'To open the output window in Roblox Studio, click on the **View** tab and then click on **Output**.',
     }, {
         searchable_query: 'roblox game output',
-        support_contents: 'To open the Developer Console (Output) in Roblox, press F9 or type /console in the Chat.',
+        support_contents: 'To open the **Developer Console** (Output) in Roblox, press F9 or type \`/console\` in the **game\'s chat**.',
     }, {
         searchable_query: 'templates',
-        support_contents: 'To fix this issue, make sure your game is published, then restart the studio session you are currently in.',
+        support_contents: 'To fix this issue, make sure that your game is published, then restart the Roblox Studio session you are currently in.',
     }
 ];
 
 module.exports = {
     name: 'quick_support',
-    description: 'provides a method of quickly looking up support topics',
+    description: 'provides a method to quickly look up support topics',
     aliases: ['quick_support', 'qs'],
     permission_level: 'public',
     async execute(message, args) {
@@ -67,8 +67,8 @@ module.exports = {
                 },
                 title: 'Improper Command Usage!',
                 description: [
-                    'Couldn\'t find a matching quick support topic!',
-                    '\nHere are a few quick support topics that you can lookup:',
+                    'I couldn\'t find quick support topic that matches your search query!',
+                    '\nFor example; here are a few quick support topics that you can lookup:',
                     `\`\`\`\n${example_qs_topics.map(example_qs_topic => `${command_prefix}${command_name} ${example_qs_topic}`).join('\n')}\n\`\`\``,
                 ].join('\n'),
             }));
