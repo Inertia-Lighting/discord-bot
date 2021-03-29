@@ -155,7 +155,7 @@ module.exports = {
         const lookup_discord_user_id = message.mentions.members.first()?.id;
         const lookup_roblox_user_id = command_args[1];
 
-        const db_user_data = (await findUserInUsersDatabase(lookup_discord_user_id, lookup_roblox_user_id)) ?? {}; // force the result to be an object
+        const db_user_data = await findUserInUsersDatabase(lookup_discord_user_id, lookup_roblox_user_id);
 
         switch (command_args[0]?.toLowerCase()) {
             case 'add':
