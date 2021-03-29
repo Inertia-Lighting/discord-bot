@@ -159,6 +159,11 @@ module.exports = {
 
         switch (command_args[0]?.toLowerCase()) {
             case 'add':
+                if (!db_user_data) {
+                    message.reply('You can only blacklist users that have verified in the product hub!');
+                    return;
+                }
+
                 const staff_member_can_add_user_to_blacklist = await checkIfStaffMemberIsAllowedToBlacklistUser(message.guild, staff_member_id, db_user_data?.identity?.discord_user_id);
                 if (!staff_member_can_add_user_to_blacklist) {
                     message.reply('You aren\'t allowed to blacklist that user!');
@@ -175,8 +180,14 @@ module.exports = {
                 } else {
                     message.reply('I was unable to add that user to the blacklist!\nDid you specify them after the command?');
                 }
+
                 break;
             case 'remove':
+                if (!db_user_data) {
+                    message.reply('You can only un-blacklist users that have verified in the product hub!');
+                    return;
+                }
+
                 const staff_member_can_remove_user_from_blacklist = await checkIfStaffMemberIsAllowedToBlacklistUser(message.guild, staff_member_id, db_user_data?.identity?.discord_user_id);
                 if (!staff_member_can_remove_user_from_blacklist) {
                     message.reply('You aren\'t allowed to un-blacklist that user!');
@@ -189,6 +200,7 @@ module.exports = {
                 } else {
                     message.reply('I was unable to remove that user from the blacklist!\nDid you specify them after the command?');
                 }
+
                 break;
             case 'lookup':
                 const blacklisted_user_db_data = await lookupUserInBlacklistedUsersDatabase(lookup_discord_user_id, lookup_roblox_user_id);
