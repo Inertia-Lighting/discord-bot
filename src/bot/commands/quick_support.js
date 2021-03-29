@@ -19,7 +19,7 @@ module.exports = {
     name: 'quick_support',
     description: 'provides a method of quickly looking up support topics',
     aliases: ['quick_support', 'qs'],
-    permission_level: 'staff',
+    permission_level: 'public',
     async execute(message, args) {
         const { command_prefix, command_name, command_args } = args;
 
