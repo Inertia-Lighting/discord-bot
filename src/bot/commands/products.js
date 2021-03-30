@@ -2,11 +2,9 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const axios = require('axios');
+const { array_chunks, Timer } =require('../../utilities.js');
 
 const { go_mongo_db } = require('../../mongo/mongo.js');
-
-const { array_chunks, Timer } =require('../../utilities.js');
 
 const { Discord, client } = require('../discord_client.js');
 
