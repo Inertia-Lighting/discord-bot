@@ -25,24 +25,8 @@ module.exports = {
         /* filter out non-public products */
         const public_roblox_products = db_roblox_products.filter(product => product.public);
 
-        /* fetch the product prices from roblox */
-        const public_roblox_products_with_prices = [];
-        for (const public_roblox_product of public_roblox_products) {
-            const {
-                data: {
-                    PriceInRobux: product_price_in_robux,
-                },
-            } = await axios.get(`https://api.roblox.com/marketplace/productDetails?productId=${encodeURIComponent(public_roblox_product.roblox_product_id)}`);
-
-            public_roblox_product.price_in_robux = product_price_in_robux;
-
-            public_roblox_products_with_prices.push(public_roblox_product);
-
-            await Timer(125); // prevent api abuse
-        }
-
         /* split the products into a 2-dimensional array of chunks */
-        const roblox_products_chunks = array_chunks(public_roblox_products_with_prices, 5);
+        const roblox_products_chunks = array_chunks(public_roblox_products, 5);
 
         /* send embeds containing up-to 5 products per embed */
         for (const roblox_products_chunk of roblox_products_chunks) {
