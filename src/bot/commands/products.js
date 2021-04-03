@@ -2,7 +2,7 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const { array_chunks, Timer } =require('../../utilities.js');
+const { array_chunks, string_ellipses, Timer } = require('../../utilities.js');
 
 const { go_mongo_db } = require('../../mongo/mongo.js');
 
@@ -45,7 +45,7 @@ module.exports = {
                         `**Price:** <:robux:759699085439139871> ${product.price_in_robux}`,
                         `**Price:** $${(parseFloat(product.price_in_usd) + product_price_service_fee_for_usd).toFixed(2)} USD`,
                         `**Role:** <@&${product.discord_role_id}>`,
-                        `**Description:**\n\`\`\`${product.description}\`\`\``,
+                        `**Description:**\n\`\`\`${string_ellipses(product.description, 1000)}\`\`\``,
                     ].join('\n')
                 ).join('\n'),
             })).catch(console.warn);
