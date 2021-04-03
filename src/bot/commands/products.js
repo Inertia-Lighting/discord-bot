@@ -28,7 +28,7 @@ module.exports = {
         const public_roblox_products = db_roblox_products.filter(product => product.public);
 
         /* split the products into a 2-dimensional array of chunks */
-        const roblox_products_chunks = array_chunks(public_roblox_products, 5);
+        const roblox_products_chunks = array_chunks(public_roblox_products, 4);
 
         /* send embeds containing up-to 5 products per embed */
         for (const roblox_products_chunk of roblox_products_chunks) {
@@ -45,7 +45,7 @@ module.exports = {
                         `**Price:** <:robux:759699085439139871> ${product.price_in_robux}`,
                         `**Price:** $${(parseFloat(product.price_in_usd) + product_price_service_fee_for_usd).toFixed(2)} USD`,
                         `**Role:** <@&${product.discord_role_id}>`,
-                        `**Description:**\n\`\`\`${string_ellipses(product.description, 1000)}\`\`\``,
+                        `**Description:**\n\`\`\`${string_ellipses(product.description, 250)}\`\`\``,
                     ].join('\n')
                 ).join('\n'),
             })).catch(console.warn);
