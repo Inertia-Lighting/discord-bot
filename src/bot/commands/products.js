@@ -10,7 +10,7 @@ const { Discord, client } = require('../discord_client.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const product_price_service_fee_for_usd = parseFloat(process.env.ECONOMICS_PRODUCT_PRICE_SERVICE_FEE_FOR_USD);
+// const product_price_service_fee_for_usd = parseFloat(process.env.ECONOMICS_PRODUCT_PRICE_SERVICE_FEE_FOR_USD);
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -43,9 +43,10 @@ module.exports = {
                         `**Product** ${product.name}`,
                         `**Code:** ${product.code}`,
                         `**Price:** <:robux:759699085439139871> ${product.price_in_robux}`,
-                        `**Price:** $${(parseFloat(product.price_in_usd) + product_price_service_fee_for_usd).toFixed(2)} USD`,
+                        // `**Price:** $${(parseFloat(product.price_in_usd) + product_price_service_fee_for_usd).toFixed(2)} USD`,
+                        `**Price:** $${parseFloat(product.price_in_usd).toFixed(2)} USD (not including taxes/fees)`,
                         `**Role:** <@&${product.discord_role_id}>`,
-                        `**Description:**\n\`\`\`${string_ellipses(product.description, 250)}\`\`\``,
+                        `**Description:**\n\`\`\`${string_ellipses(product.description, 500)}\`\`\``,
                     ].join('\n')
                 ).join('\n'),
             })).catch(console.warn);
