@@ -151,6 +151,7 @@ async function removeUserFromBlacklistedUsersDatabase({ discord_user_id, roblox_
  * @returns {Promise<Boolean>} 
  */
 async function isStaffMemberAllowedToBlacklistUser(guild, staff_member_id, user_id) {
+    if (!guild) throw new TypeError('\`guild\` was undefined');
     if (!staff_member_id) throw new TypeError('\`staff_member_id\` was undefined');
     if (!user_id) throw new TypeError('\`user_id\` was undefined');
 
@@ -159,11 +160,11 @@ async function isStaffMemberAllowedToBlacklistUser(guild, staff_member_id, user_
 
     /* check that the staff member exists in the guild */
     const staff_member = await guild.members.fetch(staff_member_id).catch(() => undefined);
-    if (!staff_member) return false;
+    if (!staff_member) return false; // if the staff member somehow doesn't exist in the guild, don't allow them to blacklist users
 
-    /* check if the member exists in the guild */
+    /* check if the user exists in the guild */
     const member_being_blacklisted = await guild.members.fetch(user_id).catch(() => undefined);
-    if (!member_being_blacklisted) return true; // no need to check role hierarchy if the user isn't in the guild
+    if (!member_being_blacklisted) return true; // assume that the user can be blacklisted since they don't exist in the guild
 
     /* check the role hierarchy since they exist in the guild */
     const staff_member_role_hierarchy_is_greater = staff_member.roles.highest.comparePositionTo(member_being_blacklisted.roles.highest) > 0;
