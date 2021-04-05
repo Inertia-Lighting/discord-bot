@@ -40,13 +40,11 @@ module.exports = {
                 },
                 description: roblox_products_chunk.map(product => 
                     [
-                        `**Product** ${product.name}`,
-                        `**Code:** ${product.code}`,
-                        `**Price:** <:robux:759699085439139871> ${product.price_in_robux}`,
+                        `**Product Name** ${product.name}`,
+                        `**Price** ${product.price_in_robux} <:robux:759699085439139871>`,
                         // `**Price:** $${(parseFloat(product.price_in_usd) + product_price_service_fee_for_usd).toFixed(2)} USD`,
-                        `**Price:** $${parseFloat(product.price_in_usd).toFixed(2)} USD (not including taxes/fees)`,
-                        `**Role:** <@&${product.discord_role_id}>`,
-                        `**Description:**\n\`\`\`${string_ellipses(product.description, 500)}\`\`\``,
+                        `**PayPal Price** $${parseFloat(product.price_in_usd).toFixed(2)} USD (Not including taxes/fees.)`,
+                        `\nA brief overview of ${product.name}. \n\`\`\`${string_ellipses(product.description, 500)}\`\`\``,
                     ].join('\n')
                 ).join('\n'),
             })).catch(console.warn);
