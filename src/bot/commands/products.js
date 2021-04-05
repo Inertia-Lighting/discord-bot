@@ -43,7 +43,7 @@ module.exports = {
                         `**Product Name** ${product.name}`,
                         `**Price** ${product.price_in_robux} <:robux:759699085439139871>`,
                         // `**Price:** $${(parseFloat(product.price_in_usd) + product_price_service_fee_for_usd).toFixed(2)} USD`,
-                        `**PayPal Price** $${parseFloat(product.price_in_usd).toFixed(2)} USD (Not including taxes/fees.)`,
+                        `**PayPal Price** $${parseFloat(product.price_in_usd).toFixed(2)} USD (before taxes/fees)`,
                         `\nA brief overview of ${product.name}. \n\`\`\`${string_ellipses(product.description, 500)}\`\`\``,
                     ].join('\n')
                 ).join('\n'),
