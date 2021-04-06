@@ -188,23 +188,23 @@ module.exports = {
 
         switch (command_args[0]?.toLowerCase()) {
             case 'add':
-                const db_user_data = await findUserInUsersDatabase({
+                const db_user_data_for_case_add = await findUserInUsersDatabase({
                     discord_user_id: lookup_discord_user_id,
                     roblox_user_id: lookup_roblox_user_id,
                 });
 
-                if (!db_user_data) {
+                if (!db_user_data_for_case_add) {
                     message.reply('You can only blacklist users that have verified in the product hub!');
                     return;
                 }
 
-                const staff_member_can_add_user_to_blacklist = await isStaffMemberAllowedToBlacklistUser(message.guild, staff_member_id, db_user_data.identity.discord_user_id);
+                const staff_member_can_add_user_to_blacklist = await isStaffMemberAllowedToBlacklistUser(message.guild, staff_member_id, db_user_data_for_case_add.identity.discord_user_id);
                 if (!staff_member_can_add_user_to_blacklist) {
                     message.reply('You aren\'t allowed to blacklist that user!');
                     return;
                 }
 
-                const added_successfully = await addUserToBlacklistedUsersDatabase(db_user_data.identity, {
+                const added_successfully = await addUserToBlacklistedUsersDatabase(db_user_data_for_case_add.identity, {
                     epoch: Date.now(),
                     reason: command_args.slice(2).join(' ').trim() || 'no reason was specified',
                     staff_member_id: staff_member_id,
@@ -217,23 +217,23 @@ module.exports = {
 
                 break;
             case 'remove':
-                const db_user_data = await findUserInUsersDatabase({
+                const db_user_data_for_case_remove = await findUserInUsersDatabase({
                     discord_user_id: lookup_discord_user_id,
                     roblox_user_id: lookup_roblox_user_id,
                 });
 
-                if (!db_user_data) {
+                if (!db_user_data_for_case_remove) {
                     message.reply('You can only un-blacklist users that have verified in the product hub!');
                     return;
                 }
 
-                const staff_member_can_remove_user_from_blacklist = await isStaffMemberAllowedToBlacklistUser(message.guild, staff_member_id, db_user_data.identity.discord_user_id);
+                const staff_member_can_remove_user_from_blacklist = await isStaffMemberAllowedToBlacklistUser(message.guild, staff_member_id, db_user_data_for_case_remove.identity.discord_user_id);
                 if (!staff_member_can_remove_user_from_blacklist) {
                     message.reply('You aren\'t allowed to un-blacklist that user!');
                     return;
                 }
 
-                const removed_successfully = await removeUserFromBlacklistedUsersDatabase(db_user_data.identity);
+                const removed_successfully = await removeUserFromBlacklistedUsersDatabase(db_user_data_for_case_remove.identity);
                 if (removed_successfully) {
                     message.reply('I removed that user from the blacklist!');
                 } else {
