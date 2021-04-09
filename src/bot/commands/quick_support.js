@@ -1,7 +1,17 @@
+'use strict';
+
+//---------------------------------------------------------------------------------------------------------------//
+
 const stringSimilarity = require('string-similarity');
 const { Discord, client } = require('../discord_client.js');
 
-/* searchable_query should be lowercase! */
+//---------------------------------------------------------------------------------------------------------------//
+
+const bot_command_prefix = process.env.BOT_COMMAND_PREFIX;
+
+//---------------------------------------------------------------------------------------------------------------//
+
+/* searchable_query must be lowercase */
 const qs_topics = [
     {
         searchable_query: 'roblox studio output',
@@ -12,8 +22,13 @@ const qs_topics = [
     }, {
         searchable_query: 'templates',
         support_contents: 'To fix this issue, make sure that your game is published, then restart the Roblox Studio session you are currently in.',
-    }
+    }, {
+        searchable_query: 'identity token',
+        support_contents: 'Check out the \`${bot_command_prefix}identity_token\` command for more info.',
+    },
 ];
+
+//---------------------------------------------------------------------------------------------------------------//
 
 module.exports = {
     name: 'quick_support',
@@ -46,18 +61,9 @@ module.exports = {
                 similarity_score: similarity_score,
             });
         }
-        const [best_matching_qs_topic] = mapped_qs_topics.filter(qs_topic => qs_topic.similarity_score > 0.55);
-        if (best_matching_qs_topic) {
-            message.channel.send(new Discord.MessageEmbed({
-                color: 0x60A0FF,
-                author: {
-                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                    name: 'Inertia Lighting | Quick Support System',
-                },
-                title: `${best_matching_qs_topic.searchable_query}`,
-                description: `${best_matching_qs_topic.support_contents}`,
-            }));
-        } else {
+
+        const [ matching_qs_topic ] = mapped_qs_topics.filter(qs_topic => qs_topic.similarity_score > 0.55);
+        if (!matching_qs_topic) {
             const example_qs_topics = qs_topics.slice(0, 3).map(qs_topic => qs_topic.searchable_query);
             message.channel.send(new Discord.MessageEmbed({
                 color: 0xFFFF00,
@@ -72,6 +78,17 @@ module.exports = {
                     `\`\`\`\n${example_qs_topics.map(example_qs_topic => `${command_prefix}${command_name} ${example_qs_topic}`).join('\n')}\n\`\`\``,
                 ].join('\n'),
             }));
+            return;
         }
+
+        message.channel.send(new Discord.MessageEmbed({
+            color: 0x60A0FF,
+            author: {
+                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                name: 'Inertia Lighting | Quick Support System',
+            },
+            title: `${matching_qs_topic.searchable_query}`,
+            description: `${matching_qs_topic.support_contents}`,
+        }));
     }
 }
