@@ -9,7 +9,7 @@ const { Discord, client } = require('../discord_client.js');
 //---------------------------------------------------------------------------------------------------------------//
 
 const new_user_role_ids = [
-    '601945352848801794', // "Users"
+    '601945352848801794', // 'Users'
 ];
 
 //---------------------------------------------------------------------------------------------------------------//
@@ -24,9 +24,13 @@ module.exports = {
         }
 
         /* fetch user data from the database */
-        const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
-            'identity.discord_user_id': member.id,
+        const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_OLD_DATABASE_NAME, process.env.MONGO_OLD_USERS_COLLECTION_NAME, {
+            '_id': member.id,
         });
+        /** @TODO Update Catalyst */
+        // const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
+        //     'identity.discord_user_id': member.id,
+        // });
 
         /* don't continue if the user isn't in the database */
         if (!db_user_data) return;
@@ -34,10 +38,12 @@ module.exports = {
         /* fetch an up-to-date copy of the products and their info */
         const db_roblox_products = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_PRODUCTS_COLLECTION_NAME, {});
 
-        /* iterate over all products in the user (includes non-owned products) */
-        for (const [ product_code, user_owns_product ] of Object.entries(db_user_data.products ?? {})) {
+        /* iterate over all of the user's products (includes non-owned products) */
+        for (const [ product_code_from_user, user_owns_product ] of Object.entries(db_user_data.products ?? {})) {
             /* find the product info from the recently fetched products */
-            const product = db_roblox_products.find(product => product.code === product_code);
+            const product = db_roblox_products.find(product => product.old_code === product_code_from_user);
+            /** @TODO Update Catalyst */
+            // const product = db_roblox_products.find(product => product.code === product_code_from_user);
 
             /* give the user the role for the product if they own it */
             if (user_owns_product) {
@@ -47,7 +53,7 @@ module.exports = {
             await Timer(1_000); // prevent api abuse
         }
 
-        /* dm the user about the auto-verification */
+        /* direct message the user to notify them about the auto-verification */
         const dm_channel = await member.user.createDM();
         dm_channel.send(new Discord.MessageEmbed({
             color: 0x00FF00,
@@ -57,7 +63,7 @@ module.exports = {
             },
             description: [
                 `Hey there ${member.user}!`,
-                'You were auto-verified since you are already in our system!',
+                'You were automatically verified since you exist in our system!',
             ].join('\n\n'),
         })).catch(console.warn);
     },
