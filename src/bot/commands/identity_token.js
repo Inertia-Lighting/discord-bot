@@ -12,6 +12,10 @@ const { Discord, client } = require('../discord_client.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
+const identity_token_channel_id = process.env.BOT_IDENTITY_TOKEN_CHANNEL_ID;
+
+//---------------------------------------------------------------------------------------------------------------//
+
 async function generateUserAPIToken() {
     const non_encrypted_token = uuid_v4();
     const encrypted_token = bcrypt.hashSync(non_encrypted_token, bcrypt.genSaltSync(parseInt(process.env.USER_API_TOKEN_BCRYPT_SALT_LENGTH)));
@@ -37,7 +41,8 @@ module.exports = {
         });
 
         if (!db_user_data) {
-            return await message.reply(`Please \`${command_prefix}verify\` before using this command!`).catch(console.warn);
+            await message.reply(`Please \`${command_prefix}verify\` before using this command!`).catch(console.warn);
+            return; // don't continue if they don't exist in the database
         }
 
         switch (`${command_args[0]}`.toLowerCase()) {
@@ -52,12 +57,19 @@ module.exports = {
                         {
                             name: 'What are Identity Tokens?',
                             value: 'Identity Tokens are like passwords, we use them to verify your identity with our systems; just like how your computer uses a password to verify that it is you!',
-                        }
+                        }, {
+                            name: 'How do I generate my Identity Token?',
+                            value: `Run \`${command_prefix}${command_name} generate\` to generate your token!`,
+                        }, {
+                            name: 'How do I use my Identity Token?',
+                            value: `Check out <#${identity_token_channel_id}> for instructions on how to use identity tokens!`,
+                        },
                     ],
                 })).catch(console.warn);
                 break;
             case 'generate':
                 const { non_encrypted_token, encrypted_token } = await generateUserAPIToken();
+
                 try {
                     const dm_channel = await message.author.createDM();
                     await dm_channel.send(new Discord.MessageEmbed({
@@ -79,17 +91,22 @@ module.exports = {
 
                 await message.reply('I sent you your Identity Token via DMs!').catch(console.warn);
 
-                await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_API_AUTH_USERS_COLLECTION_NAME, {
-                    'identity.discord_user_id': db_user_data.identity.discord_user_id,
-                }, {
-                    $set: {
-                        'identity.roblox_user_id': db_user_data.identity.roblox_user_id,
-                        'encrypted_api_token': encrypted_token,
-                        'api_access': {}, // this is required by our schema validation
-                    },
-                }, {
-                    upsert: true,
-                });
+                try {
+                    await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_API_AUTH_USERS_COLLECTION_NAME, {
+                        'identity.discord_user_id': db_user_data.identity.discord_user_id,
+                    }, {
+                        $set: {
+                            'identity.roblox_user_id': db_user_data.identity.roblox_user_id,
+                            'encrypted_api_token': encrypted_token,
+                            'api_access': {}, // this is required by our schema validation
+                        },
+                    }, {
+                        upsert: true,
+                    });
+                } catch (error) {
+                    console.trace(error);
+                    message.reply('Something went wrong while updating your Identity Token in the database, please contact staff!').catch(console.warn);
+                }
 
                 break;
             default:

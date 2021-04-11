@@ -99,6 +99,13 @@ async function commandHandler(message) {
         return;
     }
 
+    /* command logging */
+    console.info({
+        discord_user_id: message.author.id,
+        command_name: command_name,
+        command_args: command_args,
+    });
+
     /* command execution */
     try {
         await command.execute(message, {
@@ -108,7 +115,11 @@ async function commandHandler(message) {
             command_args,
         });
     } catch (error) {
-        console.trace(error);
+        console.trace({
+            command_name: command_name,
+            command_args: command_args,
+            error_message: error,
+        });
         message.reply(new Discord.MessageEmbed({
             color: 0xFF0000,
             author: {
