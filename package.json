@@ -28,6 +28,7 @@
     "go-mongo-db": "github:Inertia-Lighting/go-mongo-db",
     "moment-timezone": "^0.5.32",
     "path": "^0.12.7",
+    "string-similarity": "^4.0.4",
     "uuid": "^8.3.2"
   }
 }
