@@ -45,8 +45,8 @@ module.exports = {
             new_user['products']['PARS'] = new_user['products']['Pars'] ?? false;
             new_user['products']['BLINDERS'] = new_user['products']['Blinders'] ?? false;
             new_user['products']['WASHES'] = new_user['products']['Wash'] ?? false;
-            new_user['products']['SOURCE_4'] = false;
-            new_user['products']['VISUALS'] = false;
+            new_user['products']['SOURCE_4'] = new_user['products']['SOURCE_4'] ?? false;
+            new_user['products']['VISUALS'] = new_user['products']['VISUALS'] ?? false;
 
             delete new_user['__v'];
             delete new_user['_id'];
