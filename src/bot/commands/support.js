@@ -117,8 +117,8 @@ async function createSupportTicketChannel(guild, guild_member, support_category)
  */
 async function closeSupportTicketChannel(support_channel, save_transcript) {
     if (save_transcript) {
-        const support_ticket_topic_name = support_channel.name.match(/([a-zA-Z\-\_])+\D/i);
-        const support_ticket_owner_id = support_channel.name.match(/(?!.*\-)?([0-9])+/i);
+        const support_ticket_topic_name = support_channel.name.match(/([a-zA-Z\-\_])+\D/i)?.[0];
+        const support_ticket_owner_id = support_channel.name.match(/(?!.*\-)?([0-9])+/i)?.[0];
 
         const all_messages_in_channel = await support_channel.messages.fetch({ limit: 100 }); // 100 is the max
         const all_messages_in_channel_processed = Array.from(all_messages_in_channel.values()).reverse();
@@ -153,8 +153,8 @@ async function closeSupportTicketChannel(support_channel, save_transcript) {
                         value: `${'```'}\n${moment(support_channel.createdTimestamp).tz('America/New_York').format('YYYY[-]MM[-]DD hh:mm A [GMT]ZZ')}\n${'```'}`,
                         inline: false,
                     }, {
-                        name: 'Owner',
-                        value: `${'```'}\n<@!${support_ticket_owner_id}>\n${'```'}`,
+                        name: 'User',
+                        value: `<@!${support_ticket_owner_id}>\n`,
                         inline: false,
                     }, {
                         name: 'Participants',
