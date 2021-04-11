@@ -23,8 +23,28 @@ const qs_topics = [
         searchable_query: 'templates',
         support_contents: 'To fix this issue, make sure that your game is published, then restart the Roblox Studio session you are currently in.',
     }, {
-        searchable_query: 'identity token',
-        support_contents: 'Check out the \`${bot_command_prefix}identity_token\` command for more info.',
+        searchable_query: 'product prices',
+        support_contents: 'Check out the \`${bot_command_prefix}products\` command for more info on product prices.',
+    }, {
+        searchable_query: 'paypal',
+        support_contents: 'Please open a support ticket (<#814197612491833354>) to purchase using paypal.',
+    },
+    // {
+    //     searchable_query: 'identity token',
+    //     support_contents: 'Check out the \`${bot_command_prefix}identity_token\` command for more info on identity tokens.',
+    // },
+    {
+        searchable_query: 'buying products',
+        support_contents: 'Check out <#601891200273743932> for more info on buying our products.',
+    }, {
+        searchable_query: 'using products',
+        support_contents: 'Check out <#822726590508957727> for more info on using our products.',
+    }, {
+        searchable_query: 'support tickets',
+        support_contents: 'Check out <#814197612491833354> for more info on support tickets.',
+    }, {
+        searchable_query: 'refunds',
+        support_contents: 'We do not offer refunds as stated by our product hub confirmation screens.',
     },
 ];
 
