@@ -117,7 +117,7 @@ async function createSupportTicketChannel(guild, guild_member, support_category)
  */
 async function closeSupportTicketChannel(support_channel, save_transcript) {
     if (save_transcript) {
-        const support_ticket_topic_name = support_channel.name.match(/([a-zA-Z\-\_])+\D/i)?.[0];
+        const support_ticket_topic_name = support_channel.name.match(/([a-zA-Z\-\_])+(?![\-\_])\D/i)?.[0];
         const support_ticket_owner_id = support_channel.name.match(/(?!.*\-)?([0-9])+/i)?.[0];
 
         const all_messages_in_channel = await support_channel.messages.fetch({ limit: 100 }); // 100 is the max

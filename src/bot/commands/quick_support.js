@@ -24,14 +24,14 @@ const qs_topics = [
         support_contents: 'To fix this issue, make sure that your game is published, then restart the Roblox Studio session you are currently in.',
     }, {
         searchable_query: 'product prices',
-        support_contents: 'Check out the \`${bot_command_prefix}products\` command for more info on product prices.',
+        support_contents: `Check out the \`${bot_command_prefix}products\` command for more info on product prices.`,
     }, {
         searchable_query: 'paypal',
         support_contents: 'Please open a support ticket (<#814197612491833354>) to purchase using paypal.',
     },
     // {
     //     searchable_query: 'identity token',
-    //     support_contents: 'Check out the \`${bot_command_prefix}identity_token\` command for more info on identity tokens.',
+    //     support_contents: `Check out the \`${bot_command_prefix}identity_token\` command for more info on identity tokens.`,
     // },
     {
         searchable_query: 'buying products',
