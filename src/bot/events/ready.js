@@ -15,15 +15,20 @@ const { client } = require('../discord_client.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
+const command_prefix = process.env.BOT_COMMAND_PREFIX;
+
+//---------------------------------------------------------------------------------------------------------------//
+
 const updateBotPresence = ((client) => {
-    const statuses = [
+    const bot_custom_statuses = [
+        `with ${command_prefix}help`,
+        'with Inertia Lighting Developers!',
+        'with Inertia Lighting Products!',
         'with Roblox!',
-        'with !verify',
-        'with Inertia Lighting products!',
     ];
 
     return (async () => {
-        const first_status_item = statuses.shift(); // remove the first item and return it
+        const first_status_item = bot_custom_statuses.shift(); // remove the first item and return it
 
         const updated_presence = await client.user.setPresence({
             status: 'online',
@@ -33,7 +38,7 @@ const updateBotPresence = ((client) => {
             },
         });
 
-        statuses.push(first_status_item); // append first_status_item to the end of the array
+        bot_custom_statuses.push(first_status_item); // append first_status_item to the end of the array
 
         return updated_presence;
     });
@@ -51,7 +56,7 @@ const setProductPricesInDB = async () => {
             product_price_in_robux = response_data.PriceInRobux;
         } catch {
             console.warn(`Unable to fetch price for product: ${db_roblox_product.code}; skipping product!`);
-            continue; // skip this product the price cannot be fetched
+            continue; // skip this product since the price cannot be fetched
         }
 
         await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_PRODUCTS_COLLECTION_NAME, {
@@ -80,6 +85,6 @@ module.exports = {
         setInterval(async () => await updateBotPresence(), 5 * 60_000);
 
         /* update the product prices in the database after 1 minute */
-        setTimeout(() => setProductPricesInDB(), 1 * 60_000);
+        setTimeout(async () => await setProductPricesInDB(), 1 * 60_000);
     },
 };
