@@ -6,8 +6,8 @@ const { client } = require('../discord_client.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const { suggestionsChannelHandler } = require('../handlers/suggestionsChannelHandler.js');
-const { commandHandler } = require('../handlers/commandHandler.js');
+const { suggestionsChannelHandler } = require('../handlers/suggestions_channel_handler.js');
+const { commandHandler } = require('../handlers/command_handler.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 

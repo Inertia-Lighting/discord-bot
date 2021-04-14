@@ -2,7 +2,7 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const { illegalNicknameHandler } = require('../handlers/illegalNicknameHandler.js');
+const { illegalNicknameHandler } = require('../handlers/illegal_nickname_handler.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
