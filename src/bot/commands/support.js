@@ -218,7 +218,8 @@ module.exports = {
                 if (matching_support_category) {
                     message_collector_1.stop();
 
-                    await bot_message.delete({ timeout: 500 }).catch(console.warn);
+                    await Timer(250); // delay the message deletion
+                    await bot_message.delete().catch(console.warn);
 
                     const support_channel = await createSupportTicketChannel(message.guild, message.member, matching_support_category);
 
@@ -363,8 +364,10 @@ module.exports = {
                     message_collector_2.on('collect', async (collected_message_2) => {
                         async function cleanupMessageCollector() {
                             message_collector_2.stop();
-                            await choices_embed.delete({ timeout: 500 }).catch(console.warn);
-                            await collected_message_2.delete({ timeout: 500 }).catch(console.warn);
+                            await Timer(500); // delay the message deletion
+                            await choices_embed.delete().catch(console.warn);
+                            await Timer(500); // delay the message deletion
+                            await collected_message_2.delete().catch(console.warn);
                         }
                         switch (collected_message_2.content.toLowerCase()) {
                             case 'done':
@@ -381,7 +384,8 @@ module.exports = {
                     });
                 } else if (['cancel'].includes(collected_message_1.content.toLowerCase())) {
                     message_collector_1.stop();
-                    await bot_message.delete({ timeout: 500 }).catch(console.warn);
+                    await Timer(500); // delay the message deletion
+                    await bot_message.delete().catch(console.warn);
                     await collected_message_1.reply('Canceled!').catch(console.warn);
                 } else {
                     await collected_message_1.reply('Please type the category number or \`cancel\`.').catch(console.warn);
@@ -393,8 +397,9 @@ module.exports = {
             active_message_collectors_1.set(message.author.id, message_collector_1);
 
             /* automatically cancels a support-ticket selection screen */
-            setTimeout(() => {
-                bot_message.delete({ timeout: 500 }).catch(console.warn);
+            setTimeout(async () => {
+                await Timer(500); // delay the message deletion
+                await bot_message.delete().catch(console.warn);
                 message_collector_1.stop();
             }, 5 * 60_000); // 5 minutes
         } else if (command_name === 'close_ticket') {

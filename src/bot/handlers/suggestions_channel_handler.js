@@ -2,12 +2,15 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const { string_ellipses } = require('../../utilities.js');
+const { string_ellipses, Timer } = require('../../utilities.js');
 
-const { Discord, client } = require('../discord_client.js');
+const { Discord } = require('../discord_client.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
+/**
+ * @param {Discord.Message} message 
+ */
 async function suggestionsChannelHandler(message) {
     if (message.author.system || message.author.bot) return;
     if (message.content.length === 0) return;
@@ -27,12 +30,14 @@ async function suggestionsChannelHandler(message) {
         description: `${suggestion_text}`,
     })).catch(console.warn);
 
-    /* suggestion embed reactions */
-    await bot_suggestion_message.react(`⬆️`);
-    await bot_suggestion_message.react(`⬇️`);
+    /* add the reactions to the suggestion embed */
+    await bot_suggestion_message.react('⬆️');
+    await bot_suggestion_message.react('⬇️');
 
-    /* remove original message */
-    message.delete({ timeout: 500 });
+    await Timer(500);
+
+    /* remove the original message */
+    await message.delete();
 }
 
 //---------------------------------------------------------------------------------------------------------------//
