@@ -21,6 +21,9 @@ const new_user_role_ids = [
 module.exports = {
     name: 'guildMemberAdd',
     async handler(member) {
+        if (member.user.system) return; // don't operate on system accounts
+        if (member.user.bot) return; // don't operate on bots to prevent feedback-loops
+
         /* handle nicknames for new members */
         await illegalNicknameHandler(member);
 
