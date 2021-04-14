@@ -12,9 +12,7 @@ const { illegalNicknameHandler } = require('../handlers/illegalNicknameHandler.j
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const new_user_role_ids = [
-    '601945352848801794', // 'Users'
-];
+const new_user_role_ids = process.env.BOT_NEW_USER_AUTO_ROLE_IDS.split(',');
 
 //---------------------------------------------------------------------------------------------------------------//
 
