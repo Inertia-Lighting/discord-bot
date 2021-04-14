@@ -29,7 +29,7 @@ module.exports = {
         /* handle messages sent in the suggestions channel */
         if (message.channel.id === suggestions_channel_id) {
             suggestionsChannelHandler(message);
-            return
+            return;
         }
 
         /* respond to mentions of this bot */
