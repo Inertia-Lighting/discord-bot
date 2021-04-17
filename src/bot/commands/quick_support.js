@@ -16,7 +16,7 @@ const bot_command_prefix = process.env.BOT_COMMAND_PREFIX;
 const qs_topics = [
     {
         searchable_query: 'update catalyst',
-        support_contents: '**Update Catalyst** is an upcoming update to all of our products / systems; it\'s release date is currently unknown.',
+        support_contents: '**Update Catalyst** is an upcoming update to all of our products / systems; its release date is currently unknown.',
     }, {
         searchable_query: 'roblox studio output',
         support_contents: 'To open the output window in Roblox Studio, click on the **View** tab and then click on **Output**.',
