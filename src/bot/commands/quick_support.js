@@ -3,6 +3,7 @@
 //---------------------------------------------------------------------------------------------------------------//
 
 const stringSimilarity = require('string-similarity');
+
 const { Discord, client } = require('../discord_client.js');
 
 //---------------------------------------------------------------------------------------------------------------//
@@ -14,6 +15,9 @@ const bot_command_prefix = process.env.BOT_COMMAND_PREFIX;
 /* searchable_query must be lowercase */
 const qs_topics = [
     {
+        searchable_query: 'update catalyst',
+        support_contents: '**Update Catalyst** is an upcoming update to all of our products / systems; it\'s release date is currently unknown.',
+    }, {
         searchable_query: 'roblox studio output',
         support_contents: 'To open the output window in Roblox Studio, click on the **View** tab and then click on **Output**.',
     }, {
@@ -30,7 +34,7 @@ const qs_topics = [
         support_contents: 'Please open a support ticket (<#814197612491833354>) to purchase using paypal.',
     },
     // {
-    //     searchable_query: 'identity token',
+    //     searchable_query: 'identity tokens',
     //     support_contents: `Check out the \`${bot_command_prefix}identity_token\` command for more info on identity tokens.`,
     // },
     {
@@ -82,8 +86,8 @@ module.exports = {
             });
         }
 
-        const [ matching_qs_topic ] = mapped_qs_topics.filter(qs_topic => qs_topic.similarity_score > 0.55);
-        if (!matching_qs_topic) {
+        const matching_qs_topics = mapped_qs_topics.filter(qs_topic => qs_topic.similarity_score > 0.45);
+        if (matching_qs_topics.length === 0) {
             const example_qs_topics = qs_topics.slice(0, 3).map(qs_topic => qs_topic.searchable_query);
             message.channel.send(new Discord.MessageEmbed({
                 color: 0xFFFF00,
@@ -101,14 +105,16 @@ module.exports = {
             return;
         }
 
+        const best_matching_qs_topic = matching_qs_topics.reduce((previous, current) => previous.similarity_score > current.similarity_score ? previous : current);
+
         message.channel.send(new Discord.MessageEmbed({
             color: 0x60A0FF,
             author: {
                 iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                 name: 'Inertia Lighting | Quick Support System',
             },
-            title: `${matching_qs_topic.searchable_query}`,
-            description: `${matching_qs_topic.support_contents}`,
+            title: `${best_matching_qs_topic.searchable_query}`,
+            description: `${best_matching_qs_topic.support_contents}`,
         }));
     }
 }
