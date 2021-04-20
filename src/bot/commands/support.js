@@ -22,7 +22,7 @@ const support_tickets_transcripts_channel_id = process.env.BOT_SUPPORT_TICKETS_T
 //---------------------------------------------------------------------------------------------------------------//
 
 /**
- * @typedef {'PRODUCT_PURCHASES'|'PRODUCT_ISSUES'|'PRODUCT_TRANSFERS'|'PARTNER_REQUESTS'|'OTHER'} SupportCategoryId
+ * @typedef {'PRODUCT_PURCHASES'|'PAYPAL_PURCHASES'|'PRODUCT_ISSUES'|'PRODUCT_TRANSFERS'|'PARTNER_REQUESTS'|'OTHER'} SupportCategoryId
  * @typedef {{
  *  id: SupportCategoryId,
  *  human_index: Number,
@@ -39,6 +39,14 @@ const support_categories = new Discord.Collection([
         name: 'Product Purchases',
         description: 'Come here if you are having issues with purchasing our products.',
         qualified_support_role_ids: [
+            process.env.BOT_SUPPORT_STAFF_PRODUCT_PURCHASES_ROLE_ID,
+        ],
+    }, {
+        id: 'PAYPAL_PURCHASES',
+        name: 'PayPal Purchases',
+        description: 'Come here if you want to purchase our products using PayPal.',
+        qualified_support_role_ids: [
+            process.env.BOT_SUPPORT_STAFF_PAYPAL_ROLE_ID,
             process.env.BOT_SUPPORT_STAFF_PRODUCT_PURCHASES_ROLE_ID,
         ],
     }, {
@@ -285,10 +293,34 @@ module.exports = {
                                 description: [
                                     '**Please fill out this template so that our staff can assist you.**',
                                     '- **Product(s):** ( C-Lights, Magic Panels, etc )',
-                                    '- **Purchase Date(s):** ( 1970-1-1 )',
-                                    '- **Proof Of Purchase(s):** ( https://www.roblox.com/transactions )',
+                                    '- **Purchase Date(s):** ( 1970-01-01 )',
+                                    '- **Proof Of Purchase(s):** ( screenshot [your transactions](https://www.roblox.com/transactions) )',
                                     '- **Issue:** ( describe your issue )',
                                     '**If you don\'t fill out the template properly, your ticket will be ignored!**',
+                                ].join('\n'),
+                            })).catch(console.warn);
+                            break;
+                        case 'PAYPAL_PURCHASES':
+                            await support_channel.send(new Discord.MessageEmbed({
+                                color: 0x60A0FF,
+                                author: {
+                                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                                    name: `Inertia Lighting | ${matching_support_category.name}`,
+                                },
+                                description: [
+                                    '**Please fill out this template so that our staff can assist you.**',
+                                    '- **Product(s):** ( C-Lights, Magic Panels, etc )',
+                                    '',
+                                    '**After filling out the template, please wait for <@!331938622733549590> to provide you with a payment destination.**',
+                                    '',
+                                    '**Once you have payed, please provide the following information.**',
+                                    '- **Transaction Email:** ( you@your.email )',
+                                    '- **Transaction Id:** ( 000000000000000000 )',
+                                    '- **Transaction Amount:** ( $1.69 )',
+                                    '- **Transaction Date:** ( 1970-01-01 )',
+                                    '- **Transaction Time:** ( 12:00 AM )',
+                                    '',
+                                    '**Please follow the above instructions properly!**',
                                 ].join('\n'),
                             })).catch(console.warn);
                             break;
@@ -305,7 +337,7 @@ module.exports = {
                                     '- **Read Setup Guide:** ( yes | maybe | no )',
                                     '- **Game Is Published:** ( yes | idk |  no )',
                                     '- **HTTPS Enabled In Game:** ( yes | idk | no )',
-                                    '- **Roblox Studio Output:** ( how to enable output: https://prnt.sc/y6hnau )',
+                                    '- **Roblox Studio Output:** ( [how to enable output](https://prnt.sc/y6hnau) )',
                                     '- **Issue:** ( describe your issue )',
                                     '**If you don\'t fill out the template properly, your ticket will be ignored!**',
                                 ].join('\n'),
