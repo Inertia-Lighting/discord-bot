@@ -14,6 +14,19 @@ function Timer(time_in_milliseconds) {
 }
 
 /**
+ * Generates a random integer in an inclusive range: min <= return_value <= max
+ * @param {Number} min 
+ * @param {Number} max 
+ * @returns {Number} 
+ */
+ function random_range_inclusive(min, max) {
+    if (typeof min !== 'number') throw new TypeError('\`min\` must be a number!');
+    if (typeof max !== 'number') throw new TypeError('\`max\` must be a number!');
+
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+/**
  * Ellipses a string to a specified length (including the ellipses)
  * @param {String} string_to_ellipses 
  * @param {Number} output_length_limit by default `Number.MAX_SAFE_INTEGER`
@@ -69,11 +82,24 @@ function array_chunks(array_of_things, chunk_size) {
     return chunks;
 }
 
+/**
+ * Fetches a random item from the specified array
+ * @param {Array<*>} array_of_things 
+ * @returns {*} 
+ */
+ function array_random(array_of_things) {
+    if (!Array.isArray(array_of_things)) throw new TypeError('\`array_of_things\` must be an array!');
+
+    return array_of_things[random_range_inclusive(0, array_of_things.length - 1)];
+}
+
 //---------------------------------------------------------------------------------------------------------------//
 
 module.exports = {
     Timer,
+    random_range_inclusive,
     string_ellipses,
     object_sort,
     array_chunks,
+    array_random,
 };
