@@ -12,44 +12,93 @@ const bot_command_prefix = process.env.BOT_COMMAND_PREFIX;
 
 //---------------------------------------------------------------------------------------------------------------//
 
-/* searchable_query must be lowercase */
+/**
+ * @typedef {{
+ *  title: String,
+ *  searchable_queries: String[],
+ *  support_contents: String,
+ * }} QuickSupportTopic
+ * @typedef {QuickSupportTopic[]} QuickSupportTopics
+ */
+
+//---------------------------------------------------------------------------------------------------------------//
+
+/**
+ * searchable_query must be lowercase
+ * @type {QuickSupportTopics} 
+ */
 const qs_topics = [
-    {
-        searchable_query: 'update catalyst',
-        support_contents: '**Update Catalyst** is an upcoming update to all of our products / systems; its release date is currently unknown.',
-    }, {
-        searchable_query: 'roblox studio output',
-        support_contents: 'To open the output window in Roblox Studio, click on the **View** tab and then click on **Output**.',
-    }, {
-        searchable_query: 'roblox game output',
-        support_contents: 'To open the **Developer Console** (Output) in Roblox, press F9 or type \`/console\` in the **game\'s chat**.',
-    }, {
-        searchable_query: 'templates',
-        support_contents: 'To fix this issue, make sure that your game is published, then restart the Roblox Studio session you are currently in.',
-    }, {
-        searchable_query: 'product prices',
-        support_contents: `Check out the \`${bot_command_prefix}products\` command for more info on product prices.`,
-    }, {
-        searchable_query: 'paypal',
-        support_contents: 'Please open a support ticket (<#814197612491833354>) to purchase using paypal.',
-    },
     // {
-    //     searchable_query: 'identity tokens',
+    //     title: 'What are Identity Tokens?',
+    //     searchable_queries: [
+    //         'identity tokens',
+    //     ],
     //     support_contents: `Check out the \`${bot_command_prefix}identity_token\` command for more info on identity tokens.`,
     // },
     {
-        searchable_query: 'buying products',
+        title: 'What is Update Catalyst?',
+        searchable_queries: [
+            'update catalyst',
+        ],
+        support_contents: '**Update Catalyst** is an upcoming update to all of our products / systems; its release date is currently unknown.',
+    }, {
+        title: 'Enabling Roblox Output (in-studio)',
+        searchable_queries: [
+            'roblox studio output',
+        ],
+        support_contents: 'To open the output window in Roblox Studio, click on the **View** tab and then click on **Output**.',
+    }, {
+        title: 'Enabling Roblox Output (in-game)',
+        searchable_queries: [
+            'roblox game output',
+        ],
+        support_contents: 'To open the **Developer Console** (Output) in Roblox, press F9 or type \`/console\` in the **game\'s chat**.',
+    }, {
+        title: 'Who is \"Templates\"?',
+        searchable_queries: [
+            'templates',
+        ],
+        support_contents: 'To fix this issue, make sure that your game is published, then restart the Roblox Studio session you are currently in.',
+    }, {
+        title: 'What are the prices for our products?',
+        searchable_queries: [
+            'product prices',
+        ],
+        support_contents: `Check out the \`${bot_command_prefix}products\` command for more info on our product prices.`,
+    }, {
+        title: 'How to make purchases via PayPal',
+        searchable_queries: [
+            'paypal',
+            'using paypal',
+        ],
+        support_contents: 'Please open a support ticket (<#814197612491833354>) to purchase using paypal.',
+    }, {
+        title: 'How do I purchase a product?',
+        searchable_queries: [
+            'purchasing products',
+            'buying products',
+        ],
         support_contents: 'Check out <#601891200273743932> for more info on buying our products.',
     }, {
-        searchable_query: 'using products',
+        title: 'How do I use the products that I bought?',
+        searchable_queries: [
+            'using products',
+        ],
         support_contents: 'Check out <#822726590508957727> for more info on using our products.',
     }, {
-        searchable_query: 'support tickets',
-        support_contents: 'Check out <#814197612491833354> for more info on support tickets.',
+        title: 'Am I able to receive a refund?',
+        searchable_queries: [
+            'refunds',
+        ],
+        support_contents: 'Currently, we do not offer refunds; as stated by our product hub confirmation screens.\nThe cost of refunding is greater than the amount that we make from each transaction.',
     }, {
-        searchable_query: 'refunds',
-        support_contents: 'We do not offer refunds as stated by our product hub confirmation screens.',
-    },
+        title: 'How do I open a Support Ticket?',
+        searchable_queries: [
+            'opening a support ticket',
+            'support tickets',
+        ],
+        support_contents: 'Check out <#814197612491833354> for more information on opening support tickets.',
+    }, 
 ];
 
 //---------------------------------------------------------------------------------------------------------------//
@@ -72,17 +121,30 @@ module.exports = {
                     name: 'Inertia Lighting | Quick Support System',
                 },
                 title: 'Improper Command Usage!',
-                description: 'Please provide a quick support topic to lookup!',
+                description: [
+                    'Please provide a quick support topic to lookup!',
+                    'Example:',
+                    '\`\`\`',
+                    `${command_prefix}${command_name} refunds`,
+                    '\`\`\`',
+                ].join('\n'),
             }));
             return;
         }
 
         const mapped_qs_topics = [];
         for (const qs_topic of qs_topics) {
-            const similarity_score = stringSimilarity.compareTwoStrings(search_query, qs_topic.searchable_query);
+            let similarity_score_total = 0;
+            for (const searchable_query of qs_topic.searchable_queries) {
+                const similarity_score = stringSimilarity.compareTwoStrings(search_query, searchable_query);
+                similarity_score_total += similarity_score;
+            }
+
+            const similarity_score_average = similarity_score_total / qs_topic.searchable_queries.length;
+
             mapped_qs_topics.push({
                 ...qs_topic,
-                similarity_score: similarity_score,
+                similarity_score: similarity_score_average,
             });
         }
 
