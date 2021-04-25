@@ -19,7 +19,7 @@ function Timer(time_in_milliseconds) {
  * @param {Number} max 
  * @returns {Number} 
  */
- function random_range_inclusive(min, max) {
+function random_range_inclusive(min, max) {
     if (typeof min !== 'number') throw new TypeError('\`min\` must be a number!');
     if (typeof max !== 'number') throw new TypeError('\`max\` must be a number!');
 
@@ -87,7 +87,7 @@ function array_chunks(array_of_things, chunk_size) {
  * @param {Array<*>} array_of_things 
  * @returns {*} 
  */
- function array_random(array_of_things) {
+function array_random(array_of_things) {
     if (!Array.isArray(array_of_things)) throw new TypeError('\`array_of_things\` must be an array!');
 
     return array_of_things[random_range_inclusive(0, array_of_things.length - 1)];
