@@ -25,7 +25,7 @@ async function illegalNicknameHandler(member) {
 
     try {
         await member.setNickname(display_name_override_nickname, display_name_override_reason);
-    } catch {} // ignore any errors, as they will most likely be permission errors
+    } catch {} // ignore any errors, as they will most likely be related to missing permissions
 }
 
 //---------------------------------------------------------------------------------------------------------------//
