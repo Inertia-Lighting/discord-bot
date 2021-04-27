@@ -150,7 +150,7 @@ module.exports = {
 
         const matching_qs_topics = mapped_qs_topics.filter(qs_topic => qs_topic.similarity_score > 0.45);
         if (matching_qs_topics.length === 0) {
-            const example_qs_topics = qs_topics.slice(0, 3).map(qs_topic => qs_topic.searchable_query);
+            const example_qs_topics = qs_topics.slice(0, 3).map(qs_topic => qs_topic.searchable_queries[0]);
             message.channel.send(new Discord.MessageEmbed({
                 color: 0xFFFF00,
                 author: {
@@ -175,7 +175,7 @@ module.exports = {
                 iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                 name: 'Inertia Lighting | Quick Support System',
             },
-            title: `${best_matching_qs_topic.searchable_query}`,
+            title: `${best_matching_qs_topic.title}`,
             description: `${best_matching_qs_topic.support_contents}`,
         }));
     }
