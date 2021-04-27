@@ -6,7 +6,7 @@ const { Timer } = require('../../utilities.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const non_ascii_regex_filter = /[^A-Z0-9\-\_\'\s]/gi;
+const non_ascii_regex_filter = /[^A-Z0-9\-\_\'\#\(\)\[\]\{\}\|\s]/gi;
 
 const display_name_override_nickname = 'Illegal Nickname';
 const display_name_override_reason = 'The user\'s display name contained non-ascii character(s).';
