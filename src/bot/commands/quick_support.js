@@ -98,7 +98,7 @@ const qs_topics = [
             'support tickets',
         ],
         support_contents: 'Check out <#814197612491833354> for more information on opening support tickets.',
-    }, 
+    },
 ];
 
 //---------------------------------------------------------------------------------------------------------------//

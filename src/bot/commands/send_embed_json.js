@@ -6,8 +6,6 @@ const axios = require('axios');
 
 const { Timer } = require('../../utilities.js');
 
-// const { Discord, client } = require('../discord_client.js');
-
 //---------------------------------------------------------------------------------------------------------------//
 
 module.exports = {
@@ -19,7 +17,7 @@ module.exports = {
         const msg_attachment = message.attachments.first();
 
         if (!msg_attachment) {
-            message.reply('Send a file first!').catch(console.warn);
+            message.reply('Please send a \`.json\` file first!').catch(console.warn);
             return;
         }
 
@@ -35,12 +33,12 @@ module.exports = {
             delete webhook_message_options.avatar_url;
 
             for (const embed of webhook_message_options.embeds) {
-                message.channel.send({ embed: embed }).catch(console.warn);
-                await Timer(5_000);
+                await message.channel.send({ embed: embed });
+                await Timer(2_500);
             }
         } catch (error) {
             console.trace(error);
-            message.reply('Something went wrong, check the console!').catch(console.warn);
+            message.reply('Something went wrong, please check the console for details!').catch(console.warn);
         }
     },
 };

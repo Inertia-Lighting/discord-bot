@@ -26,7 +26,7 @@ module.exports = {
                 ],
             });
 
-            /* check for multiple users with the same identifier */
+            /* check if multiple users share the same identifier */
             if (matching_users_by_identifiers.length === 1) continue;
 
             await message.channel.send([
