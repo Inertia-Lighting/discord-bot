@@ -9,7 +9,7 @@ const Discord = require('discord.js');
 const client = new Discord.Client({
     disableMentions: 'everyone',
     presence: {
-        status: 'dnd',
+        status: 'online',
         type: 4,
         activity: {
             type: 'PLAYING',

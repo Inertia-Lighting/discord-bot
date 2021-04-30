@@ -8,16 +8,24 @@ const { Discord, client } = require('../discord_client.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const new_user_role_ids = [
-    '601945352848801794', // 'Users'
-];
+const { illegalNicknameHandler } = require('../handlers/illegal_nickname_handler.js');
+
+//---------------------------------------------------------------------------------------------------------------//
+
+const new_user_role_ids = process.env.BOT_NEW_USER_AUTO_ROLE_IDS.split(',');
 
 //---------------------------------------------------------------------------------------------------------------//
 
 module.exports = {
     name: 'guildMemberAdd',
     async handler(member) {
-        /* give roles to new users */
+        if (member.user.system) return; // don't operate on system accounts
+        if (member.user.bot) return; // don't operate on bots to prevent feedback-loops
+
+        /* handle nicknames for new members */
+        await illegalNicknameHandler(member);
+
+        /* give roles to new members */
         for (const role_id of new_user_role_ids) {
             await member.roles.add(role_id).catch(console.warn);
             await Timer(1_000); // prevent api abuse

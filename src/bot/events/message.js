@@ -2,12 +2,12 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const { Discord, client } = require('../discord_client.js');
+const { client } = require('../discord_client.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const { suggestionsChannelHandler } = require('../handlers/suggestionsChannelHandler.js');
-const { commandHandler } = require('../handlers/commandHandler.js');
+const { suggestionsChannelHandler } = require('../handlers/suggestions_channel_handler.js');
+const { commandHandler } = require('../handlers/command_handler.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -29,7 +29,7 @@ module.exports = {
         /* handle messages sent in the suggestions channel */
         if (message.channel.id === suggestions_channel_id) {
             suggestionsChannelHandler(message);
-            return
+            return;
         }
 
         /* respond to mentions of this bot */

@@ -22,7 +22,7 @@ const support_tickets_transcripts_channel_id = process.env.BOT_SUPPORT_TICKETS_T
 //---------------------------------------------------------------------------------------------------------------//
 
 /**
- * @typedef {'PRODUCT_PURCHASES'|'PRODUCT_ISSUES'|'PRODUCT_TRANSFERS'|'PARTNER_REQUESTS'|'OTHER'} SupportCategoryId
+ * @typedef {'PRODUCT_PURCHASES'|'PAYPAL_PURCHASES'|'PRODUCT_ISSUES'|'PRODUCT_TRANSFERS'|'PARTNER_REQUESTS'|'OTHER'} SupportCategoryId
  * @typedef {{
  *  id: SupportCategoryId,
  *  human_index: Number,
@@ -39,6 +39,14 @@ const support_categories = new Discord.Collection([
         name: 'Product Purchases',
         description: 'Come here if you are having issues with purchasing our products.',
         qualified_support_role_ids: [
+            process.env.BOT_SUPPORT_STAFF_PRODUCT_PURCHASES_ROLE_ID,
+        ],
+    }, {
+        id: 'PAYPAL_PURCHASES',
+        name: 'PayPal Purchases',
+        description: 'Come here if you want to purchase our products using PayPal.',
+        qualified_support_role_ids: [
+            process.env.BOT_SUPPORT_STAFF_PAYPAL_ROLE_ID,
             process.env.BOT_SUPPORT_STAFF_PRODUCT_PURCHASES_ROLE_ID,
         ],
     }, {
@@ -117,8 +125,13 @@ async function createSupportTicketChannel(guild, guild_member, support_category)
  */
 async function closeSupportTicketChannel(support_channel, save_transcript) {
     if (save_transcript) {
+        const support_ticket_topic_name = support_channel.name.match(/([a-zA-Z\-\_])+(?![\-\_])\D/i)?.[0];
+        const support_ticket_owner_id = support_channel.name.match(/(?!.*\-)?([0-9])+/i)?.[0];
+
         const all_messages_in_channel = await support_channel.messages.fetch({ limit: 100 }); // 100 is the max
         const all_messages_in_channel_processed = Array.from(all_messages_in_channel.values()).reverse();
+
+        const all_channel_participants = Array.from(new Set(all_messages_in_channel_processed.map(msg => msg.author.id)));
 
         const temp_file_path = path.join(process.cwd(), 'temporary', `transcript_${support_channel.name}.json`);
         fs.writeFileSync(temp_file_path, JSON.stringify(all_messages_in_channel_processed, null, 2), { flag: 'w' });
@@ -127,7 +140,41 @@ async function closeSupportTicketChannel(support_channel, save_transcript) {
         const message_attachment = new Discord.MessageAttachment(temp_file_read_stream);
 
         const support_ticket_transcripts_channel = client.channels.resolve(support_tickets_transcripts_channel_id);
-        await support_ticket_transcripts_channel.send(`${support_channel.name}`, message_attachment).catch(console.warn);
+        await support_ticket_transcripts_channel.send({
+            embed: {
+                color: 0x60A0FF,
+                author: {
+                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                    name: 'Inertia Lighting | Support Ticket Transcripts System',
+                },
+                fields: [
+                    {
+                        name: 'Ticket Id',
+                        value: `${'```'}\n${support_channel.name}\n${'```'}`,
+                        inline: false,
+                    }, {
+                        name: 'Topic',
+                        value: `${'```'}\n${support_ticket_topic_name}\n${'```'}`,
+                        inline: false,
+                    }, {
+                        name: 'Creation Date',
+                        value: `${'```'}\n${moment(support_channel.createdTimestamp).tz('America/New_York').format('YYYY[-]MM[-]DD hh:mm A [GMT]ZZ')}\n${'```'}`,
+                        inline: false,
+                    }, {
+                        name: 'User',
+                        value: `<@!${support_ticket_owner_id}>\n`,
+                        inline: false,
+                    }, {
+                        name: 'Participants',
+                        value: `${all_channel_participants.map(user_id => `<@!${user_id}>`).join(' - ')}`,
+                        inline: false,
+                    },
+                ],
+            },
+            files: [
+                message_attachment,
+            ],
+        }).catch(console.warn);
 
         fs.unlinkSync(temp_file_path);
     }
@@ -168,7 +215,7 @@ module.exports = {
                 description: [
                     '**How can I help you today?**',
                     support_categories.map(({ human_index, name, description }) => `**${human_index} | ${name}**\n${description}`).join('\n\n'),
-                    '**Type the number of the category that you need or \`cancel\`.**',
+                    '**Please type the category number that you need or \`cancel\`.**',
                     '*Picking the wrong category will result in longer wait times!*',
                 ].join('\n\n'),
             })).catch(console.warn);
@@ -179,7 +226,8 @@ module.exports = {
                 if (matching_support_category) {
                     message_collector_1.stop();
 
-                    await bot_message.delete({ timeout: 500 }).catch(console.warn);
+                    await Timer(250); // delay the message deletion
+                    await bot_message.delete().catch(console.warn);
 
                     const support_channel = await createSupportTicketChannel(message.guild, message.member, matching_support_category);
 
@@ -243,10 +291,34 @@ module.exports = {
                                 description: [
                                     '**Please fill out this template so that our staff can assist you.**',
                                     '- **Product(s):** ( C-Lights, Magic Panels, etc )',
-                                    '- **Purchase Date(s):** ( 1970-1-1 )',
-                                    '- **Proof Of Purchase(s):** ( https://www.roblox.com/transactions )',
+                                    '- **Purchase Date(s):** ( 1970-01-01 )',
+                                    '- **Proof Of Purchase(s):** ( screenshot [your transactions](https://www.roblox.com/transactions) )',
                                     '- **Issue:** ( describe your issue )',
                                     '**If you don\'t fill out the template properly, your ticket will be ignored!**',
+                                ].join('\n'),
+                            })).catch(console.warn);
+                            break;
+                        case 'PAYPAL_PURCHASES':
+                            await support_channel.send(new Discord.MessageEmbed({
+                                color: 0x60A0FF,
+                                author: {
+                                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                                    name: `Inertia Lighting | ${matching_support_category.name}`,
+                                },
+                                description: [
+                                    '**Please fill out this template so that our staff can assist you.**',
+                                    '- **Product(s):** ( C-Lights, Magic Panels, etc )',
+                                    '',
+                                    '**After filling out the template, please wait for <@!331938622733549590> to provide you with a payment destination.**',
+                                    '',
+                                    '**Once you have payed, please provide the following information.**',
+                                    '- **Transaction Email:** ( you@your.email )',
+                                    '- **Transaction Id:** ( 000000000000000000 )',
+                                    '- **Transaction Amount:** ( $1.69 )',
+                                    '- **Transaction Date:** ( 1970-01-01 )',
+                                    '- **Transaction Time:** ( 12:00 AM )',
+                                    '',
+                                    '**Please follow the above instructions properly!**',
                                 ].join('\n'),
                             })).catch(console.warn);
                             break;
@@ -263,7 +335,7 @@ module.exports = {
                                     '- **Read Setup Guide:** ( yes | maybe | no )',
                                     '- **Game Is Published:** ( yes | idk |  no )',
                                     '- **HTTPS Enabled In Game:** ( yes | idk | no )',
-                                    '- **Roblox Studio Output:** ( how to enable output: https://prnt.sc/y6hnau )',
+                                    '- **Roblox Studio Output:** ( [how to enable output](https://prnt.sc/y6hnau) )',
                                     '- **Issue:** ( describe your issue )',
                                     '**If you don\'t fill out the template properly, your ticket will be ignored!**',
                                 ].join('\n'),
@@ -322,8 +394,10 @@ module.exports = {
                     message_collector_2.on('collect', async (collected_message_2) => {
                         async function cleanupMessageCollector() {
                             message_collector_2.stop();
-                            await choices_embed.delete({ timeout: 500 }).catch(console.warn);
-                            await collected_message_2.delete({ timeout: 500 }).catch(console.warn);
+                            await Timer(500); // delay the message deletion
+                            await choices_embed.delete().catch(console.warn);
+                            await Timer(500); // delay the message deletion
+                            await collected_message_2.delete().catch(console.warn);
                         }
                         switch (collected_message_2.content.toLowerCase()) {
                             case 'done':
@@ -340,7 +414,8 @@ module.exports = {
                     });
                 } else if (['cancel'].includes(collected_message_1.content.toLowerCase())) {
                     message_collector_1.stop();
-                    await bot_message.delete({ timeout: 500 }).catch(console.warn);
+                    await Timer(500); // delay the message deletion
+                    await bot_message.delete().catch(console.warn);
                     await collected_message_1.reply('Canceled!').catch(console.warn);
                 } else {
                     await collected_message_1.reply('Please type the category number or \`cancel\`.').catch(console.warn);
@@ -352,8 +427,9 @@ module.exports = {
             active_message_collectors_1.set(message.author.id, message_collector_1);
 
             /* automatically cancels a support-ticket selection screen */
-            setTimeout(() => {
-                bot_message.delete({ timeout: 500 }).catch(console.warn);
+            setTimeout(async () => {
+                await Timer(500); // delay the message deletion
+                await bot_message.delete().catch(console.warn);
                 message_collector_1.stop();
             }, 5 * 60_000); // 5 minutes
         } else if (command_name === 'close_ticket') {
