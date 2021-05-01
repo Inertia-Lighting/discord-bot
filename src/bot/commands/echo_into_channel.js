@@ -12,7 +12,7 @@ module.exports = {
     async execute(message, args) {
         const { command_prefix, command_name, command_args } = args;
 
-        const [ potential_channel_id, ...command_args_to_echo ] = command_args;
+        const [ potential_channel_id='', ...command_args_to_echo ] = command_args;
 
         const parsed_potential_channel_id = potential_channel_id.replace(/[^0-9]/g, '');
 
