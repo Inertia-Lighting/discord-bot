@@ -25,7 +25,7 @@ module.exports = {
             return;
         }
 
-        channel.send(`${message_to_echo}`).catch(console.warn);
+        message.channel.send(`${message_to_echo}`).catch(console.warn);
 
         await Timer(500); // prevent api abuse
         message.delete().catch(console.warn);
