@@ -7,9 +7,9 @@ const { Discord, client } = require('../discord_client.js');
 //---------------------------------------------------------------------------------------------------------------//
 
 module.exports = {
-    name: 'echo',
+    name: 'echo_buff',
     description: 'Buffed version of the previous command, echo.js. Contains a channel mention argument & content argument.',
-    aliases: ['echo'],
+    aliases: ['echobuff', 'eb'],
     permission_level: 'admin',
     async execute(message, args) {
         const { command_args } = args;
