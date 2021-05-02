@@ -108,6 +108,10 @@ async function createSupportTicketChannel(guild, guild_member, support_category)
         permissionOverwrites: [
             ...support_tickets_category.permissionOverwrites.values(), // clone the parent channel permissions
             {
+                id: process.env.BOT_STAFF_ROLE_ID,
+                allow: [ 'VIEW_CHANNEL' ],
+                deny: [ 'SEND_MESSAGES' ], // staff must wait for the user to say 'done'
+            }, {
                 id: guild_member.id,
                 allow: [ 'VIEW_CHANNEL' ],
             },
@@ -404,6 +408,13 @@ module.exports = {
                         switch (collected_message_2.content.toLowerCase()) {
                             case 'done':
                                 await cleanupMessageCollector();
+                                await support_channel.overwritePermissions([
+                                    ...support_channel.permissionOverwrites.values(), // clone the channel's current permissions
+                                    {
+                                        id: process.env.BOT_STAFF_ROLE_ID,
+                                        allow: [ 'SEND_MESSAGES' ],
+                                    },
+                                ]).catch(console.trace);
                                 const qualified_support_role_mentions = matching_support_category.qualified_support_role_ids.map(role_id => `<@&${role_id}>`).join(', ');
                                 await support_channel.send(`${message.author}, Our ${qualified_support_role_mentions} staff will help you with your issue soon!`).catch(console.warn);
                                 break;
