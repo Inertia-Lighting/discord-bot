@@ -412,7 +412,7 @@ module.exports = {
                                     ...support_channel.permissionOverwrites.values(), // clone the channel's current permissions
                                     {
                                         id: process.env.BOT_STAFF_ROLE_ID,
-                                        allow: [ 'SEND_MESSAGES' ],
+                                        allow: [ 'VIEW_CHANNEL', 'SEND_MESSAGES' ],
                                     },
                                 ]).catch(console.trace);
                                 const qualified_support_role_mentions = matching_support_category.qualified_support_role_ids.map(role_id => `<@&${role_id}>`).join(', ');
