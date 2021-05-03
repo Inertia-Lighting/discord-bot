@@ -113,7 +113,7 @@ async function createSupportTicketChannel(guild, guild_member, support_category)
                 deny: [ 'SEND_MESSAGES' ], // staff must wait for the user to say 'done'
             }, {
                 id: guild_member.id,
-                allow: [ 'VIEW_CHANNEL' ],
+                allow: [ 'VIEW_CHANNEL', 'SEND_MESSAGES' ],
             },
         ],
     });
