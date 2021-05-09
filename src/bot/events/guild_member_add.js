@@ -32,13 +32,9 @@ module.exports = {
         }
 
         /* fetch user data from the database */
-        const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_OLD_DATABASE_NAME, process.env.MONGO_OLD_USERS_COLLECTION_NAME, {
-            '_id': member.id,
+        const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
+            'identity.discord_user_id': member.id,
         });
-        /** @TODO Update Catalyst */
-        // const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
-        //     'identity.discord_user_id': member.id,
-        // });
 
         /* don't continue if the user isn't in the database */
         if (!db_user_data) return;
@@ -49,9 +45,7 @@ module.exports = {
         /* iterate over all of the user's products (includes non-owned products) */
         for (const [ product_code_from_user, user_owns_product ] of Object.entries(db_user_data.products ?? {})) {
             /* find the product info from the recently fetched products */
-            const product = db_roblox_products.find(product => product.old_code === product_code_from_user);
-            /** @TODO Update Catalyst */
-            // const product = db_roblox_products.find(product => product.code === product_code_from_user);
+            const product = db_roblox_products.find(product => product.code === product_code_from_user);
 
             /* give the user the role for the product if they own it */
             if (user_owns_product) {

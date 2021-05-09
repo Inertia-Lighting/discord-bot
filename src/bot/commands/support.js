@@ -245,13 +245,11 @@ module.exports = {
                     await support_channel.send(`${message.author}, welcome to your support ticket!`).catch(console.warn);
 
                     /* send the user document */
-                    /** @TODO Change stuff for update Catalyst */
-                    const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_OLD_DATABASE_NAME, process.env.MONGO_OLD_USERS_COLLECTION_NAME, {
-                        '_id': message.author.id,
-                        // 'identity.discord_user_id': message.author.id,
+                    const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
+                        'identity.discord_user_id': message.author.id,
                     }, {
                         projection: {
-                            // '_id': false,
+                            '_id': false,
                         },
                     });
                     await support_channel.send(new Discord.MessageEmbed({
@@ -264,27 +262,27 @@ module.exports = {
                     })).catch(console.warn);
 
                     /* send the blacklisted user document */
-                    // const [ blacklisted_user_db_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME, {
-                    //     'identity.discord_user_id': message.author.id,
-                    // }, {
-                    //     projection: {
-                    //         '_id': false,
-                    //     },
-                    // });
-                    // await support_channel.send(new Discord.MessageEmbed({
-                    //     color: 0x60A0FF,
-                    //     author: {
-                    //         iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                    //         name: 'Inertia Lighting | Blacklisted User Document',
-                    //     },
-                    //     description: (blacklisted_user_db_data ? [
-                    //         `**User:** <@${blacklisted_user_db_data.identity.discord_user_id}>`,
-                    //         `**Roblox Id:** \`${blacklisted_user_db_data.identity.roblox_user_id}\``,
-                    //         `**Staff:** <@${blacklisted_user_db_data.staff_member_id}>`,
-                    //         `**Date:** \`${moment(blacklisted_user_db_data.epoch).tz('America/New_York').format('YYYY[-]MM[-]DD | hh:mm A | [GMT]ZZ')}\``,
-                    //         `**Reason:** ${'```'}\n${blacklisted_user_db_data.reason}\n${'```'}`,
-                    //     ].join('\n') : `${'```'}\nUser is not blacklisted!\n${'```'}`),
-                    // })).catch(console.warn);
+                    const [ blacklisted_user_db_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME, {
+                        'identity.discord_user_id': message.author.id,
+                    }, {
+                        projection: {
+                            '_id': false,
+                        },
+                    });
+                    await support_channel.send(new Discord.MessageEmbed({
+                        color: 0x60A0FF,
+                        author: {
+                            iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                            name: 'Inertia Lighting | Blacklisted User Document',
+                        },
+                        description: (blacklisted_user_db_data ? [
+                            `**User:** <@${blacklisted_user_db_data.identity.discord_user_id}>`,
+                            `**Roblox Id:** \`${blacklisted_user_db_data.identity.roblox_user_id}\``,
+                            `**Staff:** <@${blacklisted_user_db_data.staff_member_id}>`,
+                            `**Date:** \`${moment(blacklisted_user_db_data.epoch).tz('America/New_York').format('YYYY[-]MM[-]DD | hh:mm A | [GMT]ZZ')}\``,
+                            `**Reason:** ${'```'}\n${blacklisted_user_db_data.reason}\n${'```'}`,
+                        ].join('\n') : `${'```'}\nUser is not blacklisted!\n${'```'}`),
+                    })).catch(console.warn);
 
                     switch (matching_support_category.id) {
                         case 'PRODUCT_PURCHASES':

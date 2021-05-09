@@ -30,14 +30,6 @@ router.get('/test', async (req, res) => {
 
 //---------------------------------------------------------------------------------------------------------------//
 
-require('./v0/user/blacklist/blacklisted.js')(router, client);
-require('./v0/user/products/fetch.js')(router, client);
-require('./v0/user/products/purchase.js')(router, client);
-require('./v0/user/verification/verify.js')(router, client);
-require('./v0/user/verification/verified.js')(router, client);
-
-//---------------------------------------------------------------------------------------------------------------//
-
 require('./v1/auth/keys/generate.js')(router, client);
 
 require('./v1/products/fetch/fetch.js')(router, client);
