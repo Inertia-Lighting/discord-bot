@@ -25,7 +25,7 @@ async function suggestionsChannelHandler(message) {
         color: 0x60A0FF,
         author: {
             iconURL: `${message.author.displayAvatarURL({ dynamic: true })}`,
-            name: `${message.member.displayName}#${message.member.discriminator), | (${message.member.id})`,
+            name: `${message.member.user.tag} (${message.member.id})`,
         },
         description: `${suggestion_text}`,
     })).catch(console.warn);
