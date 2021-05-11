@@ -36,26 +36,29 @@ const support_tickets_transcripts_channel_id = process.env.BOT_SUPPORT_TICKETS_T
 const support_categories = new Discord.Collection([
     {
         id: 'PRODUCT_PURCHASES',
-        name: 'Product Purchases',
-        description: 'Come here if you are having issues with purchasing our products.',
+        name: 'Purchases',
+        description: 'Come here if you are having issues with making a purchase.',
         qualified_support_role_ids: [
             process.env.BOT_SUPPORT_STAFF_PRODUCT_PURCHASES_ROLE_ID,
         ],
+        automatically_save_when_closed: false,
     }, {
         id: 'PAYPAL_PURCHASES',
-        name: 'PayPal Purchases',
-        description: 'Come here if you want to purchase our products using PayPal.',
+        name: 'PayPal',
+        description: 'Come here if you wish to purchase any of our products using PayPal.',
         qualified_support_role_ids: [
             process.env.BOT_SUPPORT_STAFF_PAYPAL_ROLE_ID,
             process.env.BOT_SUPPORT_STAFF_PRODUCT_PURCHASES_ROLE_ID,
         ],
+        automatically_save_when_closed: true,
     }, {
         id: 'PRODUCT_ISSUES',
         name: 'Product Issues',
-        description: 'Come here if you are having issues with a product that was successfully purchased.',
+        description: 'Come here if you are having issues with a product that you successfully purchased.',
         qualified_support_role_ids: [
             process.env.BOT_SUPPORT_STAFF_PRODUCT_ISSUES_ROLE_ID,
         ],
+        automatically_save_when_closed: false,
     }, {
         id: 'PRODUCT_TRANSFERS',
         name: 'Product Transfers',
@@ -63,6 +66,7 @@ const support_categories = new Discord.Collection([
         qualified_support_role_ids: [
             process.env.BOT_SUPPORT_STAFF_PRODUCT_TRANSFERS_ROLE_ID,
         ],
+        automatically_save_when_closed: true,
     },
     // {
     //     id: 'PARTNER_REQUESTS',
@@ -71,14 +75,16 @@ const support_categories = new Discord.Collection([
     //     qualified_support_role_ids: [
     //         process.env.BOT_SUPPORT_STAFF_PARTNER_REQUESTS_ROLE_ID,
     //     ],
+    //     automatically_save_when_closed: true,
     // },
     {
         id: 'OTHER',
-        name: 'Other Issues',
+        name: 'Other',
         description: 'Come here if none of the other categories match your issue.',
         qualified_support_role_ids: [
             process.env.BOT_SUPPORT_STAFF_OTHER_ROLE_ID,
         ],
+        automatically_save_when_closed: false,
     },
 ].map((item, index) => {
     const updated_item = { ...item, human_index: index + 1 };
@@ -444,28 +450,37 @@ module.exports = {
                 message_collector_1.stop();
             }, 5 * 60_000); // 5 minutes
         } else if (command_name === 'close_ticket') {
-            if (user_permission_levels.includes('staff')) {
-                const channel_exists_in_support_tickets_category = message.channel.parent?.id === support_tickets_category_id;
-                const channel_is_not_transcripts_channel = message.channel.id !== support_tickets_transcripts_channel_id;
-                if (channel_exists_in_support_tickets_category && channel_is_not_transcripts_channel) {
-                    const support_channel = message.channel;
-
-                    await message.reply('Would you like to save the transcript for this support ticket before closing it?\n**( yes | no )**').catch(console.warn);
-
-                    const collection_filter = (msg) => msg.author.id === message.author.id && ['yes', 'no'].includes(msg.content.toLowerCase());
-                    const collected_messages = await support_channel.awaitMessages(collection_filter, { max: 1 }).catch((collected_messages) => collected_messages);
-
-                    const save_transcript = ['yes'].includes(collected_messages.first()?.content?.toLowerCase());
-
-                    await support_channel.send(`${message.author}, Closing support ticket in 5 seconds...`).catch(console.warn);
-
-                    await closeSupportTicketChannel(support_channel, save_transcript);
-                } else {
-                    message.reply('This channel is not a support ticket.').catch(console.warn);
-                }
-            } else {
+            if (!user_permission_levels.includes('staff')) {
                 message.reply('Sorry, only staff can close active support tickets.').catch(console.warn);
+                return;
             }
+
+            const channel_exists_in_support_tickets_category = message.channel.parent?.id === support_tickets_category_id;
+            const channel_is_not_transcripts_channel = message.channel.id !== support_tickets_transcripts_channel_id;
+            if (!(channel_exists_in_support_tickets_category && channel_is_not_transcripts_channel)) {
+                message.reply('This channel is not a support ticket.').catch(console.warn);
+                return;
+            }
+
+            const support_channel = message.channel;
+
+            const support_ticket_topic_name = support_channel.name.match(/([a-zA-Z\-\_])+(?![\-\_])\D/i)?.[0];
+
+            const support_category = support_categories.find(support_category => support_category.id === support_ticket_topic_name.toUpperCase());
+
+            let save_transcript = true;
+            if (!support_category?.automatically_save_when_closed) {
+                await message.reply('Would you like to save the transcript for this support ticket before closing it?\n**( yes | no )**').catch(console.warn);
+
+                const collection_filter = (msg) => msg.author.id === message.author.id && ['yes', 'no'].includes(msg.content.toLowerCase());
+                const collected_messages = await support_channel.awaitMessages(collection_filter, { max: 1 }).catch((collected_messages) => collected_messages);
+
+                save_transcript = ['yes'].includes(collected_messages.first()?.content?.toLowerCase());
+            }
+
+            await support_channel.send(`${message.author}, Closing support ticket in 5 seconds...`).catch(console.warn);
+
+            await closeSupportTicketChannel(support_channel, save_transcript);
         }
     },
 };
