@@ -99,12 +99,11 @@ const qs_topics = [
         ],
         support_contents: 'Check out <#814197612491833354> for more information on opening support tickets.',
     }, {
-        title: 'Can I give anyone the product I have?',
+        title: 'Can I share products that I own?',
         seachable_queries: [
-            'giving out products',
-            'product sharing',
+            'sharing products',
         ],
-        support_contents: 'No. You may not give out any products, if you do, the products are whitelisted, meaning, the person receive the product will not have access to use them until they purchase a license to use it.'
+        support_contents: 'No, unless you are the owner of a Roblox Group\'s games that others can develop in.'
     }, {
         title: 'Can I work for Inertia Lighting?',
         seachable_queries: [
@@ -114,12 +113,11 @@ const qs_topics = [
         ],
         support_contents: 'Short answer, yes. Long answer, maybe. Our acceptance on staff is purely dependant on what is in the <#838557713239375872> channel.'
     }, {
-        title: 'Am I able to do a product transfer?',
+        title: 'Am I able to transfer my product(s)?',
         seachable_queries: [
-            'product transfer',
-            'how do i transfer a product',
+            'product transfers',
         ],
-        support_contents: 'Yes you may, although once the transfer is made you will not be allowed to get those products back unless you re-purchase the products. This is one time opportunity.'
+        support_contents: 'Yes, although once you transfer your product(s), you will not be able to use those product(s) until you re-purchase them.\nOpen a Product Transfers support ticket to start a transfer!'
     }
 ];
 
