@@ -98,7 +98,29 @@ const qs_topics = [
             'support tickets',
         ],
         support_contents: 'Check out <#814197612491833354> for more information on opening support tickets.',
-    },
+    }, {
+        title: 'Can I give anyone the product I have?',
+        seachable_queries: [
+            'giving out products',
+            'product sharing',
+        ],
+        support_contents: 'No. You may not give out any products, if you do, the products are whitelisted, meaning, the person receive the product will not have access to use them until they purchase a license to use it.'
+    }, {
+        title: 'Can I work for Inertia Lighting?',
+        seachable_queries: [
+            'job',
+            'inertia lighting job',
+            'working for inertia',
+        ],
+        support_contents: 'Short answer, yes. Long answer, maybe. Our acceptance on staff is purely dependant on what is in the <#838557713239375872> channel.'
+    }, {
+        title: 'Am I able to do a product transfer?',
+        seachable_queries: [
+            'product transfer',
+            'how do i transfer a product',
+        ],
+        support_contents: 'Yes you may, although once the transfer is made you will not be allowed to get those products back unless you re-purchase the products. This is one time opportunity.'
+    }
 ];
 
 //---------------------------------------------------------------------------------------------------------------//
