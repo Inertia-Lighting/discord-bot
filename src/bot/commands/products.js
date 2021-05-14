@@ -69,15 +69,15 @@ module.exports = {
         await bot_message.react('➡️');
         await bot_message.react('⏹️');
 
-        const message_reaction_filter = (reaction, user) => true;
+        const message_reaction_filter = (collected_reaction, user) => true;
         const message_reaction_collector = bot_message.createReactionCollector(message_reaction_filter, {
             time: 5 * 60_000, // 5 minutes
         });
 
-        message_reaction_collector.on('collect', async () => {
+        message_reaction_collector.on('collect', async (collected_reaction) => {
             message_reaction_collector.resetTimer();
 
-            switch (reaction.emoji.name) {
+            switch (collected_reaction.emoji.name) {
                 case '⬅️':
                     page_index = page_index < roblox_products_chunks ? page_index + 1 : 0;
                     break;
