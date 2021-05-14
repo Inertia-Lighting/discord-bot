@@ -12,6 +12,29 @@ const { go_mongo_db } = require('../../mongo/mongo.js');
 
 const { Discord, client } = require('../discord_client.js');
 
+/**
+ * Purges all reactions created users on a specified message
+ * @param {Discord.Message} message 
+ * @returns {Promise<void>} 
+ */
+ async function purgeUserReactionsFromMessage(message) {
+    if (!(message instanceof Discord.Message)) throw new TypeError('\`message\` must be a Discord.Message');
+    if (!(message?.guild instanceof Discord.Guild)) throw new TypeError('\`message.guild\` must be a Discord.Guild');
+
+    if (!message.guild.me.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES)) return;
+
+    for (const message_reaction of message.reactions.cache.values()) {
+        const reaction_users = message_reaction.users.cache.filter(user => !user.bot && !user.system); // don't interact with bots / system
+
+        for (const reaction_user of reaction_users.values()) {
+            message_reaction.users.remove(reaction_user);
+            if (reaction_users.size > 0) await Timer(250); // prevent api abuse
+        }
+    }
+
+    return; // complete async
+}
+
 //---------------------------------------------------------------------------------------------------------------//
 
 module.exports = {
@@ -79,10 +102,10 @@ module.exports = {
 
             switch (collected_reaction.emoji.name) {
                 case '⬅️':
-                    page_index = page_index < roblox_products_chunks ? page_index + 1 : 0;
+                    page_index = page_index < roblox_products_chunks.length ? page_index + 1 : 0;
                     break;
                 case '➡️':
-                    page_index = page_index > 0 ? page_index - 1 : 0;
+                    page_index = page_index > 0 ? page_index - 1 : roblox_products_chunks.length - 1;
                     break;
                 case '⏹️':
                     message_reaction_collector.stop();
@@ -91,9 +114,11 @@ module.exports = {
                     break;
             }
 
-            if (!message_reaction_collector.ended) {
-                editEmbedWithNextProductChunk();
-            }
+            if (message_reaction_collector.ended) return;
+
+            await editEmbedWithNextProductChunk();
+            await Timer(250);
+            await purgeUserReactionsFromMessage(bot_message);
         });
 
         message_reaction_collector.on('end', async () => {
