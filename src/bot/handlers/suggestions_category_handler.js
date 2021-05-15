@@ -15,7 +15,7 @@ const { Discord } = require('../discord_client.js');
 /**
  * @param {Discord.Message} message 
  */
-async function suggestionsChannelHandler(message) {
+async function suggestionsCategoryHandler(message) {
     if (message.author.system || message.author.bot) return;
     if (message.content.length === 0) return;
 
@@ -47,5 +47,5 @@ async function suggestionsChannelHandler(message) {
 //---------------------------------------------------------------------------------------------------------------//
 
 module.exports = {
-    suggestionsChannelHandler,
+    suggestionsCategoryHandler,
 };
