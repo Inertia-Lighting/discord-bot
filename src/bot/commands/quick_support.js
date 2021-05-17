@@ -104,13 +104,13 @@ const qs_topics = [
         support_contents: 'Check out <#814197612491833354> for more information on opening support tickets.',
     }, {
         title: 'Can I share products that I own?',
-        seachable_queries: [
+        searchable_queries: [
             'sharing products',
         ],
         support_contents: 'No, unless you are the owner of a Roblox Group\'s games that others can develop in.'
     }, {
         title: 'Can I work for Inertia Lighting?',
-        seachable_queries: [
+        searchable_queries: [
             'job',
             'inertia lighting job',
             'working for inertia',
@@ -118,7 +118,7 @@ const qs_topics = [
         support_contents: 'Short answer, yes. Long answer, maybe. Our acceptance on staff is purely dependant on what is in the <#838557713239375872> channel.'
     }, {
         title: 'Am I able to transfer my product(s)?',
-        seachable_queries: [
+        searchable_queries: [
             'product transfers',
         ],
         support_contents: 'Yes, although once you transfer your product(s), you will not be able to use those product(s) until you re-purchase them.\nOpen a Product Transfers support ticket to start a transfer!'
@@ -159,7 +159,7 @@ module.exports = {
         const mapped_qs_topics = [];
         for (const qs_topic of qs_topics) {
             let similarity_score_total = 0;
-            for (const searchable_query of qs_topics.searchable_queries) {
+            for (const searchable_query of qs_topic.searchable_queries) {
                 const similarity_score = stringSimilarity.compareTwoStrings(search_query, searchable_query);
                 similarity_score_total += similarity_score;
             }
