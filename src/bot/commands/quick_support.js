@@ -159,7 +159,7 @@ module.exports = {
         const mapped_qs_topics = [];
         for (const qs_topic of qs_topics) {
             let similarity_score_total = 0;
-            for (const searchable_query of qs_topic.searchable_queries) {
+            for (const searchable_query of qs_topics.searchable_queries) {
                 const similarity_score = stringSimilarity.compareTwoStrings(search_query, searchable_query);
                 similarity_score_total += similarity_score;
             }
