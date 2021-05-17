@@ -131,7 +131,7 @@ async function commandHandler(message) {
                 name: `${client.user.username}`,
             },
             title: 'Command Error',
-            description: `It looks like I ran into an error while trying to run the command: \`\`${command_name}\`\`!`,
+            description: `It looks like I ran into an error while trying to run the command: \`\`\`${command_name}\`\`\`!`,
         })).catch(console.warn);
     }
 }
