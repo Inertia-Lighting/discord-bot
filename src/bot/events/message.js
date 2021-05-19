@@ -10,14 +10,14 @@ const { client } = require('../discord_client.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const { suggestionsChannelHandler } = require('../handlers/suggestions_channel_handler.js');
+const { suggestionsCategoryHandler } = require('../handlers/suggestions_category_handler.js');
 const { commandHandler } = require('../handlers/command_handler.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
 const command_prefix = process.env.BOT_COMMAND_PREFIX;
 
-const suggestions_channel_id = process.env.BOT_SUGGESTIONS_CHANNEL_ID;
+const suggestions_category_id = process.env.BOT_SUGGESTIONS_CATEGORY_ID;
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -30,9 +30,9 @@ module.exports = {
         /* only allow text channels */
         if (message.channel.type !== 'text') return;
 
-        /* handle messages sent in the suggestions channel */
-        if (message.channel.id === suggestions_channel_id) {
-            suggestionsChannelHandler(message);
+        /* handle messages sent in suggestions channels */
+        if (message.channel.parent?.id === suggestions_category_id) {
+            suggestionsCategoryHandler(message);
             return;
         }
 
