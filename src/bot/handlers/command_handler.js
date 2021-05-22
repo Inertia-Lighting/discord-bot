@@ -24,7 +24,7 @@ const command_cooldown_tracker = new Discord.Collection();
 //---------------------------------------------------------------------------------------------------------------//
 
 async function commandHandler(message) {
-    const command_name = message.content.split(/\s+/g)[0].replace(command_prefix, ' ').toLowerCase();
+    const command_name = message.content.split(/\s+/g)[0].replace(command_prefix, '').toLowerCase();
     const command_args = message.content.split(/\s+/g).slice(1);
 
     /* find command by command_name */
