@@ -27,9 +27,7 @@ async function commandHandler(message) {
     const command_name = message.content.split(/\s+/g)[0].replace(command_prefix, '').toLowerCase();
     const command_args = message.content.split(/\s+/g).slice(1);
 
-    if (command_name.length === 0) {
-        return; // don't continue if the only thing sent was the command prefix
-    }
+    if (command_name.length === 0) return; // don't continue if the only thing sent was the command prefix
 
     /* find command by command_name */
     const command = client.$.commands.find(cmd => cmd.aliases?.includes(command_name));
