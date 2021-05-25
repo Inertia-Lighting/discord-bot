@@ -106,7 +106,7 @@ const qs_topics = [
         searchable_queries: [
             'sharing products',
         ],
-        support_contents: 'No, unless you are the owner of a Roblox Group\'s games that others can develop in.'
+        support_contents: 'No, unless you are the owner of a Roblox Group\'s games that others can develop in.',
     }, {
         title: 'Can I work for Inertia Lighting?',
         searchable_queries: [
@@ -114,19 +114,19 @@ const qs_topics = [
             'inertia lighting jobs',
             'jobs',
         ],
-        support_contents: 'Short answer, yes. Long answer, maybe. Our acceptance on staff is purely dependant on what is in the <#838557713239375872> channel.'
+        support_contents: 'Short answer, yes. Long answer, maybe. Our acceptance on staff is purely dependant on what is in the <#838557713239375872> channel.',
     }, {
         title: 'Am I able to transfer my product(s)?',
         searchable_queries: [
             'product transfers',
         ],
-        support_contents: 'Yes, although once you transfer your product(s), you will not be able to use those product(s) until you re-purchase them.\nOpen a Product Transfers support ticket to start a transfer!'
+        support_contents: 'Yes, although once you transfer your product(s), you will not be able to use those product(s) until you re-purchase them.\nOpen a Product Transfers support ticket to start a transfer!',
     }, {
-        title: 'How to enable HTTP Request',
+        title: 'How to enable HTTP Requests',
         searchable_queries: [
-            'http'
+            'http requests',
         ],
-        support_contents: 'To enable HTTP Request, find the game settings button on the home page in studio, then click security, enable HTTP request, press save.'
+        support_contents: 'To enable HTTP Requests, open the \"Game Settings\" menu in Roblox Studio, click on the \"Security\" tab, enable \"HTTP requests\", then save changes.',
     }
 ];
 
