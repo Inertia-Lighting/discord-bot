@@ -73,6 +73,7 @@ const qs_topics = [
         title: 'How to make purchases via PayPal',
         searchable_queries: [
             'paypal',
+            'using paypal',
         ],
         support_contents: 'Please open a support ticket <#814197612491833354> to purchase using PayPal.',
     }, {
@@ -97,8 +98,8 @@ const qs_topics = [
     }, {
         title: 'How do I open a Support Ticket?',
         searchable_queries: [
-            'support tickets',
             'opening a support ticket',
+            'support tickets',
         ],
         support_contents: 'Check out <#814197612491833354> for more information on opening support tickets.',
     }, {
@@ -110,9 +111,9 @@ const qs_topics = [
     }, {
         title: 'Can I work for Inertia Lighting?',
         searchable_queries: [
+            'job',
+            'inertia lighting job',
             'working for inertia',
-            'inertia lighting jobs',
-            'jobs',
         ],
         support_contents: 'Short answer, yes. Long answer, maybe. Our acceptance on staff is purely dependant on what is in the <#838557713239375872> channel.'
     }, {
@@ -150,33 +151,8 @@ module.exports = {
                     '\`\`\`',
                     `${command_prefix}${command_name} refunds`,
                     '\`\`\`',
-                    'You can find a list of topics to lookup by doing the following:',
-                    '\`\`\`',
-                    `${command_prefix}${command_name} topics`,
-                    '\`\`\`',
                 ].join('\n'),
-            })).catch(console.warn);
-            return;
-        }
-
-        if (['topics'].includes(search_query)) {
-            const qs_searchable_queries = qs_topics.map(qs_topic => qs_topic.searchable_queries[0]);
-
-            message.channel.send(new Discord.MessageEmbed({
-                color: 0xFFFF00,
-                author: {
-                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                    name: 'Inertia Lighting | Quick Support System',
-                },
-                title: 'Searchable Quick Support Topics',
-                description: [
-                    'Here is a list of topics that can be searched using this command:',
-                    '\`\`\`',
-                    qs_searchable_queries.map(search_query => `${command_prefix}${command_name} ${search_query}`).join('\n'),
-                    '\`\`\`',
-                ].join('\n'),
-            })).catch(console.warn);
-
+            }));
             return;
         }
 
