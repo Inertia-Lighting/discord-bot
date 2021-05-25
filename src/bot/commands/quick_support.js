@@ -121,6 +121,12 @@ const qs_topics = [
             'product transfers',
         ],
         support_contents: 'Yes, although once you transfer your product(s), you will not be able to use those product(s) until you re-purchase them.\nOpen a Product Transfers support ticket to start a transfer!'
+    }, {
+        title: 'How to enable HTTP Request',
+        searchable_queries: [
+            'http'
+        ],
+        support_contents: 'To enable HTTP Request, find the game settings button on the home page in studio, then click security, enable HTTP request, press save.'
     }
 ];
 
