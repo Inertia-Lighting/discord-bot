@@ -28,7 +28,7 @@ module.exports = {
             await member.roles.remove(muted_users_role_id, unmute_reason);
         } catch (error) {
             console.trace(error);
-            await message.reply('Failed to remove the muted role to the user!').catch(console.warn);
+            await message.reply('Failed to remove the muted role from the user!').catch(console.warn);
             return;
         }
 
