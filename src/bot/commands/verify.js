@@ -26,7 +26,7 @@ module.exports = {
     permission_level: 'public',
     cooldown: 5_000,
     async execute(message, args) {
-        const { command_args } = args;
+        const { command_prefix, command_args } = args;
 
         const verification_code_to_lookup = command_args[0];
         const verification_context = client.$.verification_contexts.get(verification_code_to_lookup);
@@ -77,17 +77,36 @@ module.exports = {
             }
         }
 
-        /* update the user in the database with the correct information */
-        await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
-            'identity.roblox_user_id': verification_context.roblox_user_id,
-        }, {
-            $set: {
-                'identity.discord_user_id': message.author.id,
-                'products': updated_user_products,
-            },
-        }, {
-            upsert: true,
-        });
+        try {
+            /* update the user in the database with the correct information */
+            await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
+                'identity.roblox_user_id': verification_context.roblox_user_id,
+            }, {
+                $set: {
+                    'identity.discord_user_id': message.author.id,
+                    'products': updated_user_products,
+                },
+            }, {
+                upsert: true,
+            });
+        } catch (error) {
+            console.trace(error);
+            message.channel.send(new Discord.MessageEmbed({
+                color: 0xFF0000,
+                author: {
+                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                    name: `${client.user.username}`,
+                },
+                title: 'Error',
+                description: [
+                    'Something went wrong while modifying the database!',
+                    'The most common cause is if your discord account is already linked to a different roblox account in our database.',
+                    'If you want to change the roblox account linked to your discord account, please open a support ticket under the **other** category.',
+                    `Use \`${command_prefix}support\` to open a support ticket.`,
+                ].join('\n'),
+            })).catch(console.warn);
+            return;
+        }
 
         /* inform the user that their verification was successful */
         message.channel.send(new Discord.MessageEmbed({
