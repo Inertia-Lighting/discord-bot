@@ -50,6 +50,8 @@ module.exports = {
         /* Add muted role to member */
         try {
             await member.roles.add(muted_users_role_id, mute_reason);
+            await Timer(100);
+            await message.reply(`Successfully muted ${member} for ${mute_reason}`);
         } catch (error) {
             console.trace(error);
             await message.reply('Failed to give the muted role to the user!').catch(console.warn);
