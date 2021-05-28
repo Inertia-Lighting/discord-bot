@@ -23,7 +23,7 @@ module.exports = {
         const member = message.guild.members.resolve(member_lookup_query);
         const unmute_reason = command_args.slice(1).join(' ').trim();
 
-        /* Add muted role to member */
+        /* Remove muted role to member */
         try {
             await member.roles.remove(muted_users_role_id, unmute_reason);
         } catch (error) {
@@ -33,6 +33,6 @@ module.exports = {
         }
 
         const dm_channel = await member.createDM();
-        await dm_channel.send('You were unmuted in the Inertia Lighting Discord server')
+        await dm_channel.send('You were unmuted in the Inertia Lighting Discord server!')
     },
 };
