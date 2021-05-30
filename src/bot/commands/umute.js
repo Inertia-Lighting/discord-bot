@@ -21,7 +21,7 @@ module.exports = {
 
         const member_lookup_query = message.mentions.members.first()?.id ?? command_args[0];
         const member = message.guild.members.resolve(member_lookup_query);
-        const unmute_reason = command_args.slice(1).join(' ').trim();
+        const unmute_reason = command_args.slice(1).join(' ').trim() || 'no reason was specified';
 
         /* Remove muted role to member */
         try {
