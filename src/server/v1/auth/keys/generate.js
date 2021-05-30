@@ -131,8 +131,16 @@ module.exports = (router, client) => {
             }, null, 2));
         }
 
+        /* check if the encrypted api token exists */
+        const game_owner_encrypted_api_token = db_user_auth_data.encrypted_api_token;
+        if (!game_owner_encrypted_api_token) {
+            return res.status(403).send(JSON.stringify({
+                'message': '\`game_owner_encrypted_api_token\` was not found in auth database!',
+            }, null, 2));
+        }
+
         /* verify the game owner's api_token */
-        const game_owner_api_token_is_valid = bcrypt.compareSync(game_owner_api_token, db_user_auth_data.encrypted_api_token);
+        const game_owner_api_token_is_valid = bcrypt.compareSync(game_owner_api_token, game_owner_encrypted_api_token);
         if (!game_owner_api_token_is_valid) {
             return res.status(403).send(JSON.stringify({
                 'message': '\`game_owner_api_token\` was not recognized!',
