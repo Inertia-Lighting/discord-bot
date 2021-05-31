@@ -104,17 +104,24 @@ module.exports = (router, client) => {
         }
 
         /* add the product for the user in the database */
-        await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
-            ...(discord_user_id ? {
-                'identity.discord_user_id': discord_user_id,
-            } : {
-                'identity.roblox_user_id': roblox_user_id,
-            }),
-        }, {
-            $set: {
-                [`products.${db_roblox_product_data.code}`]: true,
-            },
-        });
+        try {
+            await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
+                ...(discord_user_id ? {
+                    'identity.discord_user_id': discord_user_id,
+                } : {
+                    'identity.roblox_user_id': roblox_user_id,
+                }),
+            }, {
+                $set: {
+                    [`products.${db_roblox_product_data.code}`]: true,
+                },
+            });
+        } catch (error) {
+            console.trace('Failed to update user products in the database!', error);
+            return res.status(500).send(JSON.stringify({
+                'message': `failed to update user products in the database`,
+            }, null, 2));
+        }
 
         const guild = await client.guilds.fetch(guild_id).catch(console.warn);
         if (!guild) {
@@ -156,42 +163,53 @@ module.exports = (router, client) => {
         }
 
         /* dm the user a confirmation of their purchase */
-        const user_dm_channel = await guild_member.user.createDM().catch(console.warn);
-        user_dm_channel?.send(new Discord.MessageEmbed({
-            color: 0x00FF00,
-            author: {
-                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                name: 'Inertia Lighting | Confirmed Purchase',
-            },
-            title: `Thank you for purchasing ${db_roblox_product_data.name}!`,
-            description: `You obtained the ${db_roblox_product_data.name} role in the Inertia Lighting discord.`,
-            fields: [
-                {
-                    name: `${db_roblox_product_data.name}`,
-                    value: `${db_roblox_product_data.description}`,
+        try {
+            const user_dm_channel = await guild_member.user.createDM();
+            await user_dm_channel.send(new Discord.MessageEmbed({
+                color: 0x00FF00,
+                author: {
+                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                    name: 'Inertia Lighting | Confirmed Purchase',
                 },
-            ],
-        }))?.catch(console.warn);
+                title: `Thank you for purchasing ${db_roblox_product_data.name}!`,
+                description: `You obtained the ${db_roblox_product_data.name} role in the Inertia Lighting discord.`,
+                fields: [
+                    {
+                        name: `${db_roblox_product_data.name}`,
+                        value: `${db_roblox_product_data.description}`,
+                    },
+                ],
+            }));
+        } catch {
+            // ignore any errors
+        }
 
-        /* log to the logging channel */
-        const user_purchases_logging_channel = await client.channels.fetch(user_purchases_logging_channel_id);
-        user_purchases_logging_channel?.send(new Discord.MessageEmbed({
-            color: 0x00FF00,
-            author: {
-                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                name: 'Inertia Lighting | Confirmed Purchase',
-            },
-            description: [
-                `**Discord user:** <@${guild_member.user.id}>`,
-                `**Roblox user:** \`${roblox_user_id}\``,
-                `**Bought product:** \`${db_roblox_product_data.code}\``,
-            ].join('\n'),
-        }))?.catch(console.warn);
+        /* log to the purchases logging channel */
+        try {
+            const user_purchases_logging_channel = client.channels.resolve(user_purchases_logging_channel_id);
+            await user_purchases_logging_channel.send(new Discord.MessageEmbed({
+                color: 0x00FF00,
+                author: {
+                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                    name: 'Inertia Lighting | Confirmed Purchase',
+                },
+                description: [
+                    `**Discord user:** <@${guild_member.user.id}>`,
+                    `**Roblox user:** \`${roblox_user_id}\``,
+                    `**Bought product:** \`${db_roblox_product_data.code}\``,
+                ].join('\n'),
+            }));
+        } catch (error) {
+            console.trace('Failed to log purchase to the purchases logging channel!', error);
+        }
+
+        /* log to the console */
+        console.log(`roblox_user_id: ${roblox_user_id}; discord_user_id: ${guild_member.user.id}; bought product: ${db_roblox_product_data.code} (${roblox_product_id}); successfully!`);
+        console.log('----------------------------------------------------------------------------------------------------------------');
 
         /* respond with success to the game server */
-        console.log(`roblox_user_id: ${roblox_user_id}; discord_user_id: ${guild_member.user.id}; bought product: ${roblox_product_id}; successfully!`);
         return res.status(200).send(JSON.stringify({
-            'message': `roblox_user_id: ${roblox_user_id}; discord_user_id: ${guild_member.user.id}; bought product: ${roblox_product_id}; successfully!`,
+            'message': `roblox_user_id: ${roblox_user_id}; discord_user_id: ${guild_member.user.id}; bought product: ${db_roblox_product_data.code} (${roblox_product_id}); successfully!`,
         }, null, 2));
     });
 };
