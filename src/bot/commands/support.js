@@ -349,7 +349,7 @@ module.exports = {
                                     '- **Read Setup Guide:** ( yes | maybe | no )',
                                     '- **Game Is Published:** ( yes | idk |  no )',
                                     '- **HTTPS Enabled In Game:** ( yes | idk | no )',
-                                    '- **Roblox Studio Output:** ( [how to enable output](https://prnt.sc/y6hnau) )',
+                                    '- **Roblox Studio Output:** ( screenshot your [studio output](https://prnt.sc/y6hnau) )',
                                     '- **Issue:** ( describe your issue )',
                                     '**If you don\'t fill out the template properly, your ticket will be ignored!**',
                                 ].join('\n'),
