@@ -70,11 +70,9 @@ module.exports = {
             /* remove the muted role from the member */
             try {
                 await member.roles.remove(muted_users_role_id, reason);
-                await Timer(3000);
-                await message.reply(`Successfully unmuted ${member}`);
             } catch (error) {
                 console.trace(error);
-                await message.reply('Failed to remove the muted role from the user!').catch(console.warn);
+                await message.reply('Failed to unmute that member!').catch(console.warn);
                 return;
             }
 
@@ -100,11 +98,9 @@ module.exports = {
         /* add the muted role to the member */
         try {
             await member.roles.add(muted_users_role_id, reason);
-            await Timer(3000);
-            await message.reply(`Successfully muted ${member} for ${reason}`);
         } catch (error) {
             console.trace(error);
-            await message.reply('Failed to give the muted role to the user!').catch(console.warn);
+            await message.reply('Failed to mute that member!').catch(console.warn);
             return;
         }
 
