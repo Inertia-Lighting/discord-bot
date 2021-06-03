@@ -50,23 +50,29 @@ module.exports = {
 
         /* handle when a member is not specified */
         if (!member) {
-            message.reply('You need to specify a user when using this command!');
+            await message.reply('You need to specify a user when using this command!').catch(console.warn);
             return;
         }
 
         /* handle when staff members specifies themself */
         if (staff_member.id === member.id) {
-            message.reply('You aren\'t allowed to (un)mute yourself!');
+            await message.reply('You aren\'t allowed to (un)mute yourself!').catch(console.warn);
             return;
         }
 
         /* handle when a staff member tries to (un)mute someone with an equal/higher role */
         if (staff_member.roles.highest.comparePositionTo(member.roles.highest) < 0) {
-            message.reply('You aren\'t allowed to (un)mute someone with an equal/higher role!');
+            await message.reply('You aren\'t allowed to (un)mute someone with an equal/higher role!').catch(console.warn);
             return;
         }
 
         if (['unmute'].includes(command_name)) {
+            /* check if the user is already unmuted */
+            if (!member.roles.cache.has(muted_users_role_id)) {
+                await message.reply('That user is already unmuted!');
+                return;
+            }
+
             /* remove the muted role from the member */
             try {
                 await member.roles.remove(muted_users_role_id, reason);
@@ -84,6 +90,9 @@ module.exports = {
                 '\`\`\`',
             ].join('\n');
 
+            /* message the member in the server */
+            await message.channel.send(unmute_message_contents).catch(console.warn);
+
             /* dm the member */
             try {
                 const dm_channel = await member.createDM();
@@ -92,6 +101,12 @@ module.exports = {
                 // ignore any errors
             }
 
+            return;
+        }
+
+        /* check if the user is already muted */
+        if (member.roles.cache.has(muted_users_role_id)) {
+            await message.reply('That user is already muted!');
             return;
         }
 
