@@ -61,7 +61,7 @@ module.exports = {
         }
 
         /* handle when a staff member tries to (un)mute someone with an equal/higher role */
-        if (staff_member.roles.highest.comparePositionTo(member.roles.highest) < 0) {
+        if (staff_member.roles.highest.comparePositionTo(member.roles.highest) <= 0) {
             await message.reply('You aren\'t allowed to (un)mute someone with an equal/higher role!').catch(console.warn);
             return;
         }
