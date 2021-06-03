@@ -36,33 +36,85 @@ const channel_permission_overwrites_for_muted_users_role = {
 
 module.exports = {
     name: 'mute',
-    description: 'mutes user',
-    aliases: ['mute'],
+    description: '(un)mutes a user',
+    aliases: ['mute', 'unmute'],
     permission_level: 'staff',
     cooldown: 2_000,
     async execute(message, args) {
-        const { command_args } = args;
+        const { command_name, command_args } = args;
 
+        const staff_member = message.member;
         const member_lookup_query = message.mentions.members.first()?.id ?? command_args[0];
         const member = message.guild.members.resolve(member_lookup_query);
-        const mute_reason = command_args.slice(1).join(' ').trim() || 'no reason was specified';
+        const reason = command_args.slice(1).join(' ').trim() || 'no reason was specified';
 
-        /* Add muted role to member */
+        /* handle when a member is not specified */
+        if (!member) {
+            message.reply('You need to specify a user when using this command!');
+            return;
+        }
+
+        /* handle when staff members specifies themself */
+        if (staff_member.id === member.id) {
+            message.reply('You aren\'t allowed to (un)mute yourself!');
+            return;
+        }
+
+        /* handle when a staff member tries to (un)mute someone with an equal/higher role */
+        if (staff_member.roles.highest.comparePositionTo(member.roles.highest) < 0) {
+            message.reply('You aren\'t allowed to (un)mute someone with an equal/higher role!');
+            return;
+        }
+
+        if (['unmute'].includes(command_name)) {
+            /* remove the muted role from the member */
+            try {
+                await member.roles.remove(muted_users_role_id, reason);
+                await Timer(3000);
+                await message.reply(`Successfully unmuted ${member}`);
+            } catch (error) {
+                console.trace(error);
+                await message.reply('Failed to remove the muted role from the user!').catch(console.warn);
+                return;
+            }
+
+            const unmute_message_contents = [
+                `${member}`,
+                `You were unmuted in the Inertia Lighting Discord by ${staff_member.user} for:`,
+                '\`\`\`',
+                `${reason}`,
+                '\`\`\`',
+            ].join('\n');
+
+            /* dm the member */
+            try {
+                const dm_channel = await member.createDM();
+                await dm_channel.send(unmute_message_contents);
+            } catch {
+                // ignore any errors
+            }
+
+            return;
+        }
+
+        /* add the muted role to the member */
         try {
-            await member.roles.add(muted_users_role_id, mute_reason);
+            await member.roles.add(muted_users_role_id, reason);
             await Timer(3000);
-            await message.reply(`Successfully muted ${member} for ${mute_reason}`);
+            await message.reply(`Successfully muted ${member} for ${reason}`);
         } catch (error) {
             console.trace(error);
             await message.reply('Failed to give the muted role to the user!').catch(console.warn);
             return;
         }
 
-        /* Change channel permissions for muted role */
+        /* change channel permissions for the muted role */
         for (const channel of message.guild.channels.cache.values()) {
+            /* check if any of the permissions need to be changed */
             const muted_users_role_permission_overwrites_in_channel = channel.permissionOverwrites.get(muted_users_role_id);
             if (muted_users_role_permission_overwrites_in_channel?.deny?.equals(channel_permission_overwrites_for_muted_users_role.deny)) continue;
 
+            /* change the permissions as needed */
             const current_channel_permissions_overwrites = Array.from(channel.permissionOverwrites.values());
             try {
                 await channel.overwritePermissions([
@@ -74,15 +126,26 @@ module.exports = {
                 break;
             }
 
-            await Timer(100);
+            await Timer(100); // prevent api abuse
         }
 
-        const dm_channel = await member.createDM();
-        await dm_channel.send([
-            'You were muted in the Inertia Lighting Discord server for:',
+        const mute_message_contents = [
+            `${member}`,
+            `You were muted in the Inertia Lighting Discord by ${staff_member.user} for:`,
             '\`\`\`',
-            `${mute_reason}`,
+            `${reason}`,
             '\`\`\`',
-        ].join('\n')).catch(console.warn);
+        ].join('\n');
+
+        /* message the member in the server */
+        await message.channel.send(mute_message_contents).catch(console.warn);
+
+        /* dm the member */
+        try {
+            const dm_channel = await member.createDM();
+            await dm_channel.send(mute_message_contents);
+        } catch {
+            // ignore any errors
+        }
     },
 };
