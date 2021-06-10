@@ -172,11 +172,11 @@ module.exports = (router, client) => {
                     name: 'Inertia Lighting | Confirmed Purchase',
                 },
                 title: `Thank you for purchasing ${db_roblox_product_data.name}!`,
-                description: `You obtained the ${db_roblox_product_data.name} role in the Inertia Lighting discord.`,
+                description: `You obtained the **${db_roblox_product_data.name}** role in the Inertia Lighting discord.\n Download it at <#${db_roblox_product_data.discord_role_id}>!`,
                 fields: [
                     {
                         name: `${db_roblox_product_data.name}`,
-                        value: `${db_roblox_product_data.description}`,
+                        value: `\`\`\`\${db_roblox_product_data.description}\`\`\``,
                     },
                 ],
             }));
