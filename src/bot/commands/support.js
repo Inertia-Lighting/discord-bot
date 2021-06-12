@@ -234,7 +234,8 @@ module.exports = {
                 ].join('\n\n'),
             })).catch(console.warn);
 
-            const message_collector_1 = bot_message.channel.createMessageCollector((msg) => msg.author.id === message.author.id);
+            const message_collector_1_filter = (msg) => msg.author.id === message.author.id;
+            const message_collector_1 = bot_message.channel.createMessageCollector(message_collector_1_filter);
             message_collector_1.on('collect', async (collected_message_1) => {
                 const matching_support_category = support_categories.find((support_category) => `${support_category.human_index}` === collected_message_1.content);
                 if (matching_support_category) {
@@ -294,6 +295,7 @@ module.exports = {
                         ].join('\n') : `${'```'}\nUser is not blacklisted!\n${'```'}`),
                     })).catch(console.warn);
 
+                    /* send the category specific template / instructions */
                     switch (matching_support_category.id) {
                         case 'PRODUCT_PURCHASES':
                             await support_channel.send(new Discord.MessageEmbed({
@@ -332,7 +334,7 @@ module.exports = {
                                     '- **Transaction Date:** ( 1970-01-01 )',
                                     '- **Transaction Time:** ( 12:00 AM )',
                                     '',
-                                    '**Please follow the above instructions properly!**',
+                                    '**Please follow the above instructions properly, or your ticket will be ignored!**',
                                 ].join('\n'),
                             })).catch(console.warn);
                             break;
@@ -380,7 +382,10 @@ module.exports = {
                                     name: `Inertia Lighting | ${matching_support_category.name}`,
                                 },
                                 title: 'Please fill out our partner request form.',
-                                description: 'https://inertia.lighting/partner-requests-form',
+                                description: [
+                                    '[Inertia Lighting Partner Request Form](https://inertia.lighting/partner-requests-form)',
+                                    '**If you don\'t put effort into the form, your request will be ignored!**',
+                                ].join('\n'),
                             })).catch(console.warn);
                             break;
                         case 'OTHER':
@@ -390,7 +395,7 @@ module.exports = {
                                     iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                                     name: `Inertia Lighting | ${matching_support_category.name}`,
                                 },
-                                title: 'Please tell us about your issue.',
+                                title: 'Please describe your issue / why you opened this ticket.',
                             })).catch(console.warn);
                             break;
                     }
@@ -398,13 +403,15 @@ module.exports = {
                     const choices_embed = await support_channel.send(new Discord.MessageEmbed({
                         color: 0x60A0FF,
                         description: [
-                            '**Type \`done\` when you are ready for our support staff.**',
-                            '**Type \`cancel\` if you wish to close this ticket.**',
+                            '**Type \`done\` when you have completed the steps above.**',
+                            '**Type \`cancel\` if you wish to cancel this ticket.**',
                         ].join('\n'),
                     })).catch(console.warn);
 
                     const message_collector_2_filter = (msg) => msg.author.id === message.author.id;
-                    const message_collector_2 = support_channel.createMessageCollector(message_collector_2_filter);
+                    const message_collector_2 = support_channel.createMessageCollector(message_collector_2_filter, {
+                        time: 10 * 60_000, // force the message collector to stop after 10 minutes
+                    });
                     message_collector_2.on('collect', async (collected_message_2) => {
                         async function cleanupMessageCollector() {
                             message_collector_2.stop();
@@ -431,6 +438,12 @@ module.exports = {
                                 await support_channel.send(`${message.author}, Cancelling support ticket...`).catch(console.warn);
                                 await closeSupportTicketChannel(support_channel, false);
                                 break;
+                        }
+                    });
+                    message_collector_2.on('end', async (collected_messages, reason) => {
+                        /* the following is used to denote when a message collector has exceeded our specified time */
+                        if (reason === 'time') {
+                            await closeSupportTicketChannel(support_channel, false);
                         }
                     });
                 } else if (['cancel'].includes(collected_message_1.content.toLowerCase())) {
