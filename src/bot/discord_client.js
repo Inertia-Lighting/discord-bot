@@ -11,7 +11,13 @@ const Discord = require('discord.js');
 //---------------------------------------------------------------------------------------------------------------//
 
 const client = new Discord.Client({
-    disableMentions: 'everyone',
+    allowedMentions: {
+        parse: [
+            'users',
+            'roles',
+        ],
+        repliedUser: true,
+    },
     presence: {
         status: 'online',
         type: 4,
@@ -20,6 +26,10 @@ const client = new Discord.Client({
             name: 'Just restarted!',
         },
     },
+    intens: [
+        Discord.Intents.FLAGS.GUILDS,
+        Discord.Intents.FLAGS.GUILD_MESSAGES,
+    ],
 });
 
 client.$ = {

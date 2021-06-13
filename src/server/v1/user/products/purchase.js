@@ -68,7 +68,7 @@ module.exports = (router, client) => {
         }
 
         /* find the user in the database */
-        const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
+        const [db_user_data] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
             ...(discord_user_id ? {
                 'identity.discord_user_id': discord_user_id,
             } : {
@@ -84,7 +84,7 @@ module.exports = (router, client) => {
         }
 
         /* find the product in the database */
-        const [ db_roblox_product_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_PRODUCTS_COLLECTION_NAME, {
+        const [db_roblox_product_data] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_PRODUCTS_COLLECTION_NAME, {
             'roblox_product_id': roblox_product_id,
         });
 
@@ -165,21 +165,23 @@ module.exports = (router, client) => {
         /* dm the user a confirmation of their purchase */
         try {
             const user_dm_channel = await guild_member.user.createDM();
-            await user_dm_channel.send(new Discord.MessageEmbed({
-                color: 0x00FF00,
-                author: {
-                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                    name: 'Inertia Lighting | Confirmed Purchase',
-                },
-                title: `Thank you for purchasing ${db_roblox_product_data.name}!`,
-                description: `You obtained the ${db_roblox_product_data.name} role in the Inertia Lighting discord.`,
-                fields: [
-                    {
-                        name: `${db_roblox_product_data.name}`,
-                        value: `${db_roblox_product_data.description}`,
+            await user_dm_channel.send({
+                embed: new Discord.MessageEmbed({
+                    color: 0x00FF00,
+                    author: {
+                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                        name: 'Inertia Lighting | Confirmed Purchase',
                     },
-                ],
-            }));
+                    title: `Thank you for purchasing ${db_roblox_product_data.name}!`,
+                    description: `You obtained the ${db_roblox_product_data.name} role in the Inertia Lighting discord.`,
+                    fields: [
+                        {
+                            name: `${db_roblox_product_data.name}`,
+                            value: `${db_roblox_product_data.description}`,
+                        },
+                    ],
+                })
+            });
         } catch {
             // ignore any errors
         }

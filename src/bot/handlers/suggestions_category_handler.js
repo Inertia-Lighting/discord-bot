@@ -25,14 +25,15 @@ async function suggestionsCategoryHandler(message) {
     const suggestion_text = string_ellipses(message.content, 1000);
 
     /* suggestion embed */
-    const bot_suggestion_message = await suggestions_channel.send(new Discord.MessageEmbed({
-        color: 0x60A0FF,
-        author: {
-            iconURL: `${message.author.displayAvatarURL({ dynamic: true })}`,
-            name: `@${message.member.user.tag} (${message.member.id})`,
-        },
-        description: `${suggestion_text}`,
-    })).catch(console.warn);
+    const bot_suggestion_message = await suggestions_channel.send({
+        embed: new Discord.MessageEmbed({
+            color: 0x60A0FF,
+            author: {
+                iconURL: `${message.author.displayAvatarURL({ dynamic: true })}`,
+                name: `@${message.member.user.tag} (${message.member.id})`,
+            },
+            description: `${suggestion_text}`,
+        })}).catch(console.warn);
 
     /* add the reactions to the suggestion embed */
     await bot_suggestion_message.react('⬆️');

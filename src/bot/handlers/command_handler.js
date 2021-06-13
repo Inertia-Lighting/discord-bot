@@ -32,15 +32,17 @@ async function commandHandler(message) {
     /* find command by command_name */
     const command = client.$.commands.find(cmd => cmd.aliases?.includes(command_name));
     if (!command) {
-        message.reply(new Discord.MessageEmbed({
-            color: 0xFF0000,
-            author: {
-                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                name: `${client.user.username}`,
-            },
-            title: 'Command Error',
-            description: 'That is not a valid command!',
-        }));
+        message.reply({
+            embed: new Discord.MessageEmbed({
+                color: 0xFF0000,
+                author: {
+                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                    name: `${client.user.username}`,
+                },
+                title: 'Command Error',
+                description: 'That is not a valid command!',
+            })
+        });
         return;
     }
 
@@ -51,7 +53,7 @@ async function commandHandler(message) {
     if (typeof command.permission_level !== 'string') throw new TypeError(`\`command.permission_level\` is not a string for command: ${command}`);
 
     /* command permission preparation */
-    const user_permission_levels = [ 'public' ]; // valid levels: [ 'public', 'staff', 'admin' ]
+    const user_permission_levels = ['public']; // valid levels: [ 'public', 'staff', 'admin' ]
     const bot_admin_ids = [
         '331938622733549590', // Drawn
         '159170842528448512', // Ross
@@ -67,31 +69,33 @@ async function commandHandler(message) {
 
     /* command permission checking */
     if (!user_permission_levels.includes(command.permission_level)) {
-        message.channel.send(new Discord.MessageEmbed({
+        message.channel.send({
+            embed: new Discord.MessageEmbed({
             color: 0xFF0000,
             author: {
                 iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                 name: `${client.user.username} | Command Access System`,
             },
             description: 'You do not have the required permissions to use this command!',
-        })).catch(console.warn);
+        })}).catch(console.warn);
         return;
     }
 
     /* command blacklist */
-    const [ db_blacklisted_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME, {
+    const [db_blacklisted_user_data] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME, {
         'identity.discord_user_id': message.author.id,
     });
     if (db_blacklisted_user_data) {
         const blacklist_formatted_timestamp = moment(db_blacklisted_user_data.epoch).tz('America/New_York').format('YYYY[-]MM[-]DD [at] hh:mm A [GMT]ZZ');
-        message.reply(new Discord.MessageEmbed({
+        message.reply({
+            embed: new Discord.MessageEmbed({
             color: 0xFF0000,
             author: {
                 iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                 name: `${client.user.username} | Blacklist System`,
             },
             description: `${message.author}, you cannot use commands because you were blacklisted by <@${db_blacklisted_user_data.staff_member_id}> on ${blacklist_formatted_timestamp} for: \`\`\`\n${db_blacklisted_user_data.reason}\n\`\`\``,
-        }));
+        })});
         return;
     }
 
@@ -101,7 +105,7 @@ async function commandHandler(message) {
     const current_command_epoch = Date.now();
     command_cooldown_tracker.set(message.author.id, { last_command_epoch: current_command_epoch });
     if (current_command_epoch - last_command_epoch_for_user < command_cooldown_in_ms && !user_permission_levels.includes('staff')) {
-        message.reply('Stop spamming commands!').catch(console.warn);
+        message.reply({ content: 'Stop spamming commands!' }).catch(console.warn);
         return;
     }
 
@@ -126,7 +130,8 @@ async function commandHandler(message) {
             command_args: command_args,
             error_message: error,
         });
-        message.reply(new Discord.MessageEmbed({
+        message.reply({
+            embed: new Discord.MessageEmbed({
             color: 0xFF0000,
             author: {
                 iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
@@ -134,7 +139,7 @@ async function commandHandler(message) {
             },
             title: 'Command Error',
             description: `It looks like I ran into an error while trying to run the command: \`${command_name}\`!`,
-        })).catch(console.warn);
+        })}).catch(console.warn);
     }
 }
 

@@ -21,7 +21,7 @@
     "axios": "^0.21.1",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
-    "discord.js": "^12.5.1",
+    "discord.js": "^13.0.0-dev.02693bc02f45980d8165820a103220f0027b96b7",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "fs": "0.0.1-security",
