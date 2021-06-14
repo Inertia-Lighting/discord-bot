@@ -18,6 +18,13 @@ const client = new Discord.Client({
         ],
         repliedUser: true,
     },
+    intens: [
+        Discord.Intents.FLAGS.GUILDS,
+        Discord.Intents.FLAGS.GUILD_MESSAGES,
+    ],
+    partials: [
+        'CHANNEL',
+    ],
     presence: {
         status: 'online',
         type: 4,
@@ -26,10 +33,6 @@ const client = new Discord.Client({
             name: 'Just restarted!',
         },
     },
-    intens: [
-        Discord.Intents.FLAGS.GUILDS,
-        Discord.Intents.FLAGS.GUILD_MESSAGES,
-    ],
 });
 
 client.$ = {
