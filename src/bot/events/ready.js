@@ -31,10 +31,10 @@ const updateBotPresence = ((client) => {
         'with Roblox!',
     ];
 
-    return (async () => {
+    return (() => {
         const first_status_item = bot_custom_statuses.shift(); // remove the first item and return it
 
-        const updated_presence = await client.user.setPresence({
+        client.user.setPresence({
             status: 'online',
             activity: {
                 type: 'PLAYING',
@@ -43,8 +43,6 @@ const updateBotPresence = ((client) => {
         });
 
         bot_custom_statuses.push(first_status_item); // append first_status_item to the end of the array
-
-        return updated_presence;
     });
 })(client);
 
