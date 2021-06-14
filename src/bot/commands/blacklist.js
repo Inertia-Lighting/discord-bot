@@ -251,40 +251,44 @@ module.exports = {
                     roblox_user_id: lookup_roblox_user_id,
                 });
 
-                message.channel.send(new Discord.MessageEmbed({
-                    color: 0x60A0FF,
-                    author: {
-                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                        name: 'Inertia Lighting | Blacklisted User Document',
-                    },
-                    description: (db_blacklisted_user_data ? [
-                        `**User:** <@${db_blacklisted_user_data.identity.discord_user_id}>`,
-                        `**Roblox Id:** \`${db_blacklisted_user_data.identity.roblox_user_id}\``,
-                        `**Staff:** <@${db_blacklisted_user_data.staff_member_id}>`,
-                        `**Date:** \`${moment(db_blacklisted_user_data.epoch).tz('America/New_York').format('YYYY[-]MM[-]DD | hh:mm A | [GMT]ZZ')}\``,
-                        `**Reason:** ${'```'}\n${db_blacklisted_user_data.reason}\n${'```'}`,
-                    ].join('\n') : `${'```'}\nUser is not blacklisted!\n${'```'}`),
-                })).catch(console.warn);
+                message.channel.send({
+                    embed: new Discord.MessageEmbed({
+                        color: 0x60A0FF,
+                        author: {
+                            iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                            name: 'Inertia Lighting | Blacklisted User Document',
+                        },
+                        description: (db_blacklisted_user_data ? [
+                            `**User:** <@${db_blacklisted_user_data.identity.discord_user_id}>`,
+                            `**Roblox Id:** \`${db_blacklisted_user_data.identity.roblox_user_id}\``,
+                            `**Staff:** <@${db_blacklisted_user_data.staff_member_id}>`,
+                            `**Date:** \`${moment(db_blacklisted_user_data.epoch).tz('America/New_York').format('YYYY[-]MM[-]DD | hh:mm A | [GMT]ZZ')}\``,
+                            `**Reason:** ${'```'}\n${db_blacklisted_user_data.reason}\n${'```'}`,
+                        ].join('\n') : `${'```'}\nUser is not blacklisted!\n${'```'}`),
+                    }),
+                }).catch(console.warn);
 
                 break;
             default:
-                message.reply(new Discord.MessageEmbed({
-                    color: 0x60A0FF,
-                    author: {
-                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                        name: 'Inertia Lighting | Blacklist System',
-                    },
-                    description: [
-                        'Please use one of the following sub-commands:',
-                        '\`\`\`',
-                        ...[
-                            'add <user_mention | roblox_id> [reason]',
-                            'remove <user_mention | roblox_id>',
-                            'lookup <user_mention | roblox_id>',
-                        ].map(sub_command => `${command_prefix}${command_name} ${sub_command}`),
-                        '\`\`\`',
-                    ].join('\n'),
-                })).catch(console.warn);
+                message.reply({
+                    embed: new Discord.MessageEmbed({
+                        color: 0x60A0FF,
+                        author: {
+                            iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                            name: 'Inertia Lighting | Blacklist System',
+                        },
+                        description: [
+                            'Please use one of the following sub-commands:',
+                            '\`\`\`',
+                            ...[
+                                'add <user_mention | roblox_id> [reason]',
+                                'remove <user_mention | roblox_id>',
+                                'lookup <user_mention | roblox_id>',
+                            ].map(sub_command => `${command_prefix}${command_name} ${sub_command}`),
+                            '\`\`\`',
+                        ].join('\n'),
+                    }),
+                }).catch(console.warn);
                 break;
         }
     },

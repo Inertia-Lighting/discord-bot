@@ -45,10 +45,12 @@ module.exports = {
     cooldown: 10_000,
     async execute(message, args) {
         /* send an initial message to the user */
-        const bot_message = await message.channel.send(new Discord.MessageEmbed({
-            color: 0x60A0FF,
-            description: 'Loading products...',
-        }));
+        const bot_message = await message.channel.send({
+            embed: new Discord.MessageEmbed({
+                color: 0x60A0FF,
+                description: 'Loading products...',
+            }),
+        });
 
         /* create a small user-experience delay */
         await Timer(500);
@@ -68,21 +70,23 @@ module.exports = {
         async function editEmbedWithNextProductChunk() {
             const roblox_products_chunk = roblox_products_chunks[page_index];
 
-            await bot_message.edit(new Discord.MessageEmbed({
-                color: 0x60A0FF,
-                author: {
-                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                    name: 'Inertia Lighting | Products',
-                },
-                description: roblox_products_chunk.map(product => 
-                    [
-                        `**Product Name** ${product.name}`,
-                        `**Price** ${product.price_in_robux} <:robux:759699085439139871>`,
-                        `**PayPal Price** $${parseFloat(product.price_in_usd).toFixed(2)} USD (before taxes/fees)`,
-                        `\nA brief overview of ${product.name}. \n\`\`\`${string_ellipses(product.description, 500)}\`\`\``,
-                    ].join('\n')
-                ).join('\n'),
-            })).catch(console.warn);
+            await bot_message.edit({
+                embed: new Discord.MessageEmbed({
+                    color: 0x60A0FF,
+                    author: {
+                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                        name: 'Inertia Lighting | Products',
+                    },
+                    description: roblox_products_chunk.map(product => 
+                        [
+                            `**Product Name** ${product.name}`,
+                            `**Price** ${product.price_in_robux} <:robux:759699085439139871>`,
+                            `**PayPal Price** $${parseFloat(product.price_in_usd).toFixed(2)} USD (before taxes/fees)`,
+                            `\nA brief overview of ${product.name}. \n\`\`\`${string_ellipses(product.description, 500)}\`\`\``,
+                        ].join('\n')
+                    ).join('\n'),
+                }),
+            }).catch(console.warn);
 
             return; // complete async
         }

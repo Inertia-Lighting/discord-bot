@@ -33,7 +33,8 @@ async function suggestionsCategoryHandler(message) {
                 name: `@${message.member.user.tag} (${message.member.id})`,
             },
             description: `${suggestion_text}`,
-        })}).catch(console.warn);
+        }),
+    }).catch(console.warn);
 
     /* add the reactions to the suggestion embed */
     await bot_suggestion_message.react('⬆️');

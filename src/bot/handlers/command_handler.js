@@ -41,7 +41,7 @@ async function commandHandler(message) {
                 },
                 title: 'Command Error',
                 description: 'That is not a valid command!',
-            })
+            }),
         });
         return;
     }
@@ -71,13 +71,14 @@ async function commandHandler(message) {
     if (!user_permission_levels.includes(command.permission_level)) {
         message.channel.send({
             embed: new Discord.MessageEmbed({
-            color: 0xFF0000,
-            author: {
-                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                name: `${client.user.username} | Command Access System`,
-            },
-            description: 'You do not have the required permissions to use this command!',
-        })}).catch(console.warn);
+                color: 0xFF0000,
+                author: {
+                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                    name: `${client.user.username} | Command Access System`,
+                },
+                description: 'You do not have the required permissions to use this command!',
+            }),
+        }).catch(console.warn);
         return;
     }
 
@@ -89,13 +90,14 @@ async function commandHandler(message) {
         const blacklist_formatted_timestamp = moment(db_blacklisted_user_data.epoch).tz('America/New_York').format('YYYY[-]MM[-]DD [at] hh:mm A [GMT]ZZ');
         message.reply({
             embed: new Discord.MessageEmbed({
-            color: 0xFF0000,
-            author: {
-                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                name: `${client.user.username} | Blacklist System`,
-            },
-            description: `${message.author}, you cannot use commands because you were blacklisted by <@${db_blacklisted_user_data.staff_member_id}> on ${blacklist_formatted_timestamp} for: \`\`\`\n${db_blacklisted_user_data.reason}\n\`\`\``,
-        })});
+                color: 0xFF0000,
+                author: {
+                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                    name: `${client.user.username} | Blacklist System`,
+                },
+                description: `${message.author}, you cannot use commands because you were blacklisted by <@${db_blacklisted_user_data.staff_member_id}> on ${blacklist_formatted_timestamp} for: \`\`\`\n${db_blacklisted_user_data.reason}\n\`\`\``,
+            }),
+        });
         return;
     }
 
@@ -132,14 +134,15 @@ async function commandHandler(message) {
         });
         message.reply({
             embed: new Discord.MessageEmbed({
-            color: 0xFF0000,
-            author: {
-                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                name: `${client.user.username}`,
-            },
-            title: 'Command Error',
-            description: `It looks like I ran into an error while trying to run the command: \`${command_name}\`!`,
-        })}).catch(console.warn);
+                color: 0xFF0000,
+                author: {
+                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                    name: `${client.user.username}`,
+                },
+                title: 'Command Error',
+                description: `It looks like I ran into an error while trying to run the command: \`${command_name}\`!`,
+            }),
+        }).catch(console.warn);
     }
 }
 

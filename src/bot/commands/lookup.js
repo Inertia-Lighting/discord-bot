@@ -43,13 +43,15 @@ module.exports = {
         });
 
         /* send the user document */
-        await message.channel.send(new Discord.MessageEmbed({
-            color: 0x60A0FF,
-            author: {
-                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                name: 'Inertia Lighting | User Document',
-            },
-            description: `${'```'}json\n${JSON.stringify(db_user_data ?? 'user not found in database', null, 2)}\n${'```'}`,
-        })).catch(console.warn);
+        await message.channel.send({
+            embed: new Discord.MessageEmbed({
+                color: 0x60A0FF,
+                author: {
+                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                    name: 'Inertia Lighting | User Document',
+                },
+                description: `${'```'}json\n${JSON.stringify(db_user_data ?? 'user not found in database', null, 2)}\n${'```'}`,
+            }),
+        }).catch(console.warn);
     },
 };

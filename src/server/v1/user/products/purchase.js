@@ -180,7 +180,7 @@ module.exports = (router, client) => {
                             value: `${db_roblox_product_data.description}`,
                         },
                     ],
-                })
+                }),
             });
         } catch {
             // ignore any errors
@@ -189,18 +189,20 @@ module.exports = (router, client) => {
         /* log to the purchases logging channel */
         try {
             const user_purchases_logging_channel = client.channels.resolve(user_purchases_logging_channel_id);
-            await user_purchases_logging_channel.send(new Discord.MessageEmbed({
-                color: 0x00FF00,
-                author: {
-                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                    name: 'Inertia Lighting | Confirmed Purchase',
-                },
-                description: [
-                    `**Discord user:** <@${guild_member.user.id}>`,
-                    `**Roblox user:** \`${roblox_user_id}\``,
-                    `**Bought product:** \`${db_roblox_product_data.code}\``,
-                ].join('\n'),
-            }));
+            await user_purchases_logging_channel.send({
+                embed: new Discord.MessageEmbed({
+                    color: 0x00FF00,
+                    author: {
+                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                        name: 'Inertia Lighting | Confirmed Purchase',
+                    },
+                    description: [
+                        `**Discord user:** <@${guild_member.user.id}>`,
+                        `**Roblox user:** \`${roblox_user_id}\``,
+                        `**Bought product:** \`${db_roblox_product_data.code}\``,
+                    ].join('\n'),
+                }),
+            });
         } catch (error) {
             console.trace('Failed to log purchase to the purchases logging channel!', error);
         }

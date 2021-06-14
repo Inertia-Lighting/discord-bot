@@ -43,25 +43,27 @@ module.exports = {
 
             const { data: roblox_user } = await axios.get(`https://users.roblox.com/v1/users/${encodeURIComponent(db_user_data.identity.roblox_user_id)}`);
 
-            await message.channel.send(new Discord.MessageEmbed({
-                color: 0x60A0FF,
-                author: {
-                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                    name: 'Inertia Lighting | User Profile',
-                },
-                fields: [
-                    {
-                        name: 'Discord',
-                        value: `<@${db_user_data.identity.discord_user_id}>`,
-                    }, {
-                        name: 'Roblox',
-                        value: `[${roblox_user.displayName}](https://roblox.com/users/${roblox_user.id}/profile)`,
-                    }, {
-                        name: 'Products',
-                        value: `${user_products.length === 0 ? 'n/a' : user_products.map(product => `- ${product.name}`).join('\n')}`,
+            await message.channel.send({
+                embed: new Discord.MessageEmbed({
+                    color: 0x60A0FF,
+                    author: {
+                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                        name: 'Inertia Lighting | User Profile',
                     },
-                ],
-            })).catch(console.warn);
+                    fields: [
+                        {
+                            name: 'Discord',
+                            value: `<@${db_user_data.identity.discord_user_id}>`,
+                        }, {
+                            name: 'Roblox',
+                            value: `[${roblox_user.displayName}](https://roblox.com/users/${roblox_user.id}/profile)`,
+                        }, {
+                            name: 'Products',
+                            value: `${user_products.length === 0 ? 'n/a' : user_products.map(product => `- ${product.name}`).join('\n')}`,
+                        },
+                    ],
+                }),
+            }).catch(console.warn);
         } else {
             message.reply('The person you looked up isn\'t in our database!');
         }
