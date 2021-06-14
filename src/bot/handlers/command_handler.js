@@ -53,7 +53,7 @@ async function commandHandler(message) {
     if (typeof command.permission_level !== 'string') throw new TypeError(`\`command.permission_level\` is not a string for command: ${command}`);
 
     /* command permission preparation */
-    const user_permission_levels = ['public']; // valid levels: [ 'public', 'staff', 'admin' ]
+    const user_permission_levels = [ 'public' ]; // valid levels: [ 'public', 'staff', 'admin' ]
     const bot_admin_ids = [
         '331938622733549590', // Drawn
         '159170842528448512', // Ross
@@ -107,7 +107,7 @@ async function commandHandler(message) {
     const current_command_epoch = Date.now();
     command_cooldown_tracker.set(message.author.id, { last_command_epoch: current_command_epoch });
     if (current_command_epoch - last_command_epoch_for_user < command_cooldown_in_ms && !user_permission_levels.includes('staff')) {
-        message.reply({ content: 'Stop spamming commands!' }).catch(console.warn);
+        message.reply('Stop spamming commands!').catch(console.warn);
         return;
     }
 
