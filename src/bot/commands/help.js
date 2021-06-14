@@ -27,7 +27,8 @@ module.exports = {
             /* display help for a specified command alias */
             const specified_command = commands_visible_to_user.find(cmd => cmd.aliases.includes(specified_command_alias.toLowerCase()));
             if (specified_command) {
-                message.channel.send(new Discord.MessageEmbed({
+                message.channel.send({
+                    embed: new Discord.MessageEmbed({
                     color: 0x60A0FF,
                     author: {
                         iconURL: `${message.author.displayAvatarURL({ dynamic: true })}`,
@@ -40,7 +41,7 @@ module.exports = {
                         `**Usage:** ${specified_command.usage ? `\`${command_prefix}${specified_command.name} ${specified_command.usage}\`` : 'n/a'}`,
                         `**Permission Level:** \`${specified_command.permission_level}\``,
                     ].join('\n'),
-                })).catch(console.warn);
+                })}).catch(console.warn);
             } else {
                 message.reply('That\'s not a valid command!').catch(console.warn);
             }
