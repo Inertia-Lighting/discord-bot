@@ -166,21 +166,23 @@ module.exports = (router, client) => {
         try {
             const user_dm_channel = await guild_member.user.createDM();
             await user_dm_channel.send({
-                embed: new Discord.MessageEmbed({
-                    color: 0x00FF00,
-                    author: {
-                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                        name: 'Inertia Lighting | Confirmed Purchase',
-                    },
-                    title: `Thank you for purchasing ${db_roblox_product_data.name}!`,
-                    description: `You obtained the ${db_roblox_product_data.name} role in the Inertia Lighting discord.`,
-                    fields: [
-                        {
-                            name: `${db_roblox_product_data.name}`,
-                            value: `${db_roblox_product_data.description}`,
+                embeds: [
+                    new Discord.MessageEmbed({
+                        color: 0x00FF00,
+                        author: {
+                            iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                            name: 'Inertia Lighting | Confirmed Purchase',
                         },
-                    ],
-                }),
+                        title: `Thank you for purchasing ${db_roblox_product_data.name}!`,
+                        description: `You obtained the ${db_roblox_product_data.name} role in the Inertia Lighting discord.`,
+                        fields: [
+                            {
+                                name: `${db_roblox_product_data.name}`,
+                                value: `${db_roblox_product_data.description}`,
+                            },
+                        ],
+                    }),
+                ],
             });
         } catch {
             // ignore any errors
@@ -190,18 +192,20 @@ module.exports = (router, client) => {
         try {
             const user_purchases_logging_channel = client.channels.resolve(user_purchases_logging_channel_id);
             await user_purchases_logging_channel.send({
-                embed: new Discord.MessageEmbed({
-                    color: 0x00FF00,
-                    author: {
-                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                        name: 'Inertia Lighting | Confirmed Purchase',
-                    },
-                    description: [
-                        `**Discord user:** <@${guild_member.user.id}>`,
-                        `**Roblox user:** \`${roblox_user_id}\``,
-                        `**Bought product:** \`${db_roblox_product_data.code}\``,
-                    ].join('\n'),
-                }),
+                embeds: [
+                    new Discord.MessageEmbed({
+                        color: 0x00FF00,
+                        author: {
+                            iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                            name: 'Inertia Lighting | Confirmed Purchase',
+                        },
+                        description: [
+                            `**Discord user:** <@${guild_member.user.id}>`,
+                            `**Roblox user:** \`${roblox_user_id}\``,
+                            `**Bought product:** \`${db_roblox_product_data.code}\``,
+                        ].join('\n'),
+                    }),
+                ],
             });
         } catch (error) {
             console.trace('Failed to log purchase to the purchases logging channel!', error);

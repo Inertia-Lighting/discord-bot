@@ -26,14 +26,16 @@ async function suggestionsCategoryHandler(message) {
 
     /* suggestion embed */
     const bot_suggestion_message = await suggestions_channel.send({
-        embed: new Discord.MessageEmbed({
-            color: 0x60A0FF,
-            author: {
-                iconURL: `${message.author.displayAvatarURL({ dynamic: true })}`,
-                name: `@${message.member.user.tag} (${message.member.id})`,
-            },
-            description: `${suggestion_text}`,
-        }),
+        embeds: [
+            new Discord.MessageEmbed({
+                color: 0x60A0FF,
+                author: {
+                    iconURL: `${message.author.displayAvatarURL({ dynamic: true })}`,
+                    name: `@${message.member.user.tag} (${message.member.id})`,
+                },
+                description: `${suggestion_text}`,
+            }),
+        ],
     }).catch(console.warn);
 
     /* add the reactions to the suggestion embed */
