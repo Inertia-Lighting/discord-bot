@@ -34,15 +34,13 @@ module.exports = {
                     '\`\`\`',
                     `${command_prefix}${command_name} <#601972296185282571> Hello world!`,
                     '\`\`\`',
-            ].join('\n').catch(console.warn),
-        });
+                ].join('\n'),
+            }).catch(console.warn);
             return;
         }
 
-        channel.send({
-            content: [
-                `${message_to_echo}`
-            ]
+        await channel.send({
+            content: `${message_to_echo}`,
         }).catch(console.warn);
 
         await Timer(500); // prevent api abuse
