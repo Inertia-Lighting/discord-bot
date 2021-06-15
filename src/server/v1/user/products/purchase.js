@@ -212,6 +212,7 @@ module.exports = (router, client) => {
         }
 
         /* log to the console */
+        console.log('----------------------------------------------------------------------------------------------------------------');
         console.log(`roblox_user_id: ${roblox_user_id}; discord_user_id: ${guild_member.user.id}; bought product: ${db_roblox_product_data.code} (${roblox_product_id}); successfully!`);
         console.log('----------------------------------------------------------------------------------------------------------------');
 
