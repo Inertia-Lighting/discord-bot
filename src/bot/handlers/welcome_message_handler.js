@@ -24,11 +24,14 @@ async function welcomeMessageHandler(member) {
             },
             title: 'Welcome!',
             description: [
-                'Welcome to Inertia Lighting, the largest lighting company at scale on ROBLOX sourcing some of today\'s best gear.',
-                'To get yourself started, view the following channels to obtain an understanding of our server.',
-                'Here for our product hub? View [**this!**](https://www.roblox.com/games/5438256564)',
-                'Require Support? View <#814197612491833354>**!**',
-                'Just looking to interact with the community? Go to <#601890659439476766>**!**',
+                'Welcome to the Inertia Lighting discord server!',
+                'To get started, visit the following channels to learn about our server:',
+                '- <#601890659439476766>', // general channel
+                '- <#814197612491833354>', // support channel
+                '- <#601890376667889684>', // rules
+                '- <#737156807910359091>', // info
+                '- <#854442081899642950>', // news
+                'Also, check out our [product hub](https://www.roblox.com/games/5438256564) to purchase our products!',
             ].join('\n'),
         }),
     };
