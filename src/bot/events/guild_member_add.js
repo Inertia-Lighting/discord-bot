@@ -12,8 +12,8 @@ const { Discord, client } = require('../discord_client.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const { illegalNicknameHandler } = require('../handlers/illegal_nickname_handler.js');
 const { welcomeMessageHandler } = require('../handlers/welcome_message_handler.js');
+const { illegalNicknameHandler } = require('../handlers/illegal_nickname_handler.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -27,10 +27,11 @@ module.exports = {
         if (member.user.system) return; // don't operate on system accounts
         if (member.user.bot) return; // don't operate on bots to prevent feedback-loops
 
+        /* send the welcome message to the member */
+        await welcomeMessageHandler(member);
+
         /* handle nicknames for new members */
         await illegalNicknameHandler(member);
-        /* direct message members information about Inertia Lighting (rules, server info, etc.) */
-        await welcomeMessageHandler(member);
         
         /* give roles to new members */
         for (const role_id of new_user_role_ids) {
