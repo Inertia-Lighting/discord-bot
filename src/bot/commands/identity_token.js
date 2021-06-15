@@ -52,25 +52,27 @@ module.exports = {
         switch (`${command_args[0]}`.toLowerCase()) {
             case 'help':
                 message.channel.send({
-                    embed: new Discord.MessageEmbed({
-                        color: 0x60A0FF,
-                        author: {
-                            iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                            name: 'Inertia Lighting | Identity Token System',
-                        },
-                        fields: [
-                            {
-                                name: 'What are Identity Tokens?',
-                                value: 'Identity Tokens are like passwords, we use them to verify your identity with our systems; just like how your computer uses a password to verify that it is you!',
-                            }, {
-                                name: 'How do I generate my Identity Token?',
-                                value: `Run \`${command_prefix}${command_name} generate\` to generate your token!`,
-                            }, {
-                                name: 'How do I use my Identity Token?',
-                                value: `Check out <#${identity_token_channel_id}> for instructions on how to use identity tokens!`,
+                    embeds: [
+                        new Discord.MessageEmbed({
+                            color: 0x60A0FF,
+                            author: {
+                                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                                name: 'Inertia Lighting | Identity Token System',
                             },
-                        ],
-                    }),
+                            fields: [
+                                {
+                                    name: 'What are Identity Tokens?',
+                                    value: 'Identity Tokens are like passwords, we use them to verify your identity with our systems; just like how your computer uses a password to verify that it is you!',
+                                }, {
+                                    name: 'How do I generate my Identity Token?',
+                                    value: `Run \`${command_prefix}${command_name} generate\` to generate your token!`,
+                                }, {
+                                    name: 'How do I use my Identity Token?',
+                                    value: `Check out <#${identity_token_channel_id}> for instructions on how to use identity tokens!`,
+                             },
+                            ],
+                        }),
+                    ],
                 }).catch(console.warn);
                 break;
             case 'generate':
@@ -79,18 +81,20 @@ module.exports = {
                 try {
                     const dm_channel = await message.author.createDM();
                     await dm_channel.send({
-                        embed: new Discord.MessageEmbed({
-                            color: 0x60A0FF,
-                            author: {
-                                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                                name: 'Inertia Lighting | Identity Token System',
-                            },
-                            description: [
-                                'The following token must be kept private and must be used in games with our products:',
-                                `||${non_encrypted_token}||`,
-                                '(click the box above to view your token)',
-                            ].join('\n'),
-                        }),
+                        embeds: [
+                            new Discord.MessageEmbed({
+                                color: 0x60A0FF,
+                                author: {
+                                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                                    name: 'Inertia Lighting | Identity Token System',
+                                },
+                                description: [
+                                    'The following token must be kept private and must be used in games with our products:',
+                                    `||${non_encrypted_token}||`,
+                                    '(click the box above to view your token)',
+                                ].join('\n'),
+                            }),
+                        ],
                     });
                 } catch {
                     await message.reply('I was unable to DM you!').catch(console.warn);
@@ -118,22 +122,24 @@ module.exports = {
                 break;
             default:
                 message.channel.send({
-                    embed: new Discord.MessageEmbed({
-                        color: 0x60A0FF,
-                        author: {
-                            iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                            name: 'Inertia Lighting | Identity Token System',
-                        },
-                        description: [
-                            'Please use one of the following sub-commands:',
-                            '\`\`\`',
-                            ...[
-                                'help',
-                                'generate',
-                            ].map(sub_command => `${command_prefix}${command_name} ${sub_command}`),
-                            '\`\`\`',
-                        ].join('\n'),
-                    }),
+                    embeds: [
+                        new Discord.MessageEmbed({
+                            color: 0x60A0FF,
+                            author: {
+                                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                                name: 'Inertia Lighting | Identity Token System',
+                            },
+                            description: [
+                                'Please use one of the following sub-commands:',
+                                '\`\`\`',
+                                ...[
+                                    'help',
+                                    'generate',
+                                ].map(sub_command => `${command_prefix}${command_name} ${sub_command}`),
+                                '\`\`\`',
+                            ].join('\n'),
+                        }),
+                    ],
                 }).catch(console.warn);
                 break;
         }

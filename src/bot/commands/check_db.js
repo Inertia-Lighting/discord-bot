@@ -33,11 +33,13 @@ module.exports = {
             /* check if multiple users share the same identifier */
             if (matching_users_by_identifiers.length === 1) continue;
 
-            await message.channel.send([
-                'User:',
-                `${'```'}\n${JSON.stringify(user.identity, null, 2)}\n${'```'}`,
-                'has identifiers that are present in the users collection more than once!',
-            ].join('\n'));
+            await message.channel.send({
+                content: [
+                    'User:',
+                    `${'```'}\n${JSON.stringify(user.identity, null, 2)}\n${'```'}`,
+                    'has identifiers that are present in the users collection more than once!',
+                ].join('\n'),
+            });
 
             await Timer(1000);
         }

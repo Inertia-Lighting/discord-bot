@@ -27,17 +27,23 @@ module.exports = {
         const message_to_echo = command_args_to_echo.join(' ').trim();
 
         if (!channel || message_to_echo.length === 0) {
-            message.reply([
-                'Please specify a valid channel and provide a message to echo!',
-                'Example:',
-                '\`\`\`',
-                `${command_prefix}${command_name} <#601972296185282571> Hello world!`,
-                '\`\`\`',
-            ].join('\n')).catch(console.warn);
+            message.reply({
+                content: [
+                    'Please specify a valid channel and provide a message to echo!',
+                    'Example:',
+                    '\`\`\`',
+                    `${command_prefix}${command_name} <#601972296185282571> Hello world!`,
+                    '\`\`\`',
+            ].join('\n').catch(console.warn),
+        });
             return;
         }
 
-        channel.send(`${message_to_echo}`).catch(console.warn);
+        channel.send({
+            content: [
+                `${message_to_echo}`
+            ]
+        }).catch(console.warn);
 
         await Timer(500); // prevent api abuse
         message.delete().catch(console.warn);
