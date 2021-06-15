@@ -91,7 +91,9 @@ module.exports = {
             ].join('\n');
 
             /* message the member in the server */
-            await message.channel.send(unmute_message_contents).catch(console.warn);
+            await message.channel.send({
+                content: unmute_message_contents
+            }).catch(console.warn);
 
             /* dm the member */
             try {
@@ -149,7 +151,9 @@ module.exports = {
         ].join('\n');
 
         /* message the member in the server */
-        await message.channel.send(mute_message_contents).catch(console.warn);
+        await message.channel.send({
+            content: mute_message_contents
+        }).catch(console.warn);
 
         /* dm the member */
         try {

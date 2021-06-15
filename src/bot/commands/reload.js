@@ -20,7 +20,9 @@ module.exports = {
         const { command_args } = args;
 
         if (command_args.length === 0) {
-            message.channel.send(`You didn't pass any command to reload, ${message.author}!`);
+            message.channel.send({ 
+                content: `You didn't pass any command to reload, ${message.author}!`
+            });
             return;
         }
 
@@ -28,7 +30,9 @@ module.exports = {
         const command = client.$.commands.find(cmd => cmd.aliases.includes(specified_command_name));
 
         if (!command) {
-            message.channel.send(`There is no command with name or alias \`${specified_command_name}\`, ${message.author}!`);
+            message.channel.send({
+                content: `There is no command with name or alias \`${specified_command_name}\`, ${message.author}!`,
+            });
             return;
         }
 
@@ -37,10 +41,14 @@ module.exports = {
         try {
             const new_command = require(`./${command.name}.js`);
             client.$.commands.set(new_command.name, new_command);
-            message.channel.send(`Command \`${new_command.name}\` was reloaded!`);
+            message.channel.send({ 
+                content: `Command \`${new_command.name}\` was reloaded!`
+            });
         } catch (error) {
             console.error(error);
-            message.channel.send(`There was an error while reloading command \`${command.name}\`:\n\`\`\`${error.message}\`\`\``);
+            message.channel.send({ 
+                content: `There was an error while reloading command \`${command.name}\`:\n\`\`\`${error.message}\`\`\``
+            });
         }
     },
 };

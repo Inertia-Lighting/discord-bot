@@ -525,7 +525,9 @@ module.exports = {
                 save_transcript = ['yes'].includes(collected_messages.first()?.content?.toLowerCase());
             }
 
-            await support_channel.send(`${message.author}, Closing support ticket in 5 seconds...`).catch(console.warn);
+            await support_channel.send({ 
+                content: `${message.author}, Closing support ticket in 5 seconds...`
+            }).catch(console.warn);
 
             await closeSupportTicketChannel(support_channel, save_transcript);
         }
