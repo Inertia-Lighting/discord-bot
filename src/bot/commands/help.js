@@ -52,8 +52,8 @@ module.exports = {
             /* display all commands visible to the user */
             const commands_visible_to_user_with_prefix = commands_visible_to_user.map(command => 
                 command.aliases.map(command_alias => 
-                    `${command_prefix}${command_alias.replace('#{cp}', `${command_prefix}`)}`
-                ).join(' | ')
+                    `${command_prefix}${command_alias.replace('#{cp}', `${command_prefix}`)}`,
+                ).join(' | '),
             );
             message.channel.send({
                 embeds: [

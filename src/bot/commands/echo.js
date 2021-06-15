@@ -35,7 +35,7 @@ module.exports = {
 
         message.channel.send({
             content: [
-                `${message_to_echo}`
+                `${message_to_echo}`,
             ],
         }).catch(console.warn);
 

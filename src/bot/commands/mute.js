@@ -92,7 +92,7 @@ module.exports = {
 
             /* message the member in the server */
             await message.channel.send({
-                content: unmute_message_contents
+                content: unmute_message_contents,
             }).catch(console.warn);
 
             /* dm the member */
@@ -152,7 +152,7 @@ module.exports = {
 
         /* message the member in the server */
         await message.channel.send({
-            content: mute_message_contents
+            content: mute_message_contents,
         }).catch(console.warn);
 
         /* dm the member */
