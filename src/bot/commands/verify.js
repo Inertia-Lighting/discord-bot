@@ -33,19 +33,21 @@ module.exports = {
 
         if (!verification_context) {
             message.channel.send({
-                embed: new Discord.MessageEmbed({
-                    color: 0xFF0000,
-                    author: {
-                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                        name: `${client.user.username}`,
-                    },
-                    title: 'Error',
-                    description: [
-                        'That verification code was not recognized!',
-                        `You need to provide the verification code that was given to you in the [Product Hub](${process.env.ROBLOX_PRODUCT_HUB_URL})!`,
-                        `Example: \`${command_prefix}verify CODE_HERE\``,
-                    ].join('\n'),
-                }),
+                embeds: [
+                    new Discord.MessageEmbed({
+                        color: 0xFF0000,
+                        author: {
+                            iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                            name: `${client.user.username}`,
+                        },
+                        title: 'Error',
+                        description: [
+                            'That verification code was not recognized!',
+                            `You need to provide the verification code that was given to you in the [Product Hub](${process.env.ROBLOX_PRODUCT_HUB_URL})!`,
+                            `Example: \`${command_prefix}verify CODE_HERE\``,
+                        ].join('\n'),
+                    }),
+                ],
             }).catch(console.warn);
             return;
         }
@@ -94,35 +96,39 @@ module.exports = {
         } catch (error) {
             console.trace(error);
             message.channel.send({
-                embed: new Discord.MessageEmbed({
-                    color: 0xFF0000,
-                    author: {
-                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                        name: `${client.user.username}`,
-                    },
-                    title: 'Error',
-                    description: [
-                        'Something went wrong while modifying the database!',
-                        'The most common cause is if your discord account is already linked to a different roblox account in our database.',
-                        'If you want to change the roblox account linked to your discord account, please open a support ticket under the **other** category.',
-                        `Use \`${command_prefix}support\` to open a support ticket.`,
-                    ].join('\n'),
-                }),
+                embeds: [
+                    new Discord.MessageEmbed({
+                        color: 0xFF0000,
+                        author: {
+                            iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                            name: `${client.user.username}`,
+                        },
+                        title: 'Error',
+                        description: [
+                            'Something went wrong while modifying the database!',
+                            'The most common cause is if your discord account is already linked to a different roblox account in our database.',
+                            'If you want to change the roblox account linked to your discord account, please open a support ticket under the **other** category.',
+                            `Use \`${command_prefix}support\` to open a support ticket.`,
+                        ].join('\n'),
+                    }),
+                ],
             }).catch(console.warn);
             return;
         }
 
         /* inform the user that their verification was successful */
         message.channel.send({
-            embed: new Discord.MessageEmbed({
-                color: 0x00FF00,
-                author: {
-                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                    name: `${client.user.username}`,
-                },
-                title: 'You have successfully linked your account!',
-                description: 'You may now return to the product hub.',
-            }),
+            embeds: [
+                new Discord.MessageEmbed({
+                    color: 0x00FF00,
+                    author: {
+                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                        name: `${client.user.username}`,
+                    },
+                    title: 'You have successfully linked your account!',
+                    description: 'You may now return to the product hub.',
+                }),
+            ],
         }).catch(console.warn);
     },
 };

@@ -155,36 +155,38 @@ async function closeSupportTicketChannel(support_channel, save_transcript) {
 
         const support_ticket_transcripts_channel = client.channels.resolve(support_tickets_transcripts_channel_id);
         await support_ticket_transcripts_channel.send({
-            embed: new Discord.MessageEmbed({
-                color: 0x60A0FF,
-                author: {
-                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                    name: 'Inertia Lighting | Support Ticket Transcripts System',
-                },
-                fields: [
-                    {
-                        name: 'Ticket Id',
-                        value: `${'```'}\n${support_channel.name}\n${'```'}`,
-                        inline: false,
-                    }, {
-                        name: 'Topic',
-                        value: `${'```'}\n${support_ticket_topic_name}\n${'```'}`,
-                        inline: false,
-                    }, {
-                        name: 'Creation Date',
-                        value: `${'```'}\n${moment(support_channel.createdTimestamp).tz('America/New_York').format('YYYY[-]MM[-]DD hh:mm A [GMT]ZZ')}\n${'```'}`,
-                        inline: false,
-                    }, {
-                        name: 'User',
-                        value: `<@!${support_ticket_owner_id}>\n`,
-                        inline: false,
-                    }, {
-                        name: 'Participants',
-                        value: `${all_channel_participants.map(user_id => `<@!${user_id}>`).join(' - ')}`,
-                        inline: false,
+            embeds: [
+                new Discord.MessageEmbed({
+                    color: 0x60A0FF,
+                    author: {
+                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                        name: 'Inertia Lighting | Support Ticket Transcripts System',
                     },
-                ],
-            }),
+                    fields: [
+                        {
+                            name: 'Ticket Id',
+                            value: `${'```'}\n${support_channel.name}\n${'```'}`,
+                            inline: false,
+                        }, {
+                            name: 'Topic',
+                            value: `${'```'}\n${support_ticket_topic_name}\n${'```'}`,
+                            inline: false,
+                        }, {
+                            name: 'Creation Date',
+                            value: `${'```'}\n${moment(support_channel.createdTimestamp).tz('America/New_York').format('YYYY[-]MM[-]DD hh:mm A [GMT]ZZ')}\n${'```'}`,
+                            inline: false,
+                        }, {
+                            name: 'User',
+                            value: `<@!${support_ticket_owner_id}>\n`,
+                            inline: false,
+                        }, {
+                            name: 'Participants',
+                            value: `${all_channel_participants.map(user_id => `<@!${user_id}>`).join(' - ')}`,
+                            inline: false,
+                        },
+                    ],
+                }),
+            ],
             files: [
                 message_attachment,
             ],
@@ -222,19 +224,21 @@ module.exports = {
 
             const bot_message = await message.channel.send({
                 content: `${message.author}`,
-                embed: new Discord.MessageEmbed({
-                    color: 0x60A0FF,
-                    author: {
-                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                        name: 'Inertia Lighting | Support System',
-                    },
-                    description: [
-                        '**How can I help you today?**',
-                        support_categories.map(({ human_index, name, description }) => `**${human_index} | ${name}**\n${description}`).join('\n\n'),
-                        '**Please type the category number that you need or \`cancel\`.**',
-                        '*Picking the wrong category will result in longer wait times!*',
-                    ].join('\n\n'),
-                }),
+                embeds: [
+                    new Discord.MessageEmbed({
+                        color: 0x60A0FF,
+                        author: {
+                            iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                            name: 'Inertia Lighting | Support System',
+                        },
+                        description: [
+                            '**How can I help you today?**',
+                            support_categories.map(({ human_index, name, description }) => `**${human_index} | ${name}**\n${description}`).join('\n\n'),
+                            '**Please type the category number that you need or \`cancel\`.**',
+                            '*Picking the wrong category will result in longer wait times!*',
+                        ].join('\n\n'),
+                    }),
+                ],
             }).catch(console.warn);
 
             const message_collector_1 = bot_message.channel.createMessageCollector((msg) => msg.author.id === message.author.id);
@@ -266,14 +270,16 @@ module.exports = {
                         },
                     });
                     await support_channel.send({
-                        embed: new Discord.MessageEmbed({
-                            color: 0x60A0FF,
-                            author: {
-                                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                                name: 'Inertia Lighting | User Document',
-                            },
-                            description: `${'```'}json\n${JSON.stringify(db_user_data ?? 'user not found in database', null, 2)}\n${'```'}`,
-                        }),
+                        embeds: [
+                            new Discord.MessageEmbed({
+                                color: 0x60A0FF,
+                                author: {
+                                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                                    name: 'Inertia Lighting | User Document',
+                                },
+                                description: `${'```'}json\n${JSON.stringify(db_user_data ?? 'user not found in database', null, 2)}\n${'```'}`,
+                            }),
+                        ],
                     }).catch(console.warn);
 
                     /* send the blacklisted user document */
@@ -285,143 +291,159 @@ module.exports = {
                         },
                     });
                     await support_channel.send({
-                        embed: new Discord.MessageEmbed({
-                            color: 0x60A0FF,
-                            author: {
-                                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                                name: 'Inertia Lighting | Blacklisted User Document',
-                            },
-                            description: (blacklisted_user_db_data ? [
-                                `**User:** <@${blacklisted_user_db_data.identity.discord_user_id}>`,
-                                `**Roblox Id:** \`${blacklisted_user_db_data.identity.roblox_user_id}\``,
-                                `**Staff:** <@${blacklisted_user_db_data.staff_member_id}>`,
-                                `**Date:** \`${moment(blacklisted_user_db_data.epoch).tz('America/New_York').format('YYYY[-]MM[-]DD | hh:mm A | [GMT]ZZ')}\``,
-                                `**Reason:** ${'```'}\n${blacklisted_user_db_data.reason}\n${'```'}`,
-                            ].join('\n') : `${'```'}\nUser is not blacklisted!\n${'```'}`),
-                        }),
+                        embeds: [
+                            new Discord.MessageEmbed({
+                                color: 0x60A0FF,
+                                author: {
+                                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                                    name: 'Inertia Lighting | Blacklisted User Document',
+                                },
+                                description: (blacklisted_user_db_data ? [
+                                    `**User:** <@${blacklisted_user_db_data.identity.discord_user_id}>`,
+                                    `**Roblox Id:** \`${blacklisted_user_db_data.identity.roblox_user_id}\``,
+                                    `**Staff:** <@${blacklisted_user_db_data.staff_member_id}>`,
+                                    `**Date:** \`${moment(blacklisted_user_db_data.epoch).tz('America/New_York').format('YYYY[-]MM[-]DD | hh:mm A | [GMT]ZZ')}\``,
+                                    `**Reason:** ${'```'}\n${blacklisted_user_db_data.reason}\n${'```'}`,
+                                ].join('\n') : `${'```'}\nUser is not blacklisted!\n${'```'}`),
+                            }),
+                        ],
                     }).catch(console.warn);
 
                     switch (matching_support_category.id) {
                         case 'PRODUCT_PURCHASES':
                             await support_channel.send({
-                                embed: new Discord.MessageEmbed({
-                                    color: 0x60A0FF,
-                                    author: {
-                                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                                        name: `Inertia Lighting | ${matching_support_category.name}`,
-                                    },
-                                    description: [
-                                        '**Please fill out this template so that our staff can assist you.**',
-                                        '- **Product(s):** ( C-Lights, Magic Panels, etc )',
-                                        '- **Purchase Date(s):** ( 1970-01-01 )',
-                                        '- **Proof Of Purchase(s):** ( screenshot [your transactions](https://www.roblox.com/transactions) )',
-                                        '- **Issue:** ( describe your issue )',
-                                        '**If you don\'t fill out the template properly, your ticket will be ignored!**',
-                                    ].join('\n'),
-                                }),
+                                embeds: [
+                                    new Discord.MessageEmbed({
+                                        color: 0x60A0FF,
+                                        author: {
+                                            iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                                            name: `Inertia Lighting | ${matching_support_category.name}`,
+                                        },
+                                        description: [
+                                            '**Please fill out this template so that our staff can assist you.**',
+                                            '- **Product(s):** ( C-Lights, Magic Panels, etc )',
+                                            '- **Purchase Date(s):** ( 1970-01-01 )',
+                                            '- **Proof Of Purchase(s):** ( screenshot [your transactions](https://www.roblox.com/transactions) )',
+                                            '- **Issue:** ( describe your issue )',
+                                            '**If you don\'t fill out the template properly, your ticket will be ignored!**',
+                                        ].join('\n'),
+                                    }),
+                                ],
                             }).catch(console.warn);
                             break;
                         case 'PAYPAL_PURCHASES':
                             await support_channel.send({
-                                embed: new Discord.MessageEmbed({
-                                    color: 0x60A0FF,
-                                    author: {
-                                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                                        name: `Inertia Lighting | ${matching_support_category.name}`,
-                                    },
-                                    description: [
-                                        '**Please fill out this template so that our staff can assist you.**',
-                                        '- **Product(s):** ( C-Lights, Magic Panels, etc )',
-                                        '',
-                                        '**After filling out the template, please wait for <@!331938622733549590> to provide you with a payment destination.**',
-                                        '',
-                                        '**Once you have payed, please provide the following information.**',
-                                        '- **Transaction Email:** ( you@your.email )',
-                                        '- **Transaction Id:** ( 000000000000000000 )',
-                                        '- **Transaction Amount:** ( $1.69 )',
-                                        '- **Transaction Date:** ( 1970-01-01 )',
-                                        '- **Transaction Time:** ( 12:00 AM )',
-                                        '',
-                                        '**Please follow the above instructions properly!**',
-                                    ].join('\n'),
-                                }),
+                                embeds: [
+                                    new Discord.MessageEmbed({
+                                        color: 0x60A0FF,
+                                        author: {
+                                            iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                                            name: `Inertia Lighting | ${matching_support_category.name}`,
+                                        },
+                                        description: [
+                                            '**Please fill out this template so that our staff can assist you.**',
+                                            '- **Product(s):** ( C-Lights, Magic Panels, etc )',
+                                            '',
+                                            '**After filling out the template, please wait for <@!331938622733549590> to provide you with a payment destination.**',
+                                            '',
+                                            '**Once you have payed, please provide the following information.**',
+                                            '- **Transaction Email:** ( you@your.email )',
+                                            '- **Transaction Id:** ( 000000000000000000 )',
+                                            '- **Transaction Amount:** ( $1.69 )',
+                                            '- **Transaction Date:** ( 1970-01-01 )',
+                                            '- **Transaction Time:** ( 12:00 AM )',
+                                            '',
+                                            '**Please follow the above instructions properly!**',
+                                        ].join('\n'),
+                                    }),
+                                ],
                             }).catch(console.warn);
                             break;
                         case 'PRODUCT_ISSUES':
                             await support_channel.send({
-                                embed: new Discord.MessageEmbed({
-                                    color: 0x60A0FF,
-                                    author: {
-                                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                                        name: `Inertia Lighting | ${matching_support_category.name}`,
-                                    },
-                                    description: [
-                                        '**Please fill out this template so that our staff can assist you.**',
-                                        '- **Product(s):** ( C-Lights, Magic Panels, etc )',
-                                        '- **Read Setup Guide:** ( yes | maybe | no )',
-                                        '- **Game Is Published:** ( yes | idk |  no )',
-                                        '- **HTTPS Enabled In Game:** ( yes | idk | no )',
-                                        '- **Roblox Studio Output:** ( screenshot your [studio output](https://prnt.sc/y6hnau) )',
-                                        '- **Issue:** ( describe your issue )',
-                                        '**If you don\'t fill out the template properly, your ticket will be ignored!**',
-                                    ].join('\n'),
-                                }),
+                                embeds: [
+                                    new Discord.MessageEmbed({
+                                        color: 0x60A0FF,
+                                        author: {
+                                            iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                                            name: `Inertia Lighting | ${matching_support_category.name}`,
+                                        },
+                                        description: [
+                                            '**Please fill out this template so that our staff can assist you.**',
+                                            '- **Product(s):** ( C-Lights, Magic Panels, etc )',
+                                            '- **Read Setup Guide:** ( yes | maybe | no )',
+                                            '- **Game Is Published:** ( yes | idk |  no )',
+                                            '- **HTTPS Enabled In Game:** ( yes | idk | no )',
+                                            '- **Roblox Studio Output:** ( screenshot your [studio output](https://prnt.sc/y6hnau) )',
+                                            '- **Issue:** ( describe your issue )',
+                                            '**If you don\'t fill out the template properly, your ticket will be ignored!**',
+                                        ].join('\n'),
+                                    }),
+                                ],
                             }).catch(console.warn);
                             break;
                         case 'PRODUCT_TRANSFERS':
                             await support_channel.send({
-                                embed: new Discord.MessageEmbed({
-                                    color: 0x60A0FF,
-                                    author: {
-                                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                                        name: `Inertia Lighting | ${matching_support_category.name}`,
-                                    },
-                                    description: [
-                                        '**Please fill out this template so that our staff can assist you.**',
-                                        '- **Product(s):** ( C-Lights, Magic Panels, etc )',
-                                        '- **Reason:** ( new account | gift for someone | other )',
-                                        '- **New Roblox Account:** ( copy the URL of the profile page for the account | n/a )',
-                                        '- **New Discord Account:** ( @mention the account | n/a )',
-                                        '**If you don\'t fill out the template properly, your ticket will be ignored!**',
-                                    ].join('\n'),
-                                }),
+                                embeds: [
+                                    new Discord.MessageEmbed({
+                                        color: 0x60A0FF,
+                                        author: {
+                                            iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                                            name: `Inertia Lighting | ${matching_support_category.name}`,
+                                        },
+                                        description: [
+                                            '**Please fill out this template so that our staff can assist you.**',
+                                            '- **Product(s):** ( C-Lights, Magic Panels, etc )',
+                                            '- **Reason:** ( new account | gift for someone | other )',
+                                            '- **New Roblox Account:** ( copy the URL of the profile page for the account | n/a )',
+                                            '- **New Discord Account:** ( @mention the account | n/a )',
+                                            '**If you don\'t fill out the template properly, your ticket will be ignored!**',
+                                        ].join('\n'),
+                                    }),
+                                ],
                             }).catch(console.warn);
                             break;
                         case 'PARTNER_REQUESTS':
                             await support_channel.send({
-                                embed: new Discord.MessageEmbed({
-                                    color: 0x60A0FF,
-                                    author: {
-                                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                                        name: `Inertia Lighting | ${matching_support_category.name}`,
-                                    },
-                                    title: 'Please fill out our partner request form.',
-                                    description: 'https://inertia.lighting/partner-requests-form',
-                                }),
+                                embeds: [
+                                    new Discord.MessageEmbed({
+                                        color: 0x60A0FF,
+                                        author: {
+                                            iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                                            name: `Inertia Lighting | ${matching_support_category.name}`,
+                                        },
+                                        title: 'Please fill out our partner request form.',
+                                        description: 'https://inertia.lighting/partner-requests-form',
+                                    }),
+                                ],
                             }).catch(console.warn);
                             break;
                         case 'OTHER':
                             await support_channel.send({
-                                embed: new Discord.MessageEmbed({
-                                    color: 0x60A0FF,
-                                    author: {
-                                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                                        name: `Inertia Lighting | ${matching_support_category.name}`,
-                                    },
-                                    title: 'Please tell us about your issue.',
-                                }),
+                                embeds: [
+                                    new Discord.MessageEmbed({
+                                        color: 0x60A0FF,
+                                        author: {
+                                            iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                                            name: `Inertia Lighting | ${matching_support_category.name}`,
+                                        },
+                                        title: 'Please tell us about your issue.',
+                                    }),
+                                ],
                             }).catch(console.warn);
                             break;
                     }
 
                     const choices_embed = await support_channel.send({
-                        embed: new Discord.MessageEmbed({
-                            color: 0x60A0FF,
-                            description: [
-                                '**Type \`done\` when you are ready for our support staff.**',
-                                '**Type \`cancel\` if you wish to close this ticket.**',
-                            ].join('\n'),
-                        }),
+                        embeds: [
+                            new Discord.MessageEmbed({
+                                color: 0x60A0FF,
+                                description: [
+                                    '**Type \`done\` when you are ready for our support staff.**',
+                                    '**Type \`cancel\` if you wish to close this ticket.**',
+                                ].join('\n'),
+                            }),
+                        ],
                     }).catch(console.warn);
 
                     const message_collector_2_filter = (msg) => msg.author.id === message.author.id;

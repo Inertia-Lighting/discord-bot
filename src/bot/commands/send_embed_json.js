@@ -37,7 +37,11 @@ module.exports = {
             delete webhook_message_options.avatar_url;
 
             for (const embed of webhook_message_options.embeds) {
-                await message.channel.send({ embed: embed });
+                await message.channel.send({
+                    embeds: [
+                        embed,
+                    ],
+                });
                 await Timer(2_500);
             }
         } catch (error) {
