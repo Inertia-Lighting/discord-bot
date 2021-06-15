@@ -10,7 +10,11 @@ const { Discord } = require('../discord_client.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const general_chat_id = '601890659439476766';
+const general_chat_id = '<#601890659439476766>';
+const support_channel_id = '<#814197612491833354>';
+const rules_channel_id = '<#601890376667889684>';
+const info_channel_id = '<#737156807910359091>';
+const news_channel_id = '<#854442081899642950>';
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -26,11 +30,11 @@ async function welcomeMessageHandler(member) {
             description: [
                 'Welcome to the Inertia Lighting discord server!',
                 'To get started, visit the following channels to learn about our server:',
-                '- <#601890659439476766>', // general channel
-                '- <#814197612491833354>', // support channel
-                '- <#601890376667889684>', // rules
-                '- <#737156807910359091>', // info
-                '- <#854442081899642950>', // news
+                `- ${general_chat_id}`, // general channel id
+                `- ${support_channel_id}`, // support channel id
+                `- ${rules_channel_id}`, // rules channel id
+                `- ${info_channel_id}`, // info channel id
+                `- ${news_channel_id}`, // news channel id
                 'Also, check out our [product hub](https://www.roblox.com/games/5438256564) to purchase our products!',
             ].join('\n'),
         }),
