@@ -12,6 +12,7 @@ const { Discord, client } = require('../discord_client.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
+const { welcomeMessageHandler } = require('../handlers/welcome_message_handler.js');
 const { illegalNicknameHandler } = require('../handlers/illegal_nickname_handler.js');
 
 //---------------------------------------------------------------------------------------------------------------//
@@ -25,6 +26,9 @@ module.exports = {
     async handler(member) {
         if (member.user.system) return; // don't operate on system accounts
         if (member.user.bot) return; // don't operate on bots to prevent feedback-loops
+
+        /* send the welcome message to the member */
+        await welcomeMessageHandler(member);
 
         /* handle nicknames for new members */
         await illegalNicknameHandler(member);
