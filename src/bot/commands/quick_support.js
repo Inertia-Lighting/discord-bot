@@ -29,7 +29,7 @@ const bot_command_prefix = process.env.BOT_COMMAND_PREFIX;
 
 /**
  * searchable_query must be lowercase
- * @type {QuickSupportTopics} 
+ * @type {QuickSupportTopics}
  */
 const qs_topics = [
     // {

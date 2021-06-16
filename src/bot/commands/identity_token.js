@@ -75,7 +75,8 @@ module.exports = {
                     ],
                 }).catch(console.warn);
                 break;
-            case 'generate':
+            }
+            case 'generate': {
                 const { non_encrypted_token, encrypted_token } = await generateUserAPIToken();
 
                 try {
@@ -142,6 +143,7 @@ module.exports = {
                     ],
                 }).catch(console.warn);
                 break;
+            }
         }
     },
 };

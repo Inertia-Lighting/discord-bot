@@ -14,8 +14,8 @@ const { Discord, client } = require('../discord_client.js');
 
 /**
  * Purges all reactions created users on a specified message
- * @param {Discord.Message} message 
- * @returns {Promise<void>} 
+ * @param {Discord.Message} message
+ * @returns {Promise<void>}
  */
  async function purgeUserReactionsFromMessage(message) {
     if (!(message instanceof Discord.Message)) throw new TypeError('\`message\` must be a Discord.Message');
@@ -80,7 +80,7 @@ module.exports = {
                             iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                             name: 'Inertia Lighting | Products',
                         },
-                        description: roblox_products_chunk.map(product => 
+                        description: roblox_products_chunk.map(product =>
                             [
                                 `**Product Name** ${product.name}`,
                                 `**Price** ${product.price_in_robux} <:robux:759699085439139871>`,
@@ -109,17 +109,21 @@ module.exports = {
             message_reaction_collector.resetTimer();
 
             switch (collected_reaction.emoji.name) {
-                case '⬅️':
+                case '⬅️': {
                     page_index = page_index < roblox_products_chunks.length ? page_index + 1 : 0;
                     break;
-                case '➡️':
+                }
+                case '➡️': {
                     page_index = page_index > 0 ? page_index - 1 : roblox_products_chunks.length - 1;
                     break;
-                case '⏹️':
+                }
+                case '⏹️': {
                     message_reaction_collector.stop();
                     break;
-                default:
+                }
+                default: {
                     break;
+                }
             }
 
             if (message_reaction_collector.ended) return;

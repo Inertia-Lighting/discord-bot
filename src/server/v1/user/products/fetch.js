@@ -127,7 +127,7 @@ module.exports = (router, client) => {
             db_user_data.products = {}; // fix the possibility of this not being an object
         }
 
-        const specified_product_code = req.params['specific_product_code'];
+        const specified_product_code = req.params.specific_product_code;
         return res.status(200).send(JSON.stringify({
             ...(specified_product_code ? {
                 [specified_product_code]: db_user_data.products[specified_product_code],

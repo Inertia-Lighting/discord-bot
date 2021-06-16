@@ -99,10 +99,10 @@ const support_categories = new Discord.Collection([
 
 /**
  * Creates a support ticket channel
- * @param {Discord.Guild} guild 
- * @param {Discord.GuildMember} guild_member 
- * @param {SupportCategory} support_category 
- * @returns {Promise<Discord.TextChannel>} 
+ * @param {Discord.Guild} guild
+ * @param {Discord.GuildMember} guild_member
+ * @param {SupportCategory} support_category
+ * @returns {Promise<Discord.TextChannel>}
  */
 async function createSupportTicketChannel(guild, guild_member, support_category) {
     const support_tickets_category = guild.channels.resolve(support_tickets_category_id);
@@ -133,9 +133,9 @@ async function createSupportTicketChannel(guild, guild_member, support_category)
 
 /**
  * Closes a support ticket channel
- * @param {Discord.TextChannel} support_channel 
- * @param {Boolean} save_transcript 
- * @returns {Promise<Discord.TextChannel>} 
+ * @param {Discord.TextChannel} support_channel
+ * @param {Boolean} save_transcript
+ * @returns {Promise<Discord.TextChannel>}
  */
 async function closeSupportTicketChannel(support_channel, save_transcript) {
     if (save_transcript) {
@@ -241,7 +241,8 @@ module.exports = {
                 ],
             }).catch(console.warn);
 
-            const message_collector_1 = bot_message.channel.createMessageCollector((msg) => msg.author.id === message.author.id);
+            const message_collector_1_filter = (msg) => msg.author.id === message.author.id;
+            const message_collector_1 = bot_message.channel.createMessageCollector(message_collector_1_filter);
             message_collector_1.on('collect', async (collected_message_1) => {
                 const matching_support_category = support_categories.find((support_category) => `${support_category.human_index}` === collected_message_1.content);
                 if (matching_support_category) {
@@ -290,9 +291,31 @@ module.exports = {
                             '_id': false,
                         },
                     });
+<<<<<<< HEAD
                     await support_channel.send({
                         embeds: [
                             new Discord.MessageEmbed({
+=======
+                    await support_channel.send(new Discord.MessageEmbed({
+                        color: 0x60A0FF,
+                        author: {
+                            iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                            name: 'Inertia Lighting | Blacklisted User Document',
+                        },
+                        description: (blacklisted_user_db_data ? [
+                            `**User:** <@${blacklisted_user_db_data.identity.discord_user_id}>`,
+                            `**Roblox Id:** \`${blacklisted_user_db_data.identity.roblox_user_id}\``,
+                            `**Staff:** <@${blacklisted_user_db_data.staff_member_id}>`,
+                            `**Date:** \`${moment(blacklisted_user_db_data.epoch).tz('America/New_York').format('YYYY[-]MM[-]DD | hh:mm A | [GMT]ZZ')}\``,
+                            `**Reason:** ${'```'}\n${blacklisted_user_db_data.reason}\n${'```'}`,
+                        ].join('\n') : `${'```'}\nUser is not blacklisted!\n${'```'}`),
+                    })).catch(console.warn);
+
+                    /* send the category specific template / instructions */
+                    switch (matching_support_category.id) {
+                        case 'PRODUCT_PURCHASES': {
+                            await support_channel.send(new Discord.MessageEmbed({
+>>>>>>> master
                                 color: 0x60A0FF,
                                 author: {
                                     iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
@@ -432,8 +455,13 @@ module.exports = {
                                 ],
                             }).catch(console.warn);
                             break;
+                        }
+                        default: {
+                            break;
+                        }
                     }
 
+<<<<<<< HEAD
                     const choices_embed = await support_channel.send({
                         embeds: [
                             new Discord.MessageEmbed({
@@ -445,9 +473,20 @@ module.exports = {
                             }),
                         ],
                     }).catch(console.warn);
+=======
+                    const choices_embed = await support_channel.send(new Discord.MessageEmbed({
+                        color: 0x60A0FF,
+                        description: [
+                            '**Type \`done\` when you have completed the steps above.**',
+                            '**Type \`cancel\` if you wish to cancel this ticket.**',
+                        ].join('\n'),
+                    })).catch(console.warn);
+>>>>>>> master
 
                     const message_collector_2_filter = (msg) => msg.author.id === message.author.id;
-                    const message_collector_2 = support_channel.createMessageCollector(message_collector_2_filter);
+                    const message_collector_2 = support_channel.createMessageCollector(message_collector_2_filter, {
+                        time: 10 * 60_000, // force the message collector to stop after 10 minutes
+                    });
                     message_collector_2.on('collect', async (collected_message_2) => {
                         async function cleanupMessageCollector() {
                             message_collector_2.stop();
@@ -457,7 +496,7 @@ module.exports = {
                             await collected_message_2.delete().catch(console.warn);
                         }
                         switch (collected_message_2.content.toLowerCase()) {
-                            case 'done':
+                            case 'done': {
                                 await cleanupMessageCollector();
                                 await support_channel.overwritePermissions([
                                     ...support_channel.permissionOverwrites.values(), // clone the channel's current permissions
@@ -469,11 +508,22 @@ module.exports = {
                                 const qualified_support_role_mentions = matching_support_category.qualified_support_role_ids.map(role_id => `<@&${role_id}>`).join(', ');
                                 await support_channel.send(`${message.author}, Our ${qualified_support_role_mentions} staff will help you with your issue soon!`).catch(console.warn);
                                 break;
-                            case 'cancel':
+                            }
+                            case 'cancel': {
                                 await cleanupMessageCollector();
                                 await support_channel.send(`${message.author}, Cancelling support ticket...`).catch(console.warn);
                                 await closeSupportTicketChannel(support_channel, false);
                                 break;
+                            }
+                            default: {
+                                break;
+                            }
+                        }
+                    });
+                    message_collector_2.on('end', async (collected_messages, reason) => {
+                        /* the following is used to denote when a message collector has exceeded our specified time */
+                        if (reason === 'time') {
+                            await closeSupportTicketChannel(support_channel, false);
                         }
                     });
                 } else if (['cancel'].includes(collected_message_1.content.toLowerCase())) {
