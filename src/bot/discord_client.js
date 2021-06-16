@@ -18,7 +18,7 @@ const client = new Discord.Client({
         ],
         repliedUser: true,
     },
-    intens: [
+    intents: [
         Discord.Intents.FLAGS.GUILDS,
         Discord.Intents.FLAGS.GUILD_MESSAGES,
     ],
