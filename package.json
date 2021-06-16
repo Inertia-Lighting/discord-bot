@@ -4,7 +4,8 @@
   "description": "Inertia Lighting Discord Bot",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npm run lint",
+    "lint": "npx eslint ."
   },
   "repository": {
     "type": "git",
@@ -30,5 +31,12 @@
     "path": "^0.12.7",
     "string-similarity": "^4.0.4",
     "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "eslint": "^7.28.0"
+  },
+  "engines": {
+    "node": ">=15.0.0",
+    "npm": ">=6.0.0"
   }
 }

@@ -29,7 +29,7 @@ const bot_command_prefix = process.env.BOT_COMMAND_PREFIX;
 
 /**
  * searchable_query must be lowercase
- * @type {QuickSupportTopics} 
+ * @type {QuickSupportTopics}
  */
 const qs_topics = [
     // {
@@ -233,4 +233,4 @@ module.exports = {
             description: `${best_matching_qs_topic.support_contents}`,
         }));
     }
-}
+};
