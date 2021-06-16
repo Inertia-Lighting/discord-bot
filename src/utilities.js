@@ -8,8 +8,8 @@
 
 /**
  * Asynchronous setTimeout
- * @param {Number} time_in_milliseconds 
- * @returns {Promise<void>} 
+ * @param {Number} time_in_milliseconds
+ * @returns {Promise<void>}
  */
 function Timer(time_in_milliseconds) {
     if (typeof time_in_milliseconds !== 'number') throw new TypeError('\`time_in_milliseconds\` must be a number');
@@ -19,9 +19,9 @@ function Timer(time_in_milliseconds) {
 
 /**
  * Generates a random integer in an inclusive range: min <= return_value <= max
- * @param {Number} min 
- * @param {Number} max 
- * @returns {Number} 
+ * @param {Number} min
+ * @param {Number} max
+ * @returns {Number}
  */
 function random_range_inclusive(min, max) {
     if (typeof min !== 'number') throw new TypeError('\`min\` must be a number!');
@@ -32,10 +32,10 @@ function random_range_inclusive(min, max) {
 
 /**
  * Ellipses a string to a specified length (including the ellipses)
- * @param {String} string_to_ellipses 
+ * @param {String} string_to_ellipses
  * @param {Number} output_length_limit by default `Number.MAX_SAFE_INTEGER`
  * @param {String} ellipses by default `'...'`
- * @returns {String} 
+ * @returns {String}
  */
 function string_ellipses(string_to_ellipses, output_length_limit=Number.MAX_SAFE_INTEGER, ellipses='...') {
     if (typeof string_to_ellipses !== 'string') throw new TypeError('\`string_to_ellipses\` must be a string');
@@ -50,7 +50,7 @@ function string_ellipses(string_to_ellipses, output_length_limit=Number.MAX_SAFE
 
 /**
  * Sorts an object based on it's keys (using Array.sort()) and returns the new sorted object
- * @param {Object} object_of_things 
+ * @param {Object} object_of_things
  * @returns {Object} the object sorted by its keys
  */
 function object_sort(object_of_things) {
@@ -68,9 +68,9 @@ function object_sort(object_of_things) {
 
 /**
  * Splits an array into a new chunked array
- * @param {Array<*>} array_of_things 
- * @param {Number} chunk_size 
- * @returns {any[][]} 
+ * @param {Array<*>} array_of_things
+ * @param {Number} chunk_size
+ * @returns {any[][]}
  */
 function array_chunks(array_of_things, chunk_size) {
     if (!Array.isArray(array_of_things)) throw new TypeError('\`array_of_things\` must be an array');
@@ -88,8 +88,8 @@ function array_chunks(array_of_things, chunk_size) {
 
 /**
  * Fetches a random item from the specified array
- * @param {Array<*>} array_of_things 
- * @returns {*} 
+ * @param {Array<*>} array_of_things
+ * @returns {*}
  */
 function array_random(array_of_things) {
     if (!Array.isArray(array_of_things)) throw new TypeError('\`array_of_things\` must be an array!');
