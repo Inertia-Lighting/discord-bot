@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "npm run lint",
-    "lint": "npx eslint ."
+    "lint": "npx eslint .",
+    "prepare": "is-ci || husky install"
   },
   "repository": {
     "type": "git",
@@ -33,7 +34,9 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "eslint": "^7.28.0"
+    "eslint": "^7.28.0",
+    "husky": "^6.0.0",
+    "is-ci": "^3.0.0"
   },
   "engines": {
     "node": ">=15.0.0",
