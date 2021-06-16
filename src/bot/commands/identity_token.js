@@ -50,7 +50,7 @@ module.exports = {
         }
 
         switch (`${command_args[0]}`.toLowerCase()) {
-            case 'help':
+            case 'help': {
                 message.channel.send(new Discord.MessageEmbed({
                     color: 0x60A0FF,
                     author: {
@@ -71,7 +71,8 @@ module.exports = {
                     ],
                 })).catch(console.warn);
                 break;
-            case 'generate':
+            }
+            case 'generate': {
                 const { non_encrypted_token, encrypted_token } = await generateUserAPIToken();
 
                 try {
@@ -112,7 +113,8 @@ module.exports = {
                 }
 
                 break;
-            default:
+            }
+            default: {
                 message.channel.send(new Discord.MessageEmbed({
                     color: 0x60A0FF,
                     author: {
@@ -130,6 +132,7 @@ module.exports = {
                     ].join('\n'),
                 })).catch(console.warn);
                 break;
+            }
         }
     },
 };

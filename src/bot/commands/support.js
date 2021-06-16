@@ -99,10 +99,10 @@ const support_categories = new Discord.Collection([
 
 /**
  * Creates a support ticket channel
- * @param {Discord.Guild} guild 
- * @param {Discord.GuildMember} guild_member 
- * @param {SupportCategory} support_category 
- * @returns {Promise<Discord.TextChannel>} 
+ * @param {Discord.Guild} guild
+ * @param {Discord.GuildMember} guild_member
+ * @param {SupportCategory} support_category
+ * @returns {Promise<Discord.TextChannel>}
  */
 async function createSupportTicketChannel(guild, guild_member, support_category) {
     const support_tickets_category = guild.channels.resolve(support_tickets_category_id);
@@ -133,9 +133,9 @@ async function createSupportTicketChannel(guild, guild_member, support_category)
 
 /**
  * Closes a support ticket channel
- * @param {Discord.TextChannel} support_channel 
- * @param {Boolean} save_transcript 
- * @returns {Promise<Discord.TextChannel>} 
+ * @param {Discord.TextChannel} support_channel
+ * @param {Boolean} save_transcript
+ * @returns {Promise<Discord.TextChannel>}
  */
 async function closeSupportTicketChannel(support_channel, save_transcript) {
     if (save_transcript) {
@@ -297,7 +297,7 @@ module.exports = {
 
                     /* send the category specific template / instructions */
                     switch (matching_support_category.id) {
-                        case 'PRODUCT_PURCHASES':
+                        case 'PRODUCT_PURCHASES': {
                             await support_channel.send(new Discord.MessageEmbed({
                                 color: 0x60A0FF,
                                 author: {
@@ -314,7 +314,8 @@ module.exports = {
                                 ].join('\n'),
                             })).catch(console.warn);
                             break;
-                        case 'PAYPAL_PURCHASES':
+                        }
+                        case 'PAYPAL_PURCHASES': {
                             await support_channel.send(new Discord.MessageEmbed({
                                 color: 0x60A0FF,
                                 author: {
@@ -338,7 +339,8 @@ module.exports = {
                                 ].join('\n'),
                             })).catch(console.warn);
                             break;
-                        case 'PRODUCT_ISSUES':
+                        }
+                        case 'PRODUCT_ISSUES': {
                             await support_channel.send(new Discord.MessageEmbed({
                                 color: 0x60A0FF,
                                 author: {
@@ -357,7 +359,8 @@ module.exports = {
                                 ].join('\n'),
                             })).catch(console.warn);
                             break;
-                        case 'PRODUCT_TRANSFERS':
+                        }
+                        case 'PRODUCT_TRANSFERS': {
                             await support_channel.send(new Discord.MessageEmbed({
                                 color: 0x60A0FF,
                                 author: {
@@ -374,7 +377,8 @@ module.exports = {
                                 ].join('\n'),
                             })).catch(console.warn);
                             break;
-                        case 'PARTNER_REQUESTS':
+                        }
+                        case 'PARTNER_REQUESTS': {
                             await support_channel.send(new Discord.MessageEmbed({
                                 color: 0x60A0FF,
                                 author: {
@@ -388,7 +392,8 @@ module.exports = {
                                 ].join('\n'),
                             })).catch(console.warn);
                             break;
-                        case 'OTHER':
+                        }
+                        case 'OTHER': {
                             await support_channel.send(new Discord.MessageEmbed({
                                 color: 0x60A0FF,
                                 author: {
@@ -398,6 +403,10 @@ module.exports = {
                                 title: 'Please describe your issue / why you opened this ticket.',
                             })).catch(console.warn);
                             break;
+                        }
+                        default: {
+                            break;
+                        }
                     }
 
                     const choices_embed = await support_channel.send(new Discord.MessageEmbed({
@@ -421,7 +430,7 @@ module.exports = {
                             await collected_message_2.delete().catch(console.warn);
                         }
                         switch (collected_message_2.content.toLowerCase()) {
-                            case 'done':
+                            case 'done': {
                                 await cleanupMessageCollector();
                                 await support_channel.overwritePermissions([
                                     ...support_channel.permissionOverwrites.values(), // clone the channel's current permissions
@@ -433,11 +442,16 @@ module.exports = {
                                 const qualified_support_role_mentions = matching_support_category.qualified_support_role_ids.map(role_id => `<@&${role_id}>`).join(', ');
                                 await support_channel.send(`${message.author}, Our ${qualified_support_role_mentions} staff will help you with your issue soon!`).catch(console.warn);
                                 break;
-                            case 'cancel':
+                            }
+                            case 'cancel': {
                                 await cleanupMessageCollector();
                                 await support_channel.send(`${message.author}, Cancelling support ticket...`).catch(console.warn);
                                 await closeSupportTicketChannel(support_channel, false);
                                 break;
+                            }
+                            default: {
+                                break;
+                            }
                         }
                     });
                     message_collector_2.on('end', async (collected_messages, reason) => {

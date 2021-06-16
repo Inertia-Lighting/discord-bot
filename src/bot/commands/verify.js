@@ -14,10 +14,6 @@ const { Discord, client } = require('../discord_client.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const command_prefix = process.env.BOT_COMMAND_PREFIX;
-
-//---------------------------------------------------------------------------------------------------------------//
-
 module.exports = {
     name: 'verify',
     description: 'verifies the user and adds them to the database',
