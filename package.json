@@ -30,5 +30,8 @@
     "path": "^0.12.7",
     "string-similarity": "^4.0.4",
     "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "eslint": "^7.28.0"
   }
 }
