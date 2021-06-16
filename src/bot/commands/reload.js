@@ -20,7 +20,7 @@ module.exports = {
         const { command_args } = args;
 
         if (command_args.length === 0) {
-            message.channel.send({ 
+            message.channel.send({
                 content: `You didn't pass any command to reload, ${message.author}!`,
             });
             return;
@@ -41,12 +41,12 @@ module.exports = {
         try {
             const new_command = require(`./${command.name}.js`);
             client.$.commands.set(new_command.name, new_command);
-            message.channel.send({ 
+            message.channel.send({
                 content: `Command \`${new_command.name}\` was reloaded!`,
             });
         } catch (error) {
             console.error(error);
-            message.channel.send({ 
+            message.channel.send({
                 content: `There was an error while reloading command \`${command.name}\`:\n\`\`\`${error.message}\`\`\``,
             });
         }

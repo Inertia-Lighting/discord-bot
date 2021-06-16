@@ -121,7 +121,6 @@ module.exports = {
                 }
 
                 break;
-<<<<<<< HEAD
             default:
                 message.channel.send({
                     embeds: [
@@ -143,26 +142,6 @@ module.exports = {
                         }),
                     ],
                 }).catch(console.warn);
-=======
-            }
-            default: {
-                message.channel.send(new Discord.MessageEmbed({
-                    color: 0x60A0FF,
-                    author: {
-                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                        name: 'Inertia Lighting | Identity Token System',
-                    },
-                    description: [
-                        'Please use one of the following sub-commands:',
-                        '\`\`\`',
-                        ...[
-                            'help',
-                            'generate',
-                        ].map(sub_command => `${command_prefix}${command_name} ${sub_command}`),
-                        '\`\`\`',
-                    ].join('\n'),
-                })).catch(console.warn);
->>>>>>> master
                 break;
             }
         }

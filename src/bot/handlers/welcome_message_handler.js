@@ -6,7 +6,7 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const { Discord } = require('../discord_client.js');
+const { Discord, client } = require('../discord_client.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -44,6 +44,7 @@ async function welcomeMessageHandler(member) {
 
     try {
         const dm_channel = await member.createDM();
+<<<<<<< HEAD
         await dm_channel.send({
             content: message_contents,
         });
@@ -52,6 +53,12 @@ async function welcomeMessageHandler(member) {
         await general_chat_channel.send({
             content: message_contents,
         }).catch(console.warn);
+=======
+        await dm_channel.send(message_contents);
+    } catch {
+        const general_chat_channel = client.channels.resolve(general_channel_id);
+        await general_chat_channel.send(message_contents).catch(console.warn);
+>>>>>>> master
     }
 }
 

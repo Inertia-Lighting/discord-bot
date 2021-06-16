@@ -80,7 +80,7 @@ module.exports = {
                             iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                             name: 'Inertia Lighting | Products',
                         },
-                        description: roblox_products_chunk.map(product => 
+                        description: roblox_products_chunk.map(product =>
                             [
                                 `**Product Name** ${product.name}`,
                                 `**Price** ${product.price_in_robux} <:robux:759699085439139871>`,

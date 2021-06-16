@@ -296,7 +296,7 @@ module.exports = {
                     ],
                 }).catch(console.warn);
                 break;
-        }
+            }
         }
     },
 };
