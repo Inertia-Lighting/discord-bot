@@ -98,7 +98,7 @@ module.exports = {
         "line-comment-position": "off",
         "linebreak-style": [
             "error",
-            (process.platform === 'win32' ? 'windows' : 'unix')
+            "windows"
         ],
         "lines-around-comment": "off",
         "lines-between-class-members": "error",
