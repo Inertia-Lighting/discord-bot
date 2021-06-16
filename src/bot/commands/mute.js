@@ -6,7 +6,7 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const { Discord, client } = require('../discord_client.js');
+const { Discord } = require('../discord_client.js');
 
 const { Timer } = require('../../utilities.js');
 

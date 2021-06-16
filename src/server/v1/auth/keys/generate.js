@@ -22,7 +22,7 @@ const { go_mongo_db } = require('../../../../mongo/mongo.js');
  * @param {String} game_place_id the game place id
  * @param {String} salt_secret_1 is a 64 digit number stored inside of a string
  * @param {String} salt_secret_2 is a 64 digit number stored inside of a string
- * @returns {Promise<String>} 
+ * @returns {Promise<String>}
  */
  async function generateGameSalt(game_owner_id, game_place_id, salt_secret_1, salt_secret_2) {
     if (typeof game_owner_id !== 'string') return new TypeError('game_owner_id was not a string');

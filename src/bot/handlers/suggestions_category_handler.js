@@ -13,7 +13,7 @@ const { Discord } = require('../discord_client.js');
 //---------------------------------------------------------------------------------------------------------------//
 
 /**
- * @param {Discord.Message} message 
+ * @param {Discord.Message} message
  */
 async function suggestionsCategoryHandler(message) {
     if (message.author.system || message.author.bot) return;
