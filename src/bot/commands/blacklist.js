@@ -273,7 +273,8 @@ module.exports = {
                 }).catch(console.warn);
 
                 break;
-            default:
+            }
+            default: {
                 message.reply({
                     embeds: [
                         new Discord.MessageEmbed({

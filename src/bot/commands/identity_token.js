@@ -50,7 +50,7 @@ module.exports = {
         }
 
         switch (`${command_args[0]}`.toLowerCase()) {
-            case 'help':
+            case 'help': {
                 message.channel.send({
                     embeds: [
                         new Discord.MessageEmbed({
@@ -121,7 +121,8 @@ module.exports = {
                 }
 
                 break;
-            default:
+            }
+            default: {
                 message.channel.send({
                     embeds: [
                         new Discord.MessageEmbed({

@@ -291,31 +291,10 @@ module.exports = {
                             '_id': false,
                         },
                     });
-<<<<<<< HEAD
+
                     await support_channel.send({
                         embeds: [
                             new Discord.MessageEmbed({
-=======
-                    await support_channel.send(new Discord.MessageEmbed({
-                        color: 0x60A0FF,
-                        author: {
-                            iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                            name: 'Inertia Lighting | Blacklisted User Document',
-                        },
-                        description: (blacklisted_user_db_data ? [
-                            `**User:** <@${blacklisted_user_db_data.identity.discord_user_id}>`,
-                            `**Roblox Id:** \`${blacklisted_user_db_data.identity.roblox_user_id}\``,
-                            `**Staff:** <@${blacklisted_user_db_data.staff_member_id}>`,
-                            `**Date:** \`${moment(blacklisted_user_db_data.epoch).tz('America/New_York').format('YYYY[-]MM[-]DD | hh:mm A | [GMT]ZZ')}\``,
-                            `**Reason:** ${'```'}\n${blacklisted_user_db_data.reason}\n${'```'}`,
-                        ].join('\n') : `${'```'}\nUser is not blacklisted!\n${'```'}`),
-                    })).catch(console.warn);
-
-                    /* send the category specific template / instructions */
-                    switch (matching_support_category.id) {
-                        case 'PRODUCT_PURCHASES': {
-                            await support_channel.send(new Discord.MessageEmbed({
->>>>>>> master
                                 color: 0x60A0FF,
                                 author: {
                                     iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
@@ -333,7 +312,7 @@ module.exports = {
                     }).catch(console.warn);
 
                     switch (matching_support_category.id) {
-                        case 'PRODUCT_PURCHASES':
+                        case 'PRODUCT_PURCHASES': {
                             await support_channel.send({
                                 embeds: [
                                     new Discord.MessageEmbed({
@@ -354,7 +333,8 @@ module.exports = {
                                 ],
                             }).catch(console.warn);
                             break;
-                        case 'PAYPAL_PURCHASES':
+                        }
+                        case 'PAYPAL_PURCHASES': {
                             await support_channel.send({
                                 embeds: [
                                     new Discord.MessageEmbed({
@@ -382,7 +362,8 @@ module.exports = {
                                 ],
                             }).catch(console.warn);
                             break;
-                        case 'PRODUCT_ISSUES':
+                        }
+                        case 'PRODUCT_ISSUES': {
                             await support_channel.send({
                                 embeds: [
                                     new Discord.MessageEmbed({
@@ -405,7 +386,8 @@ module.exports = {
                                 ],
                             }).catch(console.warn);
                             break;
-                        case 'PRODUCT_TRANSFERS':
+                        }
+                        case 'PRODUCT_TRANSFERS': {
                             await support_channel.send({
                                 embeds: [
                                     new Discord.MessageEmbed({
@@ -426,7 +408,8 @@ module.exports = {
                                 ],
                             }).catch(console.warn);
                             break;
-                        case 'PARTNER_REQUESTS':
+                        }
+                        case 'PARTNER_REQUESTS': {
                             await support_channel.send({
                                 embeds: [
                                     new Discord.MessageEmbed({
@@ -441,7 +424,8 @@ module.exports = {
                                 ],
                             }).catch(console.warn);
                             break;
-                        case 'OTHER':
+                        }
+                        case 'OTHER': {
                             await support_channel.send({
                                 embeds: [
                                     new Discord.MessageEmbed({
@@ -461,7 +445,6 @@ module.exports = {
                         }
                     }
 
-<<<<<<< HEAD
                     const choices_embed = await support_channel.send({
                         embeds: [
                             new Discord.MessageEmbed({
@@ -473,15 +456,6 @@ module.exports = {
                             }),
                         ],
                     }).catch(console.warn);
-=======
-                    const choices_embed = await support_channel.send(new Discord.MessageEmbed({
-                        color: 0x60A0FF,
-                        description: [
-                            '**Type \`done\` when you have completed the steps above.**',
-                            '**Type \`cancel\` if you wish to cancel this ticket.**',
-                        ].join('\n'),
-                    })).catch(console.warn);
->>>>>>> master
 
                     const message_collector_2_filter = (msg) => msg.author.id === message.author.id;
                     const message_collector_2 = support_channel.createMessageCollector(message_collector_2_filter, {
@@ -575,7 +549,7 @@ module.exports = {
                 save_transcript = ['yes'].includes(collected_messages.first()?.content?.toLowerCase());
             }
 
-            await support_channel.send({ 
+            await support_channel.send({
                 content: `${message.author}, Closing support ticket in 5 seconds...`,
             }).catch(console.warn);
 
