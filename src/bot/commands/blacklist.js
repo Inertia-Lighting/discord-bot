@@ -152,7 +152,7 @@ async function removeUserFromBlacklistedUsersDatabase({ discord_user_id, roblox_
  * @param {Guild} guild
  * @param {String} staff_member_id
  * @param {String} user_id
- * @returns {Promise<Boolean>} 
+ * @returns {Promise<Boolean>}
  */
 async function isStaffMemberAllowedToBlacklistUser(guild, staff_member_id, user_id) {
     if (!guild) throw new TypeError('\`guild\` was undefined');
@@ -191,7 +191,7 @@ module.exports = {
         const lookup_roblox_user_id = command_args[1];
 
         switch (command_args[0]?.toLowerCase()) {
-            case 'add':
+            case 'add': {
                 const db_user_data_for_case_add = await findUserInUsersDatabase({
                     discord_user_id: lookup_discord_user_id,
                     roblox_user_id: lookup_roblox_user_id,
@@ -220,7 +220,8 @@ module.exports = {
                 }
 
                 break;
-            case 'remove':
+            }
+            case 'remove': {
                 const db_user_data_for_case_remove = await findUserInUsersDatabase({
                     discord_user_id: lookup_discord_user_id,
                     roblox_user_id: lookup_roblox_user_id,
@@ -245,7 +246,8 @@ module.exports = {
                 }
 
                 break;
-            case 'lookup':
+            }
+            case 'lookup': {
                 const db_blacklisted_user_data = await findUserInBlacklistedUsersDatabase({
                     discord_user_id: lookup_discord_user_id,
                     roblox_user_id: lookup_roblox_user_id,
@@ -267,7 +269,8 @@ module.exports = {
                 })).catch(console.warn);
 
                 break;
-            default:
+            }
+            default: {
                 message.reply(new Discord.MessageEmbed({
                     color: 0x60A0FF,
                     author: {
@@ -286,6 +289,7 @@ module.exports = {
                     ].join('\n'),
                 })).catch(console.warn);
                 break;
+            }
         }
     },
 };

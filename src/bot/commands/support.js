@@ -99,10 +99,10 @@ const support_categories = new Discord.Collection([
 
 /**
  * Creates a support ticket channel
- * @param {Discord.Guild} guild 
- * @param {Discord.GuildMember} guild_member 
- * @param {SupportCategory} support_category 
- * @returns {Promise<Discord.TextChannel>} 
+ * @param {Discord.Guild} guild
+ * @param {Discord.GuildMember} guild_member
+ * @param {SupportCategory} support_category
+ * @returns {Promise<Discord.TextChannel>}
  */
 async function createSupportTicketChannel(guild, guild_member, support_category) {
     const support_tickets_category = guild.channels.resolve(support_tickets_category_id);
@@ -113,7 +113,7 @@ async function createSupportTicketChannel(guild, guild_member, support_category)
     const potential_open_ticket_channel = guild.channels.cache.find(ch => ch.parent?.id === support_tickets_category.id && ch.name === support_channel_name);
     const support_ticket_channel = potential_open_ticket_channel ?? await guild.channels.create(support_channel_name, {
         type: 'text',
-        topic: `${guild_member} | ${support_category.name} | Opened on ${moment().format('ddd MMM DD YYYY [at] HH:mm:ss [GMT]ZZ')} | Close using \`${bot_command_prefix}close_ticket\``,
+        topic: `${guild_member} | ${support_category.name} | Opened on ${moment().format('ddd MMM DD YYYY [at] HH:mm:ss [GMT]ZZ')} | Staff may close this using \`${bot_command_prefix}close_ticket\``,
         parent: support_tickets_category,
         permissionOverwrites: [
             ...support_tickets_category.permissionOverwrites.values(), // clone the parent channel permissions
@@ -133,9 +133,9 @@ async function createSupportTicketChannel(guild, guild_member, support_category)
 
 /**
  * Closes a support ticket channel
- * @param {Discord.TextChannel} support_channel 
- * @param {Boolean} save_transcript 
- * @returns {Promise<Discord.TextChannel>} 
+ * @param {Discord.TextChannel} support_channel
+ * @param {Boolean} save_transcript
+ * @returns {Promise<Discord.TextChannel>}
  */
 async function closeSupportTicketChannel(support_channel, save_transcript) {
     if (save_transcript) {
@@ -234,7 +234,8 @@ module.exports = {
                 ].join('\n\n'),
             })).catch(console.warn);
 
-            const message_collector_1 = bot_message.channel.createMessageCollector((msg) => msg.author.id === message.author.id);
+            const message_collector_1_filter = (msg) => msg.author.id === message.author.id;
+            const message_collector_1 = bot_message.channel.createMessageCollector(message_collector_1_filter);
             message_collector_1.on('collect', async (collected_message_1) => {
                 const matching_support_category = support_categories.find((support_category) => `${support_category.human_index}` === collected_message_1.content);
                 if (matching_support_category) {
@@ -294,8 +295,9 @@ module.exports = {
                         ].join('\n') : `${'```'}\nUser is not blacklisted!\n${'```'}`),
                     })).catch(console.warn);
 
+                    /* send the category specific template / instructions */
                     switch (matching_support_category.id) {
-                        case 'PRODUCT_PURCHASES':
+                        case 'PRODUCT_PURCHASES': {
                             await support_channel.send(new Discord.MessageEmbed({
                                 color: 0x60A0FF,
                                 author: {
@@ -312,7 +314,8 @@ module.exports = {
                                 ].join('\n'),
                             })).catch(console.warn);
                             break;
-                        case 'PAYPAL_PURCHASES':
+                        }
+                        case 'PAYPAL_PURCHASES': {
                             await support_channel.send(new Discord.MessageEmbed({
                                 color: 0x60A0FF,
                                 author: {
@@ -332,11 +335,12 @@ module.exports = {
                                     '- **Transaction Date:** ( 1970-01-01 )',
                                     '- **Transaction Time:** ( 12:00 AM )',
                                     '',
-                                    '**Please follow the above instructions properly!**',
+                                    '**Please follow the above instructions properly, or your ticket will be ignored!**',
                                 ].join('\n'),
                             })).catch(console.warn);
                             break;
-                        case 'PRODUCT_ISSUES':
+                        }
+                        case 'PRODUCT_ISSUES': {
                             await support_channel.send(new Discord.MessageEmbed({
                                 color: 0x60A0FF,
                                 author: {
@@ -355,7 +359,8 @@ module.exports = {
                                 ].join('\n'),
                             })).catch(console.warn);
                             break;
-                        case 'PRODUCT_TRANSFERS':
+                        }
+                        case 'PRODUCT_TRANSFERS': {
                             await support_channel.send(new Discord.MessageEmbed({
                                 color: 0x60A0FF,
                                 author: {
@@ -372,7 +377,8 @@ module.exports = {
                                 ].join('\n'),
                             })).catch(console.warn);
                             break;
-                        case 'PARTNER_REQUESTS':
+                        }
+                        case 'PARTNER_REQUESTS': {
                             await support_channel.send(new Discord.MessageEmbed({
                                 color: 0x60A0FF,
                                 author: {
@@ -380,31 +386,41 @@ module.exports = {
                                     name: `Inertia Lighting | ${matching_support_category.name}`,
                                 },
                                 title: 'Please fill out our partner request form.',
-                                description: 'https://inertia.lighting/partner-requests-form',
+                                description: [
+                                    '[Inertia Lighting Partner Request Form](https://inertia.lighting/partner-requests-form)',
+                                    '**If you don\'t put effort into the form, your request will be ignored!**',
+                                ].join('\n'),
                             })).catch(console.warn);
                             break;
-                        case 'OTHER':
+                        }
+                        case 'OTHER': {
                             await support_channel.send(new Discord.MessageEmbed({
                                 color: 0x60A0FF,
                                 author: {
                                     iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                                     name: `Inertia Lighting | ${matching_support_category.name}`,
                                 },
-                                title: 'Please tell us about your issue.',
+                                title: 'Please describe your issue / why you opened this ticket.',
                             })).catch(console.warn);
                             break;
+                        }
+                        default: {
+                            break;
+                        }
                     }
 
                     const choices_embed = await support_channel.send(new Discord.MessageEmbed({
                         color: 0x60A0FF,
                         description: [
-                            '**Type \`done\` when you are ready for our support staff.**',
-                            '**Type \`cancel\` if you wish to close this ticket.**',
+                            '**Type \`done\` when you have completed the steps above.**',
+                            '**Type \`cancel\` if you wish to cancel this ticket.**',
                         ].join('\n'),
                     })).catch(console.warn);
 
                     const message_collector_2_filter = (msg) => msg.author.id === message.author.id;
-                    const message_collector_2 = support_channel.createMessageCollector(message_collector_2_filter);
+                    const message_collector_2 = support_channel.createMessageCollector(message_collector_2_filter, {
+                        time: 10 * 60_000, // force the message collector to stop after 10 minutes
+                    });
                     message_collector_2.on('collect', async (collected_message_2) => {
                         async function cleanupMessageCollector() {
                             message_collector_2.stop();
@@ -414,7 +430,7 @@ module.exports = {
                             await collected_message_2.delete().catch(console.warn);
                         }
                         switch (collected_message_2.content.toLowerCase()) {
-                            case 'done':
+                            case 'done': {
                                 await cleanupMessageCollector();
                                 await support_channel.overwritePermissions([
                                     ...support_channel.permissionOverwrites.values(), // clone the channel's current permissions
@@ -426,11 +442,22 @@ module.exports = {
                                 const qualified_support_role_mentions = matching_support_category.qualified_support_role_ids.map(role_id => `<@&${role_id}>`).join(', ');
                                 await support_channel.send(`${message.author}, Our ${qualified_support_role_mentions} staff will help you with your issue soon!`).catch(console.warn);
                                 break;
-                            case 'cancel':
+                            }
+                            case 'cancel': {
                                 await cleanupMessageCollector();
                                 await support_channel.send(`${message.author}, Cancelling support ticket...`).catch(console.warn);
                                 await closeSupportTicketChannel(support_channel, false);
                                 break;
+                            }
+                            default: {
+                                break;
+                            }
+                        }
+                    });
+                    message_collector_2.on('end', async (collected_messages, reason) => {
+                        /* the following is used to denote when a message collector has exceeded our specified time */
+                        if (reason === 'time') {
+                            await closeSupportTicketChannel(support_channel, false);
                         }
                     });
                 } else if (['cancel'].includes(collected_message_1.content.toLowerCase())) {

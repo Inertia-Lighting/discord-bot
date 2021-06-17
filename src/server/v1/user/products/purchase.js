@@ -119,7 +119,7 @@ module.exports = (router, client) => {
         } catch (error) {
             console.trace('Failed to update user products in the database!', error);
             return res.status(500).send(JSON.stringify({
-                'message': `failed to update user products in the database`,
+                'message': 'failed to update user products in the database',
             }, null, 2));
         }
 

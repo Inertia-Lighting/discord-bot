@@ -6,7 +6,6 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const moment = require('moment-timezone');
 const bcrypt = require('bcryptjs');
 
 const { go_mongo_db } = require('../../../../mongo/mongo.js');
@@ -41,7 +40,7 @@ module.exports = (router, client) => {
             }, null, 2));
         }
 
-        const specified_product_code = req.params['specific_product_code'];
+        const specified_product_code = req.params.specific_product_code;
         const db_roblox_products = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_PRODUCTS_COLLECTION_NAME, {
             ...(specified_product_code ? {
                 code: specified_product_code,
