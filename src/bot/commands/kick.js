@@ -50,13 +50,17 @@ module.exports = {
         /* dm the member */
         try {
             const dm_channel = await member.createDM();
-            await dm_channel.send(moderation_message_contents);
+            await dm_channel.send({
+                content: moderation_message_contents,
+            }).catch(console.warn);
         } catch {
             // ignore any errors
         }
 
         /* message the member in the server */
-        await message.channel.send(moderation_message_contents).catch(console.warn);
+        await message.channel.send({
+            content: moderation_message_contents,
+        }).catch(console.warn);
 
         /* perform the moderation action on the member */
         try {
