@@ -23,19 +23,25 @@ module.exports = {
 
         /* handle when a member is not specified */
         if (!member) {
-            await message.reply('You need to specify a user when using this command!').catch(console.warn);
+            await message.reply({
+                content: 'You need to specify a user when using this command!',
+            }).catch(console.warn);
             return;
         }
 
         /* handle when a staff member specifies themself */
         if (staff_member.id === member.id) {
-            await message.reply('You aren\'t allowed to kick yourself!').catch(console.warn);
+            await message.reply({
+                content: 'You aren\'t allowed to kick yourself!',
+            }).catch(console.warn);
             return;
         }
 
         /* handle when a staff member tries to moderate someone with an equal/higher role */
         if (staff_member.roles.highest.comparePositionTo(member.roles.highest) <= 0) {
-            await message.reply('You aren\'t allowed to kick someone with an equal/higher role!').catch(console.warn);
+            await message.reply({
+                content: 'You aren\'t allowed to kick someone with an equal/higher role!',
+            }).catch(console.warn);
             return;
         }
 
