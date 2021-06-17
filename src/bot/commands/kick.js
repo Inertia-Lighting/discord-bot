@@ -6,13 +6,10 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const { Discord, client } = require('../discord_client.js');
-
-//---------------------------------------------------------------------------------------------------------------//
-
 module.exports = {
     name: 'kick',
     description: 'kicks a user from the server',
+    usage: '@mention reason',
     aliases: ['kick'],
     permission_level: 'staff',
     cooldown: 2_000,
@@ -42,15 +39,6 @@ module.exports = {
             return;
         }
 
-        /* perform the moderation action on the member */
-        try {
-            await member.kick(reason);
-        } catch (error) {
-            console.trace(error);
-            await message.reply('Failed to kick that member!').catch(console.warn);
-            return;
-        }
-
         const moderation_message_contents = [
             `${member}`,
             `You were kicked from the Inertia Lighting Discord by ${staff_member.user} for:`,
@@ -59,15 +47,24 @@ module.exports = {
             '\`\`\`',
         ].join('\n');
 
-        /* message the member in the server */
-        await message.channel.send(moderation_message_contents).catch(console.warn);
-
         /* dm the member */
         try {
             const dm_channel = await member.createDM();
             await dm_channel.send(moderation_message_contents);
         } catch {
             // ignore any errors
+        }
+
+        /* message the member in the server */
+        await message.channel.send(moderation_message_contents).catch(console.warn);
+
+        /* perform the moderation action on the member */
+        try {
+            await member.kick(reason);
+        } catch (error) {
+            console.trace(error);
+            await message.reply('Failed to kick that member!').catch(console.warn);
+            return;
         }
     },
 };
