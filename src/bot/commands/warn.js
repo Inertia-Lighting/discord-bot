@@ -7,10 +7,10 @@
 //---------------------------------------------------------------------------------------------------------------//
 
 module.exports = {
-    name: 'kick',
-    description: 'kicks a user from the server',
+    name: 'warn',
+    description: 'warns a user from the server',
     usage: '@mention reason',
-    aliases: ['kick'],
+    aliases: ['warn'],
     permission_level: 'staff',
     cooldown: 2_000,
     async execute(message, args) {
@@ -29,25 +29,25 @@ module.exports = {
 
         /* handle when a staff member specifies themself */
         if (staff_member.id === member.id) {
-            await message.reply('You aren\'t allowed to kick yourself!').catch(console.warn);
+            await message.reply('You aren\'t allowed to warn yourself!').catch(console.warn);
             return;
         }
 
         /* handle when a staff member specifies the guild owner */
         if (member.id === message.guild.ownerID) {
-            await message.reply('You aren\'t allowed to kick the owner of this server!');
+            await message.reply('You aren\'t allowed to warn the owner of this server!');
             return;
         }
 
         /* handle when a staff member tries to moderate someone with an equal/higher role */
         if (staff_member.roles.highest.comparePositionTo(member.roles.highest) <= 0) {
-            await message.reply('You aren\'t allowed to kick someone with an equal/higher role!').catch(console.warn);
+            await message.reply('You aren\'t allowed to warn someone with an equal/higher role!').catch(console.warn);
             return;
         }
 
         const moderation_message_contents = [
             `${member}`,
-            `You were kicked from the Inertia Lighting Discord by ${staff_member.user} for:`,
+            `You were warned in the Inertia Lighting Discord by ${staff_member.user} for:`,
             '\`\`\`',
             `${reason}`,
             '\`\`\`',
@@ -63,14 +63,5 @@ module.exports = {
 
         /* message the member in the server */
         await message.channel.send(moderation_message_contents).catch(console.warn);
-
-        /* perform the moderation action on the member */
-        try {
-            await member.kick(reason);
-        } catch (error) {
-            console.trace(error);
-            await message.reply('Failed to kick that member!').catch(console.warn);
-            return;
-        }
     },
 };
