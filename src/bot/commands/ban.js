@@ -33,6 +33,7 @@ module.exports = {
             return;
         }
 
+        /* handle when a staff member specifies the guild owner */
         if (member.id === message.guild.ownerID) {
             await message.reply('You aren\'t allowed to ban the owner of this server!');
             return;
