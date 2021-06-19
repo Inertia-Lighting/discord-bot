@@ -34,7 +34,7 @@ module.exports = {
         }
 
         if (member.id === message.guild.ownerID) {
-            await message.reply('You aren\'t allowed to ban this user!');
+            await message.reply('You aren\'t allowed to ban the owner of this server!');
             return;
         }
 
