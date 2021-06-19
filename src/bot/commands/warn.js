@@ -47,7 +47,7 @@ module.exports = {
 
         const moderation_message_contents = [
             `${member}`,
-            `You were warned in Inertia Lighting Discord by ${staff_member.user} for:`,
+            `You were warned in the Inertia Lighting Discord by ${staff_member.user} for:`,
             '\`\`\`',
             `${reason}`,
             '\`\`\`',
