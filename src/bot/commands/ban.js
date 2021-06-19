@@ -60,7 +60,7 @@ module.exports = {
 
         /* perform the moderation action on the member */
         try {
-            await member.ban(reason);
+            await member.ban({ reason: reason });
         } catch (error) {
             console.trace(error);
             await message.reply('Failed to ban that member!').catch(console.warn);
