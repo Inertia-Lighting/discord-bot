@@ -33,6 +33,11 @@ module.exports = {
             return;
         }
 
+        if (member.id === message.guild.ownerID) {
+            await message.reply('You aren\'t allowed to ban this user!');
+            return;
+        }
+
         /* handle when a staff member tries to moderate someone with an equal/higher role */
         if (staff_member.roles.highest.comparePositionTo(member.roles.highest) <= 0) {
             await message.reply('You aren\'t allowed to ban someone with an equal/higher role!').catch(console.warn);
