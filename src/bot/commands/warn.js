@@ -6,6 +6,10 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
+const { logModerationActionToDatabase } = require('../handlers/modlog_handler.js');
+
+//---------------------------------------------------------------------------------------------------------------//
+
 module.exports = {
     name: 'warn',
     description: 'warns a user from the server',
@@ -63,5 +67,7 @@ module.exports = {
 
         /* message the member in the server */
         await message.channel.send(moderation_message_contents).catch(console.warn);
+
+        await logModerationActionToDatabase(member.id, 'warn', Date.now(), message.member.id, reason);
     },
 };

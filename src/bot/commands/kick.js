@@ -6,6 +6,10 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
+const { logModerationActionToDatabase } = require('../handlers/modlog_handler.js');
+
+//---------------------------------------------------------------------------------------------------------------//
+
 module.exports = {
     name: 'kick',
     description: 'kicks a user from the server',
@@ -72,5 +76,6 @@ module.exports = {
             await message.reply('Failed to kick that member!').catch(console.warn);
             return;
         }
+        await logModerationActionToDatabase(member.id, 'kick', Date.now(), message.member.id, reason);
     },
 };

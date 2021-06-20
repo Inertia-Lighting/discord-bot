@@ -10,6 +10,8 @@ const { Discord } = require('../discord_client.js');
 
 const { Timer } = require('../../utilities.js');
 
+const { logModerationActionToDatabase } = require('../handlers/modlog_handler.js');
+
 //---------------------------------------------------------------------------------------------------------------//
 
 const muted_users_role_id = process.env.BOT_MUTED_USER_ROLE_ID;
@@ -158,5 +160,6 @@ module.exports = {
         } catch {
             // ignore any errors
         }
+        await logModerationActionToDatabase(member.id, 'mute', Date.now(), message.member.id, reason);
     },
 };
