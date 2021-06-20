@@ -76,6 +76,6 @@ module.exports = {
             await message.reply('Failed to kick that member!').catch(console.warn);
             return;
         }
-        await logModerationActionToDatabase(member.id, 'kick', Date.now(), message.member.id, reason);
+        await logModerationActionToDatabase(member.id, 'KICK', Date.now(), message.member.id, reason);
     },
 };

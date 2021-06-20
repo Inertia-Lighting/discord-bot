@@ -68,6 +68,6 @@ module.exports = {
         /* message the member in the server */
         await message.channel.send(moderation_message_contents).catch(console.warn);
 
-        await logModerationActionToDatabase(member.id, 'warn', Date.now(), message.member.id, reason);
+        await logModerationActionToDatabase(member.id, 'WARN', Date.now(), message.member.id, reason);
     },
 };

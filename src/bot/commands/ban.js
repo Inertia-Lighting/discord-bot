@@ -76,6 +76,6 @@ module.exports = {
             await message.reply('Failed to ban that member!').catch(console.warn);
             return;
         }
-        await logModerationActionToDatabase(member.id, 'ban', Date.now(), message.member.id, reason);
+        await logModerationActionToDatabase(member.id, 'BAN', Date.now(), message.member.id, reason);
     },
 };

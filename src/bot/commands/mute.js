@@ -160,6 +160,6 @@ module.exports = {
         } catch {
             // ignore any errors
         }
-        await logModerationActionToDatabase(member.id, 'mute', Date.now(), message.member.id, reason);
+        await logModerationActionToDatabase(member.id, 'MUTE', Date.now(), message.member.id, reason);
     },
 };
