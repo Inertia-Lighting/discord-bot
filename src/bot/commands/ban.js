@@ -82,7 +82,7 @@ module.exports = {
             type: 'BAN',
             epoch: Date.now(),
             staff_member_id: message.member.id,
-            reason: reason
+            reason: reason,
         });
     },
 };
