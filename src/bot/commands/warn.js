@@ -73,8 +73,8 @@ module.exports = {
         }, {
             type: 'WARN',
             epoch: Date.now(),
-            staff_member_id: message.member.id,
             reason: reason,
+            staff_member_id: message.member.id,
         });
     },
 };

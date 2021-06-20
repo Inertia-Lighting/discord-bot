@@ -165,8 +165,8 @@ module.exports = {
         }, {
             type: 'MUTE',
             epoch: Date.now(),
-            staff_member_id: message.member.id,
             reason: reason,
+            staff_member_id: message.member.id,
         });
     },
 };
