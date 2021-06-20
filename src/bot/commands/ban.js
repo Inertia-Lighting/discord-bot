@@ -76,6 +76,13 @@ module.exports = {
             await message.reply('Failed to ban that member!').catch(console.warn);
             return;
         }
-        await logModerationActionToDatabase(member.id, 'BAN', Date.now(), message.member.id, reason);
+        await logModerationActionToDatabase({
+            discord_user_id: member.id,
+        }, {
+            type: 'BAN',
+            epoch: Date.now(),
+            staff_member_id: message.member.id,
+            reason: reason
+        });
     },
 };

@@ -160,6 +160,13 @@ module.exports = {
         } catch {
             // ignore any errors
         }
-        await logModerationActionToDatabase(member.id, 'MUTE', Date.now(), message.member.id, reason);
+        await logModerationActionToDatabase({
+            discord_user_id: member.id,
+        }, {
+            type: 'MUTE',
+            epoch: Date.now(),
+            staff_member_id: message.member.id,
+            reason: reason
+        });
     },
 };
