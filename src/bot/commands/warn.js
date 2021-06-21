@@ -6,7 +6,7 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const { logModerationActionToDatabase } = require('../handlers/modlog_handler.js');
+const { logModerationActionToDatabase } = require('../handlers/log_moderation_action_handler.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -68,7 +68,8 @@ module.exports = {
         /* message the member in the server */
         await message.channel.send(moderation_message_contents).catch(console.warn);
 
-        await logModerationActionToDatabase({
+        /* log to the database */
+        const successfully_logged_to_database = await logModerationActionToDatabase({
             discord_user_id: member.id,
         }, {
             type: 'WARN',
@@ -76,5 +77,15 @@ module.exports = {
             reason: reason,
             staff_member_id: message.member.id,
         });
+
+        /* if logging to the database failed, dm the staff member */
+        if (!successfully_logged_to_database) {
+            try {
+                const staff_member_dm_channel = await message.author.createDM();
+                staff_member_dm_channel.send(`${message.author}, something went wrong while logging to the database, please contact our development team!`);
+            } catch {
+                // ignore any errors
+            }
+        }
     },
 };

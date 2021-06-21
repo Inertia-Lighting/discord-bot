@@ -29,19 +29,17 @@ const { go_mongo_db } = require('../../mongo/mongo.js');
  */
 async function logModerationActionToDatabase({ discord_user_id }, { type, epoch, reason, staff_member_id }) {
     try {
-        await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_MODERATION_ACTION_RECORDS_COLLECTION_NAME, {
-            'identity.discord_user_id': discord_user_id,
-        }, {
-            $set: {
+        await go_mongo_db.add(process.env.MONGO_DATABASE_NAME, process.env.MONGO_MODERATION_ACTION_RECORDS_COLLECTION_NAME, [
+            {
+                'identity.discord_user_id': discord_user_id,
                 'record.type': type,
                 'record.epoch': epoch,
                 'record.reason': reason,
                 'record.staff_member_id': staff_member_id,
             },
-        }, {
-            upsert: true,
-        });
-    } catch {
+        ]);
+    } catch (error) {
+        console.trace('logModerationActionToDatabase():', error);
         return false;
     }
 
