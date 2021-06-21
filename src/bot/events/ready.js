@@ -20,6 +20,7 @@ const { client } = require('../discord_client.js');
 //---------------------------------------------------------------------------------------------------------------//
 
 const command_prefix = process.env.BOT_COMMAND_PREFIX;
+const bot_guild_id = process.env.BOT_GUILD_ID;
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -73,6 +74,16 @@ const setProductPricesInDB = async () => {
 
         await Timer(250); // prevent api abuse
     }
+
+    return; // complete async
+};
+
+const updateBotNickname = async () => {
+    const bot_guild = client.guilds.resolve(bot_guild_id);
+
+    await bot_guild.me.setNickname(client.user.username, 'fixing my nickname').catch(console.trace);
+
+    return; // complete async
 };
 
 //---------------------------------------------------------------------------------------------------------------//
@@ -90,5 +101,8 @@ module.exports = {
 
         /* update the product prices in the database after 1 minute */
         setTimeout(async () => await setProductPricesInDB(), 1 * 60_000);
+
+        /* update the bot nickname after 10 minutes */
+        setTimeout(async () => await updateBotNickname(), 10 * 60_000);
     },
 };
