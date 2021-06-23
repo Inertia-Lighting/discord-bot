@@ -28,7 +28,7 @@ const drawn_discord_user_id = '331938622733549590';
 //---------------------------------------------------------------------------------------------------------------//
 
 /**
- * @typedef {'PRODUCT_PURCHASES'|'PAYPAL_PURCHASES'|'PRODUCT_ISSUES'|'PRODUCT_TRANSFERS'|'PARTNER_REQUESTS'|'OTHER'} SupportCategoryId
+ * @typedef {String} SupportCategoryId
  * @typedef {{
  *  id: SupportCategoryId,
  *  human_index: Number,
@@ -42,32 +42,30 @@ const drawn_discord_user_id = '331938622733549590';
  */
 
 const support_categories = new Discord.Collection([
+    // {
+    //     id: 'PARTNER_REQUESTS',
+    //     name: 'Partner Requests',
+    //     description: 'Come here if you want to request a partnership with Inertia Lighting.',
+    //     qualified_support_role_ids: [
+    //         process.env.BOT_SUPPORT_STAFF_PARTNER_REQUESTS_ROLE_ID,
+    //     ],
+    //     automatically_save_when_closed: true,
+    //     instructions_message_content: {
+    //         embed: new Discord.MessageEmbed({
+    //             color: 0x60A0FF,
+    //             author: {
+    //                 iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+    //                 name: 'Inertia Lighting | Support Ticket Instructions',
+    //             },
+    //             title: 'Please fill out our partner request form.',
+    //             description: [
+    //                 '[Inertia Lighting Partner Request Form](https://inertia.lighting/partner-requests-form)',
+    //                 '**If you don\'t put effort into the form, your request will be ignored!**',
+    //             ].join('\n'),
+    //         }),
+    //     },
+    // },
     {
-        id: 'PRODUCT_PURCHASES',
-        name: 'Purchases',
-        description: 'Come here if you are having issues with making a purchase.',
-        qualified_support_role_ids: [
-            process.env.BOT_SUPPORT_STAFF_PRODUCT_PURCHASES_ROLE_ID,
-        ],
-        automatically_save_when_closed: false,
-        instructions_message_content: {
-            embed: new Discord.MessageEmbed({
-                color: 0x60A0FF,
-                author: {
-                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                    name: 'Inertia Lighting | Support Ticket Instructions',
-                },
-                description: [
-                    '**Please fill out this template so that our staff can assist you.**',
-                    '- **Product(s):** ( C-Lights, Magic Panels, etc )',
-                    '- **Purchase Date(s):** ( 1970-01-01 )',
-                    '- **Proof Of Purchase(s):** ( screenshot [your transactions](https://www.roblox.com/transactions) )',
-                    '- **Issue:** ( describe your issue )',
-                    '**If you don\'t fill out the template properly, your ticket will be ignored!**',
-                ].join('\n'),
-            }),
-        },
-    }, {
         id: 'PAYPAL_PURCHASES',
         name: 'PayPal',
         description: 'Come here if you wish to purchase any of our products using PayPal.',
@@ -101,33 +99,6 @@ const support_categories = new Discord.Collection([
             }),
         },
     }, {
-        id: 'PRODUCT_ISSUES',
-        name: 'Product Issues',
-        description: 'Come here if you are having issues with a product that you successfully purchased.',
-        qualified_support_role_ids: [
-            process.env.BOT_SUPPORT_STAFF_PRODUCT_ISSUES_ROLE_ID,
-        ],
-        automatically_save_when_closed: false,
-        instructions_message_content: {
-            embed: new Discord.MessageEmbed({
-                color: 0x60A0FF,
-                author: {
-                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                    name: 'Inertia Lighting | Support Ticket Instructions',
-                },
-                description: [
-                    '**Please fill out this template so that our staff can assist you.**',
-                    '- **Product(s):** ( C-Lights, Magic Panels, etc )',
-                    '- **Read Setup Guide:** ( yes | maybe | no )',
-                    '- **Game Is Published:** ( yes | idk |  no )',
-                    '- **HTTPS Enabled In Game:** ( yes | idk | no )',
-                    '- **Roblox Studio Output:** ( screenshot your [studio output](https://prnt.sc/y6hnau) )',
-                    '- **Issue:** ( describe your issue )',
-                    '**If you don\'t fill out the template properly, your ticket will be ignored!**',
-                ].join('\n'),
-            }),
-        },
-    }, {
         id: 'PRODUCT_TRANSFERS',
         name: 'Product Transfers',
         description: 'Come here if you want to transfer any of your products to another account.',
@@ -152,31 +123,82 @@ const support_categories = new Discord.Collection([
                 ].join('\n'),
             }),
         },
-    },
-    // {
-    //     id: 'PARTNER_REQUESTS',
-    //     name: 'Partner Requests',
-    //     description: 'Come here if you want to request a partnership with Inertia Lighting.',
-    //     qualified_support_role_ids: [
-    //         process.env.BOT_SUPPORT_STAFF_PARTNER_REQUESTS_ROLE_ID,
-    //     ],
-    //     automatically_save_when_closed: true,
-    //     instructions_message_content: {
-    //         embed: new Discord.MessageEmbed({
-    //             color: 0x60A0FF,
-    //             author: {
-    //                 iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-    //                 name: 'Inertia Lighting | Support Ticket Instructions',
-    //             },
-    //             title: 'Please fill out our partner request form.',
-    //             description: [
-    //                 '[Inertia Lighting Partner Request Form](https://inertia.lighting/partner-requests-form)',
-    //                 '**If you don\'t put effort into the form, your request will be ignored!**',
-    //             ].join('\n'),
-    //         }),
-    //     },
-    // },
-    {
+    }, {
+        id: 'PRODUCT_PURCHASES',
+        name: 'Purchases',
+        description: 'Come here if you are having issues with making a purchase.',
+        qualified_support_role_ids: [
+            process.env.BOT_SUPPORT_STAFF_PRODUCT_PURCHASES_ROLE_ID,
+        ],
+        automatically_save_when_closed: false,
+        instructions_message_content: {
+            embed: new Discord.MessageEmbed({
+                color: 0x60A0FF,
+                author: {
+                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                    name: 'Inertia Lighting | Support Ticket Instructions',
+                },
+                description: [
+                    '**Please fill out this template so that our staff can assist you.**',
+                    '- **Product(s):** ( C-Lights, Magic Panels, etc )',
+                    '- **Purchase Date(s):** ( 1970-01-01 )',
+                    '- **Proof Of Purchase(s):** ( screenshot [your transactions](https://www.roblox.com/transactions) )',
+                    '- **Issue:** ( describe your issue )',
+                    '**If you don\'t fill out the template properly, your ticket will be ignored!**',
+                ].join('\n'),
+            }),
+        },
+    }, {
+        id: 'PRODUCT_ISSUES',
+        name: 'Product Issues',
+        description: 'Come here if you are having issues with our products.',
+        qualified_support_role_ids: [
+            process.env.BOT_SUPPORT_STAFF_PRODUCT_ISSUES_ROLE_ID,
+        ],
+        automatically_save_when_closed: false,
+        instructions_message_content: {
+            embed: new Discord.MessageEmbed({
+                color: 0x60A0FF,
+                author: {
+                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                    name: 'Inertia Lighting | Support Ticket Instructions',
+                },
+                description: [
+                    '**Please fill out this template so that our staff can assist you.**',
+                    '- **Product(s):** ( C-Lights, Magic Panels, etc )',
+                    '- **Read Setup Guide:** ( yes | maybe | no )',
+                    '- **Game Is Published:** ( yes | idk |  no )',
+                    '- **HTTPS Enabled In Game:** ( yes | idk | no )',
+                    '- **Roblox Studio Output:** ( screenshot your [studio output](https://prnt.sc/y6hnau) )',
+                    '- **Issue:** ( describe your issue )',
+                    '**If you don\'t fill out the template properly, your ticket will be ignored!**',
+                ].join('\n'),
+            }),
+        },
+    }, {
+        id: 'PRODUCT_QUESTIONS',
+        name: 'Product Questions',
+        description: 'Come here if you have questions about our products.',
+        qualified_support_role_ids: [
+            process.env.BOT_SUPPORT_STAFF_PRODUCT_QUESTIONS_ROLE_ID,
+        ],
+        automatically_save_when_closed: false,
+        instructions_message_content: {
+            embed: new Discord.MessageEmbed({
+                color: 0x60A0FF,
+                author: {
+                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                    name: 'Inertia Lighting | Support Ticket Instructions',
+                },
+                description: [
+                    '**Please fill out this template so that our staff can assist you.**',
+                    '- **Product(s):** ( C-Lights, Magic Panels, etc )',
+                    '- **Question:** ( what\'s your question? )',
+                    '**If you don\'t fill out the template properly, your ticket will be ignored!**',
+                ].join('\n'),
+            }),
+        },
+    }, {
         id: 'OTHER',
         name: 'Other',
         description: 'Come here if none of the other categories match your issue.',
