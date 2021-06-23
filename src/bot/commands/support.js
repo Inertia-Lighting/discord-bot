@@ -538,7 +538,7 @@ module.exports = {
         }
 
         switch (command_name) {
-            case 'support_ticket': {
+            case 'support': {
                 await supportTicketCommand();
                 break;
             }
