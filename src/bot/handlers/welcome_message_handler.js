@@ -19,7 +19,7 @@ const news_channel_id = '854442081899642950';
 //---------------------------------------------------------------------------------------------------------------//
 
 async function welcomeMessageHandler(member) {
-    const message_contents = {
+    const message_options = {
         content: `${member}`,
         embeds: [
             new Discord.MessageEmbed({
@@ -44,14 +44,10 @@ async function welcomeMessageHandler(member) {
 
     try {
         const dm_channel = await member.createDM();
-        await dm_channel.send({
-            content: message_contents,
-        });
+        await dm_channel.send(message_options);
     } catch {
         const general_chat_channel = client.channels.resolve(general_channel_id);
-        await general_chat_channel.send({
-            content: message_contents,
-        }).catch(console.warn);
+        await general_chat_channel.send(message_options).catch(console.warn);
     }
 }
 
