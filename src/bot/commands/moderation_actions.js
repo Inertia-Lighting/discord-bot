@@ -209,7 +209,7 @@ async function clearModerationActionsForMember(message, { sub_command_name, sub_
 module.exports = {
     name: 'moderation_actions',
     description: 'displays moderation actions from the database',
-    aliases: ['moderation_actions'],
+    aliases: ['moderation_actions', 'ma'],
     permission_level: 'staff',
     cooldown: 10_000,
     async execute(message, args) {
