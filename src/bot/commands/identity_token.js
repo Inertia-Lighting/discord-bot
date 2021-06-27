@@ -74,6 +74,7 @@ module.exports = {
                         }),
                     ],
                 }).catch(console.warn);
+
                 break;
             }
             case 'generate': {
@@ -117,7 +118,7 @@ module.exports = {
                     });
                 } catch (error) {
                     console.trace(error);
-                    message.reply('Something went wrong while updating your Identity Token in the database, please contact staff!').catch(console.warn);
+                    await message.reply('Something went wrong while updating your Identity Token in the database, please contact staff!').catch(console.warn);
                 }
 
                 break;
@@ -143,6 +144,7 @@ module.exports = {
                         }),
                     ],
                 }).catch(console.warn);
+
                 break;
             }
         }
