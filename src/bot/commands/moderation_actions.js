@@ -60,8 +60,11 @@ module.exports = {
         /* fetch all moderation actions from the database */
         const db_moderation_actions = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_MODERATION_ACTION_RECORDS_COLLECTION_NAME, {});
 
+        /* sort the moderation actions by epoch (newest -> oldest) */
+        const sorted_moderation_actions = db_moderation_actions.sort((a, b) => b.record.epoch - a.record.epoch);
+
         /* split the moderation actions into a 2-dimensional array of chunks */
-        const moderation_actions_chunks = array_chunks(db_moderation_actions, 10);
+        const moderation_actions_chunks = array_chunks(sorted_moderation_actions, 10);
 
         /* send a carousel containing 10 moderation actions per page */
         let page_index = 0;
@@ -107,7 +110,7 @@ module.exports = {
 
             switch (collected_reaction.emoji.name) {
                 case '⬅️': {
-                    page_index = page_index < moderation_actions_chunks.length ? page_index + 1 : 0;
+                    page_index = page_index < moderation_actions_chunks.length - 1 ? page_index + 1 : 0;
                     break;
                 }
                 case '➡️': {
