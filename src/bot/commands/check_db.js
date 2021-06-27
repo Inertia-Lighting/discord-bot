@@ -37,11 +37,11 @@ module.exports = {
                 'User:',
                 `${'```'}\n${JSON.stringify(user.identity, null, 2)}\n${'```'}`,
                 'has identifiers that are present in the users collection more than once!',
-            ].join('\n'));
+            ].join('\n')).catch(console.warn);
 
             await Timer(1000);
         }
 
-        message.reply('Done checking the database!');
+        message.reply('Done checking the database!').catch(console.warn);
     },
 };

@@ -20,8 +20,6 @@ module.exports = (router, client) => {
             }, null, 2));
         }
 
-        // console.log('req.body', req.body);
-
         const {
             api_endpoint_token: api_endpoint_token,
             roblox_user_id: roblox_user_id,
@@ -51,12 +49,6 @@ module.exports = (router, client) => {
 
         const potential_old_verification_code = potential_old_verification_context?.verification_code;
         const verification_code = potential_old_verification_code ?? (new Buffer.from(`${Date.now()}`.slice(7))).toString('base64');
-
-        // console.log({
-        //     potential_old_verification_context,
-        //     roblox_user_id,
-        //     verification_code,
-        // });
 
         client.$.verification_contexts.set(verification_code, {
             verification_code: verification_code,
