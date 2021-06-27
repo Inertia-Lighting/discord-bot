@@ -44,6 +44,8 @@ module.exports = {
             await Timer(1000);
         }
 
-        message.reply('Done checking the database!').catch(console.warn);
+        message.reply({
+            content: 'Done checking the database!',
+        }).catch(console.warn);
     },
 };

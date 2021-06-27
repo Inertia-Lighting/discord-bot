@@ -18,9 +18,9 @@ module.exports = {
     async execute(message, args) {
         const { command_prefix, command_name, command_args } = args;
 
-        const message_to_echo = command_args.join(' ').trim();
+        const message_content_to_echo = command_args.join(' ').trim();
 
-        if (message_to_echo.length === 0) {
+        if (message_content_to_echo.length === 0) {
             message.reply({
                 content: [
                     'Please provide a message to echo!',
@@ -34,9 +34,7 @@ module.exports = {
         }
 
         message.channel.send({
-            content: [
-                `${message_to_echo}`,
-            ],
+            content: `${message_content_to_echo}`,
         }).catch(console.warn);
 
         await Timer(500); // prevent api abuse

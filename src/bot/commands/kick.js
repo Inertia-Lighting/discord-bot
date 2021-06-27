@@ -39,7 +39,9 @@ module.exports = {
 
         /* handle when a staff member specifies the guild owner */
         if (member.id === message.guild.ownerID) {
-            await message.reply('You aren\'t allowed to kick the owner of this server!');
+            await message.reply({
+                content: 'You aren\'t allowed to kick the owner of this server!',
+            });
             return;
         }
 
@@ -51,35 +53,35 @@ module.exports = {
             return;
         }
 
-        const moderation_message_contents = [
-            `${member}`,
-            `You were kicked from the Inertia Lighting Discord by ${staff_member.user} for:`,
-            '\`\`\`',
-            `${reason}`,
-            '\`\`\`',
-        ].join('\n');
+        const moderation_message_options = {
+            content: [
+                `${member}`,
+                `You were kicked from the Inertia Lighting discord by ${staff_member.user} for:`,
+                '\`\`\`',
+                `${reason}`,
+                '\`\`\`',
+            ].join('\n'),
+        };
 
         /* dm the member */
         try {
             const dm_channel = await member.createDM();
-            await dm_channel.send({
-                content: moderation_message_contents,
-            }).catch(console.warn);
+            await dm_channel.send(moderation_message_options);
         } catch {
             // ignore any errors
         }
 
         /* message the member in the server */
-        await message.channel.send({
-            content: moderation_message_contents,
-        }).catch(console.warn);
+        await message.channel.send(moderation_message_options).catch(console.warn);
 
         /* perform the moderation action on the member */
         try {
             await member.kick(reason);
         } catch (error) {
             console.trace(error);
-            await message.reply('Failed to kick that member!').catch(console.warn);
+            await message.reply({
+                content: 'Failed to kick that member!',
+            }).catch(console.warn);
             return;
         }
     },

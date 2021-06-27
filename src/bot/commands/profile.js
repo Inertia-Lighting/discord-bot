@@ -67,7 +67,9 @@ module.exports = {
                 ],
             }).catch(console.warn);
         } else {
-            message.reply('The person you looked up isn\'t in our database!');
+            message.reply({
+                content: 'The person you looked up isn\'t in our database!',
+            });
         }
     },
 };

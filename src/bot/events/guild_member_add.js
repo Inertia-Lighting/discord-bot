@@ -65,7 +65,7 @@ module.exports = {
 
         /* direct message the user to notify them about the auto-verification */
         const dm_channel = await member.user.createDM();
-        dm_channel.send({
+        await dm_channel.send({
             embeds: [
                 new Discord.MessageEmbed({
                     color: 0x00FF00,

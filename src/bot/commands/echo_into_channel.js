@@ -24,9 +24,9 @@ module.exports = {
 
         const channel = message.guild.channels.resolve(parsed_potential_channel_id);
 
-        const message_to_echo = command_args_to_echo.join(' ').trim();
+        const message_content_to_echo = command_args_to_echo.join(' ').trim();
 
-        if (!channel || message_to_echo.length === 0) {
+        if (!channel || message_content_to_echo.length === 0) {
             message.reply({
                 content: [
                     'Please specify a valid channel and provide a message to echo!',
@@ -40,7 +40,7 @@ module.exports = {
         }
 
         await channel.send({
-            content: `${message_to_echo}`,
+            content: `${message_content_to_echo}`,
         }).catch(console.warn);
 
         await Timer(500); // prevent api abuse

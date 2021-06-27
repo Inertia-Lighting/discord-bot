@@ -45,7 +45,9 @@ module.exports = {
         });
 
         if (!db_user_data) {
-            await message.reply(`Please \`${command_prefix}verify\` before using this command!`).catch(console.warn);
+            await message.reply({
+                content: `Please \`${command_prefix}verify\` before using this command!`,
+            }).catch(console.warn);
             return; // don't continue if they don't exist in the database
         }
 
@@ -99,11 +101,18 @@ module.exports = {
                         ],
                     });
                 } catch {
-                    await message.reply('I was unable to DM you!').catch(console.warn);
+                    await message.reply({
+                        content: [
+                            'I was unable to send your Identity Token to your DMs!',
+                            'Please allow DMs from me!',
+                        ].join('\n'),
+                    }).catch(console.warn);
                     return; // don't continue if the user can't be messaged via DMs
                 }
 
-                await message.reply('I sent you your Identity Token via DMs!').catch(console.warn);
+                await message.reply({
+                    content: 'I sent your Identity Token to your DMs!',
+                }).catch(console.warn);
 
                 try {
                     await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_API_AUTH_USERS_COLLECTION_NAME, {
@@ -118,7 +127,9 @@ module.exports = {
                     });
                 } catch (error) {
                     console.trace(error);
-                    await message.reply('Something went wrong while updating your Identity Token in the database, please contact staff!').catch(console.warn);
+                    await message.reply({
+                        content: 'Something went wrong while updating your Identity Token in the database, please contact staff!',
+                    }).catch(console.warn);
                 }
 
                 break;

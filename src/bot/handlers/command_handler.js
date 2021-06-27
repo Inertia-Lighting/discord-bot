@@ -113,7 +113,9 @@ async function commandHandler(message) {
     const current_command_epoch = Date.now();
     command_cooldown_tracker.set(message.author.id, { last_command_epoch: current_command_epoch });
     if (current_command_epoch - last_command_epoch_for_user < command_cooldown_in_ms && !user_permission_levels.includes('staff')) {
-        message.reply('Stop spamming commands!').catch(console.warn);
+        message.reply({
+            content: 'Stop spamming commands!',
+        }).catch(console.warn);
         return;
     }
 

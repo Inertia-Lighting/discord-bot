@@ -25,7 +25,9 @@ module.exports = {
         const lookup_roblox_user_id = command_args[0];
 
         if (!(lookup_discord_user_id || lookup_roblox_user_id)) {
-            message.reply('provide a \`roblox_user_id\` or a discord user @mention!').catch(console.warn);
+            message.reply({
+                content: 'provide a \`roblox_user_id\` or a discord user @mention!',
+            }).catch(console.warn);
             return;
         }
 

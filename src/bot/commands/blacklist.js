@@ -198,13 +198,17 @@ module.exports = {
                 });
 
                 if (!db_user_data_for_case_add) {
-                    message.reply('You can only blacklist users that have verified in the product hub!');
+                    message.reply({
+                        content: 'You can only blacklist users that have verified in the product hub!',
+                    });
                     return;
                 }
 
                 const staff_member_can_add_user_to_blacklist = await isStaffMemberAllowedToBlacklistUser(message.guild, staff_member_id, db_user_data_for_case_add.identity.discord_user_id);
                 if (!staff_member_can_add_user_to_blacklist) {
-                    message.reply('You aren\'t allowed to blacklist that user!');
+                    message.reply({
+                        content: 'You aren\'t allowed to blacklist that user!',
+                    });
                     return;
                 }
 
@@ -214,9 +218,16 @@ module.exports = {
                     staff_member_id: staff_member_id,
                 });
                 if (added_successfully) {
-                    message.reply('I added that user to the blacklist!');
+                    message.reply({
+                        content: 'I added that user to the blacklist!',
+                    });
                 } else {
-                    message.reply('I was unable to add that user to the blacklist!\nDid you specify them after the command?');
+                    message.reply({
+                        content: [
+                            'I was unable to add that user to the blacklist!',
+                            'Did you specify them after the command?'
+                        ].join('\n'),
+                    });
                 }
 
                 break;
@@ -228,21 +239,32 @@ module.exports = {
                 });
 
                 if (!db_user_data_for_case_remove) {
-                    message.reply('You can only un-blacklist users that have verified in the product hub!');
+                    message.reply({
+                        content: 'You can only un-blacklist users that have verified in the product hub!',
+                    });
                     return;
                 }
 
                 const staff_member_can_remove_user_from_blacklist = await isStaffMemberAllowedToBlacklistUser(message.guild, staff_member_id, db_user_data_for_case_remove.identity.discord_user_id);
                 if (!staff_member_can_remove_user_from_blacklist) {
-                    message.reply('You aren\'t allowed to un-blacklist that user!');
+                    message.reply({
+                        content: 'You aren\'t allowed to un-blacklist that user!',
+                    });
                     return;
                 }
 
                 const removed_successfully = await removeUserFromBlacklistedUsersDatabase(db_user_data_for_case_remove.identity);
                 if (removed_successfully) {
-                    message.reply('I removed that user from the blacklist!');
+                    message.reply({
+                        content: 'I removed that user from the blacklist!',
+                    });
                 } else {
-                    message.reply('I was unable to remove that user from the blacklist!\nDid you specify them after the command?');
+                    message.reply({
+                        content: [
+                            'I was unable to remove that user from the blacklist!',
+                            'Did you specify them after the command?',
+                        ].join('\n'),
+                    });
                 }
 
                 break;

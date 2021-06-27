@@ -28,7 +28,7 @@ module.exports = {
         const verification_context = client.$.verification_contexts.get(verification_code_to_lookup);
 
         if (!verification_context) {
-            message.channel.send({
+            await message.channel.send({
                 embeds: [
                     new Discord.MessageEmbed({
                         color: 0xFF0000,
@@ -91,7 +91,7 @@ module.exports = {
             });
         } catch (error) {
             console.trace(error);
-            message.channel.send({
+            await message.channel.send({
                 embeds: [
                     new Discord.MessageEmbed({
                         color: 0xFF0000,
@@ -113,7 +113,7 @@ module.exports = {
         }
 
         /* inform the user that their verification was successful */
-        message.channel.send({
+        await message.channel.send({
             embeds: [
                 new Discord.MessageEmbed({
                     color: 0x00FF00,

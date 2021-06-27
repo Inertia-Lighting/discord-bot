@@ -467,7 +467,9 @@ module.exports = {
                     ].join('\n')).catch(console.warn);
 
                     /* ping the user to let them know where to go */
-                    await support_channel.send(`${message.author}, welcome to your support ticket!`).catch(console.warn);
+                    await support_channel.send({
+                        content: `${message.author}, welcome to your support ticket!`,
+                    }).catch(console.warn);
 
                     /* send the database documents */
                     await sendDatabaseDocumentsToSupportTicketChannel(support_channel, message.member);
@@ -513,13 +515,17 @@ module.exports = {
                                 ]).catch(console.trace);
 
                                 const qualified_support_role_mentions = matching_support_category.qualified_support_role_ids.map(role_id => `<@&${role_id}>`).join(', ');
-                                await support_channel.send(`${message.author}, Our ${qualified_support_role_mentions} staff will help you with your issue soon!`).catch(console.warn);
+                                await support_channel.send({
+                                    content: `${message.author}, Our ${qualified_support_role_mentions} staff will help you with your issue soon!`,
+                                }).catch(console.warn);
 
                                 break;
                             }
                             case 'cancel': {
                                 await cleanupCategoryInstructionsOptionsMessageCollector();
-                                await support_channel.send(`${message.author}, Cancelling support ticket...`).catch(console.warn);
+                                await support_channel.send({
+                                    content: `${message.author}, Cancelling support ticket...`,
+                                }).catch(console.warn);
                                 await closeSupportTicketChannel(support_channel, false);
 
                                 break;
@@ -540,9 +546,13 @@ module.exports = {
                     category_selection_message_collector.stop();
                     await Timer(500); // delay the message deletion
                     await category_selection_message.delete().catch(console.warn);
-                    await collected_category_selection_message.reply('Canceled!').catch(console.warn);
+                    await collected_category_selection_message.reply({
+                        content: 'Canceled!',
+                    }).catch(console.warn);
                 } else {
-                    await collected_category_selection_message.reply('Please type the __category number__ or \`cancel\`.').catch(console.warn);
+                    await collected_category_selection_message.reply({
+                        content: 'Please type the __category number__ or \`cancel\`.',
+                    }).catch(console.warn);
                 }
             });
             category_selection_message_collector.on('end', () => {
@@ -559,14 +569,18 @@ module.exports = {
 
         async function closeTicketCommand() {
             if (!user_permission_levels.includes('staff')) {
-                message.reply('Sorry, only staff can close active support tickets.').catch(console.warn);
+                message.reply({
+                    content: 'Sorry, only staff can close active support tickets.',
+                }).catch(console.warn);
                 return;
             }
 
             const channel_exists_in_support_tickets_category = message.channel.parentID === support_tickets_category_id;
             const channel_is_not_transcripts_channel = message.channel.id !== support_tickets_transcripts_channel_id;
             if (!(channel_exists_in_support_tickets_category && channel_is_not_transcripts_channel)) {
-                message.reply('This channel is not a support ticket.').catch(console.warn);
+                message.reply({
+                    content: 'This channel is not a support ticket.',
+                }).catch(console.warn);
                 return;
             }
 
@@ -576,7 +590,9 @@ module.exports = {
 
             let save_transcript = true;
             if (!support_category?.automatically_save_when_closed) {
-                await message.reply('Would you like to save the transcript for this support ticket before closing it?\n**( yes | no )**').catch(console.warn);
+                await message.reply({
+                    content: 'Would you like to save the transcript for this support ticket before closing it?\n**( yes | no )**',
+                }).catch(console.warn);
 
                 const collection_filter = (msg) => msg.author.id === message.author.id && ['yes', 'no'].includes(msg.content.toLowerCase());
                 const collected_messages = await support_channel.awaitMessages(collection_filter, { max: 1 }).catch(collected_messages => collected_messages);

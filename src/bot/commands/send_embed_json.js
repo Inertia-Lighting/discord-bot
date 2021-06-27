@@ -21,7 +21,9 @@ module.exports = {
         const msg_attachment = message.attachments.first();
 
         if (!msg_attachment) {
-            message.reply('Please send a \`.json\` file first!').catch(console.warn);
+            message.reply({
+                content: 'Please send a \`.json\` file first!',
+            }).catch(console.warn);
             return;
         }
 
@@ -46,7 +48,9 @@ module.exports = {
             }
         } catch (error) {
             console.trace(error);
-            message.reply('Something went wrong, please check the console for details!').catch(console.warn);
+            message.reply({
+                content: 'Something went wrong, please check the console for details!',
+            }).catch(console.warn);
         }
     },
 };

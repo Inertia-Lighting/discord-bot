@@ -38,10 +38,12 @@ module.exports = {
 
         /* respond to mentions of this bot */
         if (message.content.startsWith(`<@!${client.user.id}>`)) {
-            message.reply([
-                `The command_prefix for me is \`${command_prefix}\`.`,
-                `To see a list of commands do \`${command_prefix}help\`!`,
-            ].join('\n')).catch(console.warn);
+            message.reply({
+                content: [
+                    `The command_prefix for me is \`${command_prefix}\`.`,
+                    `To see a list of commands do \`${command_prefix}help\`!`,
+                ].join('\n'),
+            }).catch(console.warn);
         }
 
         /* handle commands */

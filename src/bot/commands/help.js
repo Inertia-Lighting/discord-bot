@@ -46,7 +46,9 @@ module.exports = {
                     ],
                 }).catch(console.warn);
             } else {
-                message.reply('That\'s not a valid command!').catch(console.warn);
+                message.reply({
+                    content: 'That\'s not a valid command!',
+                }).catch(console.warn);
             }
         } else {
             /* display all commands visible to the user */
