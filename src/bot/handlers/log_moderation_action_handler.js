@@ -31,11 +31,15 @@ async function logModerationActionToDatabase({ discord_user_id }, { type, epoch,
     try {
         await go_mongo_db.add(process.env.MONGO_DATABASE_NAME, process.env.MONGO_MODERATION_ACTION_RECORDS_COLLECTION_NAME, [
             {
-                'identity.discord_user_id': discord_user_id,
-                'record.type': type,
-                'record.epoch': epoch,
-                'record.reason': reason,
-                'record.staff_member_id': staff_member_id,
+                'identity': {
+                    'discord_user_id': discord_user_id,
+                },
+                'record': {
+                    'type': type,
+                    'epoch': epoch,
+                    'reason': reason,
+                    'staff_member_id': staff_member_id,
+                },
             },
         ]);
     } catch (error) {
