@@ -70,6 +70,7 @@ module.exports = {
                         },
                     ],
                 })).catch(console.warn);
+
                 break;
             }
             case 'generate': {
@@ -109,13 +110,13 @@ module.exports = {
                     });
                 } catch (error) {
                     console.trace(error);
-                    message.reply('Something went wrong while updating your Identity Token in the database, please contact staff!').catch(console.warn);
+                    await message.reply('Something went wrong while updating your Identity Token in the database, please contact staff!').catch(console.warn);
                 }
 
                 break;
             }
             default: {
-                message.channel.send(new Discord.MessageEmbed({
+                await message.channel.send(new Discord.MessageEmbed({
                     color: 0x60A0FF,
                     author: {
                         iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
@@ -131,6 +132,7 @@ module.exports = {
                         '\`\`\`',
                     ].join('\n'),
                 })).catch(console.warn);
+
                 break;
             }
         }
