@@ -17,7 +17,7 @@ const { go_mongo_db } = require('../../mongo/mongo.js');
 //---------------------------------------------------------------------------------------------------------------//
 
 /**
- * Adds moderation log to database
+ * Adds a moderation log to the database
  * @param {Object} identity
  * @param {String} identity.discord_user_id
  * @param {Object} record
@@ -28,6 +28,12 @@ const { go_mongo_db } = require('../../mongo/mongo.js');
  * @returns {Promise<Boolean>} success or failure
  */
 async function logModerationActionToDatabase({ discord_user_id }, { type, epoch, reason, staff_member_id }) {
+    if (typeof discord_user_id !== 'string') throw new TypeError('\`discord_user_id\` must be a string!');
+    if (typeof type !== 'string') throw new TypeError('\`type\` must be a string!');
+    if (typeof epoch !== 'number') throw new TypeError('\`epoch\` must be a number!');
+    if (typeof reason !== 'string') throw new TypeError('\`reason\` must be a string!');
+    if (typeof staff_member_id !== 'string') throw new TypeError('\`staff_member_id\` must be a string!');
+
     try {
         await go_mongo_db.add(process.env.MONGO_DATABASE_NAME, process.env.MONGO_MODERATION_ACTION_RECORDS_COLLECTION_NAME, [
             {
