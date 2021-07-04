@@ -40,6 +40,7 @@ module.exports = (router, client) => {
             roblox_product_id: roblox_product_id,
             discord_user_id: discord_user_id,
             roblox_user_id: roblox_user_id,
+            paypal_order_id: paypal_order_id,
         } = req.body;
 
         /* check if required information is present */
@@ -56,6 +57,11 @@ module.exports = (router, client) => {
         if (!api_endpoint_token || typeof api_endpoint_token !== 'string') {
             return res.status(400).send(JSON.stringify({
                 'message': 'missing (string) \`api_endpoint_token\` in request body',
+            }, null, 2));
+        }
+        if (paypal_order_id && typeof paypal_order_id !== 'string') {
+            return res.status(400).send(JSON.stringify({
+                'message': 'incorrect type for optional (string) \`paypal_order_id\` in request body',
             }, null, 2));
         }
 
@@ -197,9 +203,12 @@ module.exports = (router, client) => {
                     name: 'Inertia Lighting | Confirmed Purchase',
                 },
                 description: [
-                    `**Discord user:** <@${guild_member.user.id}>`,
-                    `**Roblox user:** \`${roblox_user_id}\``,
-                    `**Bought product:** \`${db_roblox_product_data.code}\``,
+                    `**Discord Mention:** <@${guild_member.user.id}>`,
+                    `**Roblox User Id:** \`${roblox_user_id}\``,
+                    `**Product Code:** \`${db_roblox_product_data.code}\``,
+                    ...(paypal_order_id ? [
+                        `**PayPal Order Id: \`${paypal_order_id}\``,
+                    ] : []),
                 ].join('\n'),
             }));
         } catch (error) {
