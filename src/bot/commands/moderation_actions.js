@@ -52,10 +52,10 @@ async function listModerationActions(message, lookup_mode='member') {
     if (!['member', 'staff'].includes(lookup_mode)) throw new RangeError('\`lookup_mode\` must be \'member\' or \'staff\'');
 
     /* get the command arguments */
-    const command_args = message.content.split(/\s+/g).slice(1);
+    const sub_command_args = message.content.split(/\s+/g).slice(2);
 
     /* lookup query for database */
-    const db_user_id_lookup_query = (command_args[0] ?? '').replace(/\D/g, '');
+    const db_user_id_lookup_query = (sub_command_args[0] ?? '').replace(/\D/g, '');
 
     /* send an initial message to the user */
     const bot_message = await message.channel.send({
@@ -204,10 +204,10 @@ async function clearModerationActionsForMember(message) {
     if (!(message instanceof Discord.Message)) throw new TypeError('\`message\` must be a Discord.Message');
 
     /* get the command arguments */
-    const command_args = message.content.split(/\s+/g).slice(1);
+    const sub_command_args = message.content.split(/\s+/g).slice(2);
 
     /* lookup query for database */
-    const db_user_id_lookup_query = (command_args[0] ?? '').replace(/\D/g, '');
+    const db_user_id_lookup_query = (sub_command_args[0] ?? '').replace(/\D/g, '');
 
     /* send an initial message to the user */
     const bot_message = await message.channel.send({
