@@ -52,7 +52,7 @@ async function listModerationActions(message, lookup_mode='member') {
     if (!['member', 'staff'].includes(lookup_mode)) throw new RangeError('\`lookup_mode\` must be \'member\' or \'staff\'');
 
     /* lookup query for database */
-    const db_member_id_lookup_query = message.mentions.members?.first()?.id ?? undefined;
+    const db_user_id_lookup_query = message.mentions.users?.first()?.id ?? undefined;
 
     /* send an initial message to the user */
     const bot_message = await message.channel.send({
@@ -66,7 +66,7 @@ async function listModerationActions(message, lookup_mode='member') {
     await Timer(500);
 
     /* check if a valid query was specified */
-    if (typeof db_member_id_lookup_query !== 'string' || db_member_id_lookup_query.length === 0) {
+    if (typeof db_user_id_lookup_query !== 'string' || db_user_id_lookup_query.length === 0) {
         await bot_message.edit({
             embed: new Discord.MessageEmbed({
                 color: 0xFFFF00,
@@ -83,9 +83,9 @@ async function listModerationActions(message, lookup_mode='member') {
     /* fetch all moderation actions from the database */
     const db_moderation_actions = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_MODERATION_ACTION_RECORDS_COLLECTION_NAME, {
         ...(lookup_mode === 'staff' ? {
-            'record.staff_member_id': db_member_id_lookup_query,
+            'record.staff_member_id': db_user_id_lookup_query,
         } : { /* assume that 'member' is the default */
-            'identity.discord_user_id': db_member_id_lookup_query,
+            'identity.discord_user_id': db_user_id_lookup_query,
         }),
     });
 
@@ -201,7 +201,7 @@ async function clearModerationActionsForMember(message) {
     if (!(message instanceof Discord.Message)) throw new TypeError('\`message\` must be a Discord.Message');
 
     /* lookup query for database */
-    const db_member_id_lookup_query = message.mentions.members?.first()?.id ?? undefined;
+    const db_user_id_lookup_query = message.mentions.users?.first()?.id ?? undefined;
 
     /* send an initial message to the user */
     const bot_message = await message.channel.send({
@@ -215,7 +215,7 @@ async function clearModerationActionsForMember(message) {
     await Timer(500);
 
     /* check if a valid query was specified */
-    if (typeof db_member_id_lookup_query !== 'string' || db_member_id_lookup_query.length === 0) {
+    if (typeof db_user_id_lookup_query !== 'string' || db_user_id_lookup_query.length === 0) {
         await bot_message.edit({
             embed: new Discord.MessageEmbed({
                 color: 0xFFFF00,
@@ -232,7 +232,7 @@ async function clearModerationActionsForMember(message) {
     /* remove the member's moderation actions from the database */
     try {
         await go_mongo_db.remove(process.env.MONGO_DATABASE_NAME, process.env.MONGO_MODERATION_ACTION_RECORDS_COLLECTION_NAME, {
-            'identity.discord_user_id': db_member_id_lookup_query,
+            'identity.discord_user_id': db_user_id_lookup_query,
         });
     } catch {
         await bot_message.edit({
@@ -256,7 +256,7 @@ async function clearModerationActionsForMember(message) {
                 iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                 name: 'Inertia Lighting | Moderation Actions',
             },
-            description: `Successfully cleared the moderation actions for <@${db_member_id_lookup_query}>`,
+            description: `Successfully cleared the moderation actions for <@${db_user_id_lookup_query}>`,
         }),
     }).catch(console.warn);
 
