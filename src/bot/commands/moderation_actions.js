@@ -49,7 +49,7 @@ async function purgeUserReactionsFromMessage(message) {
  */
 async function listModerationActions(message, lookup_mode='member') {
     if (!(message instanceof Discord.Message)) throw new TypeError('\`message\` must be a Discord.Message');
-    if (!['member', 'staff'].includes(lookup_mode)) throw new RangeError('\`lookup_mode\` must be \'member\' or \'staff\'');
+    if (!['all', 'member', 'staff'].includes(lookup_mode)) throw new RangeError('\`lookup_mode\` must be \'all\', \'member\', or \'staff\'');
 
     /* get the command arguments */
     const sub_command_args = message.content.split(/\s+/g).slice(2);
@@ -69,7 +69,7 @@ async function listModerationActions(message, lookup_mode='member') {
     await Timer(500);
 
     /* check if a valid query was specified */
-    if (typeof db_user_id_lookup_query !== 'string' || db_user_id_lookup_query.length === 0) {
+    if (lookup_mode !== 'all' && (typeof db_user_id_lookup_query !== 'string' || db_user_id_lookup_query.length === 0)) {
         await bot_message.edit({
             embed: new Discord.MessageEmbed({
                 color: 0xFFFF00,
@@ -87,8 +87,11 @@ async function listModerationActions(message, lookup_mode='member') {
     const db_moderation_actions = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_MODERATION_ACTION_RECORDS_COLLECTION_NAME, {
         ...(lookup_mode === 'staff' ? {
             'record.staff_member_id': db_user_id_lookup_query,
-        } : { /* assume that 'member' is the default */
+        } : lookup_mode === 'member' ? {
             'identity.discord_user_id': db_user_id_lookup_query,
+        } : {
+            /* assume that lookup_mode: 'all' is the default */
+            /* in that case, we want to return all moderation actions */
         }),
     });
 
@@ -128,7 +131,7 @@ async function listModerationActions(message, lookup_mode='member') {
                 },
                 description: moderation_actions_chunk.map(moderation_action =>
                     [
-                        `**Id** <@${moderation_action.record.id}>`,
+                        `**Id** \`${moderation_action.record.id}>\``,
                         `**Staff** <@${moderation_action.record.staff_member_id}>`,
                         `**Member** <@${moderation_action.identity.discord_user_id}>`,
                         `**Date** \`${moment(moderation_action.record.epoch).tz('America/New_York').format('YYYY[-]MM[-]DD | hh:mm A | [GMT]ZZ')}\``,
@@ -197,11 +200,11 @@ async function listModerationActions(message, lookup_mode='member') {
 }
 
 /**
- * Removes moderation actions from the specified member
+ * Removes moderation actions
  * @param {Discord.Message} message
  * @returns {Promise<void>}
  */
-async function clearModerationActionsForMember(message) {
+async function clearModerationActions(message) {
     if (!(message instanceof Discord.Message)) throw new TypeError('\`message\` must be a Discord.Message');
 
     /* get the command arguments */
@@ -284,6 +287,11 @@ module.exports = {
         const sub_command_name = `${command_args[0]}`.toLowerCase();
 
         switch (sub_command_name) {
+            case 'list': {
+                await listModerationActions(message, 'all');
+
+                break;
+            }
             case 'for': {
                 await listModerationActions(message, 'member');
 
@@ -295,7 +303,7 @@ module.exports = {
                 break;
             }
             case 'clear': {
-                await clearModerationActionsForMember(message);
+                await clearModerationActions(message);
 
                 break;
             }
@@ -309,6 +317,10 @@ module.exports = {
                         },
                         title: 'Here are the available sub-commands!',
                         description: [
+                            'Displaying all moderation actions in the server:',
+                            '\`\`\`',
+                            `${command_prefix}${command_name} list`,
+                            '\`\`\`',
                             'Displaying moderation actions for a member in the server:',
                             '\`\`\`',
                             `${command_prefix}${command_name} for <MEMBER_MENTION>`,
