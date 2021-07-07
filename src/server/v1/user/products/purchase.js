@@ -103,20 +103,17 @@ module.exports = (router, client) => {
 
         /* check if the user already owns the product */
         if (db_user_data.products[db_roblox_product_data.code]) {
-            console.error(`roblox_product_id: ${roblox_product_id}; already belongs to discord_user_id: ${discord_user_id}; roblox_user_id: ${roblox_user_id};`);
+            console.error(`roblox_product_id: ${roblox_product_id}; already belongs to discord_user_id: ${db_user_data.identity.discord_user_id}; roblox_user_id: ${db_user_data.identity.roblox_user_id};`);
             return res.status(403).send(JSON.stringify({
-                'message': `roblox_product_id: ${roblox_product_id}; already belongs to discord_user_id: ${discord_user_id}; roblox_user_id: ${roblox_user_id};`,
+                'message': `roblox_product_id: ${roblox_product_id}; already belongs to discord_user_id: ${db_user_data.identity.discord_user_id}; roblox_user_id: ${db_user_data.identity.roblox_user_id};`,
             }, null, 2));
         }
 
         /* add the product for the user in the database */
         try {
             await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
-                ...(discord_user_id ? {
-                    'identity.discord_user_id': discord_user_id,
-                } : {
-                    'identity.roblox_user_id': roblox_user_id,
-                }),
+                'identity.discord_user_id': db_user_data.identity.discord_user_id,
+                'identity.roblox_user_id': db_user_data.identity.roblox_user_id,
             }, {
                 $set: {
                     [`products.${db_roblox_product_data.code}`]: true,
@@ -145,7 +142,7 @@ module.exports = (router, client) => {
             }, null, 2));
         }
 
-        /* try to add the role to the guild member! */
+        /* try to add the product role to the guild member! */
         try {
             await guild_member.roles.add(db_roblox_product_data.discord_role_id);
         } catch (error) {
@@ -203,8 +200,8 @@ module.exports = (router, client) => {
                     name: 'Inertia Lighting | Confirmed Purchase',
                 },
                 description: [
-                    `**Discord Mention:** <@${guild_member.user.id}>`,
-                    `**Roblox User Id:** \`${roblox_user_id}\``,
+                    `**Discord Mention:** <@${db_user_data.identity.discord_user_id}>`,
+                    `**Roblox User Id:** \`${db_user_data.identity.roblox_user_id}\``,
                     `**Product Code:** \`${db_roblox_product_data.code}\``,
                     ...(paypal_order_id ? [
                         `**PayPal Order Id: \`${paypal_order_id}\``,
@@ -216,12 +213,16 @@ module.exports = (router, client) => {
         }
 
         /* log to the console */
-        console.log(`roblox_user_id: ${roblox_user_id}; discord_user_id: ${guild_member.user.id}; bought product: ${db_roblox_product_data.code} (${roblox_product_id}); successfully!`);
-        console.log('----------------------------------------------------------------------------------------------------------------');
+        console.log([
+            '----------------------------------------------------------------------------------------------------------------',
+            `roblox_user_id: ${db_user_data.identity.roblox_user_id}; discord_user_id: ${db_user_data.identity.discord_user_id};`,
+            `bought product: ${db_roblox_product_data.code}; successfully!`,
+            '----------------------------------------------------------------------------------------------------------------',
+        ].join('\n'));
 
         /* respond with success to the game server */
         return res.status(200).send(JSON.stringify({
-            'message': `roblox_user_id: ${roblox_user_id}; discord_user_id: ${guild_member.user.id}; bought product: ${db_roblox_product_data.code} (${roblox_product_id}); successfully!`,
+            'message': `roblox_user_id: ${db_user_data.identity.roblox_user_id}; discord_user_id: ${db_user_data.identity.discord_user_id}; bought product: ${db_roblox_product_data.code}; successfully!`,
         }, null, 2));
     });
 };
