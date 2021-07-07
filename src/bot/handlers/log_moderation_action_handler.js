@@ -6,6 +6,8 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
+const { v4: uuid_v4 } = require('uuid');
+
 const { go_mongo_db } = require('../../mongo/mongo.js');
 
 //---------------------------------------------------------------------------------------------------------------//
@@ -34,6 +36,8 @@ async function logModerationActionToDatabase({ discord_user_id }, { type, epoch,
     if (typeof reason !== 'string') throw new TypeError('\`reason\` must be a string!');
     if (typeof staff_member_id !== 'string') throw new TypeError('\`staff_member_id\` must be a string!');
 
+    const record_id = uuid_v4();
+
     try {
         await go_mongo_db.add(process.env.MONGO_DATABASE_NAME, process.env.MONGO_MODERATION_ACTION_RECORDS_COLLECTION_NAME, [
             {
@@ -41,6 +45,7 @@ async function logModerationActionToDatabase({ discord_user_id }, { type, epoch,
                     'discord_user_id': discord_user_id,
                 },
                 'record': {
+                    'id': record_id,
                     'type': type,
                     'epoch': epoch,
                     'reason': reason,
