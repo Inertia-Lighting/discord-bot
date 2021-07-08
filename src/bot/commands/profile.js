@@ -12,13 +12,15 @@ const { go_mongo_db } = require('../../mongo/mongo.js');
 
 const { Discord, client } = require('../discord_client.js');
 
+const { command_permission_levels } = require('../common/bot.js');
+
 //---------------------------------------------------------------------------------------------------------------//
 
 module.exports = {
     name: 'profile',
     description: 'displays a user\'s profile',
     aliases: ['profile'],
-    permission_level: 'public',
+    permission_level: command_permission_levels.PUBLIC,
     cooldown: 5_000,
     async execute(message, args) {
         const { command_args } = args;

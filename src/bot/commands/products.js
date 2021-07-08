@@ -12,6 +12,10 @@ const { go_mongo_db } = require('../../mongo/mongo.js');
 
 const { Discord, client } = require('../discord_client.js');
 
+const { command_permission_levels } = require('../common/bot.js');
+
+//---------------------------------------------------------------------------------------------------------------//
+
 /**
  * Purges all reactions created users on a specified message
  * @param {Discord.Message} message
@@ -41,7 +45,7 @@ module.exports = {
     name: 'products',
     description: 'lists all of the products',
     aliases: ['products'],
-    permission_level: 'public',
+    permission_level: command_permission_levels.PUBLIC,
     cooldown: 10_000,
     async execute(message, args) {
         /* send an initial message to the user */
