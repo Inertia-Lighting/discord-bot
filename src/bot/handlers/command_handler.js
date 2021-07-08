@@ -60,7 +60,7 @@ async function commandHandler(message) {
     if (typeof command.permission_level !== 'number') throw new TypeError(`\`command.permission_level\` is not a number for command: ${command}`);
 
     /* command permission preparation */
-    const user_permission_level = command_permission_levels.PUBLIC;
+    let user_permission_level = command_permission_levels.PUBLIC;
 
     if (message.member.roles.cache.has(guild_staff_role_id)) {
         user_permission_level = command_permission_levels.STAFF;
