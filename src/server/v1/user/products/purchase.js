@@ -204,7 +204,7 @@ module.exports = (router, client) => {
                     `**Roblox User Id:** \`${db_user_data.identity.roblox_user_id}\``,
                     `**Product Code:** \`${db_roblox_product_data.code}\``,
                     ...(paypal_order_id ? [
-                        `**PayPal Order Id: \`${paypal_order_id}\``,
+                        `**PayPal Order Id**: \`${paypal_order_id}\``,
                     ] : []),
                 ].join('\n'),
             }));
