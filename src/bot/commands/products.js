@@ -92,7 +92,7 @@ module.exports = {
         await bot_message.react('➡️');
         await bot_message.react('⏹️');
 
-        const message_reaction_filter = (collected_reaction, user) => true;
+        const message_reaction_filter = (collected_reaction, user) => user.id === message.author.id;
         const message_reaction_collector = bot_message.createReactionCollector(message_reaction_filter, {
             time: 5 * 60_000, // 5 minutes
         });
