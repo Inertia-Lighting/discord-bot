@@ -10,6 +10,8 @@ const stringSimilarity = require('string-similarity');
 
 const { Discord, client } = require('../discord_client.js');
 
+const { command_permission_levels } = require('../common/bot.js');
+
 //---------------------------------------------------------------------------------------------------------------//
 
 const bot_command_prefix = process.env.BOT_COMMAND_PREFIX;
@@ -136,7 +138,7 @@ module.exports = {
     name: 'quick_support',
     description: 'provides a method to quickly look up support topics',
     aliases: ['quick_support', 'qs'],
-    permission_level: 'public',
+    permission_level: command_permission_levels.PUBLIC,
     async execute(message, args) {
         const { command_prefix, command_name, command_args } = args;
 
