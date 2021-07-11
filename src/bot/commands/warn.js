@@ -6,6 +6,7 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
+const { command_permission_levels } = require('../common/bot.js');
 const { logModerationActionToDatabase } = require('../handlers/log_moderation_action_handler.js');
 
 //---------------------------------------------------------------------------------------------------------------//
@@ -15,7 +16,7 @@ module.exports = {
     description: 'warns a user from the server',
     usage: '@mention reason',
     aliases: ['warn'],
-    permission_level: 'staff',
+    permission_level: command_permission_levels.MODERATORS,
     cooldown: 2_000,
     async execute(message, args) {
         const { command_args } = args;

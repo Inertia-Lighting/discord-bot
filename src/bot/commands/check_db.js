@@ -9,13 +9,15 @@
 const { go_mongo_db } = require('../../mongo/mongo.js');
 const { Timer } = require('../../utilities.js');
 
+const { command_permission_levels } = require('../common/bot.js');
+
 //---------------------------------------------------------------------------------------------------------------//
 
 module.exports = {
     name: 'check_db',
     description: 'n/a',
     aliases: ['check_db'],
-    permission_level: 'admin',
+    permission_level: command_permission_levels.TEAM_LEADERS,
     cooldown: 60_000,
     async execute(message, args) {
         /* fetch all documents from the users collection */

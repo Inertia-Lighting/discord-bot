@@ -17,6 +17,8 @@ const { Timer } = require('../../utilities.js');
 
 const { Discord, client } = require('../discord_client.js');
 
+const { command_permission_levels } = require('../common/bot.js');
+
 //---------------------------------------------------------------------------------------------------------------//
 
 const bot_command_prefix = process.env.BOT_COMMAND_PREFIX;
@@ -390,10 +392,10 @@ module.exports = {
     name: 'support',
     description: 'support tickets and stuff',
     aliases: ['support', 'close_ticket'],
-    permission_level: 'public',
+    permission_level: command_permission_levels.PUBLIC,
     cooldown: 10_000,
     async execute(message, args) {
-        const { user_permission_levels, command_name } = args;
+        const { user_permission_level, command_name } = args;
 
         async function supportTicketCommand() {
             if (active_category_selection_message_collectors.has(message.author.id)) {
@@ -525,7 +527,7 @@ module.exports = {
         }
 
         async function closeTicketCommand() {
-            if (!user_permission_levels.includes('staff')) {
+            if (user_permission_level < command_permission_levels.STAFF) {
                 message.reply('Sorry, only staff can close active support tickets.').catch(console.warn);
                 return;
             }

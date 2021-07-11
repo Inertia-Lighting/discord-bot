@@ -14,8 +14,11 @@ module.exports = {
         'es2021': true
     },
     'extends': 'eslint:recommended',
+    'parser': '@babel/eslint-parser',
     'parserOptions': {
-        'ecmaVersion': 12
+        'ecmaVersion': 12,
+        'requireConfigFile': false,
+        'sourceType': 'script',
     },
     'rules': {
         'accessor-pairs': 'error',
