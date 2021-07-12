@@ -211,7 +211,7 @@ async function clearModerationActions(message) {
     const sub_command_args = message.content.split(/\s+/g).slice(2);
 
     /* lookup query for database */
-    const db_user_id_lookup_query = (sub_command_args[0] ?? '').replace(/\D/g, '');
+    const db_lookup_query = sub_command_args[0];
 
     /* send an initial message to the user */
     const bot_message = await message.channel.send({
@@ -225,7 +225,7 @@ async function clearModerationActions(message) {
     await Timer(500);
 
     /* check if a valid query was specified */
-    if (typeof db_user_id_lookup_query !== 'string' || db_user_id_lookup_query.length === 0) {
+    if (typeof db_lookup_query !== 'string' || db_lookup_query.length === 0) {
         await bot_message.edit({
             embed: new Discord.MessageEmbed({
                 color: 0xFFFF00,
@@ -233,17 +233,22 @@ async function clearModerationActions(message) {
                     iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                     name: 'Inertia Lighting | Moderation Actions',
                 },
-                description: 'You need to specify a valid @user mention!',
+                description: 'You need to specify a @user mention or moderation action id!',
             }),
         }).catch(console.warn);
         return;
     }
 
     /* remove the member's moderation actions from the database */
+    let db_delete_operation_count = 0;
     try {
-        await go_mongo_db.remove(process.env.MONGO_DATABASE_NAME, process.env.MONGO_MODERATION_ACTION_RECORDS_COLLECTION_NAME, {
-            'identity.discord_user_id': db_user_id_lookup_query,
+        const db_deletion_result = await go_mongo_db.remove(process.env.MONGO_DATABASE_NAME, process.env.MONGO_MODERATION_ACTION_RECORDS_COLLECTION_NAME, {
+            $or: [
+                { 'record.id': db_lookup_query.trim() },
+                { 'identity.discord_user_id': db_lookup_query.replace(/\D/g, '').trim() },
+            ],
         });
+        db_delete_operation_count = db_deletion_result.deletedCount ?? 0;
     } catch {
         await bot_message.edit({
             embed: new Discord.MessageEmbed({
@@ -259,6 +264,20 @@ async function clearModerationActions(message) {
         return;
     }
 
+    if (db_delete_operation_count === 0) {
+        await bot_message.edit({
+            embed: new Discord.MessageEmbed({
+                color: 0xFF0000,
+                author: {
+                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                    name: 'Inertia Lighting | Moderation Actions',
+                },
+                description: `No moderation actions were found for the specified query: \`${db_lookup_query}\``,
+            }),
+        }).catch(console.warn);
+        return;
+    }
+
     await bot_message.edit({
         embed: new Discord.MessageEmbed({
             color: 0x00FF00,
@@ -266,7 +285,7 @@ async function clearModerationActions(message) {
                 iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                 name: 'Inertia Lighting | Moderation Actions',
             },
-            description: `Successfully cleared the moderation actions for <@${db_user_id_lookup_query}>`,
+            description: `Successfully cleared ${db_delete_operation_count} moderation action(s)!`,
         }),
     }).catch(console.warn);
 
@@ -331,7 +350,7 @@ module.exports = {
                             '\`\`\`',
                             'Clearing all moderation actions for a member in the server:',
                             '\`\`\`',
-                            `${command_prefix}${command_name} clear <USER_MENTION>`,
+                            `${command_prefix}${command_name} clear <USER_MENTION_OR_MODERATION_ACTION_ID>`,
                             '\`\`\`',
                         ].join('\n'),
                     }),
