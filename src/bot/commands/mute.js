@@ -10,6 +10,8 @@ const { Discord } = require('../discord_client.js');
 
 const { Timer } = require('../../utilities.js');
 
+const { command_permission_levels } = require('../common/bot.js');
+
 //---------------------------------------------------------------------------------------------------------------//
 
 const muted_users_role_id = process.env.BOT_MUTED_USER_ROLE_ID;
@@ -39,7 +41,7 @@ module.exports = {
     description: '(un)mutes a user',
     usage: '@mention reason',
     aliases: ['mute', 'unmute'],
-    permission_level: 'staff',
+    permission_level: command_permission_levels.MODERATORS,
     cooldown: 2_000,
     async execute(message, args) {
         const { command_name, command_args } = args;

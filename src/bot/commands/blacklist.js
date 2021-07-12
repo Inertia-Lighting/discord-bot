@@ -12,6 +12,8 @@ const { go_mongo_db } = require('../../mongo/mongo.js');
 
 const { Discord, client } = require('../discord_client.js');
 
+const { command_permission_levels } = require('../common/bot.js');
+
 //---------------------------------------------------------------------------------------------------------------//
 
 /**
@@ -181,7 +183,7 @@ module.exports = {
     name: 'blacklist',
     description: 'blacklists a specified user in the database',
     aliases: ['blacklist'],
-    permission_level: 'admin',
+    permission_level: command_permission_levels.ADMINS,
     async execute(message, args) {
         const { command_prefix, command_name, command_args } = args;
 

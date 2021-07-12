@@ -40,6 +40,7 @@ module.exports = (router, client) => {
             roblox_product_id: roblox_product_id,
             discord_user_id: discord_user_id,
             roblox_user_id: roblox_user_id,
+            paypal_order_id: paypal_order_id,
         } = req.body;
 
         /* check if required information is present */
@@ -56,6 +57,11 @@ module.exports = (router, client) => {
         if (!api_endpoint_token || typeof api_endpoint_token !== 'string') {
             return res.status(400).send(JSON.stringify({
                 'message': 'missing (string) \`api_endpoint_token\` in request body',
+            }, null, 2));
+        }
+        if (paypal_order_id && typeof paypal_order_id !== 'string') {
+            return res.status(400).send(JSON.stringify({
+                'message': 'incorrect type for optional (string) \`paypal_order_id\` in request body',
             }, null, 2));
         }
 
@@ -76,6 +82,7 @@ module.exports = (router, client) => {
             }),
         });
 
+        /* check if the user exists */
         if (!db_user_data) {
             console.error(`discord_user_id: ${discord_user_id}; roblox_user_id: ${roblox_user_id}; not found in database`);
             return res.status(404).send(JSON.stringify({
@@ -88,6 +95,7 @@ module.exports = (router, client) => {
             'roblox_product_id': roblox_product_id,
         });
 
+        /* check if the product exists */
         if (!db_roblox_product_data) {
             console.error(`roblox_product_id: ${roblox_product_id}; not found in database`);
             return res.status(404).send(JSON.stringify({
@@ -97,20 +105,17 @@ module.exports = (router, client) => {
 
         /* check if the user already owns the product */
         if (db_user_data.products[db_roblox_product_data.code]) {
-            console.error(`roblox_product_id: ${roblox_product_id}; already belongs to discord_user_id: ${discord_user_id}; roblox_user_id: ${roblox_user_id};`);
+            console.error(`roblox_product_id: ${roblox_product_id}; already belongs to discord_user_id: ${db_user_data.identity.discord_user_id}; roblox_user_id: ${db_user_data.identity.roblox_user_id};`);
             return res.status(403).send(JSON.stringify({
-                'message': `roblox_product_id: ${roblox_product_id}; already belongs to discord_user_id: ${discord_user_id}; roblox_user_id: ${roblox_user_id};`,
+                'message': `roblox_product_id: ${roblox_product_id}; already belongs to discord_user_id: ${db_user_data.identity.discord_user_id}; roblox_user_id: ${db_user_data.identity.roblox_user_id};`,
             }, null, 2));
         }
 
         /* add the product for the user in the database */
         try {
             await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
-                ...(discord_user_id ? {
-                    'identity.discord_user_id': discord_user_id,
-                } : {
-                    'identity.roblox_user_id': roblox_user_id,
-                }),
+                'identity.discord_user_id': db_user_data.identity.discord_user_id,
+                'identity.roblox_user_id': db_user_data.identity.roblox_user_id,
             }, {
                 $set: {
                     [`products.${db_roblox_product_data.code}`]: true,
@@ -123,47 +128,23 @@ module.exports = (router, client) => {
             }, null, 2));
         }
 
-        const guild = await client.guilds.fetch(guild_id).catch(console.warn);
-        if (!guild) {
-            console.error(`unable to find discord guild: ${guild_id};`);
-            return res.status(500).send(JSON.stringify({
-                'message': `unable to find discord guild: ${guild_id};`,
-            }, null, 2));
-        }
-
-        const guild_member = await guild.members.fetch(db_user_data.identity.discord_user_id).catch(console.warn);
-        if (!guild_member) {
-            console.error(`unable to find discord user: ${guild_member.user.id}; in guild!`);
-            return res.status(404).send(JSON.stringify({
-                'message': `unable to find discord user: ${guild_member.user.id}; in guild!`,
-            }, null, 2));
-        }
-
-        /* try to add the role to the guild member! */
         try {
+            /* fetch the guild */
+            const guild = await client.guilds.fetch(guild_id);
+
+            /* fetch the guild member */
+            const guild_member = await guild.members.fetch(db_user_data.identity.discord_user_id);
+
+            /* try to add the product role to the guild member */
             await guild_member.roles.add(db_roblox_product_data.discord_role_id);
-        } catch (error) {
-            console.trace(`Unable to add role: ${db_roblox_product_data.discord_role_id}; to discord user: ${guild_member.user.id};`, error);
-            return res.status(500).send(JSON.stringify({
-                'message': `Unable to add role: ${db_roblox_product_data.discord_role_id}; to discord user: ${guild_member.user.id};`,
-            }, null, 2));
-        }
 
-        /* try to add the customer roles to the guild member */
-        try {
+            /* try to add the customer roles to the guild member */
             for (const customer_role_id of new_customer_role_ids) {
-                await guild_member.roles.add(customer_role_id).catch(console.trace);
-                await Timer(1_000); // prevent api abuse
+                await guild_member.roles.add(customer_role_id);
+                await Timer(250); // prevent api abuse
             }
-        } catch (error) {
-            console.trace(`Unable to add: \`new_customer_roles\`; to discord user: ${guild_member.user.id};`, error);
-            return res.status(500).send(JSON.stringify({
-                'message': `Unable to add: \`new_customer_roles\`; to discord user: ${guild_member.user.id};`,
-            }, null, 2));
-        }
 
-        /* dm the user a confirmation of their purchase */
-        try {
+            /* dm the user a confirmation of their purchase */
             const user_dm_channel = await guild_member.user.createDM();
             await user_dm_channel.send({
                 embeds: [
@@ -176,7 +157,7 @@ module.exports = (router, client) => {
                         title: `Thank you for purchasing ${db_roblox_product_data.name}!`,
                         description: [
                             `You obtained the ${db_roblox_product_data.name} role in the Inertia Lighting discord.`,
-                            `Go to our [product downloads](https://inertia.lighting/) to download the ${db_roblox_product_data.name}.`,
+                            `Go to our [product downloads](https://inertia.lighting/products) to download the ${db_roblox_product_data.name}.`,
                         ].join('\n'),
                         fields: [
                             {
@@ -187,8 +168,8 @@ module.exports = (router, client) => {
                     }),
                 ],
             });
-        } catch {
-            // ignore any errors
+        } catch (error) {
+            console.trace('Failed to either give product roles in the discord or dm the guild member!', error);
         }
 
         /* log to the purchases logging channel */
@@ -203,25 +184,31 @@ module.exports = (router, client) => {
                             name: 'Inertia Lighting | Confirmed Purchase',
                         },
                         description: [
-                            `**Discord user:** <@${guild_member.user.id}>`,
-                            `**Roblox user:** \`${roblox_user_id}\``,
-                            `**Bought product:** \`${db_roblox_product_data.code}\``,
+                            `**Discord Mention:** <@${db_user_data.identity.discord_user_id}>`,
+                            `**Roblox User Id:** \`${db_user_data.identity.roblox_user_id}\``,
+                            `**Product Code:** \`${db_roblox_product_data.code}\``,
+                            ...(paypal_order_id ? [
+                                `**PayPal Order Id**: \`${paypal_order_id}\``,
+                            ] : []),
                         ].join('\n'),
-                    }),
+                    })
                 ],
             });
         } catch (error) {
-            console.trace('Failed to log purchase to the purchases logging channel!', error);
+            console.trace('Failed to log the purchase to the purchases logging channel!', error);
         }
 
         /* log to the console */
-        console.log('----------------------------------------------------------------------------------------------------------------');
-        console.log(`roblox_user_id: ${roblox_user_id}; discord_user_id: ${guild_member.user.id}; bought product: ${db_roblox_product_data.code} (${roblox_product_id}); successfully!`);
-        console.log('----------------------------------------------------------------------------------------------------------------');
+        console.log([
+            '----------------------------------------------------------------------------------------------------------------',
+            `roblox_user_id: ${db_user_data.identity.roblox_user_id}; discord_user_id: ${db_user_data.identity.discord_user_id};`,
+            `bought product: ${db_roblox_product_data.code}; successfully!`,
+            '----------------------------------------------------------------------------------------------------------------',
+        ].join('\n'));
 
         /* respond with success to the game server */
         return res.status(200).send(JSON.stringify({
-            'message': `roblox_user_id: ${roblox_user_id}; discord_user_id: ${guild_member.user.id}; bought product: ${db_roblox_product_data.code} (${roblox_product_id}); successfully!`,
+            'message': `roblox_user_id: ${db_user_data.identity.roblox_user_id}; discord_user_id: ${db_user_data.identity.discord_user_id}; bought product: ${db_roblox_product_data.code}; successfully!`,
         }, null, 2));
     });
 };

@@ -8,6 +8,8 @@
 
 const { Discord, client } = require('../discord_client.js');
 
+const { command_permission_levels } = require('../common/bot.js');
+
 //---------------------------------------------------------------------------------------------------------------//
 
 module.exports = {
@@ -15,12 +17,16 @@ module.exports = {
     description: 'shows a list of commands for you to use.',
     usage: '[command_name]',
     aliases: ['help'],
-    permission_level: 'public',
+    permission_level: command_permission_levels.PUBLIC,
     cooldown: 2_500,
     async execute(message, args) {
-        const { user_permission_levels, command_prefix, command_args } = args;
+        const { user_permission_level, command_prefix, command_args } = args;
 
-        const commands_visible_to_user = client.$.commands.filter(cmd => user_permission_levels.includes(cmd.permission_level));
+        const commands_visible_to_user = client.$.commands.filter(cmd =>
+            user_permission_level >= cmd.permission_level
+        ).sort((a, b) =>
+            a.permission_level - b.permission_level
+        );
 
         const specified_command_alias = command_args[0];
         if (specified_command_alias?.length > 0) {
@@ -47,7 +53,7 @@ module.exports = {
                 }).catch(console.warn);
             } else {
                 message.reply({
-                    content: 'That\'s not a valid command!',
+                    content: `\`${specified_command_alias}\` is not a valid command alias to lookup!`,
                 }).catch(console.warn);
             }
         } else {

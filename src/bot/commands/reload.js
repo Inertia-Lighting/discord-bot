@@ -8,6 +8,8 @@
 
 const { client } = require('../discord_client.js');
 
+const { command_permission_levels } = require('../common/bot.js');
+
 //---------------------------------------------------------------------------------------------------------------//
 
 module.exports = {
@@ -15,7 +17,7 @@ module.exports = {
     description: 'reloads commands',
     usage: 'command_name',
     aliases: ['reload'],
-    permission_level: 'admin',
+    permission_level: command_permission_levels.TEAM_LEADERS,
     async execute(message, args) {
         const { command_args } = args;
 

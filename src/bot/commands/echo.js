@@ -8,13 +8,15 @@
 
 const { Timer } = require('../../utilities.js');
 
+const { command_permission_levels } = require('../common/bot.js');
+
 //---------------------------------------------------------------------------------------------------------------//
 
 module.exports = {
     name: 'echo',
     description: 'echoes what a user says into the same channel',
     aliases: ['echo'],
-    permission_level: 'admin',
+    permission_level: command_permission_levels.TEAM_LEADERS,
     async execute(message, args) {
         const { command_prefix, command_name, command_args } = args;
 

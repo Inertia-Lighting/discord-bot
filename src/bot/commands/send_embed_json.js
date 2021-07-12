@@ -10,13 +10,15 @@ const axios = require('axios');
 
 const { Timer } = require('../../utilities.js');
 
+const { command_permission_levels } = require('../common/bot.js');
+
 //---------------------------------------------------------------------------------------------------------------//
 
 module.exports = {
     name: 'send_embeds_from_json',
     description: 'sends embeds from json for Drawn',
     aliases: ['send_embeds_from_json'],
-    permission_level: 'admin',
+    permission_level: command_permission_levels.TEAM_LEADERS,
     async execute(message, args) {
         const msg_attachment = message.attachments.first();
 

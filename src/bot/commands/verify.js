@@ -12,6 +12,8 @@ const { Timer } = require('../../utilities.js');
 
 const { Discord, client } = require('../discord_client.js');
 
+const { command_permission_levels } = require('../common/bot.js');
+
 //---------------------------------------------------------------------------------------------------------------//
 
 module.exports = {
@@ -19,7 +21,7 @@ module.exports = {
     description: 'verifies the user and adds them to the database',
     usage: 'CODE_HERE',
     aliases: ['verify', 'link'],
-    permission_level: 'public',
+    permission_level: command_permission_levels.PUBLIC,
     cooldown: 5_000,
     async execute(message, args) {
         const { command_prefix, command_args } = args;

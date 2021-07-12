@@ -12,7 +12,10 @@ const { v4: uuid_v4 } = require('uuid');
 //---------------------------------------------------------------------------------------------------------------//
 
 const { go_mongo_db } = require('../../mongo/mongo.js');
+
 const { Discord, client } = require('../discord_client.js');
+
+const { command_permission_levels } = require('../common/bot.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -35,7 +38,7 @@ module.exports = {
     name: 'identity_token',
     description: 'n/a',
     aliases: ['identity_token'],
-    permission_level: 'staff',
+    permission_level: command_permission_levels.STAFF,
     cooldown: 60_000,
     async execute(message, args) {
         const { command_prefix, command_name, command_args } = args;

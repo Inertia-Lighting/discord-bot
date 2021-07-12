@@ -6,12 +6,16 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
+const { command_permission_levels } = require('../common/bot.js');
+
+//---------------------------------------------------------------------------------------------------------------//
+
 module.exports = {
     name: 'warn',
     description: 'warns a user from the server',
     usage: '@mention reason',
     aliases: ['warn'],
-    permission_level: 'staff',
+    permission_level: command_permission_levels.MODERATORS,
     cooldown: 2_000,
     async execute(message, args) {
         const { command_args } = args;
