@@ -258,7 +258,7 @@ async function clearModerationActions(message) {
                     name: 'Inertia Lighting | Moderation Actions',
                 },
                 title: 'Something went wrong!',
-                description: 'Please inform my developers that an error occurred while clearing a member\'s moderation actions!',
+                description: 'Please inform my developers that an error occurred while clearing moderation actions from the database!',
             }),
         }).catch(console.warn);
         return;
