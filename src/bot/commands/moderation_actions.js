@@ -14,6 +14,8 @@ const { go_mongo_db } = require('../../mongo/mongo.js');
 
 const { Discord, client } = require('../discord_client.js');
 
+const { command_permission_levels } = require('../common/bot.js');
+
 //---------------------------------------------------------------------------------------------------------------//
 
 /**
@@ -298,7 +300,7 @@ module.exports = {
     name: 'moderation_actions',
     description: 'displays moderation actions from the database',
     aliases: ['moderation_actions', 'ma'],
-    permission_level: 'staff',
+    permission_level: command_permission_levels.STAFF,
     cooldown: 10_000,
     async execute(message, args) {
         const { command_prefix, command_name, command_args } = args;
