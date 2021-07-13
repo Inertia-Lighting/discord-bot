@@ -133,7 +133,7 @@ const qs_topics = [
         title: 'Max HTTP Requests',
         searchable_queries: [
             'max http',
-            'http limit'
+            'number of requests exceeded limit',
         ],
         support_contents: 'The current limitation for sending and receiving HTTP requests is 500 requests per minute.\nTo work around this, you need to find ths script(s) that are making too many requests, then remove those script(s).',
     }, {
