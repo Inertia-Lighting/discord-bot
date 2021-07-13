@@ -7,6 +7,7 @@
 //---------------------------------------------------------------------------------------------------------------//
 
 const { command_permission_levels } = require('../common/bot.js');
+const { logModerationActionToDatabase } = require('../handlers/log_moderation_action_handler.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -87,6 +88,26 @@ module.exports = {
                 content: 'Failed to kick that member!',
             }).catch(console.warn);
             return;
+        }
+
+        /* log to the database */
+        const successfully_logged_to_database = await logModerationActionToDatabase({
+            discord_user_id: member.id,
+        }, {
+            type: 'KICK',
+            epoch: Date.now(),
+            reason: reason,
+            staff_member_id: message.member.id,
+        });
+
+        /* if logging to the database failed, dm the staff member */
+        if (!successfully_logged_to_database) {
+            try {
+                const staff_member_dm_channel = await message.author.createDM();
+                staff_member_dm_channel.send(`${message.author}, something went wrong while logging to the database, please contact our development team!`);
+            } catch {
+                // ignore any errors
+            }
         }
     },
 };

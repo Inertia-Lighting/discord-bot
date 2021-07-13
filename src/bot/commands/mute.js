@@ -11,6 +11,7 @@ const { Discord } = require('../discord_client.js');
 const { Timer } = require('../../utilities.js');
 
 const { command_permission_levels } = require('../common/bot.js');
+const { logModerationActionToDatabase } = require('../handlers/log_moderation_action_handler.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -184,6 +185,26 @@ module.exports = {
             await dm_channel.send(mute_message_options);
         } catch {
             // ignore any errors
+        }
+
+        /* log to the database */
+        const successfully_logged_to_database = await logModerationActionToDatabase({
+            discord_user_id: member.id,
+        }, {
+            type: 'MUTE',
+            epoch: Date.now(),
+            reason: reason,
+            staff_member_id: message.member.id,
+        });
+
+        /* if logging to the database failed, dm the staff member */
+        if (!successfully_logged_to_database) {
+            try {
+                const staff_member_dm_channel = await message.author.createDM();
+                staff_member_dm_channel.send(`${message.author}, something went wrong while logging to the database, please contact our development team!`);
+            } catch {
+                // ignore any errors
+            }
         }
     },
 };
