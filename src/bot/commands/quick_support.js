@@ -142,7 +142,7 @@ const qs_topics = [
             'download',
             'download products'
         ],
-        support_contents: 'To download your files, please visit the [website](https://inertia.lighting/products)!'
+        support_contents: 'To download your products, go to the [products page](https://inertia.lighting/products) on our website.\nMake sure to login with the correct discord account!',
     },
 ];
 
