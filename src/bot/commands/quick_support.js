@@ -143,7 +143,7 @@ const qs_topics = [
             'download products'
         ],
         support_contents: 'To download your files, please visit the [website](https://inertia.lighting/products)!'
-    }
+    },
 ];
 
 //---------------------------------------------------------------------------------------------------------------//
