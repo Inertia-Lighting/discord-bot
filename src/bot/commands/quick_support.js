@@ -139,7 +139,6 @@ const qs_topics = [
     }, {
         title: 'How do I download the products?',
         searchable_queries: [
-            'download',
             'downloading products',
         ],
         support_contents: 'To download your products, go to the [products page](https://inertia.lighting/products) on our website.\nMake sure to login with the correct discord account!',
