@@ -14,6 +14,8 @@ const { go_mongo_db } = require('../../mongo/mongo.js');
 
 const { Timer } = require('../../utilities.js');
 
+//---------------------------------------------------------------------------------------------------------------//
+
 const new_customer_role_ids = process.env.BOT_NEW_CUSTOMER_AUTO_ROLE_IDS.split(',');
 
 const user_purchases_logging_channel_id = process.env.BOT_LOGGING_PURCHASES_CHANNEL_ID;
