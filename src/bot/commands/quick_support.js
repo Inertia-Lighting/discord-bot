@@ -129,6 +129,20 @@ const qs_topics = [
             'http requests',
         ],
         support_contents: 'To enable HTTP Requests, open the \"Game Settings\" menu in Roblox Studio, click on the \"Security\" tab, enable \"HTTP requests\", then save changes.',
+    }, {
+        title: 'Max HTTP Requests',
+        searchable_queries: [
+            'max http',
+            'http limit'
+        ],
+        support_contents: 'To fix max HTTP Requests, Remove some lighting that you might think is unnecessary!'
+    }, {
+        title: 'How do I download the products?',
+        searchable_queries: [
+            'download',
+            'download products'
+        ],
+        support_contents: 'To download your files, please visit the (website)[https://inertia.lighting/products]!'
     }
 ];
 
