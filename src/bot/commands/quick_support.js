@@ -130,7 +130,7 @@ const qs_topics = [
         ],
         support_contents: 'To enable HTTP Requests, open the \"Game Settings\" menu in Roblox Studio, click on the \"Security\" tab, enable \"HTTP requests\", then save changes.',
     }, {
-        title: 'Max HTTP Requests',
+        title: 'How do I fix \"number of requests exceeded limit\"?',
         searchable_queries: [
             'too many http requests',
             'number of requests exceeded limit',
