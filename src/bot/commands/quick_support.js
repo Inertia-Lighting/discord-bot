@@ -126,7 +126,7 @@ const qs_topics = [
     }, {
         title: 'How to enable HTTP Requests',
         searchable_queries: [
-            'http requests',
+            'enabling http requests',
         ],
         support_contents: 'To enable HTTP Requests, open the \"Game Settings\" menu in Roblox Studio, click on the \"Security\" tab, enable \"HTTP requests\", then save changes.',
     }, {
