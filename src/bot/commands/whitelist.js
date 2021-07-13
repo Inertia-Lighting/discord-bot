@@ -8,7 +8,15 @@
 
 const { command_permission_levels } = require('../common/bot.js');
 
+const Discord = require('discord.js');
+
 const { go_mongo_db } = require('../../mongo/mongo.js');
+
+const { Timer } = require('../../utilities.js');
+
+const new_customer_role_ids = process.env.BOT_NEW_CUSTOMER_AUTO_ROLE_IDS.split(',');
+
+const user_purchases_logging_channel_id = process.env.BOT_LOGGING_PURCHASES_CHANNEL_ID;
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -19,7 +27,7 @@ module.exports = {
     aliases: ['give'],
     permission_level: command_permission_levels.BOARD_OF_DIRECTORS,
     cooldown: 2_000,
-    async execute(message, args) {
+    async execute(message, args, client) {
         const { command_args } = args;
 
         const member_lookup_query = message.mentions.members.first()?.id ?? command_args[0];
@@ -27,38 +35,38 @@ module.exports = {
         const Product_ID = command_args[1];
 
         /* handle when a member is not specified */
-        if(!member) {
+        if (!member) {
             await message.reply('You need to specify a user when using this command!').catch(console.warn);
             return;
-        };
+        }
 
         /* handle when a product is not specified */
-        if(!Product_ID) {
+        if (!Product_ID) {
             await message.reply('You need to specify a product when using this command!').catch(console.warn);
             return;
-        };
+        }
         /* fetch the user info from the database */
         const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
             'identity.discord_user_id': member.id
         });
-        if(!db_user_data) {
+        if (!db_user_data) {
             await message.reply('That user does not exist in the database!').catch(console.warn);
             return;
-        };
+        }
         /* fetch the product from the database */
         let [ db_roblox_product_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_PRODUCTS_COLLECTION_NAME, {
             'roblox_product_id': Product_ID,
         });
 
-        if(!db_roblox_product_data) {
+        if (!db_roblox_product_data) {
              db_roblox_product_data = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_PRODUCTS_COLLECTION_NAME, {
                 'name': Product_ID,
             });
-            if(!db_roblox_product_data) {
+            if (!db_roblox_product_data) {
                 await message.reply('You need to specify a valid product when using this command!').catch(console.warn);
                 return;
             }
-        };
+        }
 
         /*update the user in the database */
         try {
@@ -69,10 +77,10 @@ module.exports = {
                     [`products.${db_roblox_product_data.code}`]: true,
                 },
             });
-        } catch (error){
+        } catch (error) {
             message.reply(`An error occured! I was unable to update the user in the database because of the Error: ${error}`);
-            console.log(error)
-        };
+            console.log(error);
+        }
 
         try {
             /* fetch the guild */
@@ -88,7 +96,7 @@ module.exports = {
             for (const customer_role_id of new_customer_role_ids) {
                 await guild_member.roles.add(customer_role_id);
                 await Timer(250); // prevent api abuse
-            };
+            }
 
             /* dm the user a confirmation of their purchase */
             const user_dm_channel = await guild_member.user.createDM();
@@ -112,7 +120,7 @@ module.exports = {
             }));
         } catch (error) {
             console.log('Failed to either give product roles in the discord or dm the guild member!', error);
-        };
+        }
 
         /* log to the purchases logging channel */
         try {
@@ -131,7 +139,7 @@ module.exports = {
             }));
         } catch (error) {
             console.trace('Failed to log the purchase to the purchases logging channel!', error);
-        };
+        }
 
 
          /* log to the console */
@@ -142,5 +150,5 @@ module.exports = {
             '----------------------------------------------------------------------------------------------------------------',
         ].join('\n'));
 
-    }
-    };
+    },
+ };
