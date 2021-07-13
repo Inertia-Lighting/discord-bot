@@ -135,7 +135,7 @@ const qs_topics = [
             'max http',
             'http limit'
         ],
-        support_contents: 'To fix max HTTP Requests, Remove some lighting that you might think is unnecessary!'
+        support_contents: 'The current limitation for sending and receiving HTTP requests is 500 requests per minute.\nTo work around this, you need to find ths script(s) that are making too many requests, then remove those script(s).',
     }, {
         title: 'How do I download products that I have purchased?',
         searchable_queries: [
