@@ -137,7 +137,7 @@ const qs_topics = [
         ],
         support_contents: 'To fix max HTTP Requests, Remove some lighting that you might think is unnecessary!'
     }, {
-        title: 'How do I download the products?',
+        title: 'How do I download products that I have purchased?',
         searchable_queries: [
             'downloading products',
         ],
