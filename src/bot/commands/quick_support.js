@@ -126,10 +126,23 @@ const qs_topics = [
     }, {
         title: 'How to enable HTTP Requests',
         searchable_queries: [
-            'http requests',
+            'enabling http requests',
         ],
         support_contents: 'To enable HTTP Requests, open the \"Game Settings\" menu in Roblox Studio, click on the \"Security\" tab, enable \"HTTP requests\", then save changes.',
-    }
+    }, {
+        title: 'How do I fix \"number of requests exceeded limit\"?',
+        searchable_queries: [
+            'too many http requests',
+            'number of requests exceeded limit',
+        ],
+        support_contents: 'The current limitation for sending and receiving HTTP requests is 500 requests per minute.\nTo work around this, you need to find ths script(s) that are making too many requests, then remove those script(s).',
+    }, {
+        title: 'How do I download products that I have purchased?',
+        searchable_queries: [
+            'downloading products',
+        ],
+        support_contents: 'To download your products, go to the [products page](https://inertia.lighting/products) on our website.\nMake sure to login with the correct discord account!',
+    },
 ];
 
 //---------------------------------------------------------------------------------------------------------------//
