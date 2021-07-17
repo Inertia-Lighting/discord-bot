@@ -22,7 +22,7 @@ const suggestions_category_id = process.env.BOT_SUGGESTIONS_CATEGORY_ID;
 //---------------------------------------------------------------------------------------------------------------//
 
 module.exports = {
-    name: 'message',
+    name: 'messageCreate',
     async handler(message) {
         /* don't allow bots */
         if (message.author.bot) return;
