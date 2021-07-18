@@ -122,7 +122,7 @@ module.exports = (router, client) => {
         try {
             const db_user_products_update_operation = {};
             for (const specified_product of specified_products) {
-                db_user_products_update_operation[specified_product.code] = true;
+                db_user_products_update_operation[`products.${specified_product.code}`] = true;
             }
 
             await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
@@ -168,7 +168,7 @@ module.exports = (router, client) => {
                     },
                     title: 'Thank you for your purchase!',
                     description: [
-                        `You obtained: ${product_names.map(product_name => `**${product_name}**`).join(',')}.`,
+                        `You obtained: ${product_names.map(product_name => `**${product_name}**`).join(', ')}.`,
                         'Go to [our website](https://inertia.lighting/products) to download your product(s).',
                         ...(paypal_order_id ? [
                             `For future reference, ||\`${paypal_order_id}\`|| was your paypal order id!`,
@@ -193,7 +193,7 @@ module.exports = (router, client) => {
                     description: [
                         `**Discord Mention:** <@${db_user_data.identity.discord_user_id}>`,
                         `**Roblox User Id:** \`${db_user_data.identity.roblox_user_id}\``,
-                        `**Product Codes:** \`${specified_product_codes.join(',')}\``,
+                        `**Product Codes:** \`${specified_product_codes.join(', ')}\``,
                         ...(paypal_order_id ? [
                             `**PayPal Order Id**: \`${paypal_order_id}\``,
                         ] : []),
