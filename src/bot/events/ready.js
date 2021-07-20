@@ -70,7 +70,7 @@ const setProductPricesInDB = async () => {
             roblox_product_id: db_roblox_product.roblox_product_id,
         }, {
             $set: {
-                'price_in_robux': parseInt(product_price_in_robux), // robux can only be an integer
+                'price_in_robux': Number.parseInt(product_price_in_robux), // robux can only be an integer
             },
         });
 

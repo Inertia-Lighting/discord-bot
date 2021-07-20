@@ -74,7 +74,7 @@ function object_sort(object_of_things) {
  */
 function array_chunks(array_of_things, chunk_size) {
     if (!Array.isArray(array_of_things)) throw new TypeError('\`array_of_things\` must be an array');
-    if (typeof chunk_size !== 'number' || chunk_size !== parseInt(chunk_size)) throw new TypeError('\`chunk_size\` must be a (whole) number');
+    if (typeof chunk_size !== 'number' || chunk_size !== Number.parseInt(chunk_size)) throw new TypeError('\`chunk_size\` must be a (whole) number');
 
     const array_of_things_clone = [ ...array_of_things ]; // prevent mutation of the original array
 
