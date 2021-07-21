@@ -61,10 +61,12 @@ async function listModerationActions(message, lookup_mode='member') {
 
     /* send an initial message to the user */
     const bot_message = await message.channel.send({
-        embed: new Discord.MessageEmbed({
-            color: 0x60A0FF,
-            description: 'Loading moderation actions...',
-        }),
+        embeds: [
+            new Discord.MessageEmbed({
+                color: 0x60A0FF,
+                description: 'Loading moderation actions...',
+            }),
+        ],
     });
 
     /* create a small user-experience delay */
@@ -73,14 +75,16 @@ async function listModerationActions(message, lookup_mode='member') {
     /* check if a valid query was specified */
     if (lookup_mode !== 'all' && (typeof db_user_id_lookup_query !== 'string' || db_user_id_lookup_query.length === 0)) {
         await bot_message.edit({
-            embed: new Discord.MessageEmbed({
-                color: 0xFFFF00,
-                author: {
-                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                    name: 'Inertia Lighting | Moderation Actions',
-                },
-                description: 'You need to specify a valid @user mention!',
-            }),
+            embeds: [
+                new Discord.MessageEmbed({
+                    color: 0xFFFF00,
+                    author: {
+                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                        name: 'Inertia Lighting | Moderation Actions',
+                    },
+                    description: 'You need to specify a valid @user mention!',
+                }),
+            ],
         }).catch(console.warn);
         return;
     }
@@ -100,14 +104,16 @@ async function listModerationActions(message, lookup_mode='member') {
     /* check if the member has any records */
     if (db_moderation_actions.length === 0) {
         await bot_message.edit({
-            embed: new Discord.MessageEmbed({
-                color: 0xFFFF00,
-                author: {
-                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                    name: 'Inertia Lighting | Moderation Actions',
-                },
-                description: 'I wasn\'t able to find any moderation actions for the specified individual!',
-            }),
+            embeds: [
+                new Discord.MessageEmbed({
+                    color: 0xFFFF00,
+                    author: {
+                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                        name: 'Inertia Lighting | Moderation Actions',
+                    },
+                    description: 'I wasn\'t able to find any moderation actions for the specified individual!',
+                }),
+            ],
         }).catch(console.warn);
         return;
     }
@@ -125,26 +131,28 @@ async function listModerationActions(message, lookup_mode='member') {
         const moderation_actions_chunk = moderation_actions_chunks[page_index];
 
         await bot_message.edit({
-            embed: new Discord.MessageEmbed({
-                color: 0x60A0FF,
-                author: {
-                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                    name: 'Inertia Lighting | Moderation Actions',
-                },
-                description: moderation_actions_chunk.map(moderation_action =>
-                    [
-                        `**Id** \`${moderation_action.record.id}\``,
-                        `**Staff** <@${moderation_action.record.staff_member_id}>`,
-                        `**Member** <@${moderation_action.identity.discord_user_id}>`,
-                        `**Date** \`${moment(moderation_action.record.epoch).tz('America/New_York').format('YYYY[-]MM[-]DD | hh:mm A | [GMT]ZZ')}\``,
-                        `**Type** \`${moderation_action.record.type}\``,
-                        '**Reason**',
-                        '\`\`\`',
-                        `${string_ellipses(moderation_action.record.reason, 250)}`,
-                        '\`\`\`',
-                    ].join('\n')
-                ).join('\n'),
-            }),
+            embeds: [
+                new Discord.MessageEmbed({
+                    color: 0x60A0FF,
+                    author: {
+                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                        name: 'Inertia Lighting | Moderation Actions',
+                    },
+                    description: moderation_actions_chunk.map(moderation_action =>
+                        [
+                            `**Id** \`${moderation_action.record.id}\``,
+                            `**Staff** <@${moderation_action.record.staff_member_id}>`,
+                            `**Member** <@${moderation_action.identity.discord_user_id}>`,
+                            `**Date** \`${moment(moderation_action.record.epoch).tz('America/New_York').format('YYYY[-]MM[-]DD | hh:mm A | [GMT]ZZ')}\``,
+                            `**Type** \`${moderation_action.record.type}\``,
+                            '**Reason**',
+                            '\`\`\`',
+                            `${string_ellipses(moderation_action.record.reason, 250)}`,
+                            '\`\`\`',
+                        ].join('\n')
+                    ).join('\n'),
+                }),
+            ],
         }).catch(console.warn);
 
         return; // complete async
@@ -217,10 +225,12 @@ async function clearModerationActions(message) {
 
     /* send an initial message to the user */
     const bot_message = await message.channel.send({
-        embed: new Discord.MessageEmbed({
-            color: 0x60A0FF,
-            description: 'Loading moderation actions...',
-        }),
+        embeds: [
+            new Discord.MessageEmbed({
+                color: 0x60A0FF,
+                description: 'Loading moderation actions...',
+            }),
+        ],
     });
 
     /* create a small user-experience delay */
@@ -229,14 +239,16 @@ async function clearModerationActions(message) {
     /* check if a valid query was specified */
     if (typeof db_lookup_query !== 'string' || db_lookup_query.length === 0) {
         await bot_message.edit({
-            embed: new Discord.MessageEmbed({
-                color: 0xFFFF00,
-                author: {
-                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                    name: 'Inertia Lighting | Moderation Actions',
-                },
-                description: 'You need to specify a @user mention or moderation action id!',
-            }),
+            embeds: [
+                new Discord.MessageEmbed({
+                    color: 0xFFFF00,
+                    author: {
+                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                        name: 'Inertia Lighting | Moderation Actions',
+                    },
+                    description: 'You need to specify a @user mention or moderation action id!',
+                }),
+            ],
         }).catch(console.warn);
         return;
     }
@@ -253,42 +265,48 @@ async function clearModerationActions(message) {
         db_delete_operation_count = db_deletion_result.deletedCount ?? 0;
     } catch {
         await bot_message.edit({
-            embed: new Discord.MessageEmbed({
-                color: 0xFF0000,
-                author: {
-                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                    name: 'Inertia Lighting | Moderation Actions',
-                },
-                title: 'Something went wrong!',
-                description: 'Please inform my developers that an error occurred while clearing moderation actions from the database!',
-            }),
+            embeds: [
+                new Discord.MessageEmbed({
+                    color: 0xFF0000,
+                    author: {
+                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                        name: 'Inertia Lighting | Moderation Actions',
+                    },
+                    title: 'Something went wrong!',
+                    description: 'Please inform my developers that an error occurred while clearing moderation actions from the database!',
+                }),
+            ],
         }).catch(console.warn);
         return;
     }
 
     if (db_delete_operation_count === 0) {
         await bot_message.edit({
-            embed: new Discord.MessageEmbed({
-                color: 0xFF0000,
-                author: {
-                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                    name: 'Inertia Lighting | Moderation Actions',
-                },
-                description: `No moderation actions were found for the specified query: \`${db_lookup_query}\``,
-            }),
+            embeds: [
+                new Discord.MessageEmbed({
+                    color: 0xFF0000,
+                    author: {
+                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                        name: 'Inertia Lighting | Moderation Actions',
+                    },
+                    description: `No moderation actions were found for the specified query: \`${db_lookup_query}\``,
+                }),
+            ],
         }).catch(console.warn);
         return;
     }
 
     await bot_message.edit({
-        embed: new Discord.MessageEmbed({
-            color: 0x00FF00,
-            author: {
-                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                name: 'Inertia Lighting | Moderation Actions',
-            },
-            description: `Successfully cleared ${db_delete_operation_count} moderation action(s)!`,
-        }),
+        embeds: [
+            new Discord.MessageEmbed({
+                color: 0x00FF00,
+                author: {
+                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                    name: 'Inertia Lighting | Moderation Actions',
+                },
+                description: `Successfully cleared ${db_delete_operation_count} moderation action(s)!`,
+            }),
+        ],
     }).catch(console.warn);
 
     return; // complete async
@@ -330,32 +348,34 @@ module.exports = {
             }
             default: {
                 await message.channel.send({
-                    embed: new Discord.MessageEmbed({
-                        color: 0x60A0FF,
-                        author: {
-                            iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                            name: 'Inertia Lighting | Moderation Actions',
-                        },
-                        title: 'Here are the available sub-commands!',
-                        description: [
-                            'Displaying all moderation actions in the server:',
-                            '\`\`\`',
-                            `${command_prefix}${command_name} list`,
-                            '\`\`\`',
-                            'Displaying moderation actions for a member in the server:',
-                            '\`\`\`',
-                            `${command_prefix}${command_name} for <MEMBER_MENTION>`,
-                            '\`\`\`',
-                            'Displaying moderation actions from a staff member in the server:',
-                            '\`\`\`',
-                            `${command_prefix}${command_name} from <STAFF_MEMBER_MENTION>`,
-                            '\`\`\`',
-                            'Clearing all moderation actions for a member in the server:',
-                            '\`\`\`',
-                            `${command_prefix}${command_name} clear <USER_MENTION_OR_MODERATION_ACTION_ID>`,
-                            '\`\`\`',
-                        ].join('\n'),
-                    }),
+                    embeds: [
+                        new Discord.MessageEmbed({
+                            color: 0x60A0FF,
+                            author: {
+                                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                                name: 'Inertia Lighting | Moderation Actions',
+                            },
+                            title: 'Here are the available sub-commands!',
+                            description: [
+                                'Displaying all moderation actions in the server:',
+                                '\`\`\`',
+                                `${command_prefix}${command_name} list`,
+                                '\`\`\`',
+                                'Displaying moderation actions for a member in the server:',
+                                '\`\`\`',
+                                `${command_prefix}${command_name} for <MEMBER_MENTION>`,
+                                '\`\`\`',
+                                'Displaying moderation actions from a staff member in the server:',
+                                '\`\`\`',
+                                `${command_prefix}${command_name} from <STAFF_MEMBER_MENTION>`,
+                                '\`\`\`',
+                                'Clearing all moderation actions for a member in the server:',
+                                '\`\`\`',
+                                `${command_prefix}${command_name} clear <USER_MENTION_OR_MODERATION_ACTION_ID>`,
+                                '\`\`\`',
+                            ].join('\n'),
+                        }),
+                    ],
                 }).catch(console.warn);
 
                 break;
