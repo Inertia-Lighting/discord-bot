@@ -19,13 +19,14 @@ const { command_permission_levels } = require('../common/bot.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const identity_token_channel_id = process.env.BOT_IDENTITY_TOKEN_CHANNEL_ID;
-
-//---------------------------------------------------------------------------------------------------------------//
-
 async function generateUserAPIToken() {
     const non_encrypted_token = uuid_v4();
-    const encrypted_token = bcrypt.hashSync(non_encrypted_token, bcrypt.genSaltSync(parseInt(process.env.USER_API_TOKEN_BCRYPT_SALT_LENGTH)));
+    const user_api_token_bcrypt_salt_length = Number.parseInt(process.env.USER_API_TOKEN_BCRYPT_SALT_LENGTH);
+
+    if (Number.isNaN(user_api_token_bcrypt_salt_length)) throw new Error('Invalid \`USER_API_TOKEN_BCRYPT_SALT_LENGTH\` environment variable.');
+
+    const encrypted_token = bcrypt.hashSync(non_encrypted_token, bcrypt.genSaltSync(user_api_token_bcrypt_salt_length));
+
     return {
         non_encrypted_token,
         encrypted_token,
@@ -51,12 +52,12 @@ module.exports = {
             await message.reply({
                 content: `Please \`${command_prefix}verify\` before using this command!`,
             }).catch(console.warn);
-            return; // don't continue if they don't exist in the database
+            return; // don't continue if user doesn't exist in the database
         }
 
         switch (`${command_args[0]}`.toLowerCase()) {
             case 'help': {
-                message.channel.send({
+                await message.channel.send({
                     embeds: [
                         new Discord.MessageEmbed({
                             color: 0x60A0FF,
@@ -73,8 +74,8 @@ module.exports = {
                                     value: `Run \`${command_prefix}${command_name} generate\` to generate your token!`,
                                 }, {
                                     name: 'How do I use my Identity Token?',
-                                    value: `Check out <#${identity_token_channel_id}> for instructions on how to use identity tokens!`,
-                             },
+                                    value: `When running the \`${command_prefix}${command_name} generate\` command, you will be given an Identity Token Code Snippet to paste into your Roblox Studio Command Bar.`,
+                                },
                             ],
                         }),
                     ],
@@ -96,25 +97,28 @@ module.exports = {
                                     name: 'Inertia Lighting | Identity Token System',
                                 },
                                 description: [
-                                    'The following token must be kept private and must be used in games with our products:',
-                                    `||${non_encrypted_token}||`,
-                                    '(click the box above to view your token)',
+                                    '**Instructions:**',
+                                    '1) Keep your Identity Token secret, it is unique to you (like a password).',
+                                    '2) Paste your Identity Token Code Snippet into Roblox Studio\'s Command Bar.',
+                                    '3) Observe your Roblox Studio\'s Output.',
+                                    '4) Assuming everything went correctly, you can now use our products inside of your game.',
+                                    '',
+                                    '**Your Identity Token Code Snippet:**',
+                                    `||\`require(7096701514)('${non_encrypted_token}')\`||`,
+                                    '(Click the box above to view your Identity Token Code Snippet)',
                                 ].join('\n'),
                             }),
                         ],
                     });
                 } catch {
                     await message.reply({
-                        content: [
-                            'I was unable to send your Identity Token to your DMs!',
-                            'Please allow DMs from me!',
-                        ].join('\n'),
+                        content: 'I was unable to send a direct message to you!',
                     }).catch(console.warn);
-                    return; // don't continue if the user can't be messaged via DMs
+                    return; // don't continue if the user can't be direct messaged
                 }
 
                 await message.reply({
-                    content: 'I sent your Identity Token to your DMs!',
+                    content: 'I sent you your Identity Token via DMs!',
                 }).catch(console.warn);
 
                 try {
@@ -131,7 +135,7 @@ module.exports = {
                 } catch (error) {
                     console.trace(error);
                     await message.reply({
-                        content: 'Something went wrong while updating your Identity Token in the database, please contact staff!',
+                        content: 'Something went wrong while updating your Identity Token in the database, please contact our support staff!',
                     }).catch(console.warn);
                 }
 
