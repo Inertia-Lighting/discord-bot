@@ -194,6 +194,12 @@ module.exports = {
 
         switch (command_args[0]?.toLowerCase()) {
             case 'add': {
+
+                if (!lookup_discord_user_id && !lookup_roblox_user_id) {
+                    message.reply('You need to specify a @mention or roblox_user_id when using this command!');
+                    return;
+                }
+
                 const db_user_data_for_case_add = await findUserInUsersDatabase({
                     discord_user_id: lookup_discord_user_id,
                     roblox_user_id: lookup_roblox_user_id,
@@ -224,6 +230,12 @@ module.exports = {
                 break;
             }
             case 'remove': {
+
+                if (!lookup_discord_user_id && !lookup_roblox_user_id) {
+                    message.reply('You need to specify a @mention or roblox_user_id when using this command!');
+                    return;
+                }
+
                 const db_user_data_for_case_remove = await findUserInUsersDatabase({
                     discord_user_id: lookup_discord_user_id,
                     roblox_user_id: lookup_roblox_user_id,
@@ -250,6 +262,12 @@ module.exports = {
                 break;
             }
             case 'lookup': {
+
+                if (!lookup_discord_user_id && !lookup_roblox_user_id) {
+                    message.reply('You need to specify a @mention or roblox_user_id when using this command!');
+                    return;
+                }
+
                 const db_blacklisted_user_data = await findUserInBlacklistedUsersDatabase({
                     discord_user_id: lookup_discord_user_id,
                     roblox_user_id: lookup_roblox_user_id,
