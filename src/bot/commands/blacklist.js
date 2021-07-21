@@ -194,7 +194,7 @@ module.exports = {
                     return;
                 }
 
-                const added_successfully = await addUserToBlacklistedUsersDatabase(db_user_data_for_case_add.identity, {
+                const added_successfully = await addUserToBlacklistedUsersDatabase(db_user_data_for_case_add.identity.discord_user_id, {
                     epoch: Date.now(),
                     reason: sub_command_args.slice(1).join(' ').trim() || 'no reason was specified',
                     staff_member_id: staff_member_id,
@@ -241,7 +241,7 @@ module.exports = {
                     return;
                 }
 
-                const removed_successfully = await removeUserFromBlacklistedUsersDatabase(db_user_data_for_case_remove.identity);
+                const removed_successfully = await removeUserFromBlacklistedUsersDatabase(db_user_data_for_case_remove.identity.discord_user_id);
                 if (!removed_successfully) {
                     await message.reply({
                         content: 'I was unable to remove that user from the blacklist!\nDid you specify them after the command?',
