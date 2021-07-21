@@ -62,15 +62,18 @@ async function findUserInUsersDatabase(user_lookup_query) {
 
 /**
  * Adds a user to the blacklisted-users database
- * @param {String} discord_user_id
+ * @param {Object} identity
+ * @param {String} identity.discord_user_id
+ * @param {String} identity.roblox_user_id
  * @param {Object} blacklist_metadata
  * @param {Number} blacklist_metadata.epoch
  * @param {String} blacklist_metadata.reason
  * @param {String} blacklist_metadata.staff_member_id
  * @returns {Promise<Boolean>} success or failure
  */
-async function addUserToBlacklistedUsersDatabase(discord_user_id, { epoch, reason, staff_member_id }) {
+async function addUserToBlacklistedUsersDatabase({ discord_user_id, roblox_user_id }, { epoch, reason, staff_member_id }) {
     if (typeof discord_user_id !== 'string') throw new TypeError('\`discord_user_id\` must be a string');
+    if (typeof roblox_user_id !== 'string') throw new TypeError('\`roblox_user_id\` must be a string');
     if (typeof epoch !== 'number') throw new TypeError('\`epoch\` must be a number');
     if (typeof reason !== 'string') throw new TypeError('\`reason\` must be a string');
     if (typeof staff_member_id !== 'string') throw new TypeError('\`staff_member_id\` must be a string');
@@ -78,6 +81,7 @@ async function addUserToBlacklistedUsersDatabase(discord_user_id, { epoch, reaso
     try {
         await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME, {
             'identity.discord_user_id': discord_user_id,
+            'identity.roblox_user_id': roblox_user_id,
         }, {
             $set: {
                 'epoch': epoch,
@@ -97,15 +101,19 @@ async function addUserToBlacklistedUsersDatabase(discord_user_id, { epoch, reaso
 
 /**
  * Removes a user from the blacklisted-users database
- * @param {String} discord_user_id
+ * @param {Object} identity
+ * @param {String} identity.discord_user_id
+ * @param {String} identity.roblox_user_id
  * @returns {Promise<Boolean>} success or failure
  */
-async function removeUserFromBlacklistedUsersDatabase(discord_user_id) {
+async function removeUserFromBlacklistedUsersDatabase({ discord_user_id, roblox_user_id }) {
     if (typeof discord_user_id !== 'string') throw new TypeError('\`discord_user_id\` must be a string');
+    if (typeof roblox_user_id !== 'string') throw new TypeError('\`roblox_user_id\` must be a string');
 
     try {
         await go_mongo_db.remove(process.env.MONGO_DATABASE_NAME, process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME, {
             'identity.discord_user_id': discord_user_id,
+            'identity.roblox_user_id': roblox_user_id,
         });
     } catch (error) {
         console.trace(error);
@@ -188,7 +196,7 @@ module.exports = {
                     return;
                 }
 
-                const added_successfully = await addUserToBlacklistedUsersDatabase(db_user_data_for_case_add.identity.discord_user_id, {
+                const added_successfully = await addUserToBlacklistedUsersDatabase(db_user_data_for_case_add.identity, {
                     epoch: Date.now(),
                     reason: sub_command_args.slice(1).join(' ').trim() || 'no reason was specified',
                     staff_member_id: staff_member_id,
@@ -235,7 +243,7 @@ module.exports = {
                     return;
                 }
 
-                const removed_successfully = await removeUserFromBlacklistedUsersDatabase(db_user_data_for_case_remove.identity.discord_user_id);
+                const removed_successfully = await removeUserFromBlacklistedUsersDatabase(db_user_data_for_case_remove.identity);
                 if (!removed_successfully) {
                     await message.reply({
                         content: 'I was unable to remove that user from the blacklist!\nDid you specify them after the command?',
