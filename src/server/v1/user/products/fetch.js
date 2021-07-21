@@ -40,11 +40,17 @@ module.exports = (router, client) => {
         }
 
         /* check if the request was properly authenticated */
-        if (api_endpoint_token && typeof api_endpoint_token === 'string') {
+        if (api_endpoint_token) {
+            if (typeof api_endpoint_token !== 'string') {
+                return res.status(400).send(JSON.stringify({
+                    'message': '\`api_endpoint_token\` must be a string when specified!',
+                }, null, 2));
+            }
+
             const api_endpoint_token_is_valid = bcrypt.compareSync(api_endpoint_token, process.env.API_HASHED_TOKEN_FOR_USER_PRODUCTS_FETCH);
             if (!api_endpoint_token_is_valid) {
                 return res.status(403).send(JSON.stringify({
-                    'message': '\`api_endpoint_token\` was not recognized!',
+                    'message': '(string) \`api_endpoint_token\` was not valid or recognized!',
                 }, null, 2));
             }
         } else if (game_owner_api_access_key && typeof game_owner_api_access_key === 'string') {
@@ -56,33 +62,37 @@ module.exports = (router, client) => {
                 }),
             });
 
-            if (!db_user_auth_data) {
+            if (typeof db_user_auth_data !== 'object') {
                 return res.status(403).send(JSON.stringify({
-                    'message': '\`db_user_auth_data\` could not be found for \`discord_user_id\` or \`roblox_user_id\`!',
+                    'message': `\`db_user_auth_data\` was not found for discord_user_id: \'${discord_user_id}\'; roblox_user_id: \'${discord_user_id}\';`
                 }, null, 2));
             }
 
-            if (!db_user_auth_data.api_access) {
+            if (typeof db_user_auth_data.api_access !== 'object') {
+                console.trace(`\`db_user_auth_data.api_access\` was not an object for discord_user_id: \'${discord_user_id}\'; roblox_user_id: \'${discord_user_id}\';`);
                 return res.status(500).send(JSON.stringify({
-                    'message': '\`db_user_auth_data.api_access\` could not be found for \`discord_user_id\` or \`roblox_user_id\`!',
+                    'message': `\`db_user_auth_data.api_access\` was not an object for discord_user_id: \'${discord_user_id}\'; roblox_user_id: \'${discord_user_id}\';`,
                 }, null, 2));
             }
 
-            if (!db_user_auth_data.api_access.enabled) {
+            if (typeof db_user_auth_data.api_access.key !== 'string') {
+                console.trace(`\`db_user_auth_data.api_access.key\` was not a string for discord_user_id: \'${discord_user_id}\'; roblox_user_id: \'${discord_user_id}\';`);
+                return res.status(500).send(JSON.stringify({
+                    'message': `\`db_user_auth_data.api_access.key\` was not a string for discord_user_id: \'${discord_user_id}\'; roblox_user_id: \'${roblox_user_id}\';`,
+                }, null, 2));
+            }
+
+            if (typeof db_user_auth_data.api_access.expiration_epoch !== 'number') {
+                console.trace(`\`db_user_auth_data.api_access.expiration_epoch\` was not a number for discord_user_id: \'${discord_user_id}\'; roblox_user_id: \'${discord_user_id}\';`);
+                return res.status(500).send(JSON.stringify({
+                    'message': `\`db_user_auth_data.api_access.expiration_epoch\` was not a number for discord_user_id: \'${discord_user_id}\'; roblox_user_id: \'${roblox_user_id}\';`,
+                }, null, 2));
+            }
+
+            const game_owner_api_access_key_is_valid = game_owner_api_access_key === db_user_auth_data.api_access.key;
+            if (!game_owner_api_access_key_is_valid) {
                 return res.status(403).send(JSON.stringify({
-                    'message': '\`db_user_auth_data.api_access.enabled\` is not \`true\` for \`discord_user_id\` or \`roblox_user_id\`!',
-                }, null, 2));
-            }
-
-            if (!db_user_auth_data.api_access.key) {
-                return res.status(500).send(JSON.stringify({
-                    'message': '\`db_user_auth_data.api_access.key\` does not exist for \`discord_user_id\` or \`roblox_user_id\`!',
-                }, null, 2));
-            }
-
-            if (!db_user_auth_data.api_access.expiration_epoch) {
-                return res.status(500).send(JSON.stringify({
-                    'message': '\`db_user_auth_data.api_access.expiration_epoch\` does not exist for \`discord_user_id\` or \`roblox_user_id\`!',
+                    'message': '(string) \`api_access_key\` was invalid or unrecognized!',
                 }, null, 2));
             }
 
@@ -92,14 +102,7 @@ module.exports = (router, client) => {
 
             if (game_owner_api_access_key_has_expired) {
                 return res.status(403).send(JSON.stringify({
-                    'message': '\`api_access_key\` has expired!',
-                }, null, 2));
-            }
-
-            const game_owner_api_access_key_is_valid = game_owner_api_access_key === db_user_auth_data.api_access.key;
-            if (!game_owner_api_access_key_is_valid) {
-                return res.status(403).send(JSON.stringify({
-                    'message': '\`api_access_key\` was not recognized!',
+                    'message': '(string) \`api_access_key\` has expired!',
                 }, null, 2));
             }
         } else {
@@ -131,9 +134,7 @@ module.exports = (router, client) => {
         return res.status(200).send(JSON.stringify({
             ...(specified_product_code ? {
                 [specified_product_code]: db_user_data.products[specified_product_code],
-            } : {
-                ...db_user_data.products,
-            }),
+            } : db_user_data.products),
         }, null, 2));
     });
 };
