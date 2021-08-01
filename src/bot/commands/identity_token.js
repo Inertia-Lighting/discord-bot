@@ -39,7 +39,7 @@ module.exports = {
     name: 'identity_token',
     description: 'n/a',
     aliases: ['identity_token'],
-    permission_level: command_permission_levels.STAFF,
+    permission_level: command_permission_levels.PUBLIC,
     cooldown: 60_000,
     async execute(message, args) {
         const { command_prefix, command_name, command_args } = args;
