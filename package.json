@@ -34,7 +34,7 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.14.8",
+    "@babel/core": "^7.15.0",
     "@babel/eslint-parser": "^7.15.0",
     "eslint": "^7.32.0",
     "husky": "^7.0.1",
