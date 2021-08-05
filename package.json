@@ -35,7 +35,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.14.8",
-    "@babel/eslint-parser": "^7.14.9",
+    "@babel/eslint-parser": "^7.15.0",
     "eslint": "^7.32.0",
     "husky": "^7.0.1",
     "is-ci": "^3.0.0"
