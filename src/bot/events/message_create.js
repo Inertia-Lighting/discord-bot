@@ -28,7 +28,7 @@ module.exports = {
         if (message.author.bot) return;
 
         /* only allow text channels */
-        if (message.channel.type !== 'text') return;
+        if (message.channel.type !== 'GUILD_TEXT') return;
 
         /* handle messages sent in suggestions channels */
         if (message.channel.parent?.id === suggestions_category_id) {

@@ -43,7 +43,7 @@ module.exports = {
         }
 
         /* handle when a staff member specifies the guild owner */
-        if (member.id === message.guild.ownerID) {
+        if (member.id === message.guild.ownerId) {
             await message.reply({
                 content: 'You aren\'t allowed to ban the owner of this server!',
             });
@@ -104,7 +104,9 @@ module.exports = {
         if (!successfully_logged_to_database) {
             try {
                 const staff_member_dm_channel = await message.author.createDM();
-                staff_member_dm_channel.send(`${message.author}, something went wrong while logging to the database, please contact our development team!`);
+                staff_member_dm_channel.send({
+                    content: `${message.author}, something went wrong while logging to the database, please contact our development team!`,
+                });
             } catch {
                 // ignore any errors
             }

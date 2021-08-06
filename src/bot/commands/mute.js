@@ -69,7 +69,7 @@ module.exports = {
         }
 
         /* handle when a staff member specifies the guild owner */
-        if (member.id === message.guild.ownerID) {
+        if (member.id === message.guild.ownerId) {
             await message.reply({
                 content: 'You aren\'t allowed to mute the owner of this server!',
             }).catch(console.warn);
@@ -154,7 +154,7 @@ module.exports = {
             /* change the permissions as needed */
             const current_channel_permissions_overwrites = Array.from(channel.permissionOverwrites.values());
             try {
-                await channel.overwritePermissions([
+                await channel.permissionOverwrites.set([
                     ...current_channel_permissions_overwrites,
                     channel_permission_overwrites_for_muted_users_role,
                 ]);

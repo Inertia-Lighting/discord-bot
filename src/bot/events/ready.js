@@ -39,10 +39,12 @@ const updateBotPresence = ((client) => {
 
         client.user.setPresence({
             status: 'online',
-            activity: {
-                type: 'PLAYING',
-                name: `${first_status_item}`,
-            },
+            activities: [
+                {
+                    type: 'PLAYING',
+                    name: `${first_status_item}`,
+                },
+            ],
         });
 
         bot_custom_statuses.push(first_status_item); // append first_status_item to the end of the array

@@ -43,7 +43,7 @@ module.exports = {
         }
 
         /* handle when a staff member specifies the guild owner */
-        if (member.id === message.guild.ownerID) {
+        if (member.id === message.guild.ownerId) {
             await message.reply({
                 content: 'You aren\'t allowed to warn the owner of this server!',
             });

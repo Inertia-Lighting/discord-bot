@@ -25,7 +25,7 @@ const bot_command_prefix = process.env.BOT_COMMAND_PREFIX;
 const support_tickets_category_id = process.env.BOT_SUPPORT_TICKETS_CATEGORY_ID;
 const support_tickets_transcripts_channel_id = process.env.BOT_SUPPORT_TICKETS_TRANSCRIPTS_CHANNEL_ID;
 
-const drawn_discord_user_id = '331938622733549590';
+// const drawn_discord_user_id = '331938622733549590';
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -44,67 +44,67 @@ const drawn_discord_user_id = '331938622733549590';
  */
 
 const support_categories = new Discord.Collection([
+    // {
+    //     id: 'PARTNER_REQUESTS',
+    //     name: 'Partner Requests',
+    //     description: 'Come here if you want to request a partnership with Inertia Lighting.',
+    //     qualified_support_role_ids: [
+    //         process.env.BOT_SUPPORT_STAFF_PARTNER_REQUESTS_ROLE_ID,
+    //     ],
+    //     automatically_save_when_closed: true,
+    //     instructions_message_options: {
+    //         embeds: [
+    //             new Discord.MessageEmbed({
+    //                 color: 0x60A0FF,
+    //                 author: {
+    //                     iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+    //                     name: 'Inertia Lighting | Support Ticket Instructions',
+    //                 },
+    //                 title: 'Please fill out our partner request form.',
+    //                 description: [
+    //                     '[Inertia Lighting Partner Request Form](https://inertia.lighting/partner-requests-form)',
+    //                     '**If you don\'t put effort into the form, your request will be ignored!**',
+    //                 ].join('\n'),
+    //             }),
+    //         ],
+    //     },
+    // }, {
+    //     id: 'PAYPAL_PURCHASES',
+    //     name: 'PayPal',
+    //     description: 'Come here if you wish to purchase any of our products using PayPal.',
+    //     qualified_support_role_ids: [
+    //         process.env.BOT_SUPPORT_STAFF_PAYPAL_ROLE_ID,
+    //         process.env.BOT_SUPPORT_STAFF_PRODUCT_PURCHASES_ROLE_ID,
+    //     ],
+    //     automatically_save_when_closed: true,
+    //     instructions_message_options: {
+    //         embeds: [
+    //             new Discord.MessageEmbed({
+    //                 color: 0x60A0FF,
+    //                 author: {
+    //                     iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+    //                     name: 'Inertia Lighting | Support Ticket Instructions',
+    //                 },
+    //                 description: [
+    //                     '**Please fill out this template so that our staff can assist you.**',
+    //                     '- **Product(s):** ( C-Lights, Magic Panels, etc )',
+    //                     '',
+    //                     `**After filling out the template, please wait for <@!${drawn_discord_user_id}> to provide you with a payment destination.**`,
+    //                     '',
+    //                     '**Once you have payed, please provide the following information.**',
+    //                     '- **Transaction Email:** ( you@your.email )',
+    //                     '- **Transaction Id:** ( 000000000000000000 )',
+    //                     '- **Transaction Amount:** ( $1.69 )',
+    //                     '- **Transaction Date:** ( 1970-01-01 )',
+    //                     '- **Transaction Time:** ( 12:00 AM )',
+    //                     '',
+    //                     '**Please follow the above instructions properly, or your ticket will be ignored!**',
+    //                 ].join('\n'),
+    //             }),
+    //         ],
+    //     },
+    // },
     {
-        id: 'PARTNER_REQUESTS',
-        name: 'Partner Requests',
-        description: 'Come here if you want to request a partnership with Inertia Lighting.',
-        qualified_support_role_ids: [
-            process.env.BOT_SUPPORT_STAFF_PARTNER_REQUESTS_ROLE_ID,
-        ],
-        automatically_save_when_closed: true,
-        instructions_message_options: {
-            embeds: [
-                new Discord.MessageEmbed({
-                    color: 0x60A0FF,
-                    author: {
-                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                        name: 'Inertia Lighting | Support Ticket Instructions',
-                    },
-                    title: 'Please fill out our partner request form.',
-                    description: [
-                        '[Inertia Lighting Partner Request Form](https://inertia.lighting/partner-requests-form)',
-                        '**If you don\'t put effort into the form, your request will be ignored!**',
-                    ].join('\n'),
-                }),
-            ],
-        },
-    },
-    {
-        id: 'PAYPAL_PURCHASES',
-        name: 'PayPal',
-        description: 'Come here if you wish to purchase any of our products using PayPal.',
-        qualified_support_role_ids: [
-            process.env.BOT_SUPPORT_STAFF_PAYPAL_ROLE_ID,
-            process.env.BOT_SUPPORT_STAFF_PRODUCT_PURCHASES_ROLE_ID,
-        ],
-        automatically_save_when_closed: true,
-        instructions_message_options: {
-            embeds: [
-                new Discord.MessageEmbed({
-                    color: 0x60A0FF,
-                    author: {
-                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                        name: 'Inertia Lighting | Support Ticket Instructions',
-                    },
-                    description: [
-                        '**Please fill out this template so that our staff can assist you.**',
-                        '- **Product(s):** ( C-Lights, Magic Panels, etc )',
-                        '',
-                        `**After filling out the template, please wait for <@!${drawn_discord_user_id}> to provide you with a payment destination.**`,
-                        '',
-                        '**Once you have payed, please provide the following information.**',
-                        '- **Transaction Email:** ( you@your.email )',
-                        '- **Transaction Id:** ( 000000000000000000 )',
-                        '- **Transaction Amount:** ( $1.69 )',
-                        '- **Transaction Date:** ( 1970-01-01 )',
-                        '- **Transaction Time:** ( 12:00 AM )',
-                        '',
-                        '**Please follow the above instructions properly, or your ticket will be ignored!**',
-                    ].join('\n'),
-                }),
-            ],
-        },
-    }, {
         id: 'PRODUCT_TRANSFERS',
         name: 'Product Transfers',
         description: 'Come here if you want to transfer any of your products to another account.',
@@ -262,7 +262,7 @@ async function createSupportTicketChannel(guild, guild_member, support_category)
         topic: `${guild_member} | ${support_category.name} | Opened on ${moment().format('ddd MMM DD YYYY [at] HH:mm:ss [GMT]ZZ')} | Staff may close this using \`${bot_command_prefix}close_ticket\``,
         parent: support_tickets_category,
         permissionOverwrites: [
-            ...support_tickets_category.permissionOverwrites.values(), // clone the parent channel permissions
+            ...support_tickets_category.permissionOverwrites.cache.values(), // clone the parent channel permissions
             {
                 id: process.env.BOT_STAFF_ROLE_ID,
                 allow: [ 'VIEW_CHANNEL' ],
