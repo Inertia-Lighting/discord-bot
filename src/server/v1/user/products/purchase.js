@@ -163,53 +163,78 @@ module.exports = (router, client) => {
             }, null, 2));
         }
 
-        try {
-            /* fetch the guild */
-            const guild = await client.guilds.fetch(guild_id);
+        /* fetch the guild */
+        const guild = await client.guilds.fetch(guild_id).catch(() => null);
 
-            /* fetch the guild member */
-            const guild_member = await guild.members.fetch(db_user_data.identity.discord_user_id);
+        /* check if the guild exists */
+        if (!guild) {
+            console.error(`unable to fetch guild: ${guild_id};`);
+            return res.status(500).send(JSON.stringify({
+                'message': `unable to fetch guild: ${guild_id};`,
+            }, null, 2));
+        }
 
+        /* fetch the guild member */
+        const guild_member = await guild.members.fetch(db_user_data.identity.discord_user_id).catch(() => null);
+
+        /* if the guild member exists, then perform various discord tasks */
+        if (guild_member) {
             /* try to add the customer roles to the guild member */
-            await guild_member.roles.add(new_customer_role_ids);
+            try {
+                for (const new_customer_role_id of new_customer_role_ids) {
+                    if (guild_member.roles.cache.has(new_customer_role_id)) continue;
+                    await guild_member.roles.add(new_customer_role_id);
+                }
+            } catch (error) {
+                console.trace('Failed to give customer roles in the discord!', error);
+            }
 
             /* fetch the product role ids */
             const product_role_ids = specified_products.map(specified_product => specified_product.discord_role_id);
 
-            /* try to add the product role to the guild member */
-            await guild_member.roles.add(product_role_ids);
+            /* try to add the product roles to the guild member */
+            try {
+                for (const product_role_id of product_role_ids) {
+                    if (guild_member.roles.cache.has(product_role_id)) continue;
+                    await guild_member.roles.add(product_role_id);
+                }
+            } catch (error) {
+                console.trace('Failed to give product roles in the discord!', error);
+            }
 
             /* fetch the product names */
             const product_names = specified_products.map(specified_product => specified_product.name);
 
             /* dm the user a confirmation of their purchase */
-            const user_dm_channel = await guild_member.user.createDM();
-            await user_dm_channel.send({
-                embeds: [
-                    new Discord.MessageEmbed({
-                        color: 0x00FF00,
-                        author: {
-                            iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                            name: 'Inertia Lighting | Confirmed Purchase',
-                        },
-                        title: 'Thank you for your purchase!',
-                        description: [
-                            `You obtained: ${product_names.map(product_name => `**${product_name}**`).join(', ')}.`,
-                            'Go to [our website](https://inertia.lighting/products) to download your product(s).',
-                            ...(paypal_order_id ? [
-                                `For future reference, ||\`${paypal_order_id}\`|| was your paypal order id!`,
-                            ] : []),
-                        ].join('\n'),
-                    }),
-                ],
-            });
-        } catch (error) {
-            console.trace('Failed to either give product roles in the discord or dm the guild member!', error);
+            try {
+                const user_dm_channel = await guild_member.user.createDM();
+                await user_dm_channel.send({
+                    embeds: [
+                        new Discord.MessageEmbed({
+                            color: 0x00FF00,
+                            author: {
+                                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                                name: 'Inertia Lighting | Confirmed Purchase',
+                            },
+                            title: 'Thank you for your purchase!',
+                            description: [
+                                `You obtained: ${product_names.map(product_name => `**${product_name}**`).join(', ')}.`,
+                                'Go to [our website](https://inertia.lighting/products) to download your product(s).',
+                                ...(paypal_order_id ? [
+                                    `For future reference, ||\`${paypal_order_id}\`|| was your paypal order id!`,
+                                ] : []),
+                            ].join('\n'),
+                        }),
+                    ],
+                });
+            } catch {
+                // ignore any errors, as the user might have dms disabled
+            }
         }
 
         /* log to the purchase logging channel */
         try {
-            const user_purchases_logging_channel = client.channels.resolve(user_purchases_logging_channel_id);
+            const user_purchases_logging_channel = guild.channels.resolve(user_purchases_logging_channel_id);
             await user_purchases_logging_channel.send({
                 embeds: [
                     new Discord.MessageEmbed({
