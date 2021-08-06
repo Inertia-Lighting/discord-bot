@@ -78,6 +78,10 @@ module.exports = (router, client) => {
             } : {
                 'identity.roblox_user_id': roblox_user_id,
             }),
+        }, {
+            projection: {
+                '_id': false,
+            },
         });
 
         /* check if the user exists */
@@ -85,6 +89,27 @@ module.exports = (router, client) => {
             console.error(`discord_user_id: ${discord_user_id}; roblox_user_id: ${roblox_user_id}; not found in database`);
             return res.status(404).send(JSON.stringify({
                 'message': `discord_user_id: ${discord_user_id}; roblox_user_id: ${roblox_user_id}; not found in database`,
+            }, null, 2));
+        }
+
+        /* find the user in the blacklist */
+        const [ db_blacklisted_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME, {
+            ...(discord_user_id ? {
+                'identity.discord_user_id': db_user_data.identity.discord_user_id,
+            } : {
+                'identity.roblox_user_id': db_user_data.identity.roblox_user_id,
+            }),
+        }, {
+            projection: {
+                '_id': false,
+            },
+        });
+
+        /* check if the user is blacklisted */
+        if (db_blacklisted_user_data) {
+            console.error(`discord_user_id: ${db_user_data.identity.discord_user_id}; roblox_user_id: ${db_user_data.identity.roblox_user_id}; is blacklisted`);
+            return res.status(403).send(JSON.stringify({
+                'message': `discord_user_id: ${db_user_data.identity.discord_user_id}; roblox_user_id: ${db_user_data.identity.roblox_user_id}; is blacklisted`,
             }, null, 2));
         }
 
