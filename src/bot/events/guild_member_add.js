@@ -33,6 +33,11 @@ module.exports = {
         /* handle nicknames for new members */
         await illegalNicknameHandler(member);
 
+        /* wait untill the member has passed the verification gate */
+        while (member.pending){
+
+        }
+
         /* give roles to new members */
         for (const role_id of new_user_role_ids) {
             await member.roles.add(role_id).catch(console.warn);
