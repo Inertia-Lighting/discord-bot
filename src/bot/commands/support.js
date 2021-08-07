@@ -508,8 +508,8 @@ module.exports = {
                                 await cleanupCategoryInstructionsOptionsMessageCollector();
 
                                 /* allow staff to interact in the support ticket */
-                                await support_channel.overwritePermissions([
-                                    ...support_channel.permissionOverwrites.values(), // clone the channel's current permissions
+                                await support_channel.permissionOverwrites.set([
+                                    ...support_channel.permissionOverwrites.cache.values(), // clone the channel's current permissions
                                     {
                                         id: process.env.BOT_STAFF_ROLE_ID,
                                         allow: [ 'VIEW_CHANNEL', 'SEND_MESSAGES' ],
