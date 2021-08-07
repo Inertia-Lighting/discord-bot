@@ -34,8 +34,8 @@ module.exports = {
         await illegalNicknameHandler(member);
 
         /* wait untill the member has passed the verification gate */
-        while (member.pending){
-
+        while (member.pending) {
+            await Timer(1_000);
         }
 
         /* give roles to new members */
