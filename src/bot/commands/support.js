@@ -597,7 +597,10 @@ module.exports = {
                 }).catch(console.warn);
 
                 const collection_filter = (msg) => msg.author.id === message.author.id && ['yes', 'no'].includes(msg.content.toLowerCase());
-                const collected_messages = await support_channel.awaitMessages(collection_filter, { max: 1 }).catch(collected_messages => collected_messages);
+                const collected_messages = await support_channel.awaitMessages({
+                    filter: collection_filter,
+                    max: 1,
+                }).catch(collected_messages => collected_messages);
 
                 const first_collected_message_content = collected_messages.first()?.content;
                 const formatted_first_collected_message_content = first_collected_message_content?.toLowerCase();
