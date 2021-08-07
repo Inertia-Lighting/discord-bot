@@ -126,26 +126,26 @@ async function listModerationActions(message, lookup_mode='member') {
                     {
                         type: 2,
                         style: 2,
-                        value: 'previous',
+                        custom_id: 'previous',
                         emoji: {
                             id: null,
-                            name: 'arrow_right',
+                            name: '⬅️',
                         },
                     }, {
                         type: 2,
                         style: 2,
-                        value: 'next',
+                        custom_id: 'next',
                         emoji: {
                             id: null,
-                            name: 'arrow_left',
+                            name: '➡️',
                         },
                     }, {
                         type: 2,
                         style: 2,
-                        value: 'stop',
+                        custom_id: 'stop',
                         emoji: {
                             id: null,
-                            name: 'stop_button',
+                            name: '⏹️',
                         },
                     },
                 ],
@@ -221,6 +221,8 @@ async function listModerationActions(message, lookup_mode='member') {
                 break;
             }
         }
+
+        await button_interaction.deferUpdate();
 
         if (message_button_collector.ended) return;
 
