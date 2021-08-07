@@ -33,7 +33,7 @@ module.exports = {
         /* handle nicknames for new members */
         await illegalNicknameHandler(member);
 
-        /* wait untill the member has passed the verification gate */
+        /* wait until the member has passed the verification gate */
         while (member.pending) {
             await Timer(1_000);
         }
