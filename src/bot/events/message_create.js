@@ -22,13 +22,13 @@ const suggestions_category_id = process.env.BOT_SUGGESTIONS_CATEGORY_ID;
 //---------------------------------------------------------------------------------------------------------------//
 
 module.exports = {
-    name: 'message',
+    name: 'messageCreate',
     async handler(message) {
         /* don't allow bots */
         if (message.author.bot) return;
 
         /* only allow text channels */
-        if (message.channel.type !== 'text') return;
+        if (message.channel.type !== 'GUILD_TEXT') return;
 
         /* handle messages sent in suggestions channels */
         if (message.channel.parent?.id === suggestions_category_id) {
@@ -38,10 +38,12 @@ module.exports = {
 
         /* respond to mentions of this bot */
         if (message.content.startsWith(`<@!${client.user.id}>`)) {
-            message.reply([
-                `The command_prefix for me is \`${command_prefix}\`.`,
-                `To see a list of commands do \`${command_prefix}help\`!`,
-            ].join('\n')).catch(console.warn);
+            message.reply({
+                content: [
+                    `The command_prefix for me is \`${command_prefix}\`.`,
+                    `To see a list of commands do \`${command_prefix}help\`!`,
+                ].join('\n'),
+            }).catch(console.warn);
         }
 
         /* handle commands */

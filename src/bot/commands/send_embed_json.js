@@ -23,7 +23,9 @@ module.exports = {
         const msg_attachment = message.attachments.first();
 
         if (!msg_attachment) {
-            message.reply('Please send a \`.json\` file first!').catch(console.warn);
+            message.reply({
+                content: 'Please send a \`.json\` file first!',
+            }).catch(console.warn);
             return;
         }
 
@@ -39,12 +41,18 @@ module.exports = {
             delete webhook_message_options.avatar_url;
 
             for (const embed of webhook_message_options.embeds) {
-                await message.channel.send({ embed: embed });
+                await message.channel.send({
+                    embeds: [
+                        embed,
+                    ],
+                });
                 await Timer(2_500);
             }
         } catch (error) {
             console.trace(error);
-            message.reply('Something went wrong, please check the console for details!').catch(console.warn);
+            message.reply({
+                content: 'Something went wrong, please check the console for details!',
+            }).catch(console.warn);
         }
     },
 };

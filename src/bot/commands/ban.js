@@ -28,53 +28,65 @@ module.exports = {
 
         /* handle when a member is not specified */
         if (!member) {
-            await message.reply('You need to specify a user when using this command!').catch(console.warn);
+            await message.reply({
+                content: 'You need to specify a user when using this command!',
+            }).catch(console.warn);
             return;
         }
 
         /* handle when a staff member specifies themself */
         if (staff_member.id === member.id) {
-            await message.reply('You aren\'t allowed to ban yourself!').catch(console.warn);
+            await message.reply({
+                content: 'You aren\'t allowed to ban yourself!',
+            }).catch(console.warn);
             return;
         }
 
         /* handle when a staff member specifies the guild owner */
-        if (member.id === message.guild.ownerID) {
-            await message.reply('You aren\'t allowed to ban the owner of this server!');
+        if (member.id === message.guild.ownerId) {
+            await message.reply({
+                content: 'You aren\'t allowed to ban the owner of this server!',
+            });
             return;
         }
 
         /* handle when a staff member tries to moderate someone with an equal/higher role */
         if (staff_member.roles.highest.comparePositionTo(member.roles.highest) <= 0) {
-            await message.reply('You aren\'t allowed to ban someone with an equal/higher role!').catch(console.warn);
+            await message.reply({
+                content: 'You aren\'t allowed to ban someone with an equal/higher role!',
+            }).catch(console.warn);
             return;
         }
 
-        const moderation_message_contents = [
-            `${member}`,
-            `You were banned from the Inertia Lighting Discord by ${staff_member.user} for:`,
-            '\`\`\`',
-            `${reason}`,
-            '\`\`\`',
-        ].join('\n');
+        const moderation_message_options = {
+            content: [
+                `${member}`,
+                `You were banned from the Inertia Lighting discord by ${staff_member.user} for:`,
+                '\`\`\`',
+                `${reason}`,
+                '\`\`\`',
+            ].join('\n'),
+        };
 
         /* dm the member */
         try {
             const dm_channel = await member.createDM();
-            await dm_channel.send(moderation_message_contents);
+            await dm_channel.send(moderation_message_options);
         } catch {
             // ignore any errors
         }
 
         /* message the member in the server */
-        await message.channel.send(moderation_message_contents).catch(console.warn);
+        await message.channel.send(moderation_message_options).catch(console.warn);
 
         /* perform the moderation action on the member */
         try {
             await member.ban({ reason: reason });
         } catch (error) {
             console.trace(error);
-            await message.reply('Failed to ban that member!').catch(console.warn);
+            await message.reply({
+                content: 'Failed to ban that member!',
+            }).catch(console.warn);
             return;
         }
 
@@ -92,7 +104,9 @@ module.exports = {
         if (!successfully_logged_to_database) {
             try {
                 const staff_member_dm_channel = await message.author.createDM();
-                staff_member_dm_channel.send(`${message.author}, something went wrong while logging to the database, please contact our development team!`);
+                staff_member_dm_channel.send({
+                    content: `${message.author}, something went wrong while logging to the database, please contact our development team!`,
+                });
             } catch {
                 // ignore any errors
             }

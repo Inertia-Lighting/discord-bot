@@ -158,45 +158,53 @@ module.exports = {
         const search_query = command_args.join(' ').trim().toLowerCase();
 
         if (search_query.length === 0) {
-            message.channel.send(new Discord.MessageEmbed({
-                color: 0xFFFF00,
-                author: {
-                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                    name: 'Inertia Lighting | Quick Support System',
-                },
-                title: 'Improper Command Usage!',
-                description: [
-                    'Please provide a quick support topic to lookup!',
-                    'Example:',
-                    '\`\`\`',
-                    `${command_prefix}${command_name} refunds`,
-                    '\`\`\`',
-                    'You can find a list of topics to lookup by doing the following:',
-                    '\`\`\`',
-                    `${command_prefix}${command_name} topics`,
-                    '\`\`\`',
-                ].join('\n'),
-            })).catch(console.warn);
+            message.channel.send({
+                embeds: [
+                    new Discord.MessageEmbed({
+                        color: 0xFFFF00,
+                        author: {
+                            iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                            name: 'Inertia Lighting | Quick Support System',
+                        },
+                        title: 'Improper Command Usage!',
+                        description: [
+                            'Please provide a quick support topic to lookup!',
+                            'Example:',
+                            '\`\`\`',
+                            `${command_prefix}${command_name} refunds`,
+                            '\`\`\`',
+                            'You can find a list of topics to lookup by doing the following:',
+                            '\`\`\`',
+                            `${command_prefix}${command_name} topics`,
+                            '\`\`\`',
+                        ].join('\n'),
+                    }),
+                ],
+            }).catch(console.warn);
             return;
         }
 
         if (['topics'].includes(search_query)) {
             const qs_searchable_queries = qs_topics.map(qs_topic => qs_topic.searchable_queries[0]);
 
-            message.channel.send(new Discord.MessageEmbed({
-                color: 0xFFFF00,
-                author: {
-                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                    name: 'Inertia Lighting | Quick Support System',
-                },
-                title: 'Searchable Quick Support Topics',
-                description: [
-                    'Here is a list of topics that can be searched using this command:',
-                    '\`\`\`',
-                    qs_searchable_queries.map(search_query => `${command_prefix}${command_name} ${search_query}`).join('\n'),
-                    '\`\`\`',
-                ].join('\n'),
-            })).catch(console.warn);
+            message.channel.send({
+                embeds: [
+                    new Discord.MessageEmbed({
+                        color: 0xFFFF00,
+                        author: {
+                            iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                            name: 'Inertia Lighting | Quick Support System',
+                        },
+                        title: 'Searchable Quick Support Topics',
+                        description: [
+                            'Here is a list of topics that can be searched using this command:',
+                            '\`\`\`',
+                            qs_searchable_queries.map(search_query => `${command_prefix}${command_name} ${search_query}`).join('\n'),
+                            '\`\`\`',
+                        ].join('\n'),
+                    }),
+                ],
+            }).catch(console.warn);
 
             return;
         }
@@ -220,32 +228,40 @@ module.exports = {
         const matching_qs_topics = mapped_qs_topics.filter(qs_topic => qs_topic.similarity_score > 0.45);
         if (matching_qs_topics.length === 0) {
             const example_qs_topics = qs_topics.slice(0, 3).map(qs_topic => qs_topic.searchable_queries[0]);
-            message.channel.send(new Discord.MessageEmbed({
-                color: 0xFFFF00,
-                author: {
-                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                    name: 'Inertia Lighting | Quick Support System',
-                },
-                title: 'Improper Command Usage!',
-                description: [
-                    'I couldn\'t find quick support topic that matches your search query!',
-                    '\nFor example; here are a few quick support topics that you can lookup:',
-                    `\`\`\`\n${example_qs_topics.map(example_qs_topic => `${command_prefix}${command_name} ${example_qs_topic}`).join('\n')}\n\`\`\``,
-                ].join('\n'),
-            }));
+            message.channel.send({
+                embeds: [
+                    new Discord.MessageEmbed({
+                        color: 0xFFFF00,
+                        author: {
+                            iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                            name: 'Inertia Lighting | Quick Support System',
+                        },
+                        title: 'Improper Command Usage!',
+                        description: [
+                            'I couldn\'t find quick support topic that matches your search query!',
+                            '\nFor example; here are a few quick support topics that you can lookup:',
+                            `\`\`\`\n${example_qs_topics.map(example_qs_topic => `${command_prefix}${command_name} ${example_qs_topic}`).join('\n')}\n\`\`\``,
+                        ].join('\n'),
+                    }),
+                ],
+            });
             return;
         }
 
         const best_matching_qs_topic = matching_qs_topics.reduce((previous, current) => previous.similarity_score > current.similarity_score ? previous : current);
 
-        message.channel.send(new Discord.MessageEmbed({
-            color: 0x60A0FF,
-            author: {
-                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                name: 'Inertia Lighting | Quick Support System',
-            },
-            title: `${best_matching_qs_topic.title}`,
-            description: `${best_matching_qs_topic.support_contents}`,
-        }));
-    }
+        message.channel.send({
+            embeds: [
+                new Discord.MessageEmbed({
+                    color: 0x60A0FF,
+                    author: {
+                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                        name: 'Inertia Lighting | Quick Support System',
+                    },
+                    title: `${best_matching_qs_topic.title}`,
+                    description: `${best_matching_qs_topic.support_contents}`,
+                }),
+            ],
+        });
+    },
 };

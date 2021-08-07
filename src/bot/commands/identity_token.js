@@ -58,25 +58,27 @@ module.exports = {
         switch (`${command_args[0]}`.toLowerCase()) {
             case 'help': {
                 await message.channel.send({
-                    embed: new Discord.MessageEmbed({
-                        color: 0x60A0FF,
-                        author: {
-                            iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                            name: 'Inertia Lighting | Identity Token System',
-                        },
-                        fields: [
-                            {
-                                name: 'What are Identity Tokens?',
-                                value: 'Identity Tokens are like passwords, we use them to verify your identity with our systems; just like how your computer uses a password to verify that it is you!',
-                            }, {
-                                name: 'How do I generate my Identity Token?',
-                                value: `Run \`${command_prefix}${command_name} generate\` to generate your token!`,
-                            }, {
-                                name: 'How do I use my Identity Token?',
-                                value: `When running the \`${command_prefix}${command_name} generate\` command, you will be given an Identity Token Code Snippet to paste into your Roblox Studio Command Bar.`,
+                    embeds: [
+                        new Discord.MessageEmbed({
+                            color: 0x60A0FF,
+                            author: {
+                                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                                name: 'Inertia Lighting | Identity Token System',
                             },
-                        ],
-                    }),
+                            fields: [
+                                {
+                                    name: 'What are Identity Tokens?',
+                                    value: 'Identity Tokens are like passwords, we use them to verify your identity with our systems; just like how your computer uses a password to verify that it is you!',
+                                }, {
+                                    name: 'How do I generate my Identity Token?',
+                                    value: `Run \`${command_prefix}${command_name} generate\` to generate your token!`,
+                                }, {
+                                    name: 'How do I use my Identity Token?',
+                                    value: `When running the \`${command_prefix}${command_name} generate\` command, you will be given an Identity Token Code Snippet to paste into your Roblox Studio Command Bar.`,
+                                },
+                            ],
+                        }),
+                    ],
                 }).catch(console.warn);
 
                 break;
@@ -87,24 +89,26 @@ module.exports = {
                 try {
                     const dm_channel = await message.author.createDM();
                     await dm_channel.send({
-                        embed: new Discord.MessageEmbed({
-                            color: 0x60A0FF,
-                            author: {
-                                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                                name: 'Inertia Lighting | Identity Token System',
-                            },
-                            description: [
-                                '**Instructions:**',
-                                '1) Keep your Identity Token secret, it is unique to you (like a password).',
-                                '2) Paste your Identity Token Code Snippet into Roblox Studio\'s Command Bar.',
-                                '3) Observe your Roblox Studio\'s Output.',
-                                '4) Assuming everything went correctly, you can now use our products inside of your game.',
-                                '',
-                                '**Your Identity Token Code Snippet:**',
-                                `||\`require(7096701514)('${non_encrypted_token}')\`||`,
-                                '(Click the box above to view your Identity Token Code Snippet)',
-                            ].join('\n'),
-                        }),
+                        embeds: [
+                            new Discord.MessageEmbed({
+                                color: 0x60A0FF,
+                                author: {
+                                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                                    name: 'Inertia Lighting | Identity Token System',
+                                },
+                                description: [
+                                    '**Instructions:**',
+                                    '1) Keep your Identity Token secret, it is unique to you (like a password).',
+                                    '2) Paste your Identity Token Code Snippet into Roblox Studio\'s Command Bar.',
+                                    '3) Observe your Roblox Studio\'s Output.',
+                                    '4) Assuming everything went correctly, you can now use our products inside of your game.',
+                                    '',
+                                    '**Your Identity Token Code Snippet:**',
+                                    `||\`require(7096701514)('${non_encrypted_token}')\`||`,
+                                    '(Click the box above to view your Identity Token Code Snippet)',
+                                ].join('\n'),
+                            }),
+                        ],
                     });
                 } catch {
                     await message.reply({
@@ -138,22 +142,26 @@ module.exports = {
                 break;
             }
             default: {
-                await message.channel.send(new Discord.MessageEmbed({
-                    color: 0x60A0FF,
-                    author: {
-                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                        name: 'Inertia Lighting | Identity Token System',
-                    },
-                    description: [
-                        'Please use one of the following sub-commands:',
-                        '\`\`\`',
-                        ...[
-                            'help',
-                            'generate',
-                        ].map(sub_command => `${command_prefix}${command_name} ${sub_command}`),
-                        '\`\`\`',
-                    ].join('\n'),
-                })).catch(console.warn);
+                message.channel.send({
+                    embeds: [
+                        new Discord.MessageEmbed({
+                            color: 0x60A0FF,
+                            author: {
+                                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                                name: 'Inertia Lighting | Identity Token System',
+                            },
+                            description: [
+                                'Please use one of the following sub-commands:',
+                                '\`\`\`',
+                                ...[
+                                    'help',
+                                    'generate',
+                                ].map(sub_command => `${command_prefix}${command_name} ${sub_command}`),
+                                '\`\`\`',
+                            ].join('\n'),
+                        }),
+                    ],
+                }).catch(console.warn);
 
                 break;
             }

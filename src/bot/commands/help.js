@@ -33,22 +33,28 @@ module.exports = {
             /* display help for a specified command alias */
             const specified_command = commands_visible_to_user.find(cmd => cmd.aliases.includes(specified_command_alias.toLowerCase()));
             if (specified_command) {
-                message.channel.send(new Discord.MessageEmbed({
-                    color: 0x60A0FF,
-                    author: {
-                        iconURL: `${message.author.displayAvatarURL({ dynamic: true })}`,
-                        name: `${message.author.tag}`,
-                    },
-                    description: [
-                        `**Name:** ${specified_command.name}`,
-                        `**Aliases:** ${specified_command.aliases.join(', ') ?? 'n/a'}`,
-                        `**Description:** ${specified_command.description ?? 'n/a'}`,
-                        `**Usage:** ${specified_command.usage ? `\`${command_prefix}${specified_command.name} ${specified_command.usage}\`` : 'n/a'}`,
-                        `**Permission Level:** \`${specified_command.permission_level}\``,
-                    ].join('\n'),
-                })).catch(console.warn);
+                message.channel.send({
+                    embeds: [
+                        new Discord.MessageEmbed({
+                            color: 0x60A0FF,
+                            author: {
+                                iconURL: `${message.author.displayAvatarURL({ dynamic: true })}`,
+                                name: `${message.author.tag}`,
+                            },
+                            description: [
+                                `**Name:** ${specified_command.name}`,
+                                `**Aliases:** ${specified_command.aliases.join(', ') ?? 'n/a'}`,
+                                `**Description:** ${specified_command.description ?? 'n/a'}`,
+                                `**Usage:** ${specified_command.usage ? `\`${command_prefix}${specified_command.name} ${specified_command.usage}\`` : 'n/a'}`,
+                                `**Permission Level:** \`${specified_command.permission_level}\``,
+                            ].join('\n'),
+                        }),
+                    ],
+                }).catch(console.warn);
             } else {
-                message.reply(`\`${specified_command_alias}\` not a valid command alias to lookup!`).catch(console.warn);
+                message.reply({
+                    content: `\`${specified_command_alias}\` is not a valid command alias to lookup!`,
+                }).catch(console.warn);
             }
         } else {
             /* display all commands visible to the user */
@@ -57,18 +63,22 @@ module.exports = {
                     `${command_prefix}${command_alias.replace('#{cp}', `${command_prefix}`)}`
                 ).join(' | ')
             );
-            message.channel.send(new Discord.MessageEmbed({
-                color: 0x60A0FF,
-                author: {
-                    iconURL: `${message.author.displayAvatarURL({ dynamic: true })}`,
-                    name: `${message.author.tag}`,
-                },
-                title: 'Here\'s a list of all commands that you may use!',
-                description: [
-                    `You can send \`${command_prefix}help [command name]\` to get info on a specific command!`,
-                    `\`\`\`${commands_visible_to_user_with_prefix.join('\n')}\`\`\``,
-                ].join('\n'),
-            })).catch(console.warn);
+            message.channel.send({
+                embeds: [
+                    new Discord.MessageEmbed({
+                        color: 0x60A0FF,
+                        author: {
+                            iconURL: `${message.author.displayAvatarURL({ dynamic: true })}`,
+                            name: `${message.author.tag}`,
+                        },
+                        title: 'Here\'s a list of all commands that you may use!',
+                        description: [
+                            `You can send \`${command_prefix}help [command name]\` to get info on a specific command!`,
+                            `\`\`\`${commands_visible_to_user_with_prefix.join('\n')}\`\`\``,
+                        ].join('\n'),
+                    }),
+                ],
+            }).catch(console.warn);
         }
     },
 };

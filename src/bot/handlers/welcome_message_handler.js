@@ -19,33 +19,35 @@ const news_channel_id = '854442081899642950';
 //---------------------------------------------------------------------------------------------------------------//
 
 async function welcomeMessageHandler(member) {
-    const message_contents = {
+    const message_options = {
         content: `${member}`,
-        embed: new Discord.MessageEmbed({
-            author: {
-                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                name: `${client.user.username}`,
-            },
-            title: 'Welcome!',
-            description: [
-                'Welcome to the Inertia Lighting discord server!',
-                'To get started, visit the following channels to learn about our server:',
-                `- <#${rules_channel_id}>`,
-                `- <#${info_channel_id}>`,
-                `- <#${news_channel_id}>`,
-                `- <#${support_channel_id}>`,
-                `- <#${general_channel_id}>`,
-                'Also, check out our [product hub](https://www.roblox.com/games/5438256564) to purchase our products!',
-            ].join('\n'),
-        }),
+        embeds: [
+            new Discord.MessageEmbed({
+                author: {
+                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                    name: `${client.user.username}`,
+                },
+                title: 'Welcome!',
+                description: [
+                    'Welcome to the Inertia Lighting discord server!',
+                    'To get started, visit the following channels to learn about our server:',
+                    `- <#${rules_channel_id}>`,
+                    `- <#${info_channel_id}>`,
+                    `- <#${news_channel_id}>`,
+                    `- <#${support_channel_id}>`,
+                    `- <#${general_channel_id}>`,
+                    'Also, check out our [product hub](https://www.roblox.com/games/5438256564) to purchase our products!',
+                ].join('\n'),
+            }),
+        ],
     };
 
     try {
         const dm_channel = await member.createDM();
-        await dm_channel.send(message_contents);
+        await dm_channel.send(message_options);
     } catch {
         const general_chat_channel = client.channels.resolve(general_channel_id);
-        await general_chat_channel.send(message_contents).catch(console.warn);
+        await general_chat_channel.send(message_options).catch(console.warn);
     }
 }
 

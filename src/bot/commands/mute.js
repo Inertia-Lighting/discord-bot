@@ -40,6 +40,7 @@ const channel_permission_overwrites_for_muted_users_role = {
 module.exports = {
     name: 'mute',
     description: '(un)mutes a user',
+    usage: '@mention reason',
     aliases: ['mute', 'unmute'],
     permission_level: command_permission_levels.MODERATORS,
     cooldown: 2_000,
@@ -53,26 +54,42 @@ module.exports = {
 
         /* handle when a member is not specified */
         if (!member) {
-            await message.reply('You need to specify a user when using this command!').catch(console.warn);
+            await message.reply({
+                content: 'You need to specify a user when using this command!',
+            }).catch(console.warn);
             return;
         }
 
-        /* handle when staff members specifies themself */
+        /* handle when a staff member specifies themself */
         if (staff_member.id === member.id) {
-            await message.reply('You aren\'t allowed to (un)mute yourself!').catch(console.warn);
+            await message.reply({
+                content: 'You aren\'t allowed to mute yourself!',
+            }).catch(console.warn);
             return;
         }
 
-        /* handle when a staff member tries to (un)mute someone with an equal/higher role */
+        /* handle when a staff member specifies the guild owner */
+        if (member.id === message.guild.ownerId) {
+            await message.reply({
+                content: 'You aren\'t allowed to mute the owner of this server!',
+            }).catch(console.warn);
+            return;
+        }
+
+        /* handle when a staff member tries to moderate someone with an equal/higher role */
         if (staff_member.roles.highest.comparePositionTo(member.roles.highest) <= 0) {
-            await message.reply('You aren\'t allowed to (un)mute someone with an equal/higher role!').catch(console.warn);
+            await message.reply({
+                content: 'You aren\'t allowed to mute someone with an equal/higher role!',
+            }).catch(console.warn);
             return;
         }
 
         if (['unmute'].includes(command_name)) {
             /* check if the user is already unmuted */
             if (!member.roles.cache.has(muted_users_role_id)) {
-                await message.reply('That user is already unmuted!');
+                await message.reply({
+                    content: 'That user is already unmuted!',
+                }).catch(console.warn);
                 return;
             }
 
@@ -81,11 +98,13 @@ module.exports = {
                 await member.roles.remove(muted_users_role_id, reason);
             } catch (error) {
                 console.trace(error);
-                await message.reply('Failed to unmute that member!').catch(console.warn);
+                await message.reply({
+                    content: 'Failed to unmute that member!',
+                }).catch(console.warn);
                 return;
             }
 
-            const unmute_message_contents = [
+            const unmute_message_options = [
                 `${member}`,
                 `You were unmuted in the Inertia Lighting Discord by ${staff_member.user} for:`,
                 '\`\`\`',
@@ -94,12 +113,12 @@ module.exports = {
             ].join('\n');
 
             /* message the member in the server */
-            await message.channel.send(unmute_message_contents).catch(console.warn);
+            await message.channel.send(unmute_message_options).catch(console.warn);
 
             /* dm the member */
             try {
                 const dm_channel = await member.createDM();
-                await dm_channel.send(unmute_message_contents);
+                await dm_channel.send(unmute_message_options);
             } catch {
                 // ignore any errors
             }
@@ -109,7 +128,9 @@ module.exports = {
 
         /* check if the user is already muted */
         if (member.roles.cache.has(muted_users_role_id)) {
-            await message.reply('That user is already muted!');
+            await message.reply({
+                content: 'That user is already muted!',
+            });
             return;
         }
 
@@ -118,7 +139,9 @@ module.exports = {
             await member.roles.add(muted_users_role_id, reason);
         } catch (error) {
             console.trace(error);
-            await message.reply('Failed to mute that member!').catch(console.warn);
+            await message.reply({
+                content: 'Failed to mute that member!',
+            }).catch(console.warn);
             return;
         }
 
@@ -131,7 +154,7 @@ module.exports = {
             /* change the permissions as needed */
             const current_channel_permissions_overwrites = Array.from(channel.permissionOverwrites.values());
             try {
-                await channel.overwritePermissions([
+                await channel.permissionOverwrites.set([
                     ...current_channel_permissions_overwrites,
                     channel_permission_overwrites_for_muted_users_role,
                 ]);
@@ -143,21 +166,23 @@ module.exports = {
             await Timer(100); // prevent api abuse
         }
 
-        const mute_message_contents = [
-            `${member}`,
-            `You were muted in the Inertia Lighting Discord by ${staff_member.user} for:`,
-            '\`\`\`',
-            `${reason}`,
-            '\`\`\`',
-        ].join('\n');
+        const mute_message_options = {
+            content: [
+                `${member}`,
+                `You were muted in the Inertia Lighting discord by ${staff_member.user} for:`,
+                '\`\`\`',
+                `${reason}`,
+                '\`\`\`',
+            ].join('\n'),
+        };
 
         /* message the member in the server */
-        await message.channel.send(mute_message_contents).catch(console.warn);
+        await message.channel.send(mute_message_options).catch(console.warn);
 
         /* dm the member */
         try {
             const dm_channel = await member.createDM();
-            await dm_channel.send(mute_message_contents);
+            await dm_channel.send(mute_message_options);
         } catch {
             // ignore any errors
         }

@@ -27,7 +27,9 @@ module.exports = {
         const lookup_roblox_user_id = command_args[0];
 
         if (!(lookup_discord_user_id || lookup_roblox_user_id)) {
-            message.reply('provide a \`roblox_user_id\` or a discord user @mention!').catch(console.warn);
+            message.reply({
+                content: 'provide a \`roblox_user_id\` or a discord user @mention!',
+            }).catch(console.warn);
             return;
         }
 
@@ -45,13 +47,17 @@ module.exports = {
         });
 
         /* send the user document */
-        await message.channel.send(new Discord.MessageEmbed({
-            color: 0x60A0FF,
-            author: {
-                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                name: 'Inertia Lighting | User Document',
-            },
-            description: `${'```'}json\n${JSON.stringify(db_user_data ?? 'user not found in database', null, 2)}\n${'```'}`,
-        })).catch(console.warn);
+        await message.channel.send({
+            embeds: [
+                new Discord.MessageEmbed({
+                    color: 0x60A0FF,
+                    author: {
+                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                        name: 'Inertia Lighting | User Document',
+                    },
+                    description: `${'```'}json\n${JSON.stringify(db_user_data ?? 'user not found in database', null, 2)}\n${'```'}`,
+                }),
+            ],
+        }).catch(console.warn);
     },
 };
