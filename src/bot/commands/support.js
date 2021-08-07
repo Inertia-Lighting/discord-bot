@@ -577,7 +577,7 @@ module.exports = {
                 return;
             }
 
-            const channel_exists_in_support_tickets_category = message.channel.parentID === support_tickets_category_id;
+            const channel_exists_in_support_tickets_category = message.channel.parentId === support_tickets_category_id;
             const channel_is_not_transcripts_channel = message.channel.id !== support_tickets_transcripts_channel_id;
             if (!(channel_exists_in_support_tickets_category && channel_is_not_transcripts_channel)) {
                 message.reply({
