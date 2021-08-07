@@ -426,6 +426,7 @@ module.exports = {
                 return; // don't allow multiple category_selection_message_collector to exist
             }
 
+            /** @type {Discord.Message} */
             const category_selection_message = await message.channel.send({
                 content: `${message.author}`,
                 embeds: [
@@ -446,7 +447,9 @@ module.exports = {
             }).catch(console.warn);
 
             const category_selection_message_collector_filter = (msg) => msg.author.id === message.author.id;
-            const category_selection_message_collector = category_selection_message.channel.createMessageCollector(category_selection_message_collector_filter);
+            const category_selection_message_collector = category_selection_message.channel.createMessageCollector({
+                filter: category_selection_message_collector_filter,
+            });
             category_selection_message_collector.on('collect', async (collected_category_selection_message) => {
                 const matching_support_category = support_categories.find((support_category) => `${support_category.human_index}` === collected_category_selection_message.content);
                 if (matching_support_category) {
@@ -486,14 +489,17 @@ module.exports = {
                                 description: [
                                     '**Type \`done\` when you have completed the instructions above.**',
                                     '**Type \`cancel\` if you wish to cancel this ticket.**',
+                                    '',
+                                    '*Doing nothing will result in your ticket automatically closing after 30 minutes.*',
                                 ].join('\n'),
                             }),
                         ],
                     }).catch(console.warn);
 
                     const category_instructions_options_message_collector_filter = (msg) => msg.author.id === message.author.id;
-                    const category_instructions_options_message_collector = support_channel.createMessageCollector(category_instructions_options_message_collector_filter, {
-                        time: 10 * 60_000, // force the message collector to stop after 10 minutes
+                    const category_instructions_options_message_collector = support_channel.createMessageCollector({
+                        filter: category_instructions_options_message_collector_filter,
+                        time: 30 * 60_000, // force the message collector to stop after 30 minutes
                     });
                     category_instructions_options_message_collector.on('collect', async (collected_options_message) => {
                         async function cleanupCategoryInstructionsOptionsMessageCollector() {
