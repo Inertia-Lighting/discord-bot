@@ -118,6 +118,41 @@ async function listModerationActions(message, lookup_mode='member') {
         return;
     }
 
+    await bot_message.edit({
+        components: [
+            {
+                type: 1,
+                components: [
+                    {
+                        type: 2,
+                        style: 2,
+                        value: 'previous',
+                        emoji: {
+                            id: null,
+                            name: 'arrow_right',
+                        },
+                    }, {
+                        type: 2,
+                        style: 2,
+                        value: 'next',
+                        emoji: {
+                            id: null,
+                            name: 'arrow_left',
+                        },
+                    }, {
+                        type: 2,
+                        style: 2,
+                        value: 'stop',
+                        emoji: {
+                            id: null,
+                            name: 'stop_button',
+                        },
+                    },
+                ],
+            },
+        ],
+    });
+
     /* sort the moderation actions by epoch (newest -> oldest) */
     const sorted_moderation_actions = db_moderation_actions.sort((a, b) => b.record.epoch - a.record.epoch);
 
@@ -159,36 +194,27 @@ async function listModerationActions(message, lookup_mode='member') {
     }
 
     await editEmbedWithNextModerationActionsChunk();
-    await bot_message.react('⬅️');
-    await bot_message.react('➡️');
-    await bot_message.react('⏹️');
 
-    const message_reaction_filter = (collected_reaction, user) => user.id === message.author.id;
-    const message_reaction_collector = bot_message.createReactionCollector({
-        filter: message_reaction_filter,
+    const message_button_collector_filter = (button_interaction) => button_interaction.user.id === message.author.id;
+    const message_button_collector = bot_message.createMessageComponentCollector({
+        filter: message_button_collector_filter,
         time: 5 * 60_000, // 5 minutes
     });
 
-    message_reaction_collector.on('collect', async (collected_reaction, collected_reaction_user) => {
-        message_reaction_collector.resetTimer();
+    message_button_collector.on('collect', async (button_interaction) => {
+        message_button_collector.resetTimer();
 
-        switch (collected_reaction.emoji.name) {
-            case '⬅️': {
+        switch (button_interaction.customId) {
+            case 'previous': {
                 page_index = page_index < moderation_actions_chunks.length - 1 ? page_index + 1 : 0;
                 break;
             }
-            case '➡️': {
+            case 'next': {
                 page_index = page_index > 0 ? page_index - 1 : moderation_actions_chunks.length - 1;
                 break;
             }
-            case '⏹️': {
-                message_reaction_collector.stop();
-                break;
-            }
-            case '🖕': {
-                await bot_message.channel.send({
-                    content: `${collected_reaction_user}, That\'s very rude!`,
-                }).catch(console.warn);
+            case 'stop': {
+                message_button_collector.stop();
                 break;
             }
             default: {
@@ -196,14 +222,14 @@ async function listModerationActions(message, lookup_mode='member') {
             }
         }
 
-        if (message_reaction_collector.ended) return;
+        if (message_button_collector.ended) return;
 
         await editEmbedWithNextModerationActionsChunk();
         await Timer(500); // prevent api abuse
         await purgeUserReactionsFromMessage(bot_message);
     });
 
-    message_reaction_collector.on('end', async () => {
+    message_button_collector.on('end', async () => {
         await bot_message.delete().catch(console.warn);
     });
 
