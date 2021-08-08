@@ -148,7 +148,7 @@ module.exports = {
         /* change channel permissions for the muted role */
         for (const channel of message.guild.channels.cache.values()) {
             /* check if any of the permissions need to be changed */
-            const muted_users_role_permission_overwrites_in_channel = channel.permissionOverwrites.get(muted_users_role_id);
+            const muted_users_role_permission_overwrites_in_channel = channel.permissionOverwrites.resolve(muted_users_role_id);
             if (muted_users_role_permission_overwrites_in_channel?.deny?.equals(channel_permission_overwrites_for_muted_users_role.deny)) continue;
 
             /* change the permissions as needed */
