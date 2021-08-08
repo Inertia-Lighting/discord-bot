@@ -152,7 +152,7 @@ module.exports = {
             if (muted_users_role_permission_overwrites_in_channel?.deny?.equals(channel_permission_overwrites_for_muted_users_role.deny)) continue;
 
             /* change the permissions as needed */
-            const current_channel_permissions_overwrites = Array.from(channel.permissionOverwrites.values());
+            const current_channel_permissions_overwrites = Array.from(channel.permissionOverwrites.cache.values());
             try {
                 await channel.permissionOverwrites.set([
                     ...current_channel_permissions_overwrites,
