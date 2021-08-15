@@ -16,31 +16,6 @@ const { command_permission_levels } = require('../common/bot.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
-/**
- * Purges all reactions created users on a specified message
- * @param {Discord.Message} message
- * @returns {Promise<void>}
- */
- async function purgeUserReactionsFromMessage(message) {
-    if (!(message instanceof Discord.Message)) throw new TypeError('\`message\` must be a Discord.Message');
-    if (!(message?.guild instanceof Discord.Guild)) throw new TypeError('\`message.guild\` must be a Discord.Guild');
-
-    if (!message.guild.me.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES)) return;
-
-    for (const message_reaction of message.reactions.cache.values()) {
-        const reaction_users = message_reaction.users.cache.filter(user => !user.bot && !user.system); // don't interact with bots / system
-
-        for (const reaction_user of reaction_users.values()) {
-            message_reaction.users.remove(reaction_user);
-            if (reaction_users.size > 0) await Timer(250); // prevent api abuse
-        }
-    }
-
-    return; // complete async
-}
-
-//---------------------------------------------------------------------------------------------------------------//
-
 module.exports = {
     name: 'products',
     description: 'lists all of the products',
@@ -161,18 +136,18 @@ module.exports = {
                     break;
                 }
             }
-    
+
             await button_interaction.deferUpdate();
-    
+
             if (message_button_collector.ended) return;
-    
-            await editEmbedWithNextModerationActionsChunk();
+
+            await editEmbedWithNextProductChunk();
         });
-    
+
         message_button_collector.on('end', async () => {
             await bot_message.delete().catch(console.warn);
         });
-    
+
         return; // complete async
     },
 };
