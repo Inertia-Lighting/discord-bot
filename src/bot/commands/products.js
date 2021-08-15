@@ -100,46 +100,79 @@ module.exports = {
         }
 
         await editEmbedWithNextProductChunk();
-        await bot_message.react('⬅️');
-        await bot_message.react('➡️');
-        await bot_message.react('⏹️');
-
-        const message_reaction_filter = (collected_reaction, user) => user.id === message.author.id;
-        const message_reaction_collector = bot_message.createReactionCollector({
-            filter: message_reaction_filter,
-            time: 5 * 60_000, // 5 minutes
+        await bot_message.edit({
+            components: [
+                {
+                    type: 1,
+                    components: [
+                        {
+                            type: 2,
+                            style: 2,
+                            custom_id: 'previous',
+                            emoji: {
+                                id: null,
+                                name: '⬅️',
+                            },
+                        }, {
+                            type: 2,
+                            style: 2,
+                            custom_id: 'next',
+                            emoji: {
+                                id: null,
+                                name: '➡️',
+                            },
+                        }, {
+                            type: 2,
+                            style: 2,
+                            custom_id: 'stop',
+                            emoji: {
+                                id: null,
+                                name: '⏹️',
+                            },
+                        },
+                    ],
+                },
+            ],
         });
 
-        message_reaction_collector.on('collect', async (collected_reaction) => {
-            message_reaction_collector.resetTimer();
-
-            switch (collected_reaction.emoji.name) {
-                case '⬅️': {
-                    page_index = page_index < roblox_products_chunks.length ? page_index + 1 : 0;
+        const message_button_collector_filter = (button_interaction) => button_interaction.user.id === message.author.id;
+        const message_button_collector = bot_message.createMessageComponentCollector({
+            filter: message_button_collector_filter,
+            time: 5 * 60_000, // 5 minutes
+        });
+    
+        message_button_collector.on('collect', async (button_interaction) => {
+            message_button_collector.resetTimer();
+    
+            switch (button_interaction.customId) {
+                case 'previous': {
+                    page_index = page_index < roblox_products_chunks.length - 1 ? page_index + 1 : 0;
                     break;
                 }
-                case '➡️': {
+                case 'next': {
                     page_index = page_index > 0 ? page_index - 1 : roblox_products_chunks.length - 1;
                     break;
                 }
-                case '⏹️': {
-                    message_reaction_collector.stop();
+                case 'stop': {
+                    message_button_collector.stop();
                     break;
                 }
                 default: {
                     break;
                 }
             }
-
-            if (message_reaction_collector.ended) return;
-
-            await editEmbedWithNextProductChunk();
-            await Timer(250);
-            await purgeUserReactionsFromMessage(bot_message);
+    
+            await button_interaction.deferUpdate();
+    
+            if (message_button_collector.ended) return;
+    
+            await editEmbedWithNextModerationActionsChunk();
         });
-
-        message_reaction_collector.on('end', async () => {
-            await bot_message.delete();
+    
+        message_button_collector.on('end', async () => {
+            await bot_message.delete().catch(console.warn);
         });
+    
+        return; // complete async
     },
 };
