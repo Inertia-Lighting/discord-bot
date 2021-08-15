@@ -115,10 +115,10 @@ module.exports = {
             filter: message_button_collector_filter,
             time: 5 * 60_000, // 5 minutes
         });
-    
+
         message_button_collector.on('collect', async (button_interaction) => {
             message_button_collector.resetTimer();
-    
+
             switch (button_interaction.customId) {
                 case 'previous': {
                     page_index = page_index < roblox_products_chunks.length - 1 ? page_index + 1 : 0;
