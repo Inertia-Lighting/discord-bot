@@ -16,31 +16,6 @@ const { command_permission_levels } = require('../common/bot.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
-/**
- * Purges all reactions created users on a specified message
- * @param {Discord.Message} message
- * @returns {Promise<void>}
- */
- async function purgeUserReactionsFromMessage(message) {
-    if (!(message instanceof Discord.Message)) throw new TypeError('\`message\` must be a Discord.Message');
-    if (!(message?.guild instanceof Discord.Guild)) throw new TypeError('\`message.guild\` must be a Discord.Guild');
-
-    if (!message.guild.me.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES)) return;
-
-    for (const message_reaction of message.reactions.cache.values()) {
-        const reaction_users = message_reaction.users.cache.filter(user => !user.bot && !user.system); // don't interact with bots / system
-
-        for (const reaction_user of reaction_users.values()) {
-            message_reaction.users.remove(reaction_user);
-            if (reaction_users.size > 0) await Timer(250); // prevent api abuse
-        }
-    }
-
-    return; // complete async
-}
-
-//---------------------------------------------------------------------------------------------------------------//
-
 module.exports = {
     name: 'products',
     description: 'lists all of the products',
@@ -67,10 +42,45 @@ module.exports = {
         /* filter out non-public products */
         const public_roblox_products = db_roblox_products.filter(product => product.public);
 
+        await bot_message.edit({
+            components: [
+                {
+                    type: 1,
+                    components: [
+                        {
+                            type: 2,
+                            style: 2,
+                            custom_id: 'previous',
+                            emoji: {
+                                id: null,
+                                name: '⬅️',
+                            },
+                        }, {
+                            type: 2,
+                            style: 2,
+                            custom_id: 'next',
+                            emoji: {
+                                id: null,
+                                name: '➡️',
+                            },
+                        }, {
+                            type: 2,
+                            style: 2,
+                            custom_id: 'stop',
+                            emoji: {
+                                id: null,
+                                name: '⏹️',
+                            },
+                        },
+                    ],
+                },
+            ],
+        });
+
         /* send a carousel containing 1 product per page */
         let page_index = 0;
 
-        async function editEmbedWithNextProductChunk() {
+        async function editEmbedWithNextProduct() {
             const public_roblox_product = public_roblox_products[page_index];
 
             await bot_message.edit({
@@ -97,31 +107,28 @@ module.exports = {
             return; // complete async
         }
 
-        await editEmbedWithNextProductChunk();
-        await bot_message.react('⬅️');
-        await bot_message.react('➡️');
-        await bot_message.react('⏹️');
+        await editEmbedWithNextProduct();
 
-        const message_reaction_filter = (collected_reaction, user) => user.id === message.author.id;
-        const message_reaction_collector = bot_message.createReactionCollector({
-            filter: message_reaction_filter,
+        const message_button_collector_filter = (button_interaction) => button_interaction.user.id === message.author.id;
+        const message_button_collector = bot_message.createMessageComponentCollector({
+            filter: message_button_collector_filter,
             time: 5 * 60_000, // 5 minutes
         });
 
-        message_reaction_collector.on('collect', async (collected_reaction) => {
-            message_reaction_collector.resetTimer();
+        message_button_collector.on('collect', async (button_interaction) => {
+            message_button_collector.resetTimer();
 
-            switch (collected_reaction.emoji.name) {
-                case '⬅️': {
-                    page_index = page_index < public_roblox_products.length ? page_index + 1 : 0;
+            switch (button_interaction.customId) {
+                case 'previous': {
+                    page_index = page_index < public_roblox_products.length - 1 ? page_index + 1 : 0;
                     break;
                 }
-                case '➡️': {
+                case 'next': {
                     page_index = page_index > 0 ? page_index - 1 : public_roblox_products.length - 1;
                     break;
                 }
-                case '⏹️': {
-                    message_reaction_collector.stop();
+                case 'stop': {
+                    message_button_collector.stop();
                     break;
                 }
                 default: {
@@ -129,15 +136,15 @@ module.exports = {
                 }
             }
 
-            if (message_reaction_collector.ended) return;
+            await button_interaction.deferUpdate();
 
-            await editEmbedWithNextProductChunk();
-            await Timer(250);
-            await purgeUserReactionsFromMessage(bot_message);
+            if (message_button_collector.ended) return;
+
+            await editEmbedWithNextProduct();
         });
 
-        message_reaction_collector.on('end', async () => {
-            await bot_message.delete();
+        message_button_collector.on('end', async () => {
+            await bot_message.delete().catch(console.warn);
         });
     },
 };
