@@ -87,7 +87,9 @@ module.exports = {
                             `**PayPal Price** $${Number.parseFloat(public_roblox_product.price_in_usd).toFixed(2)} USD`,
                             `\nA brief overview of ${public_roblox_product.name}. \n\`\`\`${string_ellipses(public_roblox_product.description, 1000)}\`\`\``,
                         ].join('\n'),
-                        image: `https://inertia.lighting/assets/media/images/products/${public_roblox_product.code}.png`,
+                        image: {
+                            url: `https://inertia.lighting/assets/media/images/products/${public_roblox_product.code}.png`,
+                        },
                     }),
                 ],
             }).catch(console.warn);
