@@ -34,7 +34,7 @@ async function illegalNicknameHandler(member) {
     const user_display_name = `${member.displayName}`; // force to be a string
     const non_allowed_occurrences = user_display_name.match(non_allowed_regex_filter) ?? []; // force to be an array
 
-    const non_allowed_occurrences_threshold = user_display_name.length / 4; // 1/5th of the display name
+    const non_allowed_occurrences_threshold = user_display_name.length / 4; // 1/4th of the display name
     const non_allowed_occurrences_threshold_exceeded = non_allowed_occurrences.length > non_allowed_occurrences_threshold;
 
     if (!non_allowed_occurrences_threshold_exceeded) return; // only proceed if the non-allowed character threshold is exceeded
