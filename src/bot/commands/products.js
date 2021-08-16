@@ -6,7 +6,7 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const { array_chunks, string_ellipses, Timer } = require('../../utilities.js');
+const { string_ellipses, Timer } = require('../../utilities.js');
 
 const { go_mongo_db } = require('../../mongo/mongo.js');
 
@@ -67,14 +67,11 @@ module.exports = {
         /* filter out non-public products */
         const public_roblox_products = db_roblox_products.filter(product => product.public);
 
-        /* split the products into a 2-dimensional array of chunks */
-        const roblox_products_chunks = array_chunks(public_roblox_products, 1);
-
         /* send a carousel containing 1 product per page */
         let page_index = 0;
 
         async function editEmbedWithNextProductChunk() {
-            const roblox_products_chunk = roblox_products_chunks[page_index];
+            const public_roblox_product = public_roblox_products[page_index];
 
             await bot_message.edit({
                 embeds: [
@@ -84,14 +81,13 @@ module.exports = {
                             iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                             name: 'Inertia Lighting | Products',
                         },
-                        description: roblox_products_chunk.map(product =>
-                            [
-                                `**Product Name** ${product.name}`,
-                                `**Price** ${product.price_in_robux} <:robux:759699085439139871>`,
-                                `**PayPal Price** $${Number.parseFloat(product.price_in_usd).toFixed(2)} USD (before taxes/fees)`,
-                                `\nA brief overview of ${product.name}. \n\`\`\`${string_ellipses(product.description, 500)}\`\`\``,
-                            ].join('\n')
-                        ).join('\n'),
+                        description: [
+                            `**Product Name** ${public_roblox_product.name}`,
+                            `**Price** ${public_roblox_product.price_in_robux} <:robux:759699085439139871>`,
+                            `**PayPal Price** $${Number.parseFloat(public_roblox_product.price_in_usd).toFixed(2)} USD`,
+                            `\nA brief overview of ${public_roblox_product.name}. \n\`\`\`${string_ellipses(public_roblox_product.description, 1000)}\`\`\``,
+                        ].join('\n'),
+                        image: `https://inertia.lighting/assets/media/images/products/${public_roblox_product.code}.png`,
                     }),
                 ],
             }).catch(console.warn);
@@ -115,11 +111,11 @@ module.exports = {
 
             switch (collected_reaction.emoji.name) {
                 case '⬅️': {
-                    page_index = page_index < roblox_products_chunks.length ? page_index + 1 : 0;
+                    page_index = page_index < public_roblox_products.length ? page_index + 1 : 0;
                     break;
                 }
                 case '➡️': {
-                    page_index = page_index > 0 ? page_index - 1 : roblox_products_chunks.length - 1;
+                    page_index = page_index > 0 ? page_index - 1 : public_roblox_products.length - 1;
                     break;
                 }
                 case '⏹️': {
