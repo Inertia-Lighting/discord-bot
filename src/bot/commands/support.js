@@ -25,8 +25,6 @@ const bot_command_prefix = process.env.BOT_COMMAND_PREFIX;
 const support_tickets_category_id = process.env.BOT_SUPPORT_TICKETS_CATEGORY_ID;
 const support_tickets_transcripts_channel_id = process.env.BOT_SUPPORT_TICKETS_TRANSCRIPTS_CHANNEL_ID;
 
-// const drawn_discord_user_id = '331938622733549590';
-
 //---------------------------------------------------------------------------------------------------------------//
 
 /**
@@ -63,42 +61,8 @@ const support_categories = new Discord.Collection([
     //                 title: 'Please fill out our partner request form.',
     //                 description: [
     //                     '[Inertia Lighting Partner Request Form](https://inertia.lighting/partner-requests-form)',
-    //                     '**If you don\'t put effort into the form, your request will be ignored!**',
-    //                 ].join('\n'),
-    //             }),
-    //         ],
-    //     },
-    // }, {
-    //     id: 'PAYPAL_PURCHASES',
-    //     name: 'PayPal',
-    //     description: 'Come here if you wish to purchase any of our products using PayPal.',
-    //     qualified_support_role_ids: [
-    //         process.env.BOT_SUPPORT_STAFF_PAYPAL_ROLE_ID,
-    //         process.env.BOT_SUPPORT_STAFF_PRODUCT_PURCHASES_ROLE_ID,
-    //     ],
-    //     automatically_save_when_closed: true,
-    //     instructions_message_options: {
-    //         embeds: [
-    //             new Discord.MessageEmbed({
-    //                 color: 0x60A0FF,
-    //                 author: {
-    //                     iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-    //                     name: 'Inertia Lighting | Support Ticket Instructions',
-    //                 },
-    //                 description: [
-    //                     '**Please fill out this template so that our staff can assist you.**',
-    //                     '- **Product(s):** ( C-Lights, Magic Panels, etc )',
     //                     '',
-    //                     `**After filling out the template, please wait for <@!${drawn_discord_user_id}> to provide you with a payment destination.**`,
-    //                     '',
-    //                     '**Once you have payed, please provide the following information.**',
-    //                     '- **Transaction Email:** ( you@your.email )',
-    //                     '- **Transaction Id:** ( 000000000000000000 )',
-    //                     '- **Transaction Amount:** ( $1.69 )',
-    //                     '- **Transaction Date:** ( 1970-01-01 )',
-    //                     '- **Transaction Time:** ( 12:00 AM )',
-    //                     '',
-    //                     '**Please follow the above instructions properly, or your ticket will be ignored!**',
+    //                     '**If you don\'t fill out the template properly, your ticket will be ignored!**',
     //                 ].join('\n'),
     //             }),
     //         ],
@@ -126,6 +90,7 @@ const support_categories = new Discord.Collection([
                         '- **Reason:** ( new account | gift for someone | other )',
                         '- **New Roblox Account:** ( copy the URL of the profile page for the account | n/a )',
                         '- **New Discord Account:** ( @mention the account | n/a )',
+                        '',
                         '**If you don\'t fill out the template properly, your ticket will be ignored!**',
                     ].join('\n'),
                 }),
@@ -153,6 +118,7 @@ const support_categories = new Discord.Collection([
                         '- **Purchase Date(s):** ( 1970-01-01 )',
                         '- **Proof Of Purchase(s):** ( screenshot [your transactions](https://www.roblox.com/transactions) )',
                         '- **Issue:** ( describe your issue )',
+                        '',
                         '**If you don\'t fill out the template properly, your ticket will be ignored!**',
                     ].join('\n'),
                 }),
@@ -182,6 +148,7 @@ const support_categories = new Discord.Collection([
                         '- **HTTPS Enabled In Game:** ( yes | idk | no )',
                         '- **Roblox Studio Output:** ( screenshot your [studio output](https://prnt.sc/y6hnau) )',
                         '- **Issue:** ( describe your issue )',
+                        '',
                         '**If you don\'t fill out the template properly, your ticket will be ignored!**',
                     ].join('\n'),
                 }),
@@ -207,6 +174,7 @@ const support_categories = new Discord.Collection([
                         '**Please fill out this template so that our staff can assist you.**',
                         '- **Product(s):** ( C-Lights, Magic Panels, etc )',
                         '- **Question:** ( what\'s your question? )',
+                        '',
                         '**If you don\'t fill out the template properly, your ticket will be ignored!**',
                     ].join('\n'),
                 }),
@@ -364,6 +332,7 @@ async function sendDatabaseDocumentsToSupportTicketChannel(support_channel, guil
         },
     });
     await support_channel.send({
+        content: 'This embed is for our support staff.',
         embeds: [
             new Discord.MessageEmbed({
                 color: 0x60A0FF,
@@ -385,6 +354,7 @@ async function sendDatabaseDocumentsToSupportTicketChannel(support_channel, guil
         },
     });
     await support_channel.send({
+        content: 'This embed is for our support staff.',
         embeds: [
             new Discord.MessageEmbed({
                 color: 0x60A0FF,
@@ -480,17 +450,21 @@ module.exports = {
                     await sendDatabaseDocumentsToSupportTicketChannel(support_channel, message.member);
 
                     /* send the category-specific instructions */
-                    await support_channel.send(matching_support_category.instructions_message_options).catch(console.warn);
+                    const category_instructions_message = await support_channel.send({
+                        ...matching_support_category.instructions_message_options,
+                        content: `${message.author} please read this message!`,
+                    }).catch(console.warn);
 
                     const category_instructions_options_message = await support_channel.send({
+                        content: `${message.author}`,
                         embeds: [
                             new Discord.MessageEmbed({
                                 color: 0x60A0FF,
                                 description: [
-                                    '**Type \`done\` when you have completed the instructions above.**',
-                                    '**Type \`cancel\` if you wish to cancel this ticket.**',
+                                    `**Send \`done\` after you have completed the [instructions](${category_instructions_message.url}).**`,
+                                    '**Send \`cancel\` if you wish to cancel this ticket.**',
                                     '',
-                                    '*Doing nothing will result in your ticket automatically closing after 30 minutes.*',
+                                    '*Sending neither will result in your ticket automatically closing after 30 minutes.*',
                                 ].join('\n'),
                             }),
                         ],
