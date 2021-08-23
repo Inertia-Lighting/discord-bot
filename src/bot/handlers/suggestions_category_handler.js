@@ -19,6 +19,8 @@ async function suggestionsCategoryHandler(message) {
     if (message.author.system || message.author.bot) return;
     if (message.content.length === 0) return;
 
+    if (message.member.roles.has(process.env.BOT_STAFF_ROLE_ID)) return;
+
     const suggestions_channel = message.channel;
 
     /* suggestion text */
