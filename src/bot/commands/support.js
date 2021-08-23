@@ -332,7 +332,6 @@ async function sendDatabaseDocumentsToSupportTicketChannel(support_channel, guil
         },
     });
     await support_channel.send({
-        content: 'This embed is for our support staff.',
         embeds: [
             new Discord.MessageEmbed({
                 color: 0x60A0FF,
@@ -340,6 +339,7 @@ async function sendDatabaseDocumentsToSupportTicketChannel(support_channel, guil
                     iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                     name: 'Inertia Lighting | User Document',
                 },
+                title: 'This embed is for our support staff.',
                 description: `${'```'}json\n${JSON.stringify(db_user_data ?? 'user not found in database', null, 2)}\n${'```'}`,
             }),
         ],
@@ -354,7 +354,6 @@ async function sendDatabaseDocumentsToSupportTicketChannel(support_channel, guil
         },
     });
     await support_channel.send({
-        content: 'This embed is for our support staff.',
         embeds: [
             new Discord.MessageEmbed({
                 color: 0x60A0FF,
@@ -362,6 +361,7 @@ async function sendDatabaseDocumentsToSupportTicketChannel(support_channel, guil
                     iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                     name: 'Inertia Lighting | Blacklisted User Document',
                 },
+                title: 'This embed is for our support staff.',
                 description: (blacklisted_user_db_data ? [
                     `**User:** <@${blacklisted_user_db_data.identity.discord_user_id}>`,
                     `**Roblox Id:** \`${blacklisted_user_db_data.identity.roblox_user_id}\``,
@@ -441,28 +441,22 @@ module.exports = {
                         `Go to ${support_channel} to continue.`,
                     ].join('\n')).catch(console.warn);
 
-                    /* ping the user to let them know where to go */
-                    await support_channel.send({
-                        content: `${message.author}, welcome to your support ticket!`,
-                    }).catch(console.warn);
-
                     /* send the database documents */
                     await sendDatabaseDocumentsToSupportTicketChannel(support_channel, message.member);
 
                     /* send the category-specific instructions */
-                    const category_instructions_message = await support_channel.send({
-                        ...matching_support_category.instructions_message_options,
-                        content: `${message.author} please read this message!`,
-                    }).catch(console.warn);
+                    const category_instructions_message = await support_channel.send(matching_support_category.instructions_message_options).catch(console.warn);
 
                     const category_instructions_options_message = await support_channel.send({
-                        content: `${message.author}`,
+                        content: `${message.author}, welcome to your support ticket!`,
                         embeds: [
                             new Discord.MessageEmbed({
                                 color: 0x60A0FF,
                                 description: [
-                                    `**Send \`done\` after you have completed the [instructions](${category_instructions_message.url}).**`,
-                                    '**Send \`cancel\` if you wish to cancel this ticket.**',
+                                    `**Please read the [instructions](${category_instructions_message.url}) above!**`,
+                                    '',
+                                    `Send \`done\` after you have completed the [instructions](${category_instructions_message.url}).`,
+                                    'Send \`cancel\` if you wish to cancel this ticket.',
                                     '',
                                     '*Sending neither will result in your ticket automatically closing after 30 minutes.*',
                                 ].join('\n'),
