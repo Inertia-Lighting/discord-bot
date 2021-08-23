@@ -455,8 +455,8 @@ module.exports = {
                                 description: [
                                     `**Please read the [instructions](${category_instructions_message.url}) above!**`,
                                     '',
-                                    `Send __**done**__ after you have completed the [instructions](${category_instructions_message.url}).`,
-                                    'Send __**cancel**__ if you wish to cancel this ticket.',
+                                    `Send \"**done**\" after you have completed the [instructions](${category_instructions_message.url}).`,
+                                    'Send \"**cancel**\" if you wish to cancel this ticket.',
                                     '',
                                     '*Sending neither will result in your ticket automatically closing after 30 minutes.*',
                                 ].join('\n'),
