@@ -31,7 +31,7 @@
     "fs": "0.0.1-security",
     "go-mongo-db": "github:Inertia-Lighting/go-mongo-db#v0.0.1-beta",
     "moment-timezone": "^0.5.32",
-    "node-gyp": "^8.1.0",
+    "node-gyp": "^8.2.0",
     "path": "^0.12.7",
     "string-similarity": "^4.0.4",
     "utf-8-validate": "^5.0.5",
