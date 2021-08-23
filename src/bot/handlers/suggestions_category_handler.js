@@ -19,10 +19,8 @@ async function suggestionsCategoryHandler(message) {
     if (message.author.system || message.author.bot) return;
     if (message.content.length === 0) return;
 
-    if (message.member.roles.cache.some(role => role.id === process.env.BOT_STAFF_ROLE_ID)) {
-        message.delete();
-        return;
-    }
+    /* don't allow staff to create suggestions */
+    if (message.member.roles.cache.has(process.env.BOT_STAFF_ROLE_ID)) return;
 
     const suggestions_channel = message.channel;
 
