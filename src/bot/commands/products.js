@@ -120,11 +120,11 @@ module.exports = {
 
             switch (button_interaction.customId) {
                 case 'previous': {
-                    page_index = page_index < roblox_products_chunks.length - 1 ? page_index + 1 : 0;
+                    page_index = page_index < public_roblox_products.length - 1 ? page_index + 1 : 0;
                     break;
                 }
                 case 'next': {
-                    page_index = page_index > 0 ? page_index - 1 : roblox_products_chunks.length - 1;
+                    page_index = page_index > 0 ? page_index - 1 : public_roblox_products.length - 1;
                     break;
                 }
                 case 'stop': {
@@ -140,13 +140,11 @@ module.exports = {
 
             if (message_button_collector.ended) return;
 
-            await editEmbedWithNextProductChunk();
+            await editEmbedWithNextProduct();
         });
 
         message_button_collector.on('end', async () => {
             await bot_message.delete().catch(console.warn);
         });
-
-        return; // complete async
     },
 };
