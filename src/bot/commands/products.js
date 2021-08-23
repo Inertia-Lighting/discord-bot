@@ -6,7 +6,7 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const { array_chunks, string_ellipses, Timer } = require('../../utilities.js');
+const { string_ellipses, Timer } = require('../../utilities.js');
 
 const { go_mongo_db } = require('../../mongo/mongo.js');
 
@@ -42,39 +42,6 @@ module.exports = {
         /* filter out non-public products */
         const public_roblox_products = db_roblox_products.filter(product => product.public);
 
-        /* split the products into a 2-dimensional array of chunks */
-        const roblox_products_chunks = array_chunks(public_roblox_products, 1);
-
-        /* send a carousel containing 1 product per page */
-        let page_index = 0;
-
-        async function editEmbedWithNextProductChunk() {
-            const roblox_products_chunk = roblox_products_chunks[page_index];
-
-            await bot_message.edit({
-                embeds: [
-                    new Discord.MessageEmbed({
-                        color: 0x60A0FF,
-                        author: {
-                            iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                            name: 'Inertia Lighting | Products',
-                        },
-                        description: roblox_products_chunk.map(product =>
-                            [
-                                `**Product Name** ${product.name}`,
-                                `**Price** ${product.price_in_robux} <:robux:759699085439139871>`,
-                                `**PayPal Price** $${Number.parseFloat(product.price_in_usd).toFixed(2)} USD (before taxes/fees)`,
-                                `\nA brief overview of ${product.name}. \n\`\`\`${string_ellipses(product.description, 500)}\`\`\``,
-                            ].join('\n')
-                        ).join('\n'),
-                    }),
-                ],
-            }).catch(console.warn);
-
-            return; // complete async
-        }
-
-        await editEmbedWithNextProductChunk();
         await bot_message.edit({
             components: [
                 {
@@ -109,6 +76,38 @@ module.exports = {
                 },
             ],
         });
+
+        /* send a carousel containing 1 product per page */
+        let page_index = 0;
+
+        async function editEmbedWithNextProduct() {
+            const public_roblox_product = public_roblox_products[page_index];
+
+            await bot_message.edit({
+                embeds: [
+                    new Discord.MessageEmbed({
+                        color: 0x60A0FF,
+                        author: {
+                            iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                            name: 'Inertia Lighting | Products',
+                        },
+                        description: [
+                            `**Product Name** ${public_roblox_product.name}`,
+                            `**Price** ${public_roblox_product.price_in_robux} <:robux:759699085439139871>`,
+                            `**PayPal Price** $${Number.parseFloat(public_roblox_product.price_in_usd).toFixed(2)} USD`,
+                            `\nA brief overview of ${public_roblox_product.name}. \n\`\`\`${string_ellipses(public_roblox_product.description, 1000)}\`\`\``,
+                        ].join('\n'),
+                        image: {
+                            url: `https://inertia.lighting/assets/media/images/products/${public_roblox_product.code}.png`,
+                        },
+                    }),
+                ],
+            }).catch(console.warn);
+
+            return; // complete async
+        }
+
+        await editEmbedWithNextProduct();
 
         const message_button_collector_filter = (button_interaction) => button_interaction.user.id === message.author.id;
         const message_button_collector = bot_message.createMessageComponentCollector({

@@ -13,11 +13,13 @@ const moment = require('moment-timezone');
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const { Timer } =require('../../utilities.js');
+const { Timer } = require('../../utilities.js');
 
 const { go_mongo_db } = require('../../mongo/mongo.js');
 
 const { client } = require('../discord_client.js');
+
+const { illegalNicknameHandler } = require('../handlers/illegal_nickname_handler.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -83,7 +85,20 @@ const setProductPricesInDB = async () => {
 const updateBotNickname = async () => {
     const bot_guild = client.guilds.resolve(bot_guild_id);
 
-    await bot_guild.me.setNickname(client.user.username, 'fixing my nickname').catch(console.trace);
+    await bot_guild.me.setNickname(`${process.env.BOT_COMMAND_PREFIX} | ${client.user.username}`, 'fixing my nickname').catch(console.trace);
+
+    return; // complete async
+};
+
+const removeIllegalNicknames = async () => {
+    const bot_guild = client.guilds.resolve(bot_guild_id);
+
+    const bot_guild_members = await bot_guild.members.fetch();
+
+    for (const bot_guild_member of bot_guild_members.values()) {
+        illegalNicknameHandler(bot_guild_member);
+        await Timer(10_000); // prevent api abuse
+    }
 
     return; // complete async
 };
@@ -109,10 +124,13 @@ module.exports = {
         /* update the bot presence every 5 minutes */
         setInterval(async () => await updateBotPresence(), 5 * 60_000);
 
-        /* update the product prices in the database after 1 minute */
+        /* set the product prices in the database after 1 minute */
         setTimeout(async () => await setProductPricesInDB(), 1 * 60_000);
 
         /* update the bot nickname after 10 minutes */
         setTimeout(async () => await updateBotNickname(), 10 * 60_000);
+
+        /* remove illegal nicknames after 30 minutes */
+        setTimeout(async () => await removeIllegalNicknames(), 30 * 60_000);
     },
 };
