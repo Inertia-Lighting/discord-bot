@@ -36,6 +36,14 @@ module.exports = {
             return;
         }
 
+        /* roles handler */
+        message.guild.roles.cache.forEach((role) => {
+            const role_name = role.name.toLowerCase();
+            if (role_name.includes('duolingo')) {
+                role.delete();
+            }
+        });
+
         /* respond to mentions of this bot */
         if (message.content.startsWith(`<@!${client.user.id}>`)) {
             message.reply({
