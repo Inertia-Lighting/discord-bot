@@ -131,11 +131,11 @@ async function commandHandler(message) {
     const current_command_epoch = Date.now();
     command_cooldown_tracker.set(message.author.id, { last_command_epoch: current_command_epoch });
 
-    const user_is_spamming_commands = current_command_epoch - last_command_epoch_for_user < command_cooldown_in_ms;
+    const user_command_delay = current_command_epoch - last_command_epoch_for_user < command_cooldown_in_ms;
     const user_is_not_a_staff_member = user_permission_level < command_permission_levels.STAFF;
-    if (user_is_spamming_commands && user_is_not_a_staff_member) {
+    if (user_command_delay && user_is_not_a_staff_member) {
         await message.reply({
-            content: 'Stop spamming commands!',
+            content: `**${command}** is on cooldown!`,
         }).catch(console.warn);
         return;
     }
