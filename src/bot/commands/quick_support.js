@@ -142,6 +142,12 @@ const qs_topics = [
             'downloading products',
         ],
         support_contents: 'To download your products, go to the [products page](https://inertia.lighting/products) on our website.\nMake sure to login with the correct discord account!',
+    }, {
+        title: 'How do I take a screenshot?',
+        searchable_queries: [
+            'screenshot',
+        ],
+        support_contents: 'Press the keyboard shortcut for your platform.\n\nWindows: \`WINDOWS\` + \`SHIFT\` + \`S\`\nMacOS: \`COMMAND\` + \`SHIFT\` + \`4\`\nLinux: \`Print Screen\`\n\nThen paste the image where you need it.',
     },
 ];
 
