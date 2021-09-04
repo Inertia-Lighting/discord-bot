@@ -52,6 +52,7 @@ app.use(async (req, res, next) => {
     const request_origin = (req.header('x-forwarded-for') || req.socket.remoteAddress).split(', ')[0];
 
     console.info(
+        '%s',
         `${request_timestamp} | ${req.method} ${req.url} | ${request_origin}`,
         (process.env.SERVER_ADVANCED_LOGGING === 'enabled' ? {
             'req.body': req.body,
