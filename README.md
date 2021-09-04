@@ -1,5 +1,7 @@
 # Inertia Lighting Discord Bot
 
+[![CodeQL](https://github.com/Inertia-Lighting/discord-bot-api-server/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/Inertia-Lighting/discord-bot-api-server/actions/workflows/codeql-analysis.yml)
+
 ## About
 
 This code was made for Inertia Lighting.
