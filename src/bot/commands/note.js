@@ -19,8 +19,8 @@ module.exports = {
     aliases: ['note'],
     permission_level: command_permission_levels.STAFF,
     async execute(message, args) {
-        const { command_prefix, command_name, command_args } = args;
-        const sub_command_args = message.content.split(/\s+/g).slice(2);
+        // const { command_prefix, command_name, command_args } = args;
+        // const sub_command_args = message.content.split(/\s+/g).slice(2);
 
     },
 };
