@@ -42,8 +42,8 @@ async function suggestionsCategoryHandler(message) {
     }).catch(console.warn);
 
     /* add the reactions to the suggestion embed */
-    await bot_suggestion_message.react('⬆️');
-    await bot_suggestion_message.react('⬇️');
+    await bot_suggestion_message.react('<:approved:813023668211810334>');
+    await bot_suggestion_message.react('<:declined:813023668187824158>');
 
     await Timer(500);
 
