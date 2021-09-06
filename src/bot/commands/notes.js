@@ -436,7 +436,7 @@ async function lookupNotesCommand(message, lookup_method) {
     });
 
     const sorted_user_notes = user_notes.sort((a, b) => b.record.epoch - a.record.epoch);
-    const user_notes_chunks = array_chunks(sorted_user_notes, 10);
+    const user_notes_chunks = array_chunks(sorted_user_notes, 5);
 
     let page_index = 0;
 
