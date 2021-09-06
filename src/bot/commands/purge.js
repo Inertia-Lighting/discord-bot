@@ -37,7 +37,7 @@ module.exports = {
         const number_of_messages_removed = await message.channel.bulkDelete(amount_of_messages_to_remove, true).then((removed_messages) => removed_messages.size).catch(() => 0);
 
         /* check if messages were removed */
-        if (!number_of_messages_removed) {
+        if (number_of_messages_removed === 0) {
             await message.reply({
                 content: `${message.author}, I was unable to purge any messages.`,
             }).catch(console.warn);
