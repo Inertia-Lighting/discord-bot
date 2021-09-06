@@ -10,7 +10,21 @@ const { v4: uuid_v4 } = require('uuid');
 
 const { go_mongo_db } = require('../../mongo/mongo.js');
 
-// create update remove purge lookup
+//---------------------------------------------------------------------------------------------------------------//
+
+/**
+ * @typedef {{
+ *  'identity': {
+ *      'discord_user_id': String,
+ *  },
+ *  'record': {
+ *      'id': String,
+ *      'epoch': Number,
+ *      'note': String,
+ *      'staff_member_id': String,
+ *  },
+ * }} UserNote
+ */
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -57,7 +71,7 @@ async function createNoteForUser({ discord_user_id }, { epoch, note, staff_membe
 //---------------------------------------------------------------------------------------------------------------//
 
 /**
- * Update note for user
+ * Updates a note
  * @param {Object} record
  * @param {String} record.id
  * @param {Number} record.epoch
@@ -65,7 +79,7 @@ async function createNoteForUser({ discord_user_id }, { epoch, note, staff_membe
  * @param {String} record.staff_member_id
  * @returns {Promise<Boolean>} success or failure
  */
- async function updateNoteForUser({ id, epoch, note, staff_member_id }) {
+async function updateNoteForUser({ id, epoch, note, staff_member_id }) {
     if (typeof id !== 'string') throw new TypeError('\`id\` must be a string!');
     if (typeof epoch !== 'number') throw new TypeError('\`epoch\` must be a number!');
     if (typeof note !== 'string') throw new TypeError('\`note\` must be a string!');
@@ -94,12 +108,12 @@ async function createNoteForUser({ discord_user_id }, { epoch, note, staff_membe
 //---------------------------------------------------------------------------------------------------------------//
 
 /**
- * Remove note for user
+ * Removes a note
  * @param {Object} record
  * @param {String} record.id
  * @returns {Promise<Boolean>} success or failure
  */
- async function removeNoteFromUser({ id }) {
+async function removeNoteFromUser({ id }) {
     if (typeof id !== 'string') throw new TypeError('\`id\` must be a string!');
 
     try {
@@ -115,12 +129,12 @@ async function createNoteForUser({ discord_user_id }, { epoch, note, staff_membe
 }
 
 /**
- * Remove notes for user
+ * Removes all notes from a user
  * @param {Object} identity
  * @param {String} identity.discord_user_id
  * @returns {Promise<Boolean>} success or failure
  */
- async function purgeNotesFromUser({ discord_user_id }) {
+async function purgeNotesFromUser({ discord_user_id }) {
     if (typeof discord_user_id !== 'string') throw new TypeError('\`discord_user_id\` must be a string!');
 
     try {
@@ -136,31 +150,35 @@ async function createNoteForUser({ discord_user_id }, { epoch, note, staff_membe
 }
 
 /**
- * Find notes for users
+ * Finds all notes for a user
  * @param {Object} identity
- * @param {String?} identity.discord_user_id
+ * @param {String} identity.discord_user_id
+ * @returns {Promise<UserNote[]>}
+ */
+async function lookupNotesForUser({ discord_user_id }) {
+    if (typeof discord_user_id !== 'string') throw new TypeError('\`discord_user_id\` must be a string!');
+
+    const user_notes = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USER_NOTES_COLLECTION_NAME, {
+        'identity.discord_user_id': discord_user_id,
+    });
+
+    return user_notes;
+}
+
+/**
+ * Finds a singular note for a user
  * @param {Object} record
  * @param {String?} record.id
- * @returns {Promise<Boolean>} success or failure
+ * @returns {Promise<UserNote>}
  */
- async function lookupNoteForUser({ discord_user_id }, { id }) {
-    if (typeof discord_user_id !== 'string') throw new TypeError('\`discord_user_id\` must be a string!');
+async function lookupNoteForUser({ id }) {
     if (typeof id !== 'string') throw new TypeError('\`id\` must be a string!');
 
-    try {
-        await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USER_NOTES_COLLECTION_NAME, {
-            ...(discord_user_id ? {
-                'identity.discord_user_id': discord_user_id,
-            } : {
-                'record.id': id,
-            }),
-        });
-    } catch (error) {
-        console.trace('lookupNoteForUser():', error);
-        return false;
-    }
+    const [ user_note ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USER_NOTES_COLLECTION_NAME, {
+        'record.id': id,
+    });
 
-    return true;
+    return user_note;
 }
 
 module.exports = {
@@ -168,5 +186,6 @@ module.exports = {
     updateNoteForUser,
     removeNoteFromUser,
     purgeNotesFromUser,
+    lookupNotesForUser,
     lookupNoteForUser,
 };
