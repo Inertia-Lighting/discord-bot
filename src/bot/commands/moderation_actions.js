@@ -132,7 +132,7 @@ async function listModerationActions(message, lookup_mode='member') {
     const sorted_moderation_actions = db_moderation_actions.sort((a, b) => b.record.epoch - a.record.epoch);
 
     /* split the moderation actions into a 2-dimensional array of chunks */
-    const moderation_actions_chunks = array_chunks(sorted_moderation_actions, 10);
+    const moderation_actions_chunks = array_chunks(sorted_moderation_actions, 5);
 
     /* send a carousel containing 10 moderation actions per page */
     let page_index = 0;
