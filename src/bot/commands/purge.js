@@ -12,7 +12,7 @@ const { command_permission_levels } = require('../common/bot.js');
 
 module.exports = {
     name: 'purge',
-    description: 'purges a specified number of messages sent within 2 weeks',
+    description: 'removes up to 100 messages sent within 2 weeks',
     usage: '<amount_of_messages>',
     aliases: ['purge', 'clear'],
     permission_level: command_permission_levels.MODERATORS,
