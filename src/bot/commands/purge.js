@@ -15,7 +15,7 @@ module.exports = {
     description: 'removes up to 100 messages sent within 2 weeks',
     usage: '<amount_of_messages>',
     aliases: ['purge', 'clear'],
-    permission_level: command_permission_levels.MODERATORS,
+    permission_level: command_permission_levels.ADMINS,
     cooldown: 5_000,
     async execute(message, args) {
         const { command_args } = args;
