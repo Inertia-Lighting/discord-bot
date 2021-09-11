@@ -8,6 +8,21 @@
 
 const bcrypt = require('bcryptjs');
 
+const { array_random } = require('../../../../utilities.js');
+
+//---------------------------------------------------------------------------------------------------------------//
+
+/**
+ * Generates a random verification code using non-problematic characters
+ * @returns {string} a random verification code
+ */
+function generateVerificationCode() {
+    const problematic_chars_regex = /[ilo01]/gi;
+    const non_problematic_chars = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789'.split('');
+    const un_sanitized_verification_code = (new Buffer.from(`${Date.now()}`.slice(7))).toString('base64');
+    return un_sanitized_verification_code.replace(problematic_chars_regex, () => array_random(non_problematic_chars));
+}
+
 //---------------------------------------------------------------------------------------------------------------//
 
 module.exports = (router, client) => {
@@ -48,7 +63,7 @@ module.exports = (router, client) => {
         const potential_old_verification_context = client.$.verification_contexts.find(verification_context => verification_context.roblox_user_id === roblox_user_id);
 
         const potential_old_verification_code = potential_old_verification_context?.verification_code;
-        const verification_code = potential_old_verification_code ?? (new Buffer.from(`${Date.now()}`.slice(7))).toString('base64');
+        const verification_code = potential_old_verification_code ?? generateVerificationCode();
 
         client.$.verification_contexts.set(verification_code, {
             verification_code: verification_code,
