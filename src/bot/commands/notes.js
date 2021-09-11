@@ -48,7 +48,7 @@ async function createNoteCommand(message) {
     }
 
     const note_contents = sub_command_args.slice(1).join(' ');
-    if (note_contents.length < 10) {
+    if (note_contents.length < 5) {
         message.reply({
             embeds: [
                 new Discord.MessageEmbed({
@@ -57,7 +57,7 @@ async function createNoteCommand(message) {
                         iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                         name: 'Inertia Lighting | User Notes',
                     },
-                    description: 'The supplied note contents was less then 10 characters, please be more descriptive next time.',
+                    description: 'The supplied note was less then 5 characters, please be more descriptive next time.',
                 }),
             ],
         }).catch(console.warn);
@@ -139,7 +139,7 @@ async function updateNoteCommand(message) {
                         iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                         name: 'Inertia Lighting | User Notes',
                     },
-                    description: 'That note ID was not found in the database!',
+                    description: 'Unable to find specified note id in the database!',
                 }),
             ],
         }).catch(console.warn);
@@ -147,7 +147,7 @@ async function updateNoteCommand(message) {
     }
 
     const note_contents = sub_command_args.slice(1).join(' ');
-    if (note_contents.length < 10) {
+    if (note_contents.length < 5) {
         message.reply({
             embeds: [
                 new Discord.MessageEmbed({
@@ -156,7 +156,7 @@ async function updateNoteCommand(message) {
                         iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                         name: 'Inertia Lighting | User Notes',
                     },
-                    description: 'The supplied note contents was less then 10 characters, please be more descriptive next time.',
+                    description: 'The supplied note was less then 5 characters, please be more descriptive next time.',
                 }),
             ],
         }).catch(console.warn);
