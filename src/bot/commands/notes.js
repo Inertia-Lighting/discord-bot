@@ -381,11 +381,13 @@ async function lookupNotesCommand(message, lookup_method) {
     const user_notes = lookup_method === 'user_mention' ? (
         await lookupNotesForUser({
             discord_user_id: lookup_query,
-        }) // looks up notes for a user id
+        })
     ) : (
-        await lookupNoteForUser({
-            id: lookup_query,
-        }) // looks up a note for a note id
+        [
+            await lookupNoteForUser({
+                id: lookup_query,
+            }),
+        ]
     );
 
     if (user_notes.length === 0) {
