@@ -31,7 +31,6 @@ const support_tickets_transcripts_channel_id = process.env.BOT_SUPPORT_TICKETS_T
  * @typedef {String} SupportCategoryId
  * @typedef {{
  *  id: SupportCategoryId,
- *  human_index: Number,
  *  name: String,
  *  description: String,
  *  qualified_support_role_ids: Discord.Snowflake[],
@@ -228,10 +227,7 @@ const support_categories = new Discord.Collection([
             ],
         },
     },
-].map((item, index) => {
-    const updated_item = { ...item, human_index: index + 1 };
-    return [ item.id, updated_item ]; // map entry
-}));
+].map((item) => [ item.id, item ]));
 
 //---------------------------------------------------------------------------------------------------------------//
 
