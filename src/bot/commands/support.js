@@ -71,7 +71,7 @@ const support_categories = new Discord.Collection([
     {
         id: 'RECOVERY',
         name: 'Account Recovery',
-        description: 'Come here if you want to recover your products from an inaccessible account.',
+        description: 'Use this to recover products from an inaccessible account.',
         qualified_support_role_ids: [
             process.env.BOT_SUPPORT_STAFF_PRODUCT_TRANSFERS_ROLE_ID,
         ],
@@ -126,7 +126,7 @@ const support_categories = new Discord.Collection([
     }, {
         id: 'TRANSFERS',
         name: 'Transfers',
-        description: 'Come here if you want to transfer any of your products to another account.',
+        description: 'Select this if you want to transfer products to a new account.',
         qualified_support_role_ids: [
             process.env.BOT_SUPPORT_STAFF_PRODUCT_TRANSFERS_ROLE_ID,
         ],
@@ -154,7 +154,7 @@ const support_categories = new Discord.Collection([
     }, {
         id: 'ISSUES',
         name: 'Issues',
-        description: 'Come here if you are having issues with our products.',
+        description: 'Tech support can be found here.',
         qualified_support_role_ids: [
             process.env.BOT_SUPPORT_STAFF_PRODUCT_ISSUES_ROLE_ID,
         ],
@@ -184,7 +184,7 @@ const support_categories = new Discord.Collection([
     }, {
         id: 'QUESTIONS',
         name: 'Questions',
-        description: 'Come here if you have questions about our products.',
+        description: 'Have a question? Let\'s see if we can help you out.',
         qualified_support_role_ids: [
             process.env.BOT_SUPPORT_STAFF_PRODUCT_QUESTIONS_ROLE_ID,
         ],
@@ -405,10 +405,6 @@ async function sendDatabaseDocumentsToSupportTicketChannel(support_channel, guil
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const active_category_selection_message_collectors = new Discord.Collection();
-
-//---------------------------------------------------------------------------------------------------------------//
-
 module.exports = {
     name: 'support',
     description: 'support tickets and stuff',
@@ -419,10 +415,6 @@ module.exports = {
         const { user_permission_level, command_name } = args;
 
         async function supportTicketCommand() {
-            if (active_category_selection_message_collectors.has(message.author.id)) {
-                return; // don't allow multiple category_selection_message_collector to exist
-            }
-
             /** @type {Discord.Message} */
             const category_selection_message = await message.channel.send({
                 content: `${message.author}`,
@@ -434,139 +426,155 @@ module.exports = {
                             name: 'Inertia Lighting | Support System',
                         },
                         description: [
-                            '**How can I help you today?**',
-                            support_categories.map(({ human_index, name, description }) => `**${human_index} | ${name}**\n${description}`).join('\n\n'),
-                            '**Please type the __category number__ or \`cancel\`.**',
+                            '**Hi there, how can we help you today?**',
+                            '**Please choose the category that you need assistance for.**',
                             '*Picking the wrong category will result in longer wait times!*',
                         ].join('\n\n'),
                     }),
                 ],
+                components: [
+                    {
+                        type: 1,
+                        components: [
+                            {
+                                type: 3,
+                                custom_id: 'support_category_selection_menu',
+                                placeholder: 'Select a support category!',
+                                min_values: 1,
+                                max_values: 1,
+                                options: support_categories.map(({ id, name, description }) => ({
+                                    label: name,
+                                    description: description.slice(0, 50),
+                                    value: id,
+                                })),
+                            },
+                        ],
+                    },
+                ],
             }).catch(console.warn);
 
-            const category_selection_message_collector_filter = (msg) => msg.author.id === message.author.id;
-            const category_selection_message_collector = category_selection_message.channel.createMessageCollector({
-                filter: category_selection_message_collector_filter,
+            const category_selection_menu_interaction_collector = await category_selection_message.createMessageComponentCollector({
+                filter: (interaction) => interaction.user.id === message.author.id,
+                time: 5 * 60_000,
             });
-            category_selection_message_collector.on('collect', async (collected_category_selection_message) => {
-                const matching_support_category = support_categories.find((support_category) => `${support_category.human_index}` === collected_category_selection_message.content);
-                if (matching_support_category) {
-                    category_selection_message_collector.stop();
 
-                    await Timer(250); // delay the message deletion
-                    await category_selection_message.delete().catch(console.warn);
+            category_selection_menu_interaction_collector.on('collect', async (category_selection_menu_interaction) => {
+                await category_selection_menu_interaction.deferUpdate();
 
-                    let support_channel;
-                    try {
-                        support_channel = await createSupportTicketChannel(message.guild, message.member, matching_support_category);
-                    } catch {
-                        return; // don't continue if we can't create a new support ticket channel
-                    }
+                const category_selection_menu_value = category_selection_menu_interaction.values[0];
 
-                    /* respond to the user with a mention for the support ticket channel */
-                    await collected_category_selection_message.reply([
+                const matching_support_category = support_categories.find((support_category) => support_category.id === category_selection_menu_value);
+
+                if (!matching_support_category) {
+                    console.trace('Support category selection menu supplied an invalid value:', { category_selection_menu_value });
+                    return; // failed to find a matching support category
+                }
+
+                /* stop the collector since we have what we need */
+                category_selection_menu_interaction_collector.stop();
+
+                let support_channel;
+                try {
+                    support_channel = await createSupportTicketChannel(message.guild, message.member, matching_support_category);
+                } catch {
+                    return; // don't continue if we can't create a new support ticket channel
+                }
+
+                /* respond to the user with a mention for the support ticket channel */
+                await category_selection_menu_interaction.followUp({
+                    content: [
                         `You selected ${matching_support_category.name}!`,
                         `Go to ${support_channel} to continue.`,
-                    ].join('\n')).catch(console.warn);
+                    ].join('\n'),
+                }).catch(console.warn);
 
-                    /* send the database documents */
-                    await sendDatabaseDocumentsToSupportTicketChannel(support_channel, message.member);
+                /* send the database documents */
+                await sendDatabaseDocumentsToSupportTicketChannel(support_channel, message.member);
 
-                    /* send the category-specific instructions */
-                    const category_instructions_message = await support_channel.send(matching_support_category.instructions_message_options).catch(console.warn);
+                /* send the category-specific instructions */
+                const category_instructions_message = await support_channel.send(matching_support_category.instructions_message_options).catch(console.warn);
 
-                    const category_instructions_options_message = await support_channel.send({
-                        content: `${message.author}, welcome to your support ticket!`,
-                        embeds: [
-                            new Discord.MessageEmbed({
-                                color: 0x60A0FF,
-                                description: [
-                                    `**Please read the [instructions](${category_instructions_message.url}) above!**`,
-                                    '',
-                                    `Send \"**done**\" after you have completed the [instructions](${category_instructions_message.url}).`,
-                                    'Send \"**cancel**\" if you wish to cancel this ticket.',
-                                    '',
-                                    '*Sending neither will result in your ticket automatically closing after 30 minutes.*',
-                                ].join('\n'),
-                            }),
-                        ],
-                    }).catch(console.warn);
+                const category_instructions_options_message = await support_channel.send({
+                    content: `${message.author}, welcome to your support ticket!`,
+                    embeds: [
+                        new Discord.MessageEmbed({
+                            color: 0x60A0FF,
+                            description: [
+                                `**Please read the [instructions](${category_instructions_message.url}) above!**`,
+                                '',
+                                `Send \"**done**\" after you have completed the [instructions](${category_instructions_message.url}).`,
+                                'Send \"**cancel**\" if you wish to cancel this ticket.',
+                                '',
+                                '*Sending neither will result in your ticket automatically closing after 30 minutes.*',
+                            ].join('\n'),
+                        }),
+                    ],
+                }).catch(console.warn);
 
-                    const category_instructions_options_message_collector_filter = (msg) => msg.author.id === message.author.id;
-                    const category_instructions_options_message_collector = support_channel.createMessageCollector({
-                        filter: category_instructions_options_message_collector_filter,
-                        time: 30 * 60_000, // force the message collector to stop after 30 minutes
-                    });
-                    category_instructions_options_message_collector.on('collect', async (collected_options_message) => {
-                        async function cleanupCategoryInstructionsOptionsMessageCollector() {
-                            category_instructions_options_message_collector.stop();
-                            await Timer(500); // delay the message deletion
-                            await category_instructions_options_message.delete().catch(console.warn);
-                            await Timer(500); // delay the message deletion
-                            await collected_options_message.delete().catch(console.warn);
+                const category_instructions_options_message_collector_filter = (msg) => msg.author.id === message.author.id;
+                const category_instructions_options_message_collector = support_channel.createMessageCollector({
+                    filter: category_instructions_options_message_collector_filter,
+                    time: 30 * 60_000, // force the message collector to stop after 30 minutes
+                });
+                category_instructions_options_message_collector.on('collect', async (collected_options_message) => {
+                    async function cleanupCategoryInstructionsOptionsMessageCollector() {
+                        category_instructions_options_message_collector.stop();
+                        await Timer(500); // delay the message deletion
+                        await category_instructions_options_message.delete().catch(console.warn);
+                        await Timer(500); // delay the message deletion
+                        await collected_options_message.delete().catch(console.warn);
+                    }
+                    switch (collected_options_message.content.toLowerCase()) {
+                        case 'done': {
+                            await cleanupCategoryInstructionsOptionsMessageCollector();
+
+                            /* allow staff to interact in the support ticket */
+                            await support_channel.permissionOverwrites.set([
+                                ...support_channel.permissionOverwrites.cache.values(), // clone the channel's current permissions
+                                {
+                                    id: process.env.BOT_STAFF_ROLE_ID,
+                                    allow: [ 'VIEW_CHANNEL', 'SEND_MESSAGES' ],
+                                },
+                            ]).catch(console.trace);
+
+                            const qualified_support_role_mentions = matching_support_category.qualified_support_role_ids.map(role_id => `<@&${role_id}>`).join(', ');
+                            await support_channel.send({
+                                content: `${message.author}, Our ${qualified_support_role_mentions} staff will help you with your issue soon!`,
+                            }).catch(console.warn);
+
+                            break;
                         }
-                        switch (collected_options_message.content.toLowerCase()) {
-                            case 'done': {
-                                await cleanupCategoryInstructionsOptionsMessageCollector();
-
-                                /* allow staff to interact in the support ticket */
-                                await support_channel.permissionOverwrites.set([
-                                    ...support_channel.permissionOverwrites.cache.values(), // clone the channel's current permissions
-                                    {
-                                        id: process.env.BOT_STAFF_ROLE_ID,
-                                        allow: [ 'VIEW_CHANNEL', 'SEND_MESSAGES' ],
-                                    },
-                                ]).catch(console.trace);
-
-                                const qualified_support_role_mentions = matching_support_category.qualified_support_role_ids.map(role_id => `<@&${role_id}>`).join(', ');
-                                await support_channel.send({
-                                    content: `${message.author}, Our ${qualified_support_role_mentions} staff will help you with your issue soon!`,
-                                }).catch(console.warn);
-
-                                break;
-                            }
-                            case 'cancel': {
-                                await cleanupCategoryInstructionsOptionsMessageCollector();
-                                await support_channel.send({
-                                    content: `${message.author}, Cancelling support ticket...`,
-                                }).catch(console.warn);
-                                await closeSupportTicketChannel(support_channel, false);
-
-                                break;
-                            }
-                            default: {
-                                // we want to ignore all other messages that are sent
-                                break;
-                            }
-                        }
-                    });
-                    category_instructions_options_message_collector.on('end', async (collected_messages, reason) => {
-                        /* the following is used to denote when a message collector has exceeded our specified time */
-                        if (reason === 'time') {
+                        case 'cancel': {
+                            await cleanupCategoryInstructionsOptionsMessageCollector();
+                            await support_channel.send({
+                                content: `${message.author}, Cancelling support ticket...`,
+                            }).catch(console.warn);
                             await closeSupportTicketChannel(support_channel, false);
+
+                            break;
                         }
-                    });
-                } else if (['cancel'].includes(collected_category_selection_message.content.toLowerCase())) {
-                    category_selection_message_collector.stop();
-                    await Timer(500); // delay the message deletion
-                    await category_selection_message.delete().catch(console.warn);
-                    await collected_category_selection_message.reply({
-                        content: 'Canceled!',
-                    }).catch(console.warn);
-                } else {
-                    await collected_category_selection_message.reply({
-                        content: 'Please type the __category number__ or \`cancel\`.',
-                    }).catch(console.warn);
-                }
+                        default: {
+                            /* we want to ignore all other messages that are sent */
+                            break;
+                        }
+                    }
+                });
+                category_instructions_options_message_collector.on('end', async (collected_messages, reason) => {
+                    /* check if the collector has exceeded the specified time */
+                    if (reason === 'time') {
+                        await closeSupportTicketChannel(support_channel, false);
+                    }
+                });
             });
-            category_selection_message_collector.on('end', () => {
-                active_category_selection_message_collectors.delete(message.author.id);
+
+            category_selection_menu_interaction_collector.on('end', () => {
+                /* remove the selection menu as it is no longer needed */
+                category_selection_message.delete().catch(console.warn);
             });
-            active_category_selection_message_collectors.set(message.author.id, category_selection_message_collector);
 
             /* automatically cancel the category selection collector */
             setTimeout(() => {
-                category_selection_message.delete().catch(console.warn);
-                category_selection_message_collector.stop();
+                category_selection_menu_interaction_collector.stop();
             }, 5 * 60_000); // 5 minutes
         }
 
