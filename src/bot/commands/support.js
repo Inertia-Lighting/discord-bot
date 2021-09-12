@@ -507,20 +507,20 @@ module.exports = {
                     ],
                 }).catch(console.warn);
 
-                const category_instructions_options_message_collector_filter = (msg) => msg.author.id === message.author.id;
                 const category_instructions_options_message_collector = support_channel.createMessageCollector({
-                    filter: category_instructions_options_message_collector_filter,
-                    time: 30 * 60_000, // force the message collector to stop after 30 minutes
+                    filter: (msg) => msg.author.id === message.author.id,
+                    time: 30 * 60_000,
                 });
+
                 category_instructions_options_message_collector.on('collect', async (collected_options_message) => {
                     async function cleanupCategoryInstructionsOptionsMessageCollector() {
                         category_instructions_options_message_collector.stop();
-                        await Timer(500); // delay the message deletion
+                        await Timer(500); // delay the message deletions
                         await category_instructions_options_message.delete().catch(console.warn);
-                        await Timer(500); // delay the message deletion
                         await collected_options_message.delete().catch(console.warn);
                     }
-                    switch (collected_options_message.content.toLowerCase()) {
+
+                    switch (collected_options_message.content.toLowerCase().trim()) {
                         case 'done': {
                             await cleanupCategoryInstructionsOptionsMessageCollector();
 
@@ -542,6 +542,7 @@ module.exports = {
                         }
                         case 'cancel': {
                             await cleanupCategoryInstructionsOptionsMessageCollector();
+
                             await support_channel.send({
                                 content: `${message.author}, Cancelling support ticket...`,
                             }).catch(console.warn);
@@ -555,6 +556,7 @@ module.exports = {
                         }
                     }
                 });
+
                 category_instructions_options_message_collector.on('end', async (collected_messages, reason) => {
                     /* check if the collector has exceeded the specified time */
                     if (reason === 'time') {
