@@ -70,7 +70,7 @@ const support_categories = new Discord.Collection([
     {
         id: 'RECOVERY',
         name: 'Account Recovery',
-        description: 'Use this to recover products from an inaccessible account.',
+        description: 'Recover products from an inaccessible account.',
         qualified_support_role_ids: [
             process.env.BOT_SUPPORT_STAFF_PRODUCT_TRANSFERS_ROLE_ID,
         ],
@@ -97,7 +97,7 @@ const support_categories = new Discord.Collection([
     }, {
         id: 'PURCHASES',
         name: 'Purchases',
-        description: 'Come here if you are having issues with making a purchase.',
+        description: 'Issues with orders and purchases.',
         qualified_support_role_ids: [
             process.env.BOT_SUPPORT_STAFF_PRODUCT_PURCHASES_ROLE_ID,
         ],
@@ -125,7 +125,7 @@ const support_categories = new Discord.Collection([
     }, {
         id: 'TRANSFERS',
         name: 'Transfers',
-        description: 'Select this if you want to transfer products to a new account.',
+        description: 'Transfer or gift products to a new account.',
         qualified_support_role_ids: [
             process.env.BOT_SUPPORT_STAFF_PRODUCT_TRANSFERS_ROLE_ID,
         ],
@@ -183,7 +183,7 @@ const support_categories = new Discord.Collection([
     }, {
         id: 'QUESTIONS',
         name: 'Questions',
-        description: 'Have a question? Let\'s see if we can help you out.',
+        description: 'Simple questions can be asked here.',
         qualified_support_role_ids: [
             process.env.BOT_SUPPORT_STAFF_PRODUCT_QUESTIONS_ROLE_ID,
         ],
@@ -209,7 +209,7 @@ const support_categories = new Discord.Collection([
     }, {
         id: 'OTHER',
         name: 'Other',
-        description: 'Come here if none of the other categories match your issue.',
+        description: 'For all other forms of support.',
         qualified_support_role_ids: [
             process.env.BOT_SUPPORT_STAFF_OTHER_ROLE_ID,
         ],
@@ -440,7 +440,7 @@ module.exports = {
                                 max_values: 1,
                                 options: support_categories.map(({ id, name, description }) => ({
                                     label: name,
-                                    description: description.slice(0, 50),
+                                    description: description.slice(0, 50), // truncate for discord
                                     value: id,
                                 })),
                             },
