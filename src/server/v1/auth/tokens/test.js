@@ -58,7 +58,7 @@ module.exports = (router, client) => {
         /* fetch user-auth-info */
         const [ db_user_auth_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_API_AUTH_USERS_COLLECTION_NAME, {
             'identity.roblox_user_id': game_owner_id,
-        });
+        }).catch(() => []);
 
         /* check if the user exists in the auth database */
         if (!db_user_auth_data) {
