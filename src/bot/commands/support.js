@@ -125,7 +125,7 @@ const support_categories = new Discord.Collection([
     }, {
         id: 'TRANSFERS',
         name: 'Transfers',
-        description: 'Transfer or gift to a different account',
+        description: 'Transfer or gift to a different account.',
         qualified_support_role_ids: [
             process.env.BOT_SUPPORT_STAFF_PRODUCT_TRANSFERS_ROLE_ID,
         ],
@@ -153,7 +153,7 @@ const support_categories = new Discord.Collection([
     }, {
         id: 'ISSUES',
         name: 'Issues',
-        description: 'Technical support can be found here',
+        description: 'Technical support can be found here.',
         qualified_support_role_ids: [
             process.env.BOT_SUPPORT_STAFF_PRODUCT_ISSUES_ROLE_ID,
         ],
