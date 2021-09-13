@@ -406,43 +406,45 @@ async function lookupNotesCommand(message, lookup_method) {
         return;
     }
 
-    await bot_message.edit({
-        components: [
-            {
-                type: 1,
-                components: [
-                    {
-                        type: 2,
-                        style: 2,
-                        custom_id: 'previous',
-                        emoji: {
-                            id: null,
-                            name: '⬅️',
-                        },
-                    }, {
-                        type: 2,
-                        style: 2,
-                        custom_id: 'next',
-                        emoji: {
-                            id: null,
-                            name: '➡️',
-                        },
-                    }, {
-                        type: 2,
-                        style: 2,
-                        custom_id: 'stop',
-                        emoji: {
-                            id: null,
-                            name: '⏹️',
-                        },
-                    },
-                ],
-            },
-        ],
-    });
-
     const sorted_user_notes = user_notes.sort((a, b) => b.record.epoch - a.record.epoch);
     const user_notes_chunks = array_chunks(sorted_user_notes, 5);
+
+    if (user_notes_chunks.length > 1) {
+        await bot_message.edit({
+            components: [
+                {
+                    type: 1,
+                    components: [
+                        {
+                            type: 2,
+                            style: 2,
+                            custom_id: 'previous',
+                            emoji: {
+                                id: null,
+                                name: '⬅️',
+                            },
+                        }, {
+                            type: 2,
+                            style: 2,
+                            custom_id: 'next',
+                            emoji: {
+                                id: null,
+                                name: '➡️',
+                            },
+                        }, {
+                            type: 2,
+                            style: 2,
+                            custom_id: 'stop',
+                            emoji: {
+                                id: null,
+                                name: '⏹️',
+                            },
+                        },
+                    ],
+                },
+            ],
+        });
+    }
 
     let page_index = 0;
 
