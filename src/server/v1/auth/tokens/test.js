@@ -46,7 +46,7 @@ module.exports = (router, client) => {
         /* fetch user-blacklist-info */
         const [ db_blacklisted_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME, {
             'identity.roblox_user_id': game_owner_id,
-        });
+        }).catch(() => []);
 
         /* check if the user is blacklisted */
         if (db_blacklisted_user_data) {
