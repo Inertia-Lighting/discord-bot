@@ -389,8 +389,7 @@ async function lookupNotesCommand(message, lookup_method) {
             }),
         ]
     );
-
-    if (user_notes.length === 0) {
+    if (user_notes.length === 0 || (lookup_method === 'note_id' && message.mentions.users.size > 0)) {
         await bot_message.edit({
             embeds: [
                 new Discord.MessageEmbed({
@@ -399,7 +398,7 @@ async function lookupNotesCommand(message, lookup_method) {
                         iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                         name: 'Inertia Lighting | User Notes',
                     },
-                    description: 'I wasn\'t able to find any user notes for the specified user!',
+                    description: 'I wasn\'t able to find any user notes for the specified query!',
                 }),
             ],
         }).catch(console.warn);
