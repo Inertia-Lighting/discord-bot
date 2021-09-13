@@ -35,6 +35,7 @@ router.get('/test', async (req, res) => {
 //---------------------------------------------------------------------------------------------------------------//
 
 require('./v1/auth/keys/generate.js')(router, client);
+require('./v1/auth/tokens/test.js')(router, client);
 
 require('./v1/products/fetch/fetch.js')(router, client);
 
