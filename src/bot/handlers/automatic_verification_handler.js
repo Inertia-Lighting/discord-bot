@@ -15,12 +15,37 @@ const { go_mongo_db } = require('../../mongo/mongo.js');
 //---------------------------------------------------------------------------------------------------------------//
 
 async function automaticVerificationHandler(member) {
+    if (member.user.system) return; // don't operate on system accounts
+    if (member.user.bot) return; // don't operate on bots to prevent feedback-loops
+
     const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
         'identity.discord_user_id': member.id,
     });
 
-    /* don't continue if the user has already verified */
-    if (db_user_data) return;
+    /* check if the user has already verified */
+    if (db_user_data) {
+        try {
+            const dm_channel = await member.createDM();
+            await dm_channel.send({
+                embeds: [
+                    new Discord.MessageEmbed({
+                        color: 0x60A0FF,
+                        author: {
+                            iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                            name: 'Inertia Lighting Verification System',
+                        },
+                        title: 'You are verified in our database!',
+                        description: [
+                            `Our records indicate that [this roblox account](https://www.roblox.com/users/${db_user_data.identity.roblox_user_id}/profile) is linked to ${member}.`,
+                            '*If that doesn\'t look right to you, please open an \"Account Recovery\" support ticket in our server.*',
+                        ].join('\n'),
+                    }),
+                ],
+            });
+        } catch {} // ignore any errors
+
+        return; // don't continue if the user has already verified
+    }
 
     /* store the collected roblox user ids */
     const unsanitized_potential_roblox_user_ids = [];
@@ -108,9 +133,9 @@ async function automaticVerificationHandler(member) {
             switch (account_selection_menu_value) {
                 case 'account_was_not_listed': {
                     dm_channel.send({
-                        color: 0xFFFF00,
                         embeds: [
                             new Discord.MessageEmbed({
+                                color: 0xFFFF00,
                                 author: {
                                     iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                                     name: 'Inertia Lighting Verification System',
@@ -167,9 +192,9 @@ async function automaticVerificationHandler(member) {
                     });
 
                     dm_channel.send({
-                        color: 0xFFFF00,
                         embeds: [
                             new Discord.MessageEmbed({
+                                color: 0x00FF00,
                                 author: {
                                     iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                                     name: 'Inertia Lighting Verification System',
