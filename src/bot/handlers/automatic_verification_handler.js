@@ -75,7 +75,7 @@ async function automaticVerificationHandler(member) {
                         {
                             type: 3,
                             custom_id: 'automatic_verification_selection_menu',
-                            placeholder: 'Please select your account.',
+                            placeholder: 'Please select your roblox account from the dropdown menu.',
                             min_values: 1,
                             max_values: 1,
                             options: [
