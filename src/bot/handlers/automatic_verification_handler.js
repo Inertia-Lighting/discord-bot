@@ -116,7 +116,7 @@ async function automaticVerificationHandler(member) {
                                     name: 'Inertia Lighting Verification System',
                                 },
                                 title: 'You need to manually verify in our product hub!',
-                                description: 'Please go to our product hub and manually verify your account.',
+                                description: 'Please go to our product hub to manually verify your account with us.',
                             }),
                         ],
                         components: [
