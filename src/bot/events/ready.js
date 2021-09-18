@@ -10,6 +10,7 @@ const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
 const moment = require('moment-timezone');
+const recursiveReadDirectory = require('recursive-read-directory');
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -119,6 +120,15 @@ module.exports = {
         for (const command_file of command_files) {
             const bot_command = require(path.join(command_files_path, command_file));
             client.$.commands.set(bot_command.name, bot_command);
+        }
+
+        /* register interactions */
+        const interaction_files_path = path.join(process.cwd(), './src/bot/interactions/');
+        const interaction_file_names = recursiveReadDirectory(interaction_files_path);
+        for (const interaction_file_name of interaction_file_names) {
+            const interaction_file_path = path.join(interaction_files_path, interaction_file_name);
+            const interaction = require(interaction_file_path);
+            client.$.interactions.set(interaction.identifier, interaction);
         }
 
         /* update the bot presence every 5 minutes */
