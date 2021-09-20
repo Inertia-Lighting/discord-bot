@@ -561,7 +561,7 @@ module.exports = {
                     /* remove all components from the message */
                     await category_instructions_message.edit({
                         components: [],
-                    });
+                    }).catch(console.warn);
 
                     /* check if the collector has exceeded the specified time */
                     if (reason === 'time') {
