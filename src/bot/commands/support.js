@@ -488,42 +488,39 @@ module.exports = {
                 await sendDatabaseDocumentsToSupportTicketChannel(support_channel, message.member);
 
                 /* send the category-specific instructions */
-                const category_instructions_message = await support_channel.send(matching_support_category.instructions_message_options).catch(console.warn);
-
-                const category_instructions_options_message = await support_channel.send({
+                const category_instructions_message = await support_channel.send({
+                    ...matching_support_category.instructions_message_options,
                     content: `${message.author}, welcome to your support ticket!`,
-                    embeds: [
-                        new Discord.MessageEmbed({
-                            color: 0x60A0FF,
-                            description: [
-                                `**Please read the [instructions](${category_instructions_message.url}) above!**`,
-                                '',
-                                `Send \"**done**\" after you have completed the [instructions](${category_instructions_message.url}).`,
-                                'Send \"**cancel**\" if you wish to cancel this ticket.',
-                                '',
-                                '*Sending neither will result in your ticket automatically closing after 30 minutes.*',
-                            ].join('\n'),
-                        }),
+                    components: [
+                        {
+                            type: 1,
+                            components: [
+                                {
+                                    type: 2,
+                                    style: 2,
+                                    custom_id: 'ready_for_support_staff',
+                                    label: 'I have completed the instructions',
+                                }, {
+                                    type: 2,
+                                    style: 2,
+                                    custom_id: 'cancel_support_ticket',
+                                    label: 'Cancel support ticket',
+                                },
+                            ],
+                        },
                     ],
-                }).catch(console.warn);
+                });
 
-                const category_instructions_options_message_collector = support_channel.createMessageCollector({
-                    filter: (msg) => msg.author.id === message.author.id,
+                const category_instructions_message_components_collector = category_instructions_message.createMessageComponentCollector({
+                    filter: (interaction) => interaction.user.id === message.author.id,
                     time: 30 * 60_000,
                 });
 
-                category_instructions_options_message_collector.on('collect', async (collected_options_message) => {
-                    async function cleanupCategoryInstructionsOptionsMessageCollector() {
-                        category_instructions_options_message_collector.stop();
-                        await Timer(500); // delay the message deletions
-                        await category_instructions_options_message.delete().catch(console.warn);
-                        await collected_options_message.delete().catch(console.warn);
-                    }
+                category_instructions_message_components_collector.on('collect', async (interaction) => {
+                    await interaction.deferUpdate();
 
-                    switch (collected_options_message.content.toLowerCase().trim()) {
-                        case 'done': {
-                            await cleanupCategoryInstructionsOptionsMessageCollector();
-
+                    switch (interaction.customId) {
+                        case 'ready_for_support_staff': {
                             /* allow staff to interact in the support ticket */
                             await support_channel.permissionOverwrites.set([
                                 ...support_channel.permissionOverwrites.cache.values(), // clone the channel's current permissions
@@ -534,30 +531,38 @@ module.exports = {
                             ]).catch(console.trace);
 
                             const qualified_support_role_mentions = matching_support_category.qualified_support_role_ids.map(role_id => `<@&${role_id}>`).join(', ');
-                            await support_channel.send({
+
+                            await interaction.followUp({
                                 content: `${message.author}, Our ${qualified_support_role_mentions} staff will help you with your issue soon!`,
                             }).catch(console.warn);
 
                             break;
                         }
-                        case 'cancel': {
-                            await cleanupCategoryInstructionsOptionsMessageCollector();
 
-                            await support_channel.send({
+                        case 'cancel_support_ticket': {
+                            await interaction.followUp({
                                 content: `${message.author}, Cancelling support ticket...`,
                             }).catch(console.warn);
+
                             await closeSupportTicketChannel(support_channel, false);
 
                             break;
                         }
+
                         default: {
-                            /* we want to ignore all other messages that are sent */
-                            break;
+                            return; // don't continue if we don't have a valid custom_id
                         }
                     }
+
+                    category_instructions_message_components_collector.stop();
                 });
 
-                category_instructions_options_message_collector.on('end', async (collected_messages, reason) => {
+                category_instructions_message_components_collector.on('end', async (collected_interactions, reason) => {
+                    /* remove all components from the message */
+                    await category_instructions_message.edit({
+                        components: [],
+                    });
+
                     /* check if the collector has exceeded the specified time */
                     if (reason === 'time') {
                         await closeSupportTicketChannel(support_channel, false);
