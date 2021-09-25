@@ -532,7 +532,7 @@ module.exports = {
 
                             const qualified_support_role_mentions = matching_support_category.qualified_support_role_ids.map(role_id => `<@&${role_id}>`).join(', ');
 
-                            await interaction.followUp({
+                            await interaction.channel.send({
                                 content: `${message.author}, Our ${qualified_support_role_mentions} staff will help you with your issue soon!`,
                             }).catch(console.warn);
 
@@ -540,7 +540,7 @@ module.exports = {
                         }
 
                         case 'cancel_support_ticket': {
-                            await interaction.followUp({
+                            await interaction.channel.send({
                                 content: `${message.author}, Cancelling support ticket...`,
                             }).catch(console.warn);
 
