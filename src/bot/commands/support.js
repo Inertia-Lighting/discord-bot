@@ -584,7 +584,7 @@ module.exports = {
         async function closeTicketCommand() {
             if (user_permission_level < command_permission_levels.STAFF) {
                 message.reply({
-                    content: 'Sorry, only staff can close active support tickets.',
+                    content: 'Sorry, only staff may close active support tickets.',
                 }).catch(console.warn);
                 return;
             }
@@ -593,7 +593,7 @@ module.exports = {
             const channel_is_not_transcripts_channel = message.channel.id !== support_tickets_transcripts_channel_id;
             if (!(channel_exists_in_support_tickets_category && channel_is_not_transcripts_channel)) {
                 message.reply({
-                    content: 'This channel is not a support ticket.',
+                    content: 'This channel is not an active support ticket.',
                 }).catch(console.warn);
                 return;
             }
@@ -602,29 +602,69 @@ module.exports = {
             const support_ticket_topic_name = support_channel.name.match(/([a-zA-Z\-\_])+(?![\-\_])\D/i)?.[0];
             const support_category = support_categories.find(support_category => support_category.id === support_ticket_topic_name.toUpperCase());
 
-            let save_transcript = true;
-            if (!support_category?.automatically_save_when_closed) {
-                await message.reply({
-                    content: 'Would you like to save the transcript for this support ticket before closing it?\n**( yes | no )**',
-                }).catch(console.warn);
-
-                const collection_filter = (msg) => msg.author.id === message.author.id && ['yes', 'no'].includes(msg.content.toLowerCase());
-                const collected_messages = await support_channel.awaitMessages({
-                    filter: collection_filter,
-                    max: 1,
-                }).catch(collected_messages => collected_messages);
-
-                const first_collected_message_content = collected_messages.first()?.content;
-                const formatted_first_collected_message_content = first_collected_message_content?.toLowerCase();
-
-                save_transcript = ['yes'].includes(formatted_first_collected_message_content);
+            if (support_category?.automatically_save_when_closed) {
+                await closeSupportTicketChannel(support_channel, true);
+                return;
             }
 
-            await support_channel.send({
-                content: `${message.author}, Closing support ticket in 5 seconds...`,
+            let save_transcript = true;
+
+            const save_transcript_message = await message.reply({
+                content: 'Would you like to save the transcript for this support ticket before closing it?',
+                components: [
+                    {
+                        type: 1,
+                        components: [
+                            {
+                                type: 2,
+                                style: 2,
+                                custom_id: 'save_transcript',
+                                label: 'Yes',
+                            }, {
+                                type: 2,
+                                style: 2,
+                                custom_id: 'discard_transcript',
+                                label: 'No',
+                            },
+                        ],
+                    },
+                ],
             }).catch(console.warn);
 
-            await closeSupportTicketChannel(support_channel, save_transcript);
+            const save_transcript_message_components_collector = save_transcript_message.createMessageComponentCollector({
+                filter: (interaction) => interaction.user.id === message.author.id,
+                time: 30 * 60_000,
+            });
+
+            save_transcript_message_components_collector.on('collect', async (interaction) => {
+                await interaction.deferUpdate();
+
+                switch (interaction.customId) {
+                    case 'save_transcript': {
+                        save_transcript = true;
+                        break;
+                    }
+
+                    case 'discard_transcript': {
+                        save_transcript = false;
+                        break;
+                    }
+
+                    default: {
+                        return; // don't continue if we don't have a valid custom_id
+                    }
+                }
+
+                save_transcript_message_components_collector.stop();
+            });
+
+            save_transcript_message_components_collector.on('end', async (collected_interactions, reason) => {
+                await support_channel.send({
+                    content: `${message.author}, Closing support ticket in 5 seconds...`,
+                }).catch(console.warn);
+
+                await closeSupportTicketChannel(support_channel, save_transcript);
+            });
         }
 
         switch (command_name) {
