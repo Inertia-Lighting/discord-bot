@@ -272,9 +272,14 @@ async function createSupportTicketChannel(guild, guild_member, support_category)
  * Closes a support ticket channel
  * @param {Discord.TextChannel} support_channel
  * @param {Boolean} save_transcript
+ * @param {Discord.GuildMember?} member_that_closed_ticket
  * @returns {Promise<Discord.TextChannel>}
  */
-async function closeSupportTicketChannel(support_channel, save_transcript) {
+async function closeSupportTicketChannel(support_channel, save_transcript, member_that_closed_ticket) {
+    await support_channel.send({
+        content: `${member_that_closed_ticket ? `${member_that_closed_ticket},` : 'automatically'} closing support ticket in 5 seconds...`,
+    }).catch(console.warn);
+
     if (save_transcript) {
         const support_ticket_topic_name = support_channel.name.match(/([a-zA-Z\-\_])+(?![\-\_])\D/i)?.[0];
         const support_ticket_owner_id = support_channel.name.match(/(?!.*\-)?([0-9])+/i)?.[0];
@@ -305,17 +310,21 @@ async function closeSupportTicketChannel(support_channel, save_transcript) {
                             value: `${'```'}\n${support_channel.name}\n${'```'}`,
                             inline: false,
                         }, {
-                            name: 'Topic',
-                            value: `${'```'}\n${support_ticket_topic_name}\n${'```'}`,
-                            inline: false,
-                        }, {
                             name: 'Creation Date',
                             value: `${'```'}\n${moment(support_channel.createdTimestamp).tz('America/New_York').format('YYYY[-]MM[-]DD hh:mm A [GMT]ZZ')}\n${'```'}`,
                             inline: false,
                         }, {
-                            name: 'User',
-                            value: `<@!${support_ticket_owner_id}>\n`,
+                            name: 'Topic',
+                            value: `${'```'}\n${support_ticket_topic_name}\n${'```'}`,
                             inline: false,
+                        }, {
+                            name: 'Opened By',
+                            value: `<@!${support_ticket_owner_id}>`,
+                            inline: true,
+                        }, {
+                            name: 'Closed By',
+                            value: `<@!${member_that_closed_ticket.id}>`,
+                            inline: true,
                         }, {
                             name: 'Participants',
                             value: `${all_channel_participants.map(user_id => `<@!${user_id}>`).join(' - ')}`,
@@ -544,7 +553,7 @@ module.exports = {
                                 content: `${message.author}, Cancelling support ticket...`,
                             }).catch(console.warn);
 
-                            await closeSupportTicketChannel(support_channel, false);
+                            await closeSupportTicketChannel(support_channel, false, message.member);
 
                             break;
                         }
@@ -565,7 +574,7 @@ module.exports = {
 
                     /* check if the collector has exceeded the specified time */
                     if (reason === 'time') {
-                        await closeSupportTicketChannel(support_channel, false);
+                        await closeSupportTicketChannel(support_channel, false, undefined);
                     }
                 });
             });
@@ -603,11 +612,9 @@ module.exports = {
             const support_category = support_categories.find(support_category => support_category.id === support_ticket_topic_name.toUpperCase());
 
             if (support_category?.automatically_save_when_closed) {
-                await closeSupportTicketChannel(support_channel, true);
+                await closeSupportTicketChannel(support_channel, true, message.member);
                 return;
             }
-
-            let save_transcript = true;
 
             const save_transcript_message = await message.reply({
                 content: 'Would you like to save the transcript for this support ticket before closing it?',
@@ -641,12 +648,12 @@ module.exports = {
 
                 switch (interaction.customId) {
                     case 'save_transcript': {
-                        save_transcript = true;
+                        await closeSupportTicketChannel(support_channel, true, message.member);
                         break;
                     }
 
                     case 'discard_transcript': {
-                        save_transcript = false;
+                        await closeSupportTicketChannel(support_channel, false, message.member);
                         break;
                     }
 
@@ -656,14 +663,6 @@ module.exports = {
                 }
 
                 save_transcript_message_components_collector.stop();
-            });
-
-            save_transcript_message_components_collector.on('end', async (collected_interactions, reason) => {
-                await support_channel.send({
-                    content: `${message.author}, Closing support ticket in 5 seconds...`,
-                }).catch(console.warn);
-
-                await closeSupportTicketChannel(support_channel, save_transcript);
             });
         }
 
