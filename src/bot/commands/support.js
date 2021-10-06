@@ -668,6 +668,12 @@ module.exports = {
             });
 
             save_transcript_message_components_collector.on('end', async () => {
+                /* remove all components from the message */
+                await save_transcript_message.edit({
+                    components: [],
+                }).catch(console.warn);
+
+                /* close the support ticket */
                 await closeSupportTicketChannel(support_channel, save_transcript, message.member);
             });
         }
