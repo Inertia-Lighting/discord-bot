@@ -523,6 +523,7 @@ module.exports = {
                 const category_instructions_message_components_collector = category_instructions_message.createMessageComponentCollector({
                     filter: (interaction) => interaction.user.id === message.author.id,
                     time: 30 * 60_000,
+                    max: 1,
                 });
 
                 category_instructions_message_components_collector.on('collect', async (interaction) => {
@@ -616,6 +617,7 @@ module.exports = {
                 return;
             }
 
+            /** @type {Discord.Message} */
             const save_transcript_message = await message.reply({
                 content: 'Would you like to save the transcript for this support ticket before closing it?',
                 components: [
@@ -638,9 +640,11 @@ module.exports = {
                 ],
             }).catch(console.warn);
 
+            let save_transcript = false;
+
             const save_transcript_message_components_collector = save_transcript_message.createMessageComponentCollector({
                 filter: (interaction) => interaction.user.id === message.author.id,
-                time: 30 * 60_000,
+                max: 1,
             });
 
             save_transcript_message_components_collector.on('collect', async (interaction) => {
@@ -648,12 +652,12 @@ module.exports = {
 
                 switch (interaction.customId) {
                     case 'save_transcript': {
-                        await closeSupportTicketChannel(support_channel, true, message.member);
+                        save_transcript = true;
                         break;
                     }
 
                     case 'discard_transcript': {
-                        await closeSupportTicketChannel(support_channel, false, message.member);
+                        save_transcript = false;
                         break;
                     }
 
@@ -661,8 +665,10 @@ module.exports = {
                         return; // don't continue if we don't have a valid custom_id
                     }
                 }
+            });
 
-                save_transcript_message_components_collector.stop();
+            save_transcript_message_components_collector.on('end', async () => {
+                await closeSupportTicketChannel(support_channel, save_transcript, message.member);
             });
         }
 
