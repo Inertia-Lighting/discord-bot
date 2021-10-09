@@ -93,6 +93,16 @@ async function automaticVerificationHandler(member) {
     try {
         const dm_channel = await member.createDM();
         const account_selection_menu_message = await dm_channel.send({
+            embeds: [
+                new Discord.MessageEmbed({
+                    color: 0x60A0FF,
+                    author: {
+                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                        name: 'Inertia Lighting Verification System',
+                    },
+                    title: 'Please select an account bellow to automatically verify.',
+                }),
+            ],
             components: [
                 {
                     type: 1,
