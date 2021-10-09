@@ -41,33 +41,37 @@ const support_tickets_transcripts_channel_id = process.env.BOT_SUPPORT_TICKETS_T
  */
 
 const support_categories = new Discord.Collection([
-    // {
-    //     id: 'PARTNERS',
-    //     name: 'Partner Requests',
-    //     description: 'Come here if you want to request a partnership with Inertia Lighting.',
-    //     qualified_support_role_ids: [
-    //         process.env.BOT_SUPPORT_STAFF_PARTNER_REQUESTS_ROLE_ID,
-    //     ],
-    //     automatically_save_when_closed: true,
-    //     instructions_message_options: {
-    //         embeds: [
-    //             new Discord.MessageEmbed({
-    //                 color: 0x60A0FF,
-    //                 author: {
-    //                     iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-    //                     name: 'Inertia Lighting | Support Ticket Instructions',
-    //                 },
-    //                 title: 'Please fill out our partner request form.',
-    //                 description: [
-    //                     '[Inertia Lighting Partner Request Form](https://inertia.lighting/partner-requests-form)',
-    //                     '',
-    //                     '**If you don\'t fill out the template properly, your ticket will be ignored!**',
-    //                 ].join('\n'),
-    //             }),
-    //         ],
-    //     },
-    // },
     {
+        id: 'ISSUES',
+        name: 'Tech Support',
+        description: 'Product technical support can be found here.',
+        qualified_support_role_ids: [
+            process.env.BOT_SUPPORT_STAFF_PRODUCT_ISSUES_ROLE_ID,
+        ],
+        automatically_save_when_closed: false,
+        instructions_message_options: {
+            embeds: [
+                new Discord.MessageEmbed({
+                    color: 0x60A0FF,
+                    author: {
+                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                        name: 'Inertia Lighting | Support Ticket Instructions',
+                    },
+                    description: [
+                        '**Please fill out this template so that our staff can assist you.**',
+                        '- **Product(s):** ( All Products, C-Lights, Magic Panels, etc )',
+                        '- **Read Setup Guide:** ( yes | kinda | maybe | no )',
+                        '- **Game Is Published:** ( yes | idk |  no )',
+                        '- **HTTPS Enabled In Game:** ( yes | idk | no )',
+                        '- **Issue Encountered:** ( please fully describe your issue )',
+                        '- **Roblox Studio Output:** ( screenshot your [studio output](https://inertia.wtf/ktudeh32f9a) while game is running )',
+                        '',
+                        '**If you don\'t fill out the template properly, your ticket will be ignored!**',
+                    ].join('\n'),
+                }),
+            ],
+        },
+    }, {
         id: 'RECOVERY',
         name: 'Account Recovery',
         description: 'Recover products from an inaccessible account.',
@@ -85,37 +89,9 @@ const support_categories = new Discord.Collection([
                     },
                     description: [
                         '**Please fill out this template so that our staff can assist you.**',
-                        '- **Old Roblox Account:** ( copy the URL of the profile page for the account | n/a )',
-                        '- **Old Discord Account:** ( @mention the account | n/a )',
-                        '- **Explain:** ( tell us what happened )',
-                        '',
-                        '**If you don\'t fill out the template properly, your ticket will be ignored!**',
-                    ].join('\n'),
-                }),
-            ],
-        },
-    }, {
-        id: 'PURCHASES',
-        name: 'Purchases',
-        description: 'Issues with orders and purchases.',
-        qualified_support_role_ids: [
-            process.env.BOT_SUPPORT_STAFF_PRODUCT_PURCHASES_ROLE_ID,
-        ],
-        automatically_save_when_closed: false,
-        instructions_message_options: {
-            embeds: [
-                new Discord.MessageEmbed({
-                    color: 0x60A0FF,
-                    author: {
-                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                        name: 'Inertia Lighting | Support Ticket Instructions',
-                    },
-                    description: [
-                        '**Please fill out this template so that our staff can assist you.**',
-                        '- **Product(s):** ( C-Lights, Magic Panels, etc )',
-                        '- **Purchase Date(s):** ( 1970-01-01 )',
-                        '- **Proof Of Purchase(s):** ( screenshot [your transactions](https://www.roblox.com/transactions) )',
-                        '- **Issue:** ( describe your issue )',
+                        '- **Old Roblox Account:** ( copy the URL for the profile page of the account | n/a )',
+                        '- **Old Discord Account:** ( @mention#0001 | discord id | n/a )',
+                        '- **Explain:** ( tell us what happened to your account )',
                         '',
                         '**If you don\'t fill out the template properly, your ticket will be ignored!**',
                     ].join('\n'),
@@ -124,8 +100,8 @@ const support_categories = new Discord.Collection([
         },
     }, {
         id: 'TRANSFERS',
-        name: 'Transfers',
-        description: 'Transfer or gift to a different account.',
+        name: 'Transfer Products',
+        description: 'Transfer or gift products to a different account.',
         qualified_support_role_ids: [
             process.env.BOT_SUPPORT_STAFF_PRODUCT_TRANSFERS_ROLE_ID,
         ],
@@ -151,11 +127,11 @@ const support_categories = new Discord.Collection([
             ],
         },
     }, {
-        id: 'ISSUES',
-        name: 'Issues',
-        description: 'Technical support can be found here.',
+        id: 'TRANSACTIONS',
+        name: 'Transactions',
+        description: 'Failed transactions or monetary issues with orders.',
         qualified_support_role_ids: [
-            process.env.BOT_SUPPORT_STAFF_PRODUCT_ISSUES_ROLE_ID,
+            process.env.BOT_SUPPORT_STAFF_PRODUCT_PURCHASES_ROLE_ID,
         ],
         automatically_save_when_closed: false,
         instructions_message_options: {
@@ -169,10 +145,8 @@ const support_categories = new Discord.Collection([
                     description: [
                         '**Please fill out this template so that our staff can assist you.**',
                         '- **Product(s):** ( C-Lights, Magic Panels, etc )',
-                        '- **Read Setup Guide:** ( yes | maybe | no )',
-                        '- **Game Is Published:** ( yes | idk |  no )',
-                        '- **HTTPS Enabled In Game:** ( yes | idk | no )',
-                        '- **Roblox Studio Output:** ( screenshot your [studio output](https://prnt.sc/y6hnau) )',
+                        '- **Purchase Date(s):** ( 1970-01-01 )',
+                        '- **Proof Of Purchase(s):** ( screenshot [your transactions](https://www.roblox.com/transactions) )',
                         '- **Issue:** ( describe your issue )',
                         '',
                         '**If you don\'t fill out the template properly, your ticket will be ignored!**',
@@ -180,9 +154,36 @@ const support_categories = new Discord.Collection([
                 }),
             ],
         },
-    }, {
+    },
+    // {
+    //     id: 'PARTNERS',
+    //     name: 'Partner Requests',
+    //     description: 'Apply to become an Official Inertia Partner.',
+    //     qualified_support_role_ids: [
+    //         process.env.BOT_SUPPORT_STAFF_PARTNER_REQUESTS_ROLE_ID,
+    //     ],
+    //     automatically_save_when_closed: true,
+    //     instructions_message_options: {
+    //         embeds: [
+    //             new Discord.MessageEmbed({
+    //                 color: 0x60A0FF,
+    //                 author: {
+    //                     iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+    //                     name: 'Inertia Lighting | Support Ticket Instructions',
+    //                 },
+    //                 title: 'Please fill out our partner request form.',
+    //                 description: [
+    //                     '[Inertia Lighting Partner Request Form](https://inertia.lighting/partner-requests-form)',
+    //                     '',
+    //                     '**If you don\'t fill out the template properly, your ticket will be ignored!**',
+    //                 ].join('\n'),
+    //             }),
+    //         ],
+    //     },
+    // },
+    {
         id: 'QUESTIONS',
-        name: 'Questions',
+        name: 'Quick Questions',
         description: 'Simple questions can be asked here.',
         qualified_support_role_ids: [
             process.env.BOT_SUPPORT_STAFF_PRODUCT_QUESTIONS_ROLE_ID,
@@ -198,7 +199,6 @@ const support_categories = new Discord.Collection([
                     },
                     description: [
                         '**Please fill out this template so that our staff can assist you.**',
-                        '- **Product(s):** ( C-Lights, Magic Panels, etc )',
                         '- **Question:** ( what\'s your question? )',
                         '',
                         '**If you don\'t fill out the template properly, your ticket will be ignored!**',
@@ -222,7 +222,7 @@ const support_categories = new Discord.Collection([
                         iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                         name: 'Inertia Lighting | Support Ticket Instructions',
                     },
-                    title: 'Please describe your issue / why you opened this ticket.',
+                    title: 'Tell us why you opened this ticket.',
                 }),
             ],
         },
@@ -272,9 +272,14 @@ async function createSupportTicketChannel(guild, guild_member, support_category)
  * Closes a support ticket channel
  * @param {Discord.TextChannel} support_channel
  * @param {Boolean} save_transcript
+ * @param {Discord.GuildMember?} member_that_closed_ticket
  * @returns {Promise<Discord.TextChannel>}
  */
-async function closeSupportTicketChannel(support_channel, save_transcript) {
+async function closeSupportTicketChannel(support_channel, save_transcript, member_that_closed_ticket) {
+    await support_channel.send({
+        content: `${member_that_closed_ticket ? `${member_that_closed_ticket},` : 'automatically'} closing support ticket in 5 seconds...`,
+    }).catch(console.warn);
+
     if (save_transcript) {
         const support_ticket_topic_name = support_channel.name.match(/([a-zA-Z\-\_])+(?![\-\_])\D/i)?.[0];
         const support_ticket_owner_id = support_channel.name.match(/(?!.*\-)?([0-9])+/i)?.[0];
@@ -305,17 +310,21 @@ async function closeSupportTicketChannel(support_channel, save_transcript) {
                             value: `${'```'}\n${support_channel.name}\n${'```'}`,
                             inline: false,
                         }, {
-                            name: 'Topic',
-                            value: `${'```'}\n${support_ticket_topic_name}\n${'```'}`,
-                            inline: false,
-                        }, {
                             name: 'Creation Date',
                             value: `${'```'}\n${moment(support_channel.createdTimestamp).tz('America/New_York').format('YYYY[-]MM[-]DD hh:mm A [GMT]ZZ')}\n${'```'}`,
                             inline: false,
                         }, {
-                            name: 'User',
-                            value: `<@!${support_ticket_owner_id}>\n`,
+                            name: 'Topic',
+                            value: `${'```'}\n${support_ticket_topic_name}\n${'```'}`,
                             inline: false,
+                        }, {
+                            name: 'Opened By',
+                            value: `<@!${support_ticket_owner_id}>`,
+                            inline: true,
+                        }, {
+                            name: 'Closed By',
+                            value: `<@!${member_that_closed_ticket.id}>`,
+                            inline: true,
                         }, {
                             name: 'Participants',
                             value: `${all_channel_participants.map(user_id => `<@!${user_id}>`).join(' - ')}`,
@@ -488,42 +497,40 @@ module.exports = {
                 await sendDatabaseDocumentsToSupportTicketChannel(support_channel, message.member);
 
                 /* send the category-specific instructions */
-                const category_instructions_message = await support_channel.send(matching_support_category.instructions_message_options).catch(console.warn);
-
-                const category_instructions_options_message = await support_channel.send({
+                const category_instructions_message = await support_channel.send({
+                    ...matching_support_category.instructions_message_options,
                     content: `${message.author}, welcome to your support ticket!`,
-                    embeds: [
-                        new Discord.MessageEmbed({
-                            color: 0x60A0FF,
-                            description: [
-                                `**Please read the [instructions](${category_instructions_message.url}) above!**`,
-                                '',
-                                `Send \"**done**\" after you have completed the [instructions](${category_instructions_message.url}).`,
-                                'Send \"**cancel**\" if you wish to cancel this ticket.',
-                                '',
-                                '*Sending neither will result in your ticket automatically closing after 30 minutes.*',
-                            ].join('\n'),
-                        }),
+                    components: [
+                        {
+                            type: 1,
+                            components: [
+                                {
+                                    type: 2,
+                                    style: 2,
+                                    custom_id: 'ready_for_support_staff',
+                                    label: 'I have completed the instructions',
+                                }, {
+                                    type: 2,
+                                    style: 2,
+                                    custom_id: 'cancel_support_ticket',
+                                    label: 'Cancel support ticket',
+                                },
+                            ],
+                        },
                     ],
-                }).catch(console.warn);
-
-                const category_instructions_options_message_collector = support_channel.createMessageCollector({
-                    filter: (msg) => msg.author.id === message.author.id,
-                    time: 30 * 60_000,
                 });
 
-                category_instructions_options_message_collector.on('collect', async (collected_options_message) => {
-                    async function cleanupCategoryInstructionsOptionsMessageCollector() {
-                        category_instructions_options_message_collector.stop();
-                        await Timer(500); // delay the message deletions
-                        await category_instructions_options_message.delete().catch(console.warn);
-                        await collected_options_message.delete().catch(console.warn);
-                    }
+                const category_instructions_message_components_collector = category_instructions_message.createMessageComponentCollector({
+                    filter: (interaction) => interaction.user.id === message.author.id,
+                    time: 30 * 60_000,
+                    max: 1,
+                });
 
-                    switch (collected_options_message.content.toLowerCase().trim()) {
-                        case 'done': {
-                            await cleanupCategoryInstructionsOptionsMessageCollector();
+                category_instructions_message_components_collector.on('collect', async (interaction) => {
+                    await interaction.deferUpdate();
 
+                    switch (interaction.customId) {
+                        case 'ready_for_support_staff': {
                             /* allow staff to interact in the support ticket */
                             await support_channel.permissionOverwrites.set([
                                 ...support_channel.permissionOverwrites.cache.values(), // clone the channel's current permissions
@@ -534,33 +541,41 @@ module.exports = {
                             ]).catch(console.trace);
 
                             const qualified_support_role_mentions = matching_support_category.qualified_support_role_ids.map(role_id => `<@&${role_id}>`).join(', ');
-                            await support_channel.send({
+
+                            await interaction.channel.send({
                                 content: `${message.author}, Our ${qualified_support_role_mentions} staff will help you with your issue soon!`,
                             }).catch(console.warn);
 
                             break;
                         }
-                        case 'cancel': {
-                            await cleanupCategoryInstructionsOptionsMessageCollector();
 
-                            await support_channel.send({
+                        case 'cancel_support_ticket': {
+                            await interaction.channel.send({
                                 content: `${message.author}, Cancelling support ticket...`,
                             }).catch(console.warn);
-                            await closeSupportTicketChannel(support_channel, false);
+
+                            await closeSupportTicketChannel(support_channel, false, message.member);
 
                             break;
                         }
+
                         default: {
-                            /* we want to ignore all other messages that are sent */
-                            break;
+                            return; // don't continue if we don't have a valid custom_id
                         }
                     }
+
+                    category_instructions_message_components_collector.stop();
                 });
 
-                category_instructions_options_message_collector.on('end', async (collected_messages, reason) => {
+                category_instructions_message_components_collector.on('end', async (collected_interactions, reason) => {
+                    /* remove all components from the message */
+                    await category_instructions_message.edit({
+                        components: [],
+                    }).catch(console.warn);
+
                     /* check if the collector has exceeded the specified time */
                     if (reason === 'time') {
-                        await closeSupportTicketChannel(support_channel, false);
+                        await closeSupportTicketChannel(support_channel, false, undefined);
                     }
                 });
             });
@@ -579,7 +594,7 @@ module.exports = {
         async function closeTicketCommand() {
             if (user_permission_level < command_permission_levels.STAFF) {
                 message.reply({
-                    content: 'Sorry, only staff can close active support tickets.',
+                    content: 'Sorry, only staff may close active support tickets.',
                 }).catch(console.warn);
                 return;
             }
@@ -588,7 +603,7 @@ module.exports = {
             const channel_is_not_transcripts_channel = message.channel.id !== support_tickets_transcripts_channel_id;
             if (!(channel_exists_in_support_tickets_category && channel_is_not_transcripts_channel)) {
                 message.reply({
-                    content: 'This channel is not a support ticket.',
+                    content: 'This channel is not an active support ticket.',
                 }).catch(console.warn);
                 return;
             }
@@ -597,29 +612,70 @@ module.exports = {
             const support_ticket_topic_name = support_channel.name.match(/([a-zA-Z\-\_])+(?![\-\_])\D/i)?.[0];
             const support_category = support_categories.find(support_category => support_category.id === support_ticket_topic_name.toUpperCase());
 
-            let save_transcript = true;
-            if (!support_category?.automatically_save_when_closed) {
-                await message.reply({
-                    content: 'Would you like to save the transcript for this support ticket before closing it?\n**( yes | no )**',
-                }).catch(console.warn);
-
-                const collection_filter = (msg) => msg.author.id === message.author.id && ['yes', 'no'].includes(msg.content.toLowerCase());
-                const collected_messages = await support_channel.awaitMessages({
-                    filter: collection_filter,
-                    max: 1,
-                }).catch(collected_messages => collected_messages);
-
-                const first_collected_message_content = collected_messages.first()?.content;
-                const formatted_first_collected_message_content = first_collected_message_content?.toLowerCase();
-
-                save_transcript = ['yes'].includes(formatted_first_collected_message_content);
+            if (support_category?.automatically_save_when_closed) {
+                await closeSupportTicketChannel(support_channel, true, message.member);
+                return;
             }
 
-            await support_channel.send({
-                content: `${message.author}, Closing support ticket in 5 seconds...`,
+            /** @type {Discord.Message} */
+            const save_transcript_message = await message.reply({
+                content: 'Would you like to save the transcript for this support ticket before closing it?',
+                components: [
+                    {
+                        type: 1,
+                        components: [
+                            {
+                                type: 2,
+                                style: 2,
+                                custom_id: 'save_transcript',
+                                label: 'Yes',
+                            }, {
+                                type: 2,
+                                style: 2,
+                                custom_id: 'discard_transcript',
+                                label: 'No',
+                            },
+                        ],
+                    },
+                ],
             }).catch(console.warn);
 
-            await closeSupportTicketChannel(support_channel, save_transcript);
+            let save_transcript = false;
+
+            const save_transcript_message_components_collector = save_transcript_message.createMessageComponentCollector({
+                filter: (interaction) => interaction.user.id === message.author.id,
+                max: 1,
+            });
+
+            save_transcript_message_components_collector.on('collect', async (interaction) => {
+                await interaction.deferUpdate();
+
+                switch (interaction.customId) {
+                    case 'save_transcript': {
+                        save_transcript = true;
+                        break;
+                    }
+
+                    case 'discard_transcript': {
+                        save_transcript = false;
+                        break;
+                    }
+
+                    default: {
+                        return; // don't continue if we don't have a valid custom_id
+                    }
+                }
+            });
+
+            save_transcript_message_components_collector.on('end', async () => {
+                /* remove all components from the message */
+                await save_transcript_message.edit({
+                    components: [],
+                }).catch(console.warn);
+
+                /* close the support ticket */
+                await closeSupportTicketChannel(support_channel, save_transcript, message.member);
+            });
         }
 
         switch (command_name) {
