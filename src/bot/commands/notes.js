@@ -48,7 +48,7 @@ async function createNoteCommand(message) {
     }
 
     const note_contents = sub_command_args.slice(1).join(' ');
-    if (note_contents.length < 5) {
+    if (note_contents.length < 10) {
         message.reply({
             embeds: [
                 new Discord.MessageEmbed({
@@ -57,7 +57,7 @@ async function createNoteCommand(message) {
                         iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                         name: 'Inertia Lighting | User Notes',
                     },
-                    description: 'The supplied note was less then 5 characters, please be more descriptive next time.',
+                    description: 'The supplied note contents was less then 10 characters, please be more descriptive next time.',
                 }),
             ],
         }).catch(console.warn);
@@ -139,7 +139,7 @@ async function updateNoteCommand(message) {
                         iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                         name: 'Inertia Lighting | User Notes',
                     },
-                    description: 'Unable to find specified note id in the database!',
+                    description: 'That note ID was not found in the database!',
                 }),
             ],
         }).catch(console.warn);
@@ -147,7 +147,7 @@ async function updateNoteCommand(message) {
     }
 
     const note_contents = sub_command_args.slice(1).join(' ');
-    if (note_contents.length < 5) {
+    if (note_contents.length < 10) {
         message.reply({
             embeds: [
                 new Discord.MessageEmbed({
@@ -156,7 +156,7 @@ async function updateNoteCommand(message) {
                         iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                         name: 'Inertia Lighting | User Notes',
                     },
-                    description: 'The supplied note was less then 5 characters, please be more descriptive next time.',
+                    description: 'The supplied note contents was less then 10 characters, please be more descriptive next time.',
                 }),
             ],
         }).catch(console.warn);
@@ -379,17 +379,12 @@ async function lookupNotesCommand(message, lookup_method) {
     await Timer(500);
 
     const user_notes = lookup_method === 'user_mention' ? (
-        await lookupNotesForUser({
-            discord_user_id: lookup_query,
-        })
+        await lookupNotesForUser(lookup_query) // looks up notes for a user id
     ) : (
-        [
-            await lookupNoteForUser({
-                id: lookup_query,
-            }),
-        ]
+        await lookupNoteForUser(lookup_query) // looks up a note for a note id
     );
-    if (user_notes.length === 0 || (lookup_method === 'note_id' && message.mentions.users.size > 0)) {
+
+    if (user_notes.length === 0) {
         await bot_message.edit({
             embeds: [
                 new Discord.MessageEmbed({
@@ -398,52 +393,50 @@ async function lookupNotesCommand(message, lookup_method) {
                         iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                         name: 'Inertia Lighting | User Notes',
                     },
-                    description: 'I wasn\'t able to find any user notes for the specified query!',
+                    description: 'I wasn\'t able to find any user notes for the specified user!',
                 }),
             ],
         }).catch(console.warn);
         return;
     }
 
+    await bot_message.edit({
+        components: [
+            {
+                type: 1,
+                components: [
+                    {
+                        type: 2,
+                        style: 2,
+                        custom_id: 'previous',
+                        emoji: {
+                            id: null,
+                            name: '⬅️',
+                        },
+                    }, {
+                        type: 2,
+                        style: 2,
+                        custom_id: 'next',
+                        emoji: {
+                            id: null,
+                            name: '➡️',
+                        },
+                    }, {
+                        type: 2,
+                        style: 2,
+                        custom_id: 'stop',
+                        emoji: {
+                            id: null,
+                            name: '⏹️',
+                        },
+                    },
+                ],
+            },
+        ],
+    });
+
     const sorted_user_notes = user_notes.sort((a, b) => b.record.epoch - a.record.epoch);
     const user_notes_chunks = array_chunks(sorted_user_notes, 5);
-
-    if (user_notes_chunks.length > 1) {
-        await bot_message.edit({
-            components: [
-                {
-                    type: 1,
-                    components: [
-                        {
-                            type: 2,
-                            style: 2,
-                            custom_id: 'previous',
-                            emoji: {
-                                id: null,
-                                name: '⬅️',
-                            },
-                        }, {
-                            type: 2,
-                            style: 2,
-                            custom_id: 'next',
-                            emoji: {
-                                id: null,
-                                name: '➡️',
-                            },
-                        }, {
-                            type: 2,
-                            style: 2,
-                            custom_id: 'stop',
-                            emoji: {
-                                id: null,
-                                name: '⏹️',
-                            },
-                        },
-                    ],
-                },
-            ],
-        });
-    }
 
     let page_index = 0;
 
