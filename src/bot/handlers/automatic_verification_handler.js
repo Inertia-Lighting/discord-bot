@@ -187,7 +187,7 @@ async function automaticVerificationHandler(member) {
                     const user_products = {};
 
                     for (const db_roblox_product of db_roblox_products) {
-                        user_products[db_roblox_product] = false;
+                        user_products[db_roblox_product.code] = false;
                     }
 
                     await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
