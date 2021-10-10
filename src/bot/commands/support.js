@@ -154,34 +154,38 @@ const support_categories = new Discord.Collection([
                 }),
             ],
         },
-    },
-    // {
-    //     id: 'PARTNERS',
-    //     name: 'Partner Requests',
-    //     description: 'Apply to become an Official Inertia Partner.',
-    //     qualified_support_role_ids: [
-    //         process.env.BOT_SUPPORT_STAFF_PARTNER_REQUESTS_ROLE_ID,
-    //     ],
-    //     automatically_save_when_closed: true,
-    //     instructions_message_options: {
-    //         embeds: [
-    //             new Discord.MessageEmbed({
-    //                 color: 0x60A0FF,
-    //                 author: {
-    //                     iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-    //                     name: 'Inertia Lighting | Support Ticket Instructions',
-    //                 },
-    //                 title: 'Please fill out our partner request form.',
-    //                 description: [
-    //                     '[Inertia Lighting Partner Request Form](https://inertia.lighting/partner-requests-form)',
-    //                     '',
-    //                     '**If you don\'t fill out the template properly, your ticket will be ignored!**',
-    //                 ].join('\n'),
-    //             }),
-    //         ],
-    //     },
-    // },
-    {
+    }, {
+        id: 'PARTNERS',
+        name: 'Partner Requests',
+        description: 'Apply to become a partner of Inertia Lighting.',
+        qualified_support_role_ids: [
+            process.env.BOT_SUPPORT_STAFF_PARTNER_REQUESTS_ROLE_ID,
+        ],
+        automatically_save_when_closed: true,
+        instructions_message_options: {
+            embeds: [
+                new Discord.MessageEmbed({
+                    color: 0x60A0FF,
+                    author: {
+                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                        name: 'Inertia Lighting | Support Ticket Instructions',
+                    },
+                    title: 'Please fill out our partner request form.',
+                    description: [
+                        '**Please fill out this template.**',
+                        '- **Group Name:**',
+                        '- **Group Owner Discord Id:**',
+                        '- **Group Description:**',
+                        '- **Group Member Count:**',
+                        '- **Group Social Links ( discord, website, etc ):**',
+                        '- **Reason ( why should we partner? ):**',
+                        '',
+                        '**If you don\'t fill out the template properly, your ticket will be ignored!**',
+                    ].join('\n'),
+                }),
+            ],
+        },
+    }, {
         id: 'QUESTIONS',
         name: 'Quick Questions',
         description: 'Simple questions can be asked here.',
