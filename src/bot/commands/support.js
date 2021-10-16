@@ -277,16 +277,19 @@ async function createSupportTicketChannel(guild, guild_member, support_category)
  * @param {Discord.TextChannel} support_channel
  * @param {Boolean} save_transcript
  * @param {Discord.GuildMember?} member_that_closed_ticket
+ * @param {Boolean} send_feedback_survey
  * @returns {Promise<Discord.TextChannel>}
  */
-async function closeSupportTicketChannel(support_channel, save_transcript, member_that_closed_ticket) {
+async function closeSupportTicketChannel(support_channel, save_transcript, member_that_closed_ticket, send_feedback_survey=false) {
     await support_channel.send({
         content: `${member_that_closed_ticket ? `${member_that_closed_ticket},` : 'automatically'} closing support ticket in 5 seconds...`,
     }).catch(console.warn);
 
-    if (save_transcript) {
+    if (save_transcript && member_that_closed_ticket) {
         const support_ticket_topic_name = support_channel.name.match(/([a-zA-Z\-\_])+(?![\-\_])\D/i)?.[0];
         const support_ticket_owner_id = support_channel.name.match(/(?!.*\-)?([0-9])+/i)?.[0];
+
+        const support_ticket_owner = await support_channel.guild.members.fetch(support_ticket_owner_id);
 
         const all_messages_in_channel = await support_channel.messages.fetch({ limit: 100 }); // 100 is the max
         const all_messages_in_channel_processed = Array.from(all_messages_in_channel.values()).reverse();
@@ -296,52 +299,193 @@ async function closeSupportTicketChannel(support_channel, save_transcript, membe
         const temp_file_path = path.join(process.cwd(), 'temporary', `transcript_${support_channel.name}.json`);
         fs.writeFileSync(temp_file_path, JSON.stringify(all_messages_in_channel_processed, null, 2), { flag: 'w' });
 
-        const temp_file_read_stream = fs.createReadStream(temp_file_path);
-        const message_attachment = new Discord.MessageAttachment(temp_file_read_stream);
+        const createTranscriptAttachment = () => {
+            const temp_file_read_stream = fs.createReadStream(temp_file_path);
+            return new Discord.MessageAttachment(temp_file_read_stream);
+        };
 
-        const support_ticket_transcripts_channel = client.channels.resolve(support_tickets_transcripts_channel_id);
-        await support_ticket_transcripts_channel.send({
+        const transcript_embed = new Discord.MessageEmbed({
+            color: 0x60A0FF,
+            author: {
+                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                name: 'Inertia Lighting | Support Ticket Transcripts System',
+            },
+            fields: [
+                {
+                    name: 'Ticket Id',
+                    value: `${'```'}\n${support_channel.name}\n${'```'}`,
+                    inline: false,
+                }, {
+                    name: 'Creation Date',
+                    value: `${'```'}\n${moment(support_channel.createdTimestamp).tz('America/New_York').format('YYYY[-]MM[-]DD hh:mm A [GMT]ZZ')}\n${'```'}`,
+                    inline: false,
+                }, {
+                    name: 'Topic',
+                    value: `${'```'}\n${support_ticket_topic_name}\n${'```'}`,
+                    inline: false,
+                }, {
+                    name: 'Opened By',
+                    value: `<@!${support_ticket_owner.id}>`,
+                    inline: true,
+                }, {
+                    name: 'Closed By',
+                    value: `<@!${member_that_closed_ticket.id}>`,
+                    inline: true,
+                }, {
+                    name: 'Participants',
+                    value: `${all_channel_participants.map(user_id => `<@!${user_id}>`).join(' - ')}`,
+                    inline: false,
+                },
+            ],
+        });
+
+        /* send the transcript to transcripts channel */
+        const support_ticket_transcripts_channel = await client.channels.fetch(support_tickets_transcripts_channel_id);
+        const transcript_message = await support_ticket_transcripts_channel.send({
             embeds: [
-                new Discord.MessageEmbed({
-                    color: 0x60A0FF,
-                    author: {
-                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                        name: 'Inertia Lighting | Support Ticket Transcripts System',
-                    },
-                    fields: [
-                        {
-                            name: 'Ticket Id',
-                            value: `${'```'}\n${support_channel.name}\n${'```'}`,
-                            inline: false,
-                        }, {
-                            name: 'Creation Date',
-                            value: `${'```'}\n${moment(support_channel.createdTimestamp).tz('America/New_York').format('YYYY[-]MM[-]DD hh:mm A [GMT]ZZ')}\n${'```'}`,
-                            inline: false,
-                        }, {
-                            name: 'Topic',
-                            value: `${'```'}\n${support_ticket_topic_name}\n${'```'}`,
-                            inline: false,
-                        }, {
-                            name: 'Opened By',
-                            value: `<@!${support_ticket_owner_id}>`,
-                            inline: true,
-                        }, {
-                            name: 'Closed By',
-                            value: `<@!${member_that_closed_ticket.id}>`,
-                            inline: true,
-                        }, {
-                            name: 'Participants',
-                            value: `${all_channel_participants.map(user_id => `<@!${user_id}>`).join(' - ')}`,
-                            inline: false,
-                        },
-                    ],
-                }),
+                transcript_embed,
             ],
             files: [
-                message_attachment,
+                createTranscriptAttachment(),
             ],
         }).catch(console.warn);
 
+        /* send the feedback survey to the user */
+        if (send_feedback_survey) {
+            try {
+                const satisfaction_levels = {
+                    'highest_satisfaction': {
+                        name: 'Excellent',
+                        description: 'Support went above and beyond expectations!',
+                        color: '#00ff00',
+                    },
+                    'high_satisfaction': {
+                        name: 'Good',
+                        description: 'Support was able to help me without issues!',
+                        color: '#ccff00',
+                    },
+                    'medium_satisfaction': {
+                        name: 'Decent',
+                        description: 'Support was able to help me with little issues!',
+                        color: '#ffff00',
+                    },
+                    'low_satisfaction': {
+                        name: 'Bad',
+                        description: 'Support wasn\'t able to help me properly!',
+                        color: '#ffcc00',
+                    },
+                    'lowest_satisfaction': {
+                        name: 'Horrible',
+                        description: 'Support staff need better training!',
+                        color: '#ff0000',
+                    },
+                };
+
+                const support_ticket_owner_dms = await support_ticket_owner.createDM();
+
+                await support_ticket_owner_dms.send({
+                    embeds: [
+                        new Discord.MessageEmbed({
+                            color: 0x60A0FF,
+                            author: {
+                                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                                name: 'Inertia Lighting | Support Ticket Transcript',
+                            },
+                            description: 'Your support ticket transcript is attached to this message.',
+                        }),
+                    ],
+                    files: [
+                        createTranscriptAttachment(),
+                    ],
+                });
+
+                const user_feedback_survey_message = await support_ticket_owner_dms.send({
+                    embeds: [
+                        new Discord.MessageEmbed({
+                            color: 0x60A0FF,
+                            author: {
+                                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                                name: 'Inertia Lighting | Support Ticket Feedback',
+                            },
+                            description: 'How was your most recent support ticket experience?',
+                        }),
+                    ],
+                    components: [
+                        {
+                            type: 1,
+                            components: [
+                                {
+                                    type: 3,
+                                    custom_id: 'support_user_feedback_survey_color',
+                                    placeholder: 'Select a rating!',
+                                    min_values: 1,
+                                    max_values: 1,
+                                    options: Object.entries(satisfaction_levels).map(([key, value]) => ({
+                                        label: value.name,
+                                        description: value.description,
+                                        value: key,
+                                    })),
+                                },
+                            ],
+                        },
+                    ],
+                });
+
+                const user_feedback_survey_components_collector = user_feedback_survey_message.createMessageComponentCollector({
+                    filter: (interaction) => interaction.user.id === support_ticket_owner.id,
+                    time: 30 * 60_000,
+                    max: 1,
+                });
+
+                user_feedback_survey_components_collector.on('collect', async (interaction) => {
+                    await interaction.deferUpdate();
+
+                    if (!interaction.isSelectMenu()) return;
+
+                    switch (interaction.customId) {
+                        case 'support_user_feedback_survey_color': {
+                            const satisfaction_level = satisfaction_levels[interaction.values[0]];
+
+                            const customer_review_embed = new Discord.MessageEmbed({
+                                color: satisfaction_level.color ?? 0x60A0FF,
+                                title: `User feedback: ${satisfaction_level.name}`,
+                                description: `${satisfaction_level.description}`,
+                            });
+
+                            await transcript_message.edit({
+                                embeds: [
+                                    transcript_embed,
+                                    customer_review_embed,
+                                ],
+                            }).catch(console.warn);
+
+                            await user_feedback_survey_message.edit({
+                                embeds: [
+                                    new Discord.MessageEmbed({
+                                        color: 0x60A0FF,
+                                        title: 'Thanks for the feedback!',
+                                    }),
+                                ],
+                            }).catch(console.warn);
+
+                            break;
+                        }
+
+                        default: {
+                            return; // don't continue if we don't have a valid custom_id
+                        }
+                    }
+                });
+
+                user_feedback_survey_components_collector.on('end', async () => {
+                    await user_feedback_survey_message.edit({
+                        components: [],
+                    }).catch(console.warn);
+                });
+            } catch {} // ignore any errors
+        }
+
+        /* delete the temporary file */
         fs.unlinkSync(temp_file_path);
     }
 
@@ -558,7 +702,7 @@ module.exports = {
                                 content: `${message.author}, Cancelling support ticket...`,
                             }).catch(console.warn);
 
-                            await closeSupportTicketChannel(support_channel, false, message.member);
+                            await closeSupportTicketChannel(support_channel, false, message.member, false);
 
                             break;
                         }
@@ -579,7 +723,7 @@ module.exports = {
 
                     /* check if the collector has exceeded the specified time */
                     if (reason === 'time') {
-                        await closeSupportTicketChannel(support_channel, false, undefined);
+                        await closeSupportTicketChannel(support_channel, false, undefined, false);
                     }
                 });
             });
@@ -617,7 +761,7 @@ module.exports = {
             const support_category = support_categories.find(support_category => support_category.id === support_ticket_topic_name.toUpperCase());
 
             if (support_category?.automatically_save_when_closed) {
-                await closeSupportTicketChannel(support_channel, true, message.member);
+                await closeSupportTicketChannel(support_channel, true, message.member, true);
                 return;
             }
 
@@ -678,7 +822,7 @@ module.exports = {
                 }).catch(console.warn);
 
                 /* close the support ticket */
-                await closeSupportTicketChannel(support_channel, save_transcript, message.member);
+                await closeSupportTicketChannel(support_channel, save_transcript, message.member, true);
             });
         }
 
