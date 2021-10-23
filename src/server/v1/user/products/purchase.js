@@ -189,19 +189,6 @@ module.exports = (router, client) => {
                 console.trace('Failed to give customer roles in the discord!', error);
             }
 
-            /* fetch the product role ids */
-            const product_role_ids = specified_products.map(specified_product => specified_product.discord_role_id);
-
-            /* try to add the product roles to the guild member */
-            try {
-                for (const product_role_id of product_role_ids) {
-                    if (guild_member.roles.cache.has(product_role_id)) continue;
-                    await guild_member.roles.add(product_role_id);
-                }
-            } catch (error) {
-                console.trace('Failed to give product roles in the discord!', error);
-            }
-
             /* fetch the product names */
             const product_names = specified_products.map(specified_product => specified_product.name);
 
