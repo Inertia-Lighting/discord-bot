@@ -14,6 +14,7 @@ const { Discord, client } = require('../discord_client.js');
 
 const { welcomeMessageHandler } = require('../handlers/welcome_message_handler.js');
 const { illegalNicknameHandler } = require('../handlers/illegal_nickname_handler.js');
+const { automaticVerificationHandler } = require('../handlers/automatic_verification_handler.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -38,6 +39,9 @@ module.exports = {
             await member.roles.add(role_id).catch(console.warn);
             await Timer(1_000); // prevent api abuse
         }
+
+        /* automatically verify the user (if possible) */
+        await automaticVerificationHandler(member).catch(console.trace);
 
         /* fetch user data from the database */
         const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {

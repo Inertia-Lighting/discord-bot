@@ -10,14 +10,6 @@ const { Discord, client } = require('../discord_client.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const general_channel_id = '601890659439476766';
-const support_channel_id = '814197612491833354';
-const rules_channel_id = '601890376667889684';
-const info_channel_id = '737156807910359091';
-const news_channel_id = '854442081899642950';
-
-//---------------------------------------------------------------------------------------------------------------//
-
 async function welcomeMessageHandler(member) {
     const message_options = {
         content: `${member}`,
@@ -31,12 +23,13 @@ async function welcomeMessageHandler(member) {
                 description: [
                     'Welcome to the Inertia Lighting discord server!',
                     'To get started, visit the following channels to learn about our server:',
-                    `- <#${rules_channel_id}>`,
-                    `- <#${info_channel_id}>`,
-                    `- <#${news_channel_id}>`,
-                    `- <#${support_channel_id}>`,
-                    `- <#${general_channel_id}>`,
-                    'Also, check out our [product hub](https://www.roblox.com/games/5438256564) to purchase our products!',
+                    `- <#${member.guild.rulesChannelId}>`,
+                    `- <#${process.env.BOT_INFO_CHANNEL_ID}>`,
+                    `- <#${process.env.BOT_NEWS_CHANNEL_ID}>`,
+                    `- <#${process.env.BOT_SUPPORT_CHANNEL_ID}>`,
+                    `- <#${process.env.BOT_GENERAL_CHANNEL_ID}>`,
+                    `Also, check out our [product hub](${process.env.ROBLOX_PRODUCT_HUB_URL}) to purchase products using Robux!`,
+                    'Or, you can go to [our website](https://inertia.lighting/products) to purchase products using PayPal!',
                 ].join('\n'),
             }),
         ],
@@ -46,7 +39,7 @@ async function welcomeMessageHandler(member) {
         const dm_channel = await member.createDM();
         await dm_channel.send(message_options);
     } catch {
-        const general_chat_channel = client.channels.resolve(general_channel_id);
+        const general_chat_channel = client.channels.resolve(process.env.BOT_GENERAL_CHANNEL_ID);
         await general_chat_channel.send(message_options).catch(console.warn);
     }
 }

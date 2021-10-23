@@ -39,19 +39,19 @@ const qs_topics = [
         searchable_queries: [
             'identity tokens',
         ],
-        support_contents: `Check out the \`${bot_command_prefix}identity_token\` command for more info on Identity Tokens.`,
+        support_contents: `Check out the \`${bot_command_prefix}identity_token help\` command for more info on Identity Tokens.`,
     }, {
         title: 'What is Update Catalyst?',
         searchable_queries: [
             'update catalyst',
         ],
-        support_contents: '**Update Catalyst** is an upcoming update to all of our products / systems; its release date is currently unknown.',
+        support_contents: '**Update Catalyst** is an ongoing effort to update all of our products / systems.',
     }, {
         title: 'How do I enable Roblox Output (in-studio)?',
         searchable_queries: [
             'roblox studio output',
         ],
-        support_contents: 'To open the output window in Roblox Studio, click on the **View** tab and then click on **Output**.',
+        support_contents: 'To open the output window in Roblox Studio, click on the **View** tab and then click on **Output**.\nOr [watch this](https://inertia.wtf/ktudeh32f9a) to see how!',
     }, {
         title: 'How do I enable Roblox Output (in-game)?',
         searchable_queries: [
@@ -70,12 +70,6 @@ const qs_topics = [
             'product prices',
         ],
         support_contents: `Check out the \`${bot_command_prefix}products\` command for more info on our product prices.`,
-    }, {
-        title: 'How do I make purchases via PayPal?',
-        searchable_queries: [
-            'paypal',
-        ],
-        support_contents: 'Please open a support ticket <#814197612491833354> to purchase using PayPal.',
     }, {
         title: 'How do I purchase a product?',
         searchable_queries: [
