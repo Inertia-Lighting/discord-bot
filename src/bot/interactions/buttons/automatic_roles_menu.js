@@ -31,7 +31,7 @@ module.exports = {
 
         await interaction.deferUpdate();
 
-        const guild_member = await interaction.guild.members.fetch(interaction.userId);
+        const guild_member = await interaction.guild.members.fetch(interaction.user.id);
 
         const role_ids = interaction.values;
 
