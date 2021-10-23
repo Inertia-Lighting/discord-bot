@@ -34,7 +34,11 @@ async function interactionHandler(unknown_interaction) {
             unknown_interaction.type === 'APPLICATION_COMMAND' ? (
                 unknown_interaction.commandName
             ) : (
-                unknown_interaction.id
+                unknown_interaction.type === 'PING' ? (
+                    unknown_interaction.id
+                ) : (
+                    null
+                )
             )
         );
 

@@ -128,6 +128,13 @@ module.exports = {
         for (const interaction_file_name of interaction_file_names) {
             const interaction_file_path = path.join(interaction_files_path, interaction_file_name);
             const interaction = require(interaction_file_path);
+
+            const interaction_exists = client.$.interactions.has(interaction.identifier);
+            if (interaction_exists) {
+                console.warn(`Interaction: ${interaction.name}; already exists; skipping \'${interaction_file_path}\'.`);
+                continue;
+            }
+
             client.$.interactions.set(interaction.identifier, interaction);
         }
 
