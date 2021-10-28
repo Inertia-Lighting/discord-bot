@@ -33,6 +33,7 @@
     "moment-timezone": "^0.5.32",
     "node-gyp": "^8.3.0",
     "path": "^0.12.7",
+    "recursive-read-directory": "github:MidSpike/recursive-read-directory",
     "string-similarity": "^4.0.4",
     "utf-8-validate": "^5.0.7",
     "uuid": "^8.3.2",
