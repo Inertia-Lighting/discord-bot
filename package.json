@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/Inertia-Lighting/inertia-lighting-discord-bot#readme",
   "dependencies": {
-    "axios": "^0.23.0",
+    "axios": "^0.24.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "bufferutil": "^4.0.5",
@@ -42,9 +42,9 @@
   "devDependencies": {
     "@babel/core": "^7.15.8",
     "@babel/eslint-parser": "^7.15.8",
-    "eslint": "^8.0.1",
+    "eslint": "^8.1.0",
     "husky": "^7.0.4",
-    "is-ci": "^3.0.0"
+    "is-ci": "^3.0.1"
   },
   "engines": {
     "node": ">=15.0.0",

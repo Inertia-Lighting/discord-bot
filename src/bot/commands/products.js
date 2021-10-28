@@ -71,6 +71,11 @@ module.exports = {
                                 id: null,
                                 name: '⏹️',
                             },
+                        }, {
+                            type: 2,
+                            style: 5,
+                            label: 'Products & Downloads',
+                            url: 'https://inertia.lighting/products',
                         },
                     ],
                 },
