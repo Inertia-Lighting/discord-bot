@@ -20,7 +20,7 @@ module.exports = {
     name: 'verify',
     description: 'verifies the user and adds them to the database',
     usage: 'CODE_HERE',
-    aliases: ['verify', 'link'],
+    aliases: ['verify'],
     permission_level: command_permission_levels.PUBLIC,
     cooldown: 5_000,
     async execute(message, args) {
@@ -104,8 +104,8 @@ module.exports = {
                         title: 'Error',
                         description: [
                             'Something went wrong while modifying the database!',
-                            'The most common cause is if your discord account is already linked to a different roblox account in our database.',
-                            'If you want to change the roblox account linked to your discord account, please open a support ticket under the **other** category.',
+                            'The most common cause is if your roblox account is already linked to a different discord account in our database.',
+                            'If you wish to change how your accounts are linked, please open a support ticket under the **Account Recovery** category.',
                             `Use \`${command_prefix}support\` to open a support ticket.`,
                         ].join('\n'),
                     }),
@@ -123,7 +123,7 @@ module.exports = {
                         iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                         name: `${client.user.username}`,
                     },
-                    title: 'You have successfully linked your account!',
+                    title: 'You have successfully verified your account!',
                     description: 'You may now return to the product hub.',
                 }),
             ],
