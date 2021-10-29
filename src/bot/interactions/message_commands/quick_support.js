@@ -52,7 +52,7 @@ module.exports = {
                 });
             }
 
-            const matching_qs_topics = mapped_qs_topics.filter(qs_topic => qs_topic.similarity_score > 0.45);
+            const matching_qs_topics = mapped_qs_topics.filter(qs_topic => qs_topic.similarity_score > 0.25);
 
             interaction.respond(matching_qs_topics.map(qs_topic => ({
                 name: qs_topic.title,
@@ -61,7 +61,7 @@ module.exports = {
         } else if (interaction.isCommand()) {
             await interaction.deferReply();
 
-            const quick_support_topic_id = interaction.options.get('topic', true);
+            const quick_support_topic_id = interaction.options.get('topic', true)?.value;
 
             /** @type {QuickSupportTopics} */
             const qs_topics = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_QUICK_SUPPORT_TOPICS_COLLECTION_NAME, {});
