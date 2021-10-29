@@ -44,7 +44,7 @@ module.exports = {
                     similarity_score_total += stringSimilarity.compareTwoStrings(search_query, searchable_query);
                 }
 
-                similarity_score_total += stringSimilarity.compareTwoStrings(search_query, qs_topic.title);
+                similarity_score_total += stringSimilarity.compareTwoStrings(search_query, qs_topic.title) * 1.20; // multiplied for weighted value
 
                 const similarity_score_average = similarity_score_total / qs_topic.searchable_queries.length;
 
@@ -54,7 +54,11 @@ module.exports = {
                 });
             }
 
-            const matching_qs_topics = mapped_qs_topics.filter(qs_topic => qs_topic.similarity_score > 0.35);
+            const matching_qs_topics = mapped_qs_topics.filter(qs_topic => qs_topic.similarity_score > 0.20).sort((a, b) => b.similarity_score - a.similarity_score);
+
+            console.warn({
+                matching_qs_topics,
+            });
 
             // eslint-disable-next-line no-inner-declarations
             function generateRandomQuickSupportTopic() {
