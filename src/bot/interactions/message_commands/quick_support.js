@@ -57,21 +57,22 @@ module.exports = {
 
             // eslint-disable-next-line no-inner-declarations
             function generateRandomQuickSupportTopic() {
-                const random_qs_topic = array_random(matching_qs_topics);
+                const random_qs_topic = array_random(qs_topics);
 
-                const already_matched_qs_topic = matching_qs_topics.find(qs_topic => qs_topic.id === random_qs_topic.id);
-                if (already_matched_qs_topic) return generateRandomQuickSupportTopic();
+                const already_matched_qs_topic = matching_qs_topics.find(matching_qs_topic => matching_qs_topic.id === random_qs_topic?.id);
 
-                return random_qs_topic;
+                if (!already_matched_qs_topic) return random_qs_topic;
+
+                return generateRandomQuickSupportTopic();
             }
 
-            const random_qs_topics = Array.from({ length: 5 }, () => generateRandomQuickSupportTopic());
+            const random_qs_topics = Array.from({ length: 3 }, generateRandomQuickSupportTopic);
 
             interaction.respond(
                 [
                     ...matching_qs_topics,
                     ...random_qs_topics,
-                ].slice(0, 25).map(qs_topic => ({
+                ].slice(0, 5).map(qs_topic => ({
                     name: qs_topic.title,
                     value: qs_topic.id,
                 }))
