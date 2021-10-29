@@ -8,6 +8,7 @@
 
 const stringSimilarity = require('string-similarity');
 
+const { array_random } = require('../../../utilities.js');
 const { go_mongo_db } = require('../../../mongo/mongo.js');
 
 const { Discord, client } = require('../../discord_client.js');
@@ -52,12 +53,18 @@ module.exports = {
                 });
             }
 
-            const matching_qs_topics = mapped_qs_topics.filter(qs_topic => qs_topic.similarity_score > 0.25);
+            const matching_qs_topics = mapped_qs_topics.filter(qs_topic => qs_topic.similarity_score > 0.10);
+            const random_qs_topics = Array.from({ length: 5 }, () => array_random(qs_topics));
 
-            interaction.respond(matching_qs_topics.map(qs_topic => ({
-                name: qs_topic.title,
-                value: qs_topic.id,
-            })));
+            interaction.respond(
+                [
+                    ...matching_qs_topics,
+                    ...random_qs_topics,
+                ].slice(0, 25).map(qs_topic => ({
+                    name: qs_topic.title,
+                    value: qs_topic.id,
+                }))
+            );
         } else if (interaction.isCommand()) {
             await interaction.deferReply();
 
