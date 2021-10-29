@@ -41,9 +41,10 @@ module.exports = {
             for (const qs_topic of qs_topics) {
                 let similarity_score_total = 0;
                 for (const searchable_query of qs_topic.searchable_queries) {
-                    const similarity_score = stringSimilarity.compareTwoStrings(search_query, searchable_query);
-                    similarity_score_total += similarity_score;
+                    similarity_score_total += stringSimilarity.compareTwoStrings(search_query, searchable_query);
                 }
+
+                similarity_score_total += stringSimilarity.compareTwoStrings(search_query, qs_topic.title);
 
                 const similarity_score_average = similarity_score_total / qs_topic.searchable_queries.length;
 
@@ -53,7 +54,7 @@ module.exports = {
                 });
             }
 
-            const matching_qs_topics = mapped_qs_topics.filter(qs_topic => qs_topic.similarity_score > 0.10);
+            const matching_qs_topics = mapped_qs_topics.filter(qs_topic => qs_topic.similarity_score > 0.35);
 
             // eslint-disable-next-line no-inner-declarations
             function generateRandomQuickSupportTopic() {
