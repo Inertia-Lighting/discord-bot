@@ -54,7 +54,18 @@ module.exports = {
             }
 
             const matching_qs_topics = mapped_qs_topics.filter(qs_topic => qs_topic.similarity_score > 0.10);
-            const random_qs_topics = Array.from({ length: 5 }, () => array_random(qs_topics));
+
+            // eslint-disable-next-line no-inner-declarations
+            function generateRandomQuickSupportTopic() {
+                const random_qs_topic = array_random(matching_qs_topics);
+
+                const already_matched_qs_topic = matching_qs_topics.find(qs_topic => qs_topic.id === random_qs_topic.id);
+                if (already_matched_qs_topic) return generateRandomQuickSupportTopic();
+
+                return random_qs_topic;
+            }
+
+            const random_qs_topics = Array.from({ length: 5 }, () => generateRandomQuickSupportTopic());
 
             interaction.respond(
                 [
