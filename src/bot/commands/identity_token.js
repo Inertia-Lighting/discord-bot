@@ -144,7 +144,10 @@ module.exports = {
                     try {
                         /* IMPORTANT: remove the existing identity token entry */
                         await go_mongo_db.remove(process.env.MONGO_DATABASE_NAME, process.env.MONGO_API_AUTH_USERS_COLLECTION_NAME, {
-                            'identity.discord_user_id': db_user_data.identity.discord_user_id,
+                            $or: [
+                                { 'identity.discord_user_id': db_user_data.identity.discord_user_id },
+                                { 'identity.roblox_user_id': db_user_data.identity.roblox_user_id },
+                            ],
                         });
 
                         /* add the new identity token entry */
