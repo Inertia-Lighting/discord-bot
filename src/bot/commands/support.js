@@ -308,7 +308,7 @@ async function closeSupportTicketChannel(support_channel, save_transcript, membe
         const support_ticket_topic_name = support_channel.name.match(/([a-zA-Z\-\_])+(?![\-\_])\D/i)?.[0];
         const support_ticket_owner_id = support_channel.name.match(/(?!.*\-)?([0-9])+/i)?.[0];
 
-        const support_ticket_owner = await support_channel.guild.members.fetch(support_ticket_owner_id);
+        const support_ticket_owner = await client.users.fetch(support_ticket_owner_id);
 
         const all_messages_in_channel = await support_channel.messages.fetch({ limit: 100 }); // 100 is the max
         const all_messages_in_channel_processed = Array.from(all_messages_in_channel.values()).reverse();
