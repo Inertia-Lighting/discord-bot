@@ -724,7 +724,8 @@ module.exports = {
                     ],
                 });
 
-                setTimeout(() => {
+                let notice_to_press_button_message; // declared here so we can access it later
+                setTimeout(async () => {
                     if (category_instructions_message.deleted) return; // don't continue if the message was deleted
 
                     category_instructions_message.edit({
@@ -739,12 +740,8 @@ module.exports = {
                         ],
                     }).catch(() => null);
 
-                    category_instructions_message.reply({
+                    notice_to_press_button_message = await category_instructions_message.reply({
                         content: `${message.author}, press the button to ping our staff!`,
-                    }).then(notice_to_press_button_message => {
-                        setTimeout(() => {
-                            notice_to_press_button_message.delete().catch(() => null);
-                        }, 60_000); // wait 1 minute
                     }).catch(() => null);
                 }, 3 * 60_000); // wait 3 minutes
 
@@ -791,6 +788,7 @@ module.exports = {
                         }
                     }
 
+                    notice_to_press_button_message?.delete()?.catch(() => null);
                     category_instructions_message_components_collector.stop();
                 });
 
