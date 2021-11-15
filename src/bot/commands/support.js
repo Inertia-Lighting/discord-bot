@@ -89,8 +89,8 @@ const support_categories = new Discord.Collection([
                         '\`   \` Give us as much information as humanly possible!',
                         '',
                         '**Follow the instructions properly or your ticket will be ignored!**',
-                        '*Once you are done with the instructions, click the green button below.*',
-                        '*The green button will automatically appear after one minute.*',
+                        '*Once you are ready for staff, wait for a green button to appear.*',
+                        '*The green button will automatically appear in a few minutes.*',
                     ].join('\n'),
                 }),
             ],
@@ -146,8 +146,8 @@ const support_categories = new Discord.Collection([
                         '\`   \` Tell us what happened and why you opened this ticket.',
                         '',
                         '**Follow the instructions properly or your ticket will be ignored!**',
-                        '*Once you are done with the instructions, click the green button below.*',
-                        '*The green button will automatically appear after one minute.*',
+                        '*Once you are ready for staff, wait for a green button to appear.*',
+                        '*The green button will automatically appear in a few minutes.*',
                     ].join('\n'),
                 }),
             ],
@@ -190,8 +190,8 @@ const support_categories = new Discord.Collection([
                         '\`   \` *( re-linking account | gifting products | other, please specify )*',
                         '',
                         '**Follow the instructions properly or your ticket will be ignored!**',
-                        '*Once you are done with the instructions, click the green button below.*',
-                        '*The green button will automatically appear after one minute.*',
+                        '*Once you are ready for staff, wait for a green button to appear.*',
+                        '*The green button will automatically appear in a few minutes.*',
                     ].join('\n'),
                 }),
             ],
@@ -229,8 +229,8 @@ const support_categories = new Discord.Collection([
                         '\`   \` Fully describe the issue you are encountering.',
                         '',
                         '**Follow the instructions properly or your ticket will be ignored!**',
-                        '*Once you are done with the instructions, click the green button below.*',
-                        '*The green button will automatically appear after one minute.*',
+                        '*Once you are ready for staff, wait for a green button to appear.*',
+                        '*The green button will automatically appear in a few minutes.*',
                     ].join('\n'),
                 }),
             ],
@@ -277,8 +277,8 @@ const support_categories = new Discord.Collection([
                         '\`   \` Why should we partner with you?',
                         '',
                         '**Follow the instructions properly or your ticket will be ignored!**',
-                        '*Once you are done with the instructions, click the green button below.*',
-                        '*The green button will automatically appear after one minute.*',
+                        '*Once you are ready for staff, wait for a green button to appear.*',
+                        '*The green button will automatically appear in a few minutes.*',
                     ].join('\n'),
                 }),
             ],
@@ -300,10 +300,12 @@ const support_categories = new Discord.Collection([
                         name: 'Inertia Lighting | Support Ticket Instructions',
                     },
                     description: [
-                        '**Tell us why you opened this ticket.**',
+                        '**Tell us why you opened this ticket, and how we can help!**',
+                        '*If you have a question, please explain the details.*',
                         '',
-                        '*Once you are done, click the green button below.*',
-                        '*The green button will automatically appear after one minute.*',
+                        '**Follow the instructions properly or your ticket will be ignored!**',
+                        '*Once you are ready for staff, wait for a green button to appear.*',
+                        '*The green button will automatically appear in a few minutes.*',
                     ].join('\n'),
                 }),
             ],
@@ -751,20 +753,28 @@ module.exports = {
                 });
 
                 setTimeout(() => {
-                    if (!category_instructions_message.deleted) {
-                        category_instructions_message.edit({
-                            components: [
-                                {
-                                    type: 1,
-                                    components: [
-                                        ready_for_support_staff_button,
-                                        cancel_support_ticket_button,
-                                    ],
-                                },
-                            ],
-                        }).catch(() => null);
-                    }
-                }, 1 * 60_000); // wait 1 minute
+                    if (category_instructions_message.deleted) return; // don't continue if the message was deleted
+
+                    category_instructions_message.edit({
+                        components: [
+                            {
+                                type: 1,
+                                components: [
+                                    ready_for_support_staff_button,
+                                    cancel_support_ticket_button,
+                                ],
+                            },
+                        ],
+                    }).catch(() => null);
+
+                    category_instructions_message.reply({
+                        content: `${message.author}, press the button to ping our staff!`,
+                    }).then(notice_to_press_button_message => {
+                        setTimeout(() => {
+                            notice_to_press_button_message.delete().catch(() => null);
+                        }, 60_000); // wait 1 minute
+                    }).catch(() => null);
+                }, 3 * 60_000); // wait 3 minutes
 
                 const category_instructions_message_components_collector = category_instructions_message.createMessageComponentCollector({
                     filter: (interaction) => interaction.user.id === message.author.id,
