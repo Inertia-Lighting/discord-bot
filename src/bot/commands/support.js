@@ -736,11 +736,11 @@ module.exports = {
                     notice_to_press_button_message = await category_instructions_message.reply({
                         content: `${message.author}, press the button to ping our staff!`,
                     }).catch(() => null);
-                }, 3 * 60_000); // wait 3 minutes
+                }, 5 * 60_000); // 5 minutes
 
                 const category_instructions_message_components_collector = category_instructions_message.createMessageComponentCollector({
                     filter: (interaction) => interaction.user.id === message.author.id,
-                    time: 30 * 60_000,
+                    time: 30 * 60_000, // 30 minutes
                 });
 
                 category_instructions_message_components_collector.on('collect', async (interaction) => {
