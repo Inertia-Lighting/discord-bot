@@ -20,6 +20,7 @@ const automatic_role_ids = [
     '835003345348722758', // Partner Announcements
     '835003307381489674', // Game Announcements
     '779463039325700147', // Streams Announcements
+    '914540830994358294', // Community Event Announcements
     '891339307527335936', // Community Poll Announcements
 ];
 
