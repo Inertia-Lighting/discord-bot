@@ -29,7 +29,7 @@
     "erlpack": "github:discord/erlpack",
     "express": "^4.17.1",
     "fs": "0.0.1-security",
-    "go-mongo-db": "github:Inertia-Lighting/go-mongo-db#v0.0.3-beta",
+    "go-mongo-db": "github:Inertia-Lighting/go-mongo-db#v0.0.4-beta",
     "moment-timezone": "^0.5.34",
     "node-gyp": "^8.4.0",
     "path": "^0.12.7",
