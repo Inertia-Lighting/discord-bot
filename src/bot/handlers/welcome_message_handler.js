@@ -10,11 +10,15 @@ const { Discord, client } = require('../discord_client.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
+/**
+ * @param {Discord.GuildMember} member
+ */
 async function welcomeMessageHandler(member) {
     const message_options = {
         content: `${member}`,
         embeds: [
             new Discord.MessageEmbed({
+                color: 0x60A0FF,
                 author: {
                     iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                     name: `${client.user.username}`,

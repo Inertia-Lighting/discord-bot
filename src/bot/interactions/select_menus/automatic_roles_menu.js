@@ -30,7 +30,7 @@ module.exports = {
     identifier: 'automatic_roles_menu',
     /** @param {SelectMenuInteraction} interaction */
     async execute(interaction) {
-        if (!interaction.guildId) return;
+        if (!interaction.inCachedGuild()) return;
 
         await interaction.deferUpdate();
 
