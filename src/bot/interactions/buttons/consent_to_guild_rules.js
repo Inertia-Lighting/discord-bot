@@ -25,7 +25,7 @@ module.exports = {
         const guild_member = await interaction.guild.members.fetch(interaction.user.id);
 
         if (guild_member.roles.cache.hasAll(new_user_role_ids)) {
-            interaction.reply({
+            interaction.editReply({
                 ephemeral: true,
                 embeds: [
                     new Discord.MessageEmbed({
@@ -41,7 +41,7 @@ module.exports = {
         /* give roles to the user once they have agreed to the rules */
         await guild_member.roles.add(new_user_role_ids).catch(console.warn);
 
-        await interaction.reply({
+        await interaction.editReply({
             ephemeral: true,
             embeds: [
                 new Discord.MessageEmbed({
