@@ -8,7 +8,7 @@
 
 const Discord = require('discord.js');
 
-const { Timer } = require('../../utilities.js');
+const { Timer } = require('../../../utilities.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
