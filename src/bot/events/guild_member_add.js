@@ -6,7 +6,6 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const { Timer } = require('../../utilities.js');
 const { go_mongo_db } = require('../../mongo/mongo.js');
 const { Discord, client } = require('../discord_client.js');
 
@@ -15,10 +14,6 @@ const { Discord, client } = require('../discord_client.js');
 const { welcomeMessageHandler } = require('../handlers/welcome_message_handler.js');
 const { illegalNicknameHandler } = require('../handlers/illegal_nickname_handler.js');
 const { automaticVerificationHandler } = require('../handlers/automatic_verification_handler.js');
-
-//---------------------------------------------------------------------------------------------------------------//
-
-const new_user_role_ids = process.env.BOT_NEW_USER_AUTO_ROLE_IDS.split(',');
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -33,12 +28,6 @@ module.exports = {
 
         /* handle nicknames for new members */
         await illegalNicknameHandler(member);
-
-        /* give roles to new members */
-        for (const role_id of new_user_role_ids) {
-            await member.roles.add(role_id).catch(console.warn);
-            await Timer(1_000); // prevent api abuse
-        }
 
         /* automatically verify the user (if possible) */
         await automaticVerificationHandler(member).catch(console.trace);
