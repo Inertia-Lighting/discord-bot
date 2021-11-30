@@ -24,7 +24,7 @@ module.exports = {
 
         const guild_member = await interaction.guild.members.fetch(interaction.user.id);
 
-        if (guild_member.roles.cache.hasAll(new_user_role_ids)) {
+        if (guild_member.roles.cache.hasAll(...new_user_role_ids)) {
             interaction.editReply({
                 ephemeral: true,
                 embeds: [
