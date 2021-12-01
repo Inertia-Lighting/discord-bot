@@ -61,12 +61,12 @@ module.exports = {
 
         const db_roblox_products = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_PRODUCTS_COLLECTION_NAME, {});
 
-        /* check for discrepancies in the user's products and attempt to fix them */
+        /** @type {Object<string, boolean>} */
         const updated_user_products = {};
         for (const db_roblox_product of db_roblox_products) {
             const user_owns_product = db_user_data?.products?.[db_roblox_product.code];
 
-            updated_user_products[db_roblox_product.code] = user_owns_product;
+            updated_user_products[db_roblox_product.code] = Boolean(user_owns_product);
         }
 
         try {
