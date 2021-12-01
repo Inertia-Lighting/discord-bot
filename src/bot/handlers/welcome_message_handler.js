@@ -23,19 +23,49 @@ async function welcomeMessageHandler(member) {
                     iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                     name: `${client.user.username}`,
                 },
-                title: 'Welcome!',
+                title: 'Welcome to the Inertia Lighting!',
                 description: [
-                    'Welcome to the Inertia Lighting discord server!',
-                    'To get started, visit the following channels to learn about our server:',
+                    `Make sure to accept our rules in <#${member.guild.rulesChannelId}>!`,
+                    '',
+                    'To get started, check out these channels:',
                     `- <#${member.guild.rulesChannelId}>`,
                     `- <#${process.env.BOT_INFO_CHANNEL_ID}>`,
                     `- <#${process.env.BOT_NEWS_CHANNEL_ID}>`,
                     `- <#${process.env.BOT_SUPPORT_CHANNEL_ID}>`,
                     `- <#${process.env.BOT_GENERAL_CHANNEL_ID}>`,
-                    `Also, check out our [product hub](${process.env.ROBLOX_PRODUCT_HUB_URL}) to purchase products using Robux!`,
-                    'Or, you can go to [our website](https://inertia.lighting/products) to purchase products using PayPal!',
+                    '',
+                    'Also, visit the product hub to purchase products using Robux!',
+                    'Or, you can go to our website to make a purchase using PayPal!',
                 ].join('\n'),
             }),
+        ],
+        components: [
+            {
+                type: 1,
+                components: [
+                    {
+                        type: 2,
+                        style: 5,
+                        label: 'Our Website',
+                        url: 'https://inertia.lighting/',
+                    }, {
+                        type: 2,
+                        style: 5,
+                        label: 'Product Hub',
+                        url: 'https://product-hub.inertia.lighting/',
+                    }, {
+                        type: 2,
+                        style: 5,
+                        label: 'Privacy Policy',
+                        url: 'https://inertia.lighting/privacy',
+                    }, {
+                        type: 2,
+                        style: 5,
+                        label: 'F.A.Q.',
+                        url: 'https://inertia.lighting/faq',
+                    },
+                ],
+            },
         ],
     };
 
