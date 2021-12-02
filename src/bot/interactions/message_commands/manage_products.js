@@ -72,8 +72,8 @@ module.exports = {
                 interaction.editReply({
                     embeds: [
                         new Discord.MessageEmbed({
-                            color: 0xFF0000,
-                            description: 'You do not have permission to use this command.',
+                            color: 0xFF00FF,
+                            description: 'You aren\'t allowed to use this command!',
                         }),
                     ],
                 });
@@ -82,7 +82,7 @@ module.exports = {
 
             const user_to_modify = interaction.options.getUser('for', true);
             const action_to_perform = interaction.options.getString('action', true);
-            const db_roblox_product_code = interaction.options.getString('product_code', true);
+            const potential_product_code = interaction.options.getString('product_code', true);
 
             /* find the user in the database */
             const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
@@ -99,7 +99,7 @@ module.exports = {
                     embeds: [
                         new Discord.MessageEmbed({
                             color: 0xFFFF00,
-                            description: 'User does not exist in the database!',
+                            description: `${user_to_modify} does not exist in the database!`,
                         }),
                     ],
                 });
@@ -108,14 +108,14 @@ module.exports = {
 
             const db_roblox_products = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_PRODUCTS_COLLECTION_NAME, {});
 
-            const db_roblox_product = db_roblox_products.find(db_roblox_product => db_roblox_product.code === db_roblox_product_code);
+            const db_roblox_product = db_roblox_products.find(db_roblox_product => db_roblox_product.code === potential_product_code);
 
             if (!db_roblox_product) {
                 interaction.followUp({
                     embeds: [
                         new Discord.MessageEmbed({
-                            color: 0x60A0FF,
-                            description: 'Unable to find a matching product for the provided product_code.',
+                            color: 0xFFFF00,
+                            description: `\`${potential_product_code}\` is not a valid product code!`,
                         }),
                     ],
                 });
@@ -127,19 +127,19 @@ module.exports = {
                 'identity.roblox_user_id': db_user_data.identity.roblox_user_id,
             }, {
                 $set: {
-                    [`products.${db_roblox_product.code}`]: (action_to_perform === 'give' ? true : false),
+                    [`products.${db_roblox_product.code}`]: (action_to_perform === 'add' ? true : false),
                 },
             });
 
             interaction.editReply({
                 embeds: [
                     new Discord.MessageEmbed({
-                        color: action_to_perform === 'give' ? 0x00FF00 : 0xFF0000,
+                        color: action_to_perform === 'add' ? 0x00FF00 : 0xFF0000,
                         author: {
                             iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                             name: 'Inertia Lighting | Products Manager',
                         },
-                        description: `${action_to_perform === 'give' ? 'Gave' : 'Removed'} ${db_roblox_product.code} ${action_to_perform === 'give' ? 'to' : 'from'} ${user_to_modify}!`,
+                        description: `${action_to_perform === 'add' ? 'Added' : 'Removed'} ${db_roblox_product.code} ${action_to_perform === 'add' ? 'to' : 'from'} ${user_to_modify}!`,
                     }),
                 ],
             });
