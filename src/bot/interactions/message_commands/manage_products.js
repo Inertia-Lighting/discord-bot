@@ -24,7 +24,9 @@ module.exports = {
     /** @param {Discord.AutocompleteInteraction|Discord.CommandInteraction} interaction */
     async execute(interaction) {
         if (interaction.isAutocomplete()) {
-            const search_query = `${interaction.options.getFocused()}`.toUpperCase();
+            /** @type {string} */
+            const focused_option = interaction.options.getFocused();
+            const search_query = focused_option.toUpperCase();
 
             const db_roblox_products = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_PRODUCTS_COLLECTION_NAME, {});
 
@@ -36,11 +38,7 @@ module.exports = {
                 });
             }
 
-            const matching_db_roblox_products = mapped_db_roblox_products.filter(mapped_db_roblox_product => mapped_db_roblox_product.similarity_score > 0.25).sort((a, b) => b.similarity_score - a.similarity_score);
-
-            console.warn({
-                matching_db_roblox_products,
-            });
+            const matching_db_roblox_products = mapped_db_roblox_products.sort((a, b) => b.similarity_score - a.similarity_score);
 
             // eslint-disable-next-line no-inner-declarations
             function generateRandomRobloxProduct() {
@@ -60,7 +58,7 @@ module.exports = {
                     ...matching_db_roblox_products,
                     ...random_db_roblox_products,
                 ].slice(0, 5).map(db_roblox_product => ({
-                    name: db_roblox_product.name,
+                    name: db_roblox_product.code,
                     value: db_roblox_product.code,
                 }))
             );
@@ -141,7 +139,7 @@ module.exports = {
                             iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                             name: 'Inertia Lighting | Products Manager',
                         },
-                        description: `${action_to_perform === 'give' ? 'Gave' : 'Took'} ${db_roblox_product.code} ${action_to_perform === 'give' ? 'to' : 'from'} ${user_to_modify}!`,
+                        description: `${action_to_perform === 'give' ? 'Gave' : 'Removed'} ${db_roblox_product.code} ${action_to_perform === 'give' ? 'to' : 'from'} ${user_to_modify}!`,
                     }),
                 ],
             });
