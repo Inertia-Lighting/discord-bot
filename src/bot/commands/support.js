@@ -100,7 +100,7 @@ const support_categories = new Discord.Collection([
         name: 'Account Recovery',
         description: 'Recover products from an inaccessible account.',
         qualified_support_role_ids: [
-            process.env.BOT_SUPPORT_STAFF_PRODUCT_TRANSFERS_ROLE_ID,
+            process.env.BOT_SUPPORT_STAFF_DATABASE_ROLE_ID,
         ],
         automatically_save_when_closed: true,
         instructions_message_options: {
@@ -151,7 +151,7 @@ const support_categories = new Discord.Collection([
         name: 'Transfer Products',
         description: 'Transfer or gift products to a different account.',
         qualified_support_role_ids: [
-            process.env.BOT_SUPPORT_STAFF_PRODUCT_TRANSFERS_ROLE_ID,
+            process.env.BOT_SUPPORT_STAFF_DATABASE_ROLE_ID,
         ],
         automatically_save_when_closed: true,
         instructions_message_options: {
