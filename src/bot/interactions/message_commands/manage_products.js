@@ -24,7 +24,7 @@ module.exports = {
     /** @param {Discord.AutocompleteInteraction|Discord.CommandInteraction} interaction */
     async execute(interaction) {
         if (interaction.isAutocomplete()) {
-            const search_query = interaction.options.getFocused();
+            const search_query = `${interaction.options.getFocused()}`.toUpperCase();
 
             const db_roblox_products = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_PRODUCTS_COLLECTION_NAME, {});
 
@@ -36,7 +36,7 @@ module.exports = {
                 });
             }
 
-            const matching_db_roblox_products = mapped_db_roblox_products.filter(mapped_db_roblox_product => mapped_db_roblox_product.similarity_score > 0.20).sort((a, b) => b.similarity_score - a.similarity_score);
+            const matching_db_roblox_products = mapped_db_roblox_products.filter(mapped_db_roblox_product => mapped_db_roblox_product.similarity_score > 0.25).sort((a, b) => b.similarity_score - a.similarity_score);
 
             console.warn({
                 matching_db_roblox_products,
