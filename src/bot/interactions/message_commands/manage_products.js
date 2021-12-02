@@ -136,12 +136,12 @@ module.exports = {
             interaction.editReply({
                 embeds: [
                     new Discord.MessageEmbed({
-                        color: 0x60A0FF,
+                        color: action_to_perform === 'give' ? 0x00FF00 : 0xFF0000,
                         author: {
                             iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                             name: 'Inertia Lighting | Products Manager',
                         },
-                        description: `${action_to_perform === 'give' ? 'gave' : 'took'} ${db_roblox_product.name} ${action_to_perform === 'give' ? 'to' : 'from'} ${user_to_modify}!`,
+                        description: `${action_to_perform === 'give' ? 'Gave' : 'Took'} ${db_roblox_product.code} ${action_to_perform === 'give' ? 'to' : 'from'} ${user_to_modify}!`,
                     }),
                 ],
             });
