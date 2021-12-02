@@ -38,7 +38,7 @@ module.exports = {
                 });
             }
 
-            const matching_db_roblox_products = mapped_db_roblox_products.sort((a, b) => b.similarity_score - a.similarity_score);
+            const matching_db_roblox_products = mapped_db_roblox_products.sort((a, b) => b.similarity_score - a.similarity_score).slice(0, 3);
 
             // eslint-disable-next-line no-inner-declarations
             function generateRandomRobloxProduct() {
