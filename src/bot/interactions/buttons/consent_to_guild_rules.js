@@ -38,9 +38,7 @@ module.exports = {
             return;
         }
 
-        /* give roles to the user once they have agreed to the rules */
-        await guild_member.roles.add(new_user_role_ids).catch(console.warn);
-
+        /* inform the user that they have agreed to the rules */
         await interaction.editReply({
             ephemeral: true,
             embeds: [
@@ -50,5 +48,17 @@ module.exports = {
                 }),
             ],
         }).catch(console.warn);
+
+        /* give roles to the user once they have agreed to the rules */
+        await guild_member.roles.add(new_user_role_ids).catch(console.warn);
+
+        /** @type {Discord.Snowflake?} */
+        const welcome_message_id = interaction.client.$.welcome_message_ids.get(interaction.user.id);
+
+        /** @type {Discord.TextChannel?} */
+        const general_chat_channel = interaction.client.channels.resolve(process.env.BOT_GENERAL_CHANNEL_ID);
+
+        /* remove the welcome message */
+        general_chat_channel.messages.delete(welcome_message_id);
     },
 };

@@ -21,18 +21,11 @@ async function welcomeMessageHandler(member) {
                 color: 0x60A0FF,
                 title: 'Welcome to Inertia Lighting!',
                 description: [
-                    `You need to accept our rules in <#${member.guild.rulesChannelId}> (click the button)!`,
-                    'Once you accept, you will gain access to the server.',
+                    `You need to accept our rules in <#${member.guild.rulesChannelId}> (click the green button)!`,
+                    'Once you accept, you will gain access to the rest of the server.',
                     '',
-                    'To get started, check out these channels:',
-                    `- <#${member.guild.rulesChannelId}>`,
-                    `- <#${process.env.BOT_INFO_CHANNEL_ID}>`,
-                    `- <#${process.env.BOT_NEWS_CHANNEL_ID}>`,
-                    `- <#${process.env.BOT_SUPPORT_CHANNEL_ID}>`,
-                    `- <#${process.env.BOT_GENERAL_CHANNEL_ID}>`,
-                    '',
-                    'Make sure to visit our product hub to purchase our products using Robux!',
-                    'Alternatively, you can go to our website to make a purchase using PayPal!',
+                    'Check out our product hub to purchase our products using Robux!',
+                    'Alternatively, you can make a purchase using PayPal on our website!',
                 ].join('\n'),
             }),
         ],
@@ -71,8 +64,12 @@ async function welcomeMessageHandler(member) {
         await dm_channel.send(message_options);
     } catch {} // ignore any errors
 
+    /** @type {Discord.TextChannel} */
     const general_chat_channel = client.channels.resolve(process.env.BOT_GENERAL_CHANNEL_ID);
-    await general_chat_channel.send(message_options).catch(console.warn);
+
+    /* send welcome message to general chat */
+    const welcome_message = await general_chat_channel.send(message_options).catch(console.warn);
+    if (welcome_message) client.$.welcome_message_ids.set(member.id, welcome_message.id);
 }
 
 //---------------------------------------------------------------------------------------------------------------//

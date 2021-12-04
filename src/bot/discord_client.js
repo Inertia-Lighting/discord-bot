@@ -47,6 +47,7 @@ client.$ = {
     commands: new Discord.Collection(),
     interactions: new Discord.Collection(),
     verification_contexts: new Discord.Collection(),
+    welcome_message_ids: new Discord.Collection(),
 };
 
 //---------------------------------------------------------------------------------------------------------------//
