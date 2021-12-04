@@ -6,13 +6,9 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const moment = require('moment-timezone');
-
 const { Discord, client } = require('../discord_client.js');
 
 const { command_permission_levels } = require('../common/bot.js');
-
-const { go_mongo_db } = require('../../mongo/mongo.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -37,7 +33,7 @@ async function commandHandler(message) {
 
     if (command_name.length === 0) return; // don't continue if the only thing sent was the command prefix
 
-    /* find command by command_name */
+    /* find the command */
     const command = client.$.commands.find(cmd => cmd.aliases?.includes(command_name));
     if (!command) {
         await message.reply({
@@ -48,8 +44,8 @@ async function commandHandler(message) {
                         iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                         name: `${client.user.username}`,
                     },
-                    title: 'Command Error',
-                    description: 'That is not a valid command!',
+                    title: 'Unknown Command Error',
+                    description: 'That is not a known command!',
                 }),
             ],
         });
@@ -94,33 +90,10 @@ async function commandHandler(message) {
                         iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                         name: `${client.user.username} | Command Access System`,
                     },
-                    description: 'You do not have the required permissions to use this command!',
+                    description: 'You\'re lacking permissions required to use this command!',
                 }),
             ],
         }).catch(console.warn);
-
-        return;
-    }
-
-    /* command blacklist */
-    const [ db_blacklisted_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME, {
-        'identity.discord_user_id': message.author.id,
-    });
-    if (db_blacklisted_user_data) {
-        const blacklist_formatted_timestamp = moment(db_blacklisted_user_data.epoch).tz('America/New_York').format('YYYY[-]MM[-]DD [at] hh:mm A [GMT]ZZ');
-
-        await message.reply({
-            embeds: [
-                new Discord.MessageEmbed({
-                    color: 0xFF0000,
-                    author: {
-                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                        name: `${client.user.username} | Blacklist System`,
-                    },
-                    description: `${message.author}, you cannot use commands because you were blacklisted by <@${db_blacklisted_user_data.staff_member_id}> on ${blacklist_formatted_timestamp} for: \`\`\`\n${db_blacklisted_user_data.reason}\n\`\`\``,
-                }),
-            ],
-        });
 
         return;
     }

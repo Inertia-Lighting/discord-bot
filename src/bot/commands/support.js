@@ -576,6 +576,34 @@ async function closeSupportTicketChannel(support_channel, save_transcript, membe
  * @returns {Promise<void>}
  */
 async function sendDatabaseDocumentsToSupportTicketChannel(support_channel, guild_member) {
+    /* check if the user is blacklisted */
+    const [ db_blacklisted_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME, {
+        'identity.discord_user_id': guild_member.user.id,
+    });
+    if (db_blacklisted_user_data) {
+        await support_channel.send({
+            embeds: [
+                new Discord.MessageEmbed({
+                    color: 0x60A0FF,
+                    author: {
+                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                        name: 'Inertia Lighting | Support Ticket',
+                    },
+                    description: [
+                        '\`\`\`',
+                        'User is blacklisted from using Inertia Lighting products!',
+                        '\`\`\`',
+                        '\`\`\`json',
+                        `${JSON.stringify(db_blacklisted_user_data, null, 2)}`,
+                        '\`\`\`',
+                    ].join('\n'),
+                }),
+            ],
+        }).catch(console.warn);
+
+        return; // don't continue if the user is blacklisted
+    }
+
     /* send the user document */
     const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
         'identity.discord_user_id': guild_member.user.id,

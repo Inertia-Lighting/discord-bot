@@ -27,7 +27,7 @@ const { client } = require('../discord_client.js');
  */
 async function interactionHandler(unknown_interaction) {
     /** @type {CustomInteraction?} */
-    const interaction = client.$.interactions.find(interaction => {
+    const client_interaction = client.$.interactions.find(client_interaction => {
         const unknown_interaction_identifier = unknown_interaction.type === 'MESSAGE_COMPONENT' ? (
             unknown_interaction.customId
         ) : (
@@ -46,18 +46,25 @@ async function interactionHandler(unknown_interaction) {
             )
         );
 
-        return interaction.identifier === unknown_interaction_identifier;
+        return client_interaction.identifier === unknown_interaction_identifier;
     });
 
     /* check if the interaction exists */
-    if (!interaction) return;
+    if (!client_interaction) return;
+
+    /* interaction logging */
+    console.info({
+        client_interaction_identifier: client_interaction.identifier,
+        interaction_type: unknown_interaction.type,
+        interaction: unknown_interaction,
+    });
 
     /* execute the interaction */
     try {
-        await interaction.execute(unknown_interaction);
+        await client_interaction.execute(unknown_interaction);
     } catch (error) {
         console.trace({
-            interaction_identifier: interaction.identifier,
+            client_interaction_identifier: client_interaction.identifier,
             interaction_type: unknown_interaction.type,
             error_message: error,
         });
