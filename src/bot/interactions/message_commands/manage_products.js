@@ -139,7 +139,6 @@ module.exports = {
                             iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                             name: 'Inertia Lighting | Products Manager',
                         },
-                        title: "Success!",
                         description: `${action_to_perform === 'add' ? 'Added' : 'Removed'} \`\`${db_roblox_product.name}\`\` *(${db_roblox_product.code})* ${action_to_perform === 'add' ? 'to' : 'from'} ${user_to_modify}.`,
                     }),
                 ],
