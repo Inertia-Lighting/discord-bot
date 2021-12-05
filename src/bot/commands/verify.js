@@ -16,7 +16,7 @@ const { command_permission_levels } = require('../common/bot.js');
 
 module.exports = {
     name: 'verify',
-    description: 'verifies the user and adds them to the database',
+    description: 'verifies and adds a user to the database',
     usage: 'CODE_HERE',
     aliases: ['verify'],
     permission_level: command_permission_levels.PUBLIC,
@@ -24,25 +24,39 @@ module.exports = {
     async execute(message, args) {
         const { command_prefix, command_args } = args;
 
-        const verification_code_to_lookup = command_args[0];
+        const verification_code_to_lookup = `${command_args[0]}`.trim();
         const verification_context = client.$.verification_contexts.get(verification_code_to_lookup);
 
         if (!verification_context) {
             await message.channel.send({
                 embeds: [
                     new Discord.MessageEmbed({
-                        color: 0xFF0000,
+                        color: 0xFFFF00,
                         author: {
                             iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                            name: `${client.user.username}`,
+                            name: `${client.user.username} | Verification System`,
                         },
-                        title: 'Error',
+                        title: 'Missing / Unknown Verification Code',
                         description: [
-                            'That verification code was not recognized!',
-                            `You need to provide the verification code that was given to you in the [Product Hub](${process.env.ROBLOX_PRODUCT_HUB_URL})!`,
+                            'This command is used to verify your roblox account in our database.',
+                            '',
+                            'You need to provide the verification code given to you by our Product Hub!',
                             `Example: \`${command_prefix}verify CODE_HERE\``,
                         ].join('\n'),
                     }),
+                ],
+                components: [
+                    {
+                        type: 1,
+                        components: [
+                            {
+                                type: 2,
+                                style: 5,
+                                label: 'Product Hub',
+                                url: 'https://product-hub.inertia.lighting/',
+                            },
+                        ],
+                    },
                 ],
             }).catch(console.warn);
             return;
@@ -83,24 +97,28 @@ module.exports = {
             });
         } catch (error) {
             console.trace(error);
+
             await message.channel.send({
                 embeds: [
                     new Discord.MessageEmbed({
                         color: 0xFF0000,
                         author: {
                             iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                            name: `${client.user.username}`,
+                            name: `${client.user.username} | Verification System`,
                         },
                         title: 'Error',
                         description: [
                             'Something went wrong while modifying the database!',
+                            '',
                             'The most common cause is if your roblox account is already linked to a different discord account in our database.',
-                            'If you wish to change how your accounts are linked, please open a support ticket under the **Account Recovery** category.',
+                            'If you wish to alter your linked accounts, please open a support ticket under the **Account Recovery** category.',
+                            '',
                             `Use \`${command_prefix}support\` to open a support ticket.`,
                         ].join('\n'),
                     }),
                 ],
             }).catch(console.warn);
+
             return;
         }
 
@@ -111,10 +129,10 @@ module.exports = {
                     color: 0x00FF00,
                     author: {
                         iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                        name: `${client.user.username}`,
+                        name: `${client.user.username} | Verification System`,
                     },
-                    title: 'You have successfully verified your account!',
-                    description: 'You may now return to the product hub.',
+                    title: 'You have successfully verified!',
+                    description: 'Go back to the Product Hub to continue.',
                 }),
             ],
         }).catch(console.warn);
