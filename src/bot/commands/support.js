@@ -762,7 +762,7 @@ module.exports = {
                     }).catch(() => null);
 
                     notice_to_press_button_message = await category_instructions_message.reply({
-                        content: `${message.author}, press the button to ping our staff!`,
+                        content: `${message.author}, if you have completed the instructions above; press the button to ping our staff!`,
                     }).catch(() => null);
                 }, 5 * 60_000); // 5 minutes
 
