@@ -771,7 +771,12 @@ module.exports = {
                     /* remove all components from the message */
                     await category_instructions_message.edit({
                         components: [
-                            display_database_documents_button,
+                            {
+                                type: 1,
+                                components: [
+                                    display_database_documents_button,
+                                ],
+                            },
                         ],
                     }).catch(console.warn);
 
