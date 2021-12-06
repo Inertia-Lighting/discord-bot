@@ -40,15 +40,12 @@ module.exports = {
 
         await interaction.deferReply({ ephemeral: true });
 
-        const guild_member = await interaction.guild.members.fetch(interaction.user.id);
-
         const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
-            'identity.discord_user_id': guild_member.id,
+            'identity.discord_user_id': interaction.user.id,
         });
 
         if (!db_user_data) {
             await interaction.editReply({
-                ephemeral: true,
                 content: `Please \`${process.env.BOT_COMMAND_PREFIX}verify\` first!`,
             }).catch(console.warn);
 
@@ -80,7 +77,6 @@ module.exports = {
             console.trace(error);
 
             await interaction.editReply({
-                ephemeral: true,
                 embeds: [
                     new Discord.MessageEmbed({
                         color: 0xFF0000,
@@ -98,7 +94,6 @@ module.exports = {
         }
 
         await interaction.editReply({
-            ephemeral: true,
             embeds: [
                 new Discord.MessageEmbed({
                     color: 0x00FF00,

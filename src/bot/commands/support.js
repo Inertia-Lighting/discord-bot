@@ -12,7 +12,6 @@ const moment = require('moment-timezone');
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const { go_mongo_db } = require('../../mongo/mongo.js');
 const { Timer } = require('../../utilities.js');
 
 const { Discord, client } = require('../discord_client.js');
@@ -24,6 +23,29 @@ const { command_permission_levels } = require('../common/bot.js');
 const bot_command_prefix = process.env.BOT_COMMAND_PREFIX;
 const support_tickets_category_id = process.env.BOT_SUPPORT_TICKETS_CATEGORY_ID;
 const support_tickets_transcripts_channel_id = process.env.BOT_SUPPORT_TICKETS_TRANSCRIPTS_CHANNEL_ID;
+
+//---------------------------------------------------------------------------------------------------------------//
+
+const display_database_documents_button = {
+    type: 2,
+    style: 2,
+    custom_id: 'display_support_ticket_database_documents',
+    label: 'Display database documents',
+};
+
+const ready_for_support_staff_button = {
+    type: 2,
+    style: 3,
+    custom_id: 'ready_for_support_staff',
+    label: 'I have completed the instructions',
+};
+
+const cancel_support_ticket_button = {
+    type: 2,
+    style: 4,
+    custom_id: 'cancel_support_ticket',
+    label: 'Cancel support ticket',
+};
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -441,7 +463,7 @@ async function closeSupportTicketChannel(support_channel, save_transcript, membe
                     'high_satisfaction': {
                         name: 'Good',
                         description: 'Support was able to help me without issues!',
-                        color: '#ccff00',
+                        color: '#77ff00',
                     },
                     'medium_satisfaction': {
                         name: 'Decent',
@@ -451,7 +473,7 @@ async function closeSupportTicketChannel(support_channel, save_transcript, membe
                     'low_satisfaction': {
                         name: 'Bad',
                         description: 'Support wasn\'t able to help me properly!',
-                        color: '#ffcc00',
+                        color: '#ff7700',
                     },
                     'lowest_satisfaction': {
                         name: 'Horrible',
@@ -575,66 +597,6 @@ async function closeSupportTicketChannel(support_channel, save_transcript, membe
     return support_channel;
 }
 
-/**
- * Sends the database documents to the support ticket channel
- * @param {Discord.TextChannel} support_channel
- * @param {Discord.GuildMember} guild_member
- * @returns {Promise<void>}
- */
-async function sendDatabaseDocumentsToSupportTicketChannel(support_channel, guild_member) {
-    /* check if the user is blacklisted */
-    const [ db_blacklisted_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME, {
-        'identity.discord_user_id': guild_member.id,
-    });
-    if (db_blacklisted_user_data) {
-        await support_channel.send({
-            embeds: [
-                new Discord.MessageEmbed({
-                    color: 0x60A0FF,
-                    author: {
-                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                        name: 'Inertia Lighting | Support Ticket',
-                    },
-                    description: [
-                        '\`\`\`',
-                        'User is blacklisted from using Inertia Lighting products!',
-                        '\`\`\`',
-                        '\`\`\`json',
-                        `${JSON.stringify(db_blacklisted_user_data, null, 2)}`,
-                        '\`\`\`',
-                    ].join('\n'),
-                }),
-            ],
-        }).catch(console.warn);
-
-        return; // don't continue if the user is blacklisted
-    }
-
-    /* send the user document */
-    const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
-        'identity.discord_user_id': guild_member.id,
-    }, {
-        projection: {
-            '_id': false,
-        },
-    });
-    await support_channel.send({
-        embeds: [
-            new Discord.MessageEmbed({
-                color: 0x60A0FF,
-                author: {
-                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                    name: 'Inertia Lighting | User Document',
-                },
-                title: 'This embed is for our support staff.',
-                description: `${'```'}json\n${JSON.stringify(db_user_data ?? 'user not found in database', null, 2)}\n${'```'}`,
-            }),
-        ],
-    }).catch(console.warn);
-
-    return; // complete async
-}
-
 //---------------------------------------------------------------------------------------------------------------//
 
 module.exports = {
@@ -720,23 +682,6 @@ module.exports = {
                     ].join('\n'),
                 }).catch(console.warn);
 
-                /* send the database documents */
-                await sendDatabaseDocumentsToSupportTicketChannel(support_channel, message.member);
-
-                const ready_for_support_staff_button = {
-                    type: 2,
-                    style: 3,
-                    custom_id: 'ready_for_support_staff',
-                    label: 'I have completed the instructions',
-                };
-
-                const cancel_support_ticket_button = {
-                    type: 2,
-                    style: 4,
-                    custom_id: 'cancel_support_ticket',
-                    label: 'Cancel support ticket',
-                };
-
                 /* send the category-specific instructions */
                 const category_instructions_message = await support_channel.send({
                     ...matching_support_category.instructions_message_options,
@@ -750,6 +695,9 @@ module.exports = {
                         },
                     ],
                 });
+
+                /* pin the category-specific instructions */
+                support_channel.messages.pin(category_instructions_message.id).catch(console.warn);
 
                 let notice_to_press_button_message; // declared here so we can access it later
                 setTimeout(async () => {
@@ -774,7 +722,7 @@ module.exports = {
 
                 const category_instructions_message_components_collector = category_instructions_message.createMessageComponentCollector({
                     filter: (interaction) => interaction.user.id === message.author.id,
-                    time: 30 * 60_000, // 30 minutes
+                    time: 60 * 60_000, // 1 hour
                 });
 
                 category_instructions_message_components_collector.on('collect', async (interaction) => {
@@ -822,7 +770,9 @@ module.exports = {
                 category_instructions_message_components_collector.on('end', async (collected_interactions, reason) => {
                     /* remove all components from the message */
                     await category_instructions_message.edit({
-                        components: [],
+                        components: [
+                            display_database_documents_button,
+                        ],
                     }).catch(console.warn);
 
                     /* check if the collector has exceeded the specified time */

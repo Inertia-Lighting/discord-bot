@@ -26,7 +26,6 @@ module.exports = {
 
         if (guild_member.roles.cache.hasAll(...new_user_role_ids)) {
             interaction.editReply({
-                ephemeral: true,
                 embeds: [
                     new Discord.MessageEmbed({
                         color: 0x60A0FF,
@@ -40,7 +39,6 @@ module.exports = {
 
         /* inform the user that they have agreed to the rules */
         await interaction.editReply({
-            ephemeral: true,
             embeds: [
                 new Discord.MessageEmbed({
                     color: 0x60A0FF,
