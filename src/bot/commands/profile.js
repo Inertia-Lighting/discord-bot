@@ -52,7 +52,7 @@ module.exports = {
 
         /* fetch the user document */
         const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
-            'identity.discord_user_id': member.user.id,
+            'identity.discord_user_id': member.id,
         }, {
             projection: {
                 '_id': false,

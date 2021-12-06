@@ -43,7 +43,7 @@ module.exports = {
         const guild_member = await interaction.guild.members.fetch(interaction.user.id);
 
         const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
-            'identity.discord_user_id': guild_member.user.id,
+            'identity.discord_user_id': guild_member.id,
         });
 
         if (!db_user_data) {

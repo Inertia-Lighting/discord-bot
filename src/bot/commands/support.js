@@ -578,7 +578,7 @@ async function closeSupportTicketChannel(support_channel, save_transcript, membe
 async function sendDatabaseDocumentsToSupportTicketChannel(support_channel, guild_member) {
     /* check if the user is blacklisted */
     const [ db_blacklisted_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME, {
-        'identity.discord_user_id': guild_member.user.id,
+        'identity.discord_user_id': guild_member.id,
     });
     if (db_blacklisted_user_data) {
         await support_channel.send({
@@ -606,7 +606,7 @@ async function sendDatabaseDocumentsToSupportTicketChannel(support_channel, guil
 
     /* send the user document */
     const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
-        'identity.discord_user_id': guild_member.user.id,
+        'identity.discord_user_id': guild_member.id,
     }, {
         projection: {
             '_id': false,

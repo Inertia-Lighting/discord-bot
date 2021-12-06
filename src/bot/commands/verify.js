@@ -24,6 +24,33 @@ module.exports = {
     async execute(message, args) {
         const { command_prefix, command_args } = args;
 
+        const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
+            'identity.discord_user_id': message.author.id,
+        }, {
+            projection: {
+                '_id': false,
+            },
+        });
+        if (db_user_data) {
+            await message.channel.send({
+                embeds: [
+                    new Discord.MessageEmbed({
+                        color: 0xFF0000,
+                        author: {
+                            iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                            name: `${client.user.username} | Verification System`,
+                        },
+                        title: 'You are already verified!',
+                        description: [
+                            `${message.author} is already verified and linked to a roblox account in our database!`,
+                            'If you want to modify your linked accounts, please open an **Account Recovery** support ticket.',
+                        ].join('\n'),
+                    }),
+                ],
+            }).catch(console.warn);
+            return; // don't allow the user to verify if they're already verified
+        }
+
         const verification_code_to_lookup = `${command_args[0]}`.trim();
         const verification_context = client.$.verification_contexts.get(verification_code_to_lookup);
 
@@ -36,11 +63,11 @@ module.exports = {
                             iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                             name: `${client.user.username} | Verification System`,
                         },
-                        title: 'Missing / Unknown Verification Code',
+                        title: 'Invalid verification code!',
                         description: [
                             'This command is used to verify your roblox account in our database.',
                             '',
-                            'You need to provide the verification code given to you by our Product Hub!',
+                            'You need to use the verification code given to you by our Product Hub!',
                             `Example: \`${command_prefix}verify CODE_HERE\``,
                         ].join('\n'),
                     }),
@@ -65,62 +92,25 @@ module.exports = {
         /* quickly remove the verification context b/c it is no longer needed */
         client.$.verification_contexts.delete(verification_context.verification_code);
 
-        const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
-            'identity.roblox_user_id': verification_context.roblox_user_id,
-        }, {
-            projection: {
-                '_id': false,
-            },
-        });
-
         const db_roblox_products = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_PRODUCTS_COLLECTION_NAME, {});
 
         /** @type {Object<string, boolean>} */
         const updated_user_products = {};
         for (const db_roblox_product of db_roblox_products) {
-            const user_owns_product = db_user_data?.products?.[db_roblox_product.code];
-
-            updated_user_products[db_roblox_product.code] = Boolean(user_owns_product);
+            updated_user_products[db_roblox_product.code] = false;
         }
 
-        try {
-            /* update the user in the database with the correct information */
-            await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
-                'identity.roblox_user_id': verification_context.roblox_user_id,
-            }, {
-                $set: {
-                    'identity.discord_user_id': message.author.id,
-                    'products': updated_user_products,
-                },
-            }, {
-                upsert: true,
-            });
-        } catch (error) {
-            console.trace(error);
-
-            await message.channel.send({
-                embeds: [
-                    new Discord.MessageEmbed({
-                        color: 0xFF0000,
-                        author: {
-                            iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                            name: `${client.user.username} | Verification System`,
-                        },
-                        title: 'Error',
-                        description: [
-                            'Something went wrong while modifying the database!',
-                            '',
-                            'The most common cause is if your roblox account is already linked to a different discord account in our database.',
-                            'If you wish to alter your linked accounts, please open a support ticket under the **Account Recovery** category.',
-                            '',
-                            `Use \`${command_prefix}support\` to open a support ticket.`,
-                        ].join('\n'),
-                    }),
-                ],
-            }).catch(console.warn);
-
-            return;
-        }
+        /* update the user in the database with the correct information */
+        await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
+            'identity.roblox_user_id': verification_context.roblox_user_id,
+        }, {
+            $set: {
+                'identity.discord_user_id': message.author.id,
+                'products': updated_user_products,
+            },
+        }, {
+            upsert: true,
+        });
 
         /* inform the user that their verification was successful */
         await message.channel.send({
