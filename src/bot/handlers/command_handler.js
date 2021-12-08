@@ -108,6 +108,20 @@ async function commandHandler(message) {
     const user_is_not_a_staff_member = user_permission_level < command_permission_levels.STAFF;
     if (user_triggered_command_cooldown && user_is_not_a_staff_member) {
         await message.reply({
+            embeds: [
+                new Discord.MessageEmbed({
+                    color: 0xFF0000,
+                    author: {
+                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                        name: `${client.user.username}`,
+                    },
+                    title: 'Command Cooldown',
+                    description: `\`${command_name}\` is on a cooldown of  \`${command_cooldown_for_user_in_seconds / 1000}s\`!`,
+                }),
+            ],
+        })
+        
+        message.reply({
             content: `**${command_name}** is on a cooldown of ${command_cooldown_in_ms}ms!`,
         }).catch(console.warn);
         return;
