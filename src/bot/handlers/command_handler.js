@@ -119,10 +119,6 @@ async function commandHandler(message) {
                     description: `\`${command_name}\` is on a cooldown of  \`${command_cooldown_for_user_in_seconds / 1000}s\`!`,
                 }),
             ],
-        })
-        
-        message.reply({
-            content: `**${command_name}** is on a cooldown of ${command_cooldown_in_ms}ms!`,
         }).catch(console.warn);
         return;
     }
