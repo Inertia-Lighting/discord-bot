@@ -103,7 +103,6 @@ async function commandHandler(message) {
     const last_command_epoch_for_user = command_cooldown_tracker.get(message.author.id)?.last_command_epoch ?? Date.now() - command_cooldown_in_ms;
     const current_command_epoch = Date.now();
     command_cooldown_tracker.set(message.author.id, { last_command_epoch: current_command_epoch });
-
     const user_triggered_command_cooldown = current_command_epoch - last_command_epoch_for_user < command_cooldown_in_ms;
     const user_is_not_a_staff_member = user_permission_level < command_permission_levels.STAFF;
     if (user_triggered_command_cooldown && user_is_not_a_staff_member) {
@@ -116,7 +115,7 @@ async function commandHandler(message) {
                         name: `${client.user.username}`,
                     },
                     title: 'Command Cooldown',
-                    description: `\`${command_name}\` is on a cooldown of  \`${command_cooldown_for_user_in_seconds / 1000}s\`!`,
+                    description: `\`${command_name}\` is on a cooldown of  \`${command_cooldown_in_ms / 1000}s\`!`,
                 }),
             ],
         }).catch(console.warn);
