@@ -26,10 +26,10 @@ module.exports = {
     async execute(message, args) {
         const { command_prefix, command_name, command_args } = args;
 
-        const user_lookup_query = `${message.mentions.users.first()?.id ?? command_args[0]}`;
+        const user_lookup_query = message.mentions.users.first()?.id ?? command_args[0] ?? '';
 
         /** @type {Discord.GuildMember?} */
-        const user = user_lookup_query ?? message.author;
+        const user = client.users.cache.get(user_lookup_query) ?? message.author;
 
         if (user_lookup_query.length > 0 && !user) {
             await message.channel.send({
