@@ -19,17 +19,19 @@ const { command_permission_levels } = require('../common/bot.js');
 module.exports = {
     name: 'profile',
     description: 'displays a user\'s profile',
+    usage: '[user_mention]',
     aliases: ['profile'],
     permission_level: command_permission_levels.PUBLIC,
     cooldown: 5_000,
     async execute(message, args) {
         const { command_prefix, command_name, command_args } = args;
 
-        const member_lookup_query = message.mentions.members.first()?.id ?? command_args[0];
+        const user_lookup_query = `${message.mentions.users.first()?.id ?? command_args[0]}`;
 
         /** @type {Discord.GuildMember?} */
-        const member = await message.guild.members.fetch(member_lookup_query);
-        if (!member) {
+        const user = user_lookup_query ?? message.author;
+
+        if (user_lookup_query.length > 0 && !user) {
             await message.channel.send({
                 embeds: [
                     new Discord.MessageEmbed({
@@ -38,7 +40,7 @@ module.exports = {
                             iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                             name: 'Inertia Lighting | User Profiles',
                         },
-                        title: 'Missing Command Arguments',
+                        title: 'Invalid User Mention',
                         description: [
                             'Please provide a valid @user mention to view their profile!',
                             '',
@@ -52,7 +54,7 @@ module.exports = {
 
         /* fetch the user document */
         const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
-            'identity.discord_user_id': member.id,
+            'identity.discord_user_id': user.id,
         }, {
             projection: {
                 '_id': false,
