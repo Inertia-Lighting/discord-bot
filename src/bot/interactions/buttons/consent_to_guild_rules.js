@@ -52,6 +52,7 @@ module.exports = {
 
         /** @type {Discord.Snowflake?} */
         const welcome_message_id = interaction.client.$.welcome_message_ids.get(interaction.user.id);
+        if (!welcome_message_id) return;
 
         /** @type {Discord.TextChannel?} */
         const general_chat_channel = interaction.client.channels.resolve(process.env.BOT_GENERAL_CHANNEL_ID);
