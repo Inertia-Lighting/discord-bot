@@ -18,7 +18,7 @@ module.exports = {
     name: 'verify',
     description: 'verifies and adds a user to the database',
     usage: 'CODE_HERE',
-    aliases: ['verify'],
+    aliases: ['verify', 'link', 'unverify', 'unlink'],
     permission_level: command_permission_levels.PUBLIC,
     cooldown: 5_000,
     async execute(message, args) {
