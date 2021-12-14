@@ -76,7 +76,8 @@ module.exports = {
                             description: 'You aren\'t allowed to use this command!',
                         }),
                     ],
-                });
+                }).catch(console.warn);
+
                 return;
             }
 
@@ -102,7 +103,8 @@ module.exports = {
                             description: `${user_to_modify} does not exist in the database!`,
                         }),
                     ],
-                });
+                }).catch(console.warn);
+
                 return;
             }
 
@@ -118,23 +120,43 @@ module.exports = {
                             description: `\`${potential_product_code}\` is not a valid product code!`,
                         }),
                     ],
-                });
+                }).catch(console.warn);
+
                 return;
             }
 
-            await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
-                'identity.discord_user_id': db_user_data.identity.discord_user_id,
-                'identity.roblox_user_id': db_user_data.identity.roblox_user_id,
-            }, {
-                $set: {
-                    [`products.${db_roblox_product.code}`]: (action_to_perform === 'add' ? true : false),
-                },
-            });
+            try {
+                await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
+                    'identity.discord_user_id': db_user_data.identity.discord_user_id,
+                    'identity.roblox_user_id': db_user_data.identity.roblox_user_id,
+                }, {
+                    $set: {
+                        [`products.${db_roblox_product.code}`]: (action_to_perform === 'add' ? true : false),
+                    },
+                });
+            } catch (error) {
+                console.trace(error);
+
+                interaction.editReply({
+                    embeds: [
+                        new Discord.MessageEmbed({
+                            color: 0xFF0000,
+                            author: {
+                                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                                name: 'Inertia Lighting | Products Manager',
+                            },
+                            description: 'An error occurred while modifying the user\'s products!',
+                        }),
+                    ],
+                }).catch(console.warn);
+
+                return;
+            }
 
             interaction.editReply({
                 embeds: [
                     new Discord.MessageEmbed({
-                        color: action_to_perform === 'add' ? 0x00FF00 : 0xFF0000,
+                        color: action_to_perform === 'add' ? 0x00FF00 : 0xFFFF00,
                         author: {
                             iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                             name: 'Inertia Lighting | Products Manager',
@@ -142,7 +164,7 @@ module.exports = {
                         description: `${action_to_perform === 'add' ? 'Added' : 'Removed'} \`${db_roblox_product.code}\` ${action_to_perform === 'add' ? 'to' : 'from'} ${user_to_modify}.`,
                     }),
                 ],
-            });
+            }).catch(console.warn);
         }
     },
 };
