@@ -13,9 +13,9 @@ const { command_permission_levels } = require('../common/bot.js');
 //---------------------------------------------------------------------------------------------------------------//
 
 module.exports = {
-    name: 'download',
+    name: 'downloads',
     description: 'why does this even exist',
-    aliases: ['download', 'roles', 'rank', 'get', 'getroles', 'receive', 'retrieve'],
+    aliases: ['downloads', 'download', 'roles', 'receive', 'retrieve'],
     permission_level: command_permission_levels.PUBLIC,
     cooldown: 10_000,
     async execute(message, args) {

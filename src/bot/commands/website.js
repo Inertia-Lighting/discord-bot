@@ -14,7 +14,7 @@ const { command_permission_levels } = require('../common/bot.js');
 
 module.exports = {
     name: 'website',
-    description: 'provides a link to the product hub',
+    description: 'why does this even exist',
     aliases: ['website', 'site'],
     permission_level: command_permission_levels.PUBLIC,
     cooldown: 10_000,

@@ -14,8 +14,8 @@ const { command_permission_levels } = require('../common/bot.js');
 
 module.exports = {
     name: 'product_hub',
-    description: 'provides a link to the product hub',
-    aliases: ['product_hub', 'hub', 'producthub'],
+    description: 'why does this even exist',
+    aliases: ['product_hub', 'producthub', 'hub'],
     permission_level: command_permission_levels.PUBLIC,
     cooldown: 10_000,
     async execute(message, args) {
@@ -33,7 +33,7 @@ module.exports = {
                         {
                             type: 2,
                             style: 5,
-                            label: 'Products Hub',
+                            label: 'Product Hub',
                             url: 'https://product-hub.inertia.lighting/',
                         },
                     ],
