@@ -85,12 +85,12 @@ async function commandHandler(message) {
         await message.channel.send({
             embeds: [
                 new Discord.MessageEmbed({
-                    color: 0xFF0000,
+                    color: 0xFFFF00,
                     author: {
                         iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                         name: `${client.user.username} | Command Access System`,
                     },
-                    description: 'You\'re lacking permissions required to use this command!',
+                    description: 'You aren\'t allowed to use this command!',
                 }),
             ],
         }).catch(console.warn);
