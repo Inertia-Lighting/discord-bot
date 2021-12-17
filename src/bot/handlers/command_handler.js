@@ -90,7 +90,7 @@ async function commandHandler(message) {
                         iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                         name: `${client.user.username} | Command Access System`,
                     },
-                    description: 'You\'re lacking permissions required to use this command!',
+                    description: 'You aren\'t allowed to use this command!',
                 }),
             ],
         }).catch(console.warn);
@@ -103,13 +103,22 @@ async function commandHandler(message) {
     const last_command_epoch_for_user = command_cooldown_tracker.get(message.author.id)?.last_command_epoch ?? Date.now() - command_cooldown_in_ms;
     const current_command_epoch = Date.now();
     command_cooldown_tracker.set(message.author.id, { last_command_epoch: current_command_epoch });
-
     const user_triggered_command_cooldown = current_command_epoch - last_command_epoch_for_user < command_cooldown_in_ms;
     const user_is_not_a_staff_member = user_permission_level < command_permission_levels.STAFF;
     if (user_triggered_command_cooldown && user_is_not_a_staff_member) {
         await message.reply({
-            content: `**${command_name}** is on a cooldown of ${command_cooldown_in_ms}ms!`,
+            embeds: [
+                new Discord.MessageEmbed({
+                    color: 0xFFFF00,
+                    author: {
+                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                        name: `${client.user.username} | Command Cooldown System`,
+                    },
+                    description: `\`${command_name}\` is on a cooldown of  \`${command_cooldown_in_ms / 1000}s\`!`,
+                }),
+            ],
         }).catch(console.warn);
+
         return;
     }
 
