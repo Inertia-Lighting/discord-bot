@@ -27,7 +27,7 @@
     "discord.js": "^13.3.1",
     "dotenv": "^10.0.0",
     "erlpack": "github:discord/erlpack",
-    "express": "^4.17.1",
+    "express": "^4.17.2",
     "fs": "0.0.1-security",
     "go-mongo-db": "github:Inertia-Lighting/go-mongo-db#v0.0.4-beta",
     "moment-timezone": "^0.5.34",
