@@ -85,7 +85,7 @@ async function commandHandler(message) {
         await message.channel.send({
             embeds: [
                 new Discord.MessageEmbed({
-                    color: 0xFFFF00,
+                    color: 0xFF0000,
                     author: {
                         iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                         name: `${client.user.username} | Command Access System`,
@@ -109,16 +109,16 @@ async function commandHandler(message) {
         await message.reply({
             embeds: [
                 new Discord.MessageEmbed({
-                    color: 0xFF0000,
+                    color: 0xFFFF00,
                     author: {
                         iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                        name: `${client.user.username}`,
+                        name: `${client.user.username} | Command Cooldown System`,
                     },
-                    title: 'Command Cooldown',
                     description: `\`${command_name}\` is on a cooldown of  \`${command_cooldown_in_ms / 1000}s\`!`,
                 }),
             ],
         }).catch(console.warn);
+
         return;
     }
 
