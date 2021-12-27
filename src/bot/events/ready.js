@@ -62,18 +62,25 @@ const setProductPricesInDB = async () => {
     for (const db_roblox_product of db_roblox_products) {
         let product_price_in_robux;
         try {
-            const { data: response_data } = await axios.get(`https://api.roblox.com/marketplace/productDetails?productId=${encodeURIComponent(db_roblox_product.roblox_product_id)}`);
-            product_price_in_robux = response_data.PriceInRobux;
+            const response = await axios.get(`https://api.roblox.com/marketplace/productDetails?productId=${encodeURIComponent(db_roblox_product.roblox_product_id)}`);
+            product_price_in_robux = response?.data?.PriceInRobux ?? null;
         } catch {
             console.warn(`Unable to fetch price for product: ${db_roblox_product.code}; skipping product!`);
             continue; // skip this product since the price cannot be fetched
+        }
+
+        const parsed_product_price_in_robux = Number.parseInt(product_price_in_robux); // Robux can only be an integer
+
+        if (Number.isNaN(parsed_product_price_in_robux)) {
+            console.warn(`Unable to parse price for product: ${db_roblox_product.code}; skipping product!`);
+            continue; // skip this product since the price cannot be parsed
         }
 
         await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_PRODUCTS_COLLECTION_NAME, {
             roblox_product_id: db_roblox_product.roblox_product_id,
         }, {
             $set: {
-                'price_in_robux': Number.parseInt(product_price_in_robux), // robux can only be an integer
+                'price_in_robux': parsed_product_price_in_robux,
             },
         });
 
@@ -139,15 +146,15 @@ module.exports = {
         }
 
         /* update the bot presence every 5 minutes */
-        setInterval(async () => await updateBotPresence(), 5 * 60_000);
+        setInterval(() => updateBotPresence(), 5 * 60_000);
 
         /* set the product prices in the database after 1 minute */
-        setTimeout(async () => await setProductPricesInDB(), 1 * 60_000);
+        setTimeout(() => setProductPricesInDB(), 1 * 60_000);
 
         /* update the bot nickname after 10 minutes */
-        setTimeout(async () => await updateBotNickname(), 10 * 60_000);
+        setTimeout(() => updateBotNickname(), 10 * 60_000);
 
         /* remove illegal nicknames after 30 minutes */
-        setTimeout(async () => await removeIllegalNicknames(), 30 * 60_000);
+        setTimeout(() => removeIllegalNicknames(), 30 * 60_000);
     },
 };
