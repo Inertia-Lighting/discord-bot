@@ -135,7 +135,7 @@ module.exports = (router, client) => {
             user: db_user_data.identity.discord_user_id,
             force: false,
             cache: true,
-        });
+        }).catch(() => null);
 
         const user_is_in_guild = Boolean(guild_member);
 
