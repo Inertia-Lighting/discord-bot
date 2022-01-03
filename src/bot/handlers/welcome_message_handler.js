@@ -135,11 +135,6 @@ async function welcomeMessageHandler(member) {
             }
         }
     });
-
-    welcome_message_component_interaction_collector.on('end', () => {
-        /* remove the welcome message */
-        welcome_message.channel.messages.delete(welcome_message.id).catch(() => null);
-    });
 }
 
 //---------------------------------------------------------------------------------------------------------------//
