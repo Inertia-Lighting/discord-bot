@@ -24,35 +24,9 @@ const { illegalNicknameHandler } = require('../handlers/illegal_nickname_handler
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const command_prefix = process.env.BOT_COMMAND_PREFIX;
 const bot_guild_id = process.env.BOT_GUILD_ID;
 
 //---------------------------------------------------------------------------------------------------------------//
-
-const updateBotPresence = ((client) => {
-    const bot_custom_statuses = [
-        `with ${command_prefix}help`,
-        'with Inertia Lighting Developers!',
-        'with Inertia Lighting Products!',
-        'with Roblox!',
-    ];
-
-    return (() => {
-        const first_status_item = bot_custom_statuses.shift(); // remove the first item and return it
-
-        client.user.setPresence({
-            status: 'online',
-            activities: [
-                {
-                    type: 'PLAYING',
-                    name: `${first_status_item}`,
-                },
-            ],
-        });
-
-        bot_custom_statuses.push(first_status_item); // append first_status_item to the end of the array
-    });
-})(client);
 
 const setProductPricesInDB = async () => {
     /* fetch all products from the database */
@@ -144,9 +118,6 @@ module.exports = {
 
             client.$.interactions.set(interaction.identifier, interaction);
         }
-
-        /* update the bot presence every 5 minutes */
-        setInterval(() => updateBotPresence(), 5 * 60_000);
 
         /* set the product prices in the database after 1 minute */
         setTimeout(() => setProductPricesInDB(), 1 * 60_000);

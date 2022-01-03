@@ -35,11 +35,12 @@ const client = new Discord.Client({
     ],
     presence: {
         status: 'online',
-        type: 4,
-        activity: {
-            type: 'PLAYING',
-            name: 'Just restarted!',
-        },
+        activities: [
+            {
+                type: 'LISTENING',
+                name: `${process.env.BOT_COMMAND_PREFIX}help`,
+            },
+        ],
     },
 });
 
@@ -47,7 +48,6 @@ client.$ = {
     commands: new Discord.Collection(),
     interactions: new Discord.Collection(),
     verification_contexts: new Discord.Collection(),
-    welcome_message_ids: new Discord.Collection(),
 };
 
 //---------------------------------------------------------------------------------------------------------------//

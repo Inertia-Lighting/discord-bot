@@ -13,6 +13,10 @@ const { go_mongo_db } = require('../../../../mongo/mongo.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
+const bot_guild_id = process.env.BOT_GUILD_ID;
+
+//---------------------------------------------------------------------------------------------------------------//
+
 module.exports = (router, client) => {
     router.post('/v1/user/products/fetch/:specific_product_code?', async (req, res) => {
         res.set('Content-Type', 'application/json');
@@ -125,12 +129,29 @@ module.exports = (router, client) => {
             }, null, 2));
         }
 
-        if (!db_user_data.products) {
-            console.error(`discord_user_id: ${discord_user_id}; roblox_user_id: ${roblox_user_id}; does not have \`db_user_data.products\` defined!`);
-            db_user_data.products = {}; // fix the possibility of this not being an object
+        const bot_guild = await client.guilds.fetch(bot_guild_id);
+
+        const guild_member = await bot_guild.members.fetch({
+            user: db_user_data.identity.discord_user_id,
+            force: false,
+            cache: true,
+        });
+
+        const user_is_in_guild = Boolean(guild_member);
+
+        if (!user_is_in_guild) {
+            return res.status(403).send(JSON.stringify({
+                'message': `discord_user_id: ${db_user_data.identity.discord_user_id}; is not in the discord server!`,
+            }, null, 2));
         }
 
+        if (typeof db_user_data.products !== 'object') {
+            throw new Error(`discord_user_id: ${discord_user_id}; roblox_user_id: ${roblox_user_id}; does not have \`db_user_data.products\` defined!`);
+        }
+
+        /** @type {string?} */
         const specified_product_code = req.params.specific_product_code;
+
         return res.status(200).send(JSON.stringify({
             ...(specified_product_code ? {
                 [specified_product_code]: db_user_data.products[specified_product_code],
