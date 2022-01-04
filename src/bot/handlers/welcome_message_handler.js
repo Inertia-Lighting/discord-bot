@@ -67,7 +67,7 @@ async function welcomeMessageHandler(member) {
     /* handle the button presses */
     const welcome_message_component_interaction_collector = await welcome_message.channel.createMessageComponentCollector();
 
-    welcome_message_component_interaction_collector.on('collect', (message_component_interaction) => {
+    welcome_message_component_interaction_collector.on('collect', async (message_component_interaction) => {
         message_component_interaction.deferUpdate({ ephemeral: false });
 
         switch (message_component_interaction.customId) {
@@ -75,10 +75,10 @@ async function welcomeMessageHandler(member) {
                 welcome_message_component_interaction_collector.stop();
 
                 /* give roles to the user */
-                member.roles.add(new_user_role_ids).catch(console.warn);
+                await member.roles.add(new_user_role_ids);
 
                 /* welcome the user to the server */
-                message_component_interaction.update({
+                await message_component_interaction.editReply({
                     embeds: [
                         new Discord.MessageEmbed({
                             color: 0x60A0FF,
@@ -124,7 +124,7 @@ async function welcomeMessageHandler(member) {
                             ],
                         },
                     ],
-                }).catch(console.warn);
+                });
 
                 break;
             }
