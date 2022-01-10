@@ -23,7 +23,7 @@
     "axios": "^0.24.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.1",
-    "bufferutil": "^4.0.5",
+    "bufferutil": "^4.0.6",
     "discord.js": "^13.5.0",
     "dotenv": "^10.0.0",
     "erlpack": "github:discord/erlpack",
@@ -35,14 +35,14 @@
     "path": "^0.12.7",
     "recursive-read-directory": "github:MidSpike/recursive-read-directory",
     "string-similarity": "^4.0.4",
-    "utf-8-validate": "^5.0.7",
+    "utf-8-validate": "^5.0.8",
     "uuid": "^8.3.2",
     "zlib-sync": "^0.1.7"
   },
   "devDependencies": {
-    "@babel/core": "^7.16.5",
+    "@babel/core": "^7.16.7",
     "@babel/eslint-parser": "^7.16.5",
-    "eslint": "^8.5.0",
+    "eslint": "^8.6.0",
     "husky": "^7.0.4",
     "is-ci": "^3.0.1"
   },
