@@ -10,7 +10,6 @@ const { Discord, client } = require('../discord_client.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const new_user_role_ids = process.env.BOT_NEW_USER_AUTO_ROLE_IDS.split(',');
 const general_chat_channel_id = process.env.BOT_GENERAL_CHANNEL_ID;
 
 //---------------------------------------------------------------------------------------------------------------//
@@ -19,9 +18,7 @@ const general_chat_channel_id = process.env.BOT_GENERAL_CHANNEL_ID;
  * @param {Discord.GuildMember} member
  */
 async function welcomeMessageHandler(member) {
-    await member.fetch(true);
-
-    const message_options = {
+    const welcome_message_options = {
         content: `${member}`,
         embeds: [
             new Discord.MessageEmbed({
@@ -39,7 +36,7 @@ async function welcomeMessageHandler(member) {
                     {
                         type: 2,
                         style: 3,
-                        custom_id: 'user_is_a_human',
+                        custom_id: 'welcome_message_captcha_button',
                         label: 'I am a human!',
                     },
                 ],
@@ -47,94 +44,33 @@ async function welcomeMessageHandler(member) {
         ],
     };
 
-    let welcome_message;
+    let dm_welcome_message_sent_successfully = true; // assume success until proven otherwise
     try {
         const dm_channel = await member.createDM();
-        welcome_message = await dm_channel.send(message_options);
+        await dm_channel.send(welcome_message_options);
     } catch {
-        try {
-            /** @type {Discord.TextChannel} */
-            const general_chat_channel = await client.channels.fetch(general_chat_channel_id);
-            welcome_message = await general_chat_channel.send(message_options);
-        } catch (error) {
-            console.trace('Failed to send welcome_message to general_chat_channel:', error);
-        }
+        dm_welcome_message_sent_successfully = false;
     }
 
-    /* check if the message was sent */
-    if (!welcome_message) return;
-
-    /* handle the button presses */
-    const welcome_message_component_interaction_collector = await welcome_message.channel.createMessageComponentCollector();
-
-    welcome_message_component_interaction_collector.on('collect', async (message_component_interaction) => {
-        message_component_interaction.deferUpdate({ ephemeral: false });
-
-        switch (message_component_interaction.customId) {
-            case 'user_is_a_human': {
-                welcome_message_component_interaction_collector.stop();
-
-                /* give roles to the user */
-                await member.roles.add(new_user_role_ids);
-
-                /* welcome the user to the server */
-                await message_component_interaction.editReply({
-                    embeds: [
-                        new Discord.MessageEmbed({
-                            color: 0x60A0FF,
-                            title: 'Welcome to Inertia Lighting!',
-                            description: [
-                                'Thank you for joining our server, and welcome to what\'s possible!',
-                                '',
-                                'Check out our product hub to purchase our products using Robux!',
-                                'Alternatively, you can make a purchase using PayPal on our website!',
-                            ].join('\n'),
-                        }),
-                    ],
-                    components: [
-                        {
-                            type: 1,
-                            components: [
-                                {
-                                    type: 2,
-                                    style: 5,
-                                    label: 'Our Website',
-                                    url: 'https://inertia.lighting/',
-                                }, {
-                                    type: 2,
-                                    style: 5,
-                                    label: 'Our Products',
-                                    url: 'https://inertia.lighting/products',
-                                }, {
-                                    type: 2,
-                                    style: 5,
-                                    label: 'Product Hub',
-                                    url: 'https://product-hub.inertia.lighting/',
-                                }, {
-                                    type: 2,
-                                    style: 5,
-                                    label: 'F.A.Q.',
-                                    url: 'https://inertia.lighting/faq',
-                                }, {
-                                    type: 2,
-                                    style: 5,
-                                    label: 'Privacy Policy',
-                                    url: 'https://inertia.lighting/privacy',
-                                },
-                            ],
-                        },
-                    ],
-                });
-
-                break;
-            }
-
-            default: {
-                welcome_message_component_interaction_collector.stop();
-                break;
-            }
-        }
-    });
+    try {
+        /** @type {Discord.TextChannel} */
+        const general_chat_channel = await client.channels.fetch(general_chat_channel_id);
+        await general_chat_channel.send(dm_welcome_message_sent_successfully ? {
+            content: `${member}`,
+            embeds: [
+                new Discord.MessageEmbed({
+                    color: 0x60A0FF,
+                    title: 'Welcome to Inertia Lighting!',
+                    description: [
+                        'Please check your DMs for a CAPTCHA message sent by our bot!',
+                        'You need to complete the CAPTCHA to gain access to the server!',
+                    ].join('\n'),
+                }),
+            ],
+        } : welcome_message_options);
+    } catch (error) {
+        console.trace('Failed to send welcome_message to general_chat_channel:', error);
+    }
 }
 
 //---------------------------------------------------------------------------------------------------------------//

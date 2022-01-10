@@ -14,10 +14,10 @@ const { go_mongo_db } = require('../../mongo/mongo.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
+/**
+ * @param {Discord.GuildMember} member
+ */
 async function automaticVerificationHandler(member) {
-    if (member.user.system) return; // don't operate on system accounts
-    if (member.user.bot) return; // don't operate on bots to prevent feedback-loops
-
     const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
         'identity.discord_user_id': member.id,
     });
@@ -32,7 +32,7 @@ async function automaticVerificationHandler(member) {
                         color: 0x60A0FF,
                         author: {
                             iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                            name: 'Inertia Lighting Verification System',
+                            name: 'Inertia Lighting | Verification System',
                         },
                         title: 'You are verified in our database!',
                         description: [
@@ -98,7 +98,7 @@ async function automaticVerificationHandler(member) {
                     color: 0x60A0FF,
                     author: {
                         iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                        name: 'Inertia Lighting Verification System',
+                        name: 'Inertia Lighting | Verification System',
                     },
                     title: 'Please select an account bellow to automatically verify.',
                 }),
@@ -148,7 +148,7 @@ async function automaticVerificationHandler(member) {
                                 color: 0xFFFF00,
                                 author: {
                                     iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                                    name: 'Inertia Lighting Verification System',
+                                    name: 'Inertia Lighting | Verification System',
                                 },
                                 title: 'You need to manually verify in our product hub!',
                                 description: 'Please go to our product hub to manually verify your account with us.',
@@ -207,7 +207,7 @@ async function automaticVerificationHandler(member) {
                                 color: 0x00FF00,
                                 author: {
                                     iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                                    name: 'Inertia Lighting Verification System',
+                                    name: 'Inertia Lighting | Verification System',
                                 },
                                 title: 'Automatic verification was successful!',
                                 description: [
