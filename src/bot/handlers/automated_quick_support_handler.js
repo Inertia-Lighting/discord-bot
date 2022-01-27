@@ -63,7 +63,7 @@ async function findPotentialMatchingQuickSupportTopics(user_input) {
     }
 
     const matching_qs_topics = mapped_quick_support_topics.filter(quick_support_topic =>
-        quick_support_topic.similarity_score > 0.80
+        quick_support_topic.similarity_score > 0.95
     ).sort((a, b) =>
         b.similarity_score - a.similarity_score
     );
@@ -81,12 +81,8 @@ async function automatedQuickSupportHandler(message) {
     if (message.cleanContent.length < 5) return;
     if (!(/\w+/gi).test(message.cleanContent)) return;
 
-    const matching_qs_topics = (await findPotentialMatchingQuickSupportTopics(message.cleanContent)).slice(0, 3);
+    const matching_qs_topics = (await findPotentialMatchingQuickSupportTopics(message.cleanContent)).slice(0, 2);
     if (matching_qs_topics.length === 0) return;
-
-    console.log({
-        matching_qs_topics,
-    });
 
     message.reply({
         content: [
