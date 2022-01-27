@@ -46,17 +46,33 @@ async function updateQuickSupportTopics() {
 setImmediate(() => updateQuickSupportTopics());
 setInterval(() => updateQuickSupportTopics(), 15 * 60_000); // every 15 minutes
 
-function getSimilarityScore(user_input, quick_support_topic) {
+//---------------------------------------------------------------------------------------------------------------//
+
+/**
+ * @param {string} string_1
+ * @param {string} string_2
+ * @returns {number}
+ */
+function getSimilarityScore(string_1, string_2) {
+    return stringSimilarity.compareTwoStrings(string_1.toLowerCase(), string_2.toLowerCase());
+}
+
+/**
+ * @param {string} user_input
+ * @param {QuickSupportTopic} quick_support_topic
+ * @returns {number}
+ */
+function generateSimilarityScoreForQuickSupportTopic(user_input, quick_support_topic) {
     let similarity_score = 0;
 
     for (const searchable_query of quick_support_topic.searchable_queries) {
-        const searchable_query_similarity_score = stringSimilarity.compareTwoStrings(user_input, searchable_query);
+        const searchable_query_similarity_score = getSimilarityScore(user_input, searchable_query);
         if (searchable_query_similarity_score <= similarity_score) continue;
 
         similarity_score = searchable_query_similarity_score;
     }
 
-    const title_similarity_score = stringSimilarity.compareTwoStrings(user_input, quick_support_topic.title);
+    const title_similarity_score = getSimilarityScore(user_input, quick_support_topic.title);
     if (title_similarity_score > similarity_score) {
         similarity_score = title_similarity_score;
     }
@@ -64,12 +80,16 @@ function getSimilarityScore(user_input, quick_support_topic) {
     return similarity_score;
 }
 
-async function findPotentialMatchingQuickSupportTopics(user_input) {
+/**
+ * @param {string} user_input
+ * @returns {(QuickSupportTopic & { similarity_score: number })[]}
+ */
+function findPotentialMatchingQuickSupportTopics(user_input) {
     const mapped_quick_support_topics = [];
     for (const quick_support_topic of quick_support_topics) {
         mapped_quick_support_topics.push({
             ...quick_support_topic,
-            similarity_score: getSimilarityScore(user_input, quick_support_topic),
+            similarity_score: generateSimilarityScoreForQuickSupportTopic(user_input, quick_support_topic),
         });
     }
 
@@ -92,7 +112,7 @@ async function automatedQuickSupportHandler(message) {
     if (message.cleanContent.length < 5) return;
     if (!(/\w+/gi).test(message.cleanContent)) return;
 
-    const matching_qs_topics = (await findPotentialMatchingQuickSupportTopics(message.cleanContent)).slice(0, 2);
+    const matching_qs_topics = findPotentialMatchingQuickSupportTopics(message.cleanContent).slice(0, 2);
     if (matching_qs_topics.length === 0) return;
 
     message.reply({
