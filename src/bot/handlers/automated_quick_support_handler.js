@@ -12,6 +12,8 @@ const { go_mongo_db } = require('../../mongo/mongo.js');
 
 const { client } = require('../discord_client.js');
 
+const { math_clamp } = require('../../utilities.js');
+
 //---------------------------------------------------------------------------------------------------------------//
 
 /**
@@ -99,7 +101,7 @@ async function automatedQuickSupportHandler(message) {
             title: quick_support_topic.title,
             description: quick_support_topic.support_contents,
             footer: {
-                text: `Automated Confidence: ${(Math.clamp(quick_support_topic.similarity_score, 0, 1) * 100).toFixed(2)}%`,
+                text: `Automated Confidence: ${(math_clamp(quick_support_topic.similarity_score, 0, 1) * 100).toFixed(2)}%`,
             },
         })),
     }).catch(console.warn);
