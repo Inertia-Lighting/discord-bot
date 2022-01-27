@@ -10,7 +10,7 @@ const stringSimilarity = require('string-similarity');
 
 const { go_mongo_db } = require('../../mongo/mongo.js');
 
-const { client } = require('../../discord_client.js');
+const { client } = require('../discord_client.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
