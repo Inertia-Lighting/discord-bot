@@ -31,6 +31,8 @@ const { math_clamp } = require('../../utilities.js');
 /** @type {QuickSupportTopics} */
 const quick_support_topics = [];
 
+const confidence_threshold = 0.85;
+
 //---------------------------------------------------------------------------------------------------------------//
 
 async function updateQuickSupportTopics() {
@@ -44,26 +46,35 @@ async function updateQuickSupportTopics() {
 setImmediate(() => updateQuickSupportTopics());
 setInterval(() => updateQuickSupportTopics(), 15 * 60_000); // every 15 minutes
 
+function getSimilarityScore(user_input, quick_support_topic) {
+    let similarity_score = 0;
+
+    for (const searchable_query of quick_support_topic.searchable_queries) {
+        const searchable_query_similarity_score = stringSimilarity.compareTwoStrings(user_input, searchable_query);
+        if (searchable_query_similarity_score <= similarity_score) continue;
+
+        similarity_score = searchable_query_similarity_score;
+    }
+
+    const title_similarity_score = stringSimilarity.compareTwoStrings(user_input, quick_support_topic.title);
+    if (title_similarity_score > similarity_score) {
+        similarity_score = title_similarity_score;
+    }
+
+    return similarity_score;
+}
+
 async function findPotentialMatchingQuickSupportTopics(user_input) {
     const mapped_quick_support_topics = [];
     for (const quick_support_topic of quick_support_topics) {
-        let similarity_score_total = 0;
-        for (const searchable_query of quick_support_topic.searchable_queries) {
-            similarity_score_total += stringSimilarity.compareTwoStrings(user_input, searchable_query);
-        }
-
-        similarity_score_total += stringSimilarity.compareTwoStrings(user_input, quick_support_topic.title) * 1.20; // multiplied for weighted value
-
-        const similarity_score_average = similarity_score_total / quick_support_topic.searchable_queries.length;
-
         mapped_quick_support_topics.push({
             ...quick_support_topic,
-            similarity_score: similarity_score_average,
+            similarity_score: getSimilarityScore(user_input, quick_support_topic),
         });
     }
 
     const matching_qs_topics = mapped_quick_support_topics.filter(quick_support_topic =>
-        quick_support_topic.similarity_score > 0.95
+        quick_support_topic.similarity_score >= confidence_threshold
     ).sort((a, b) =>
         b.similarity_score - a.similarity_score
     );
@@ -97,7 +108,7 @@ async function automatedQuickSupportHandler(message) {
             title: quick_support_topic.title,
             description: quick_support_topic.support_contents,
             footer: {
-                text: `Automated Confidence: ${(math_clamp(quick_support_topic.similarity_score, 0, 1) * 100).toFixed(2)}%`,
+                text: `Automated Confidence: ${(math_clamp(quick_support_topic.similarity_score * 100, 0, 100)).toFixed(2)}%`,
             },
         })),
     }).catch(console.warn);
