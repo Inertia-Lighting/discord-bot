@@ -61,7 +61,7 @@ async function findPotentialMatchingQuickSupportTopics(user_input) {
     }
 
     const matching_qs_topics = mapped_quick_support_topics.filter(quick_support_topic =>
-        quick_support_topics.similarity_score > 0.80
+        quick_support_topic.similarity_score > 0.80
     ).sort((a, b) =>
         b.similarity_score - a.similarity_score
     );
