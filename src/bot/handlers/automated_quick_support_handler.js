@@ -31,7 +31,7 @@ const { math_clamp } = require('../../utilities.js');
 /** @type {QuickSupportTopics} */
 const quick_support_topics = [];
 
-const confidence_threshold = 0.85;
+const confidence_threshold = 0.75;
 
 //---------------------------------------------------------------------------------------------------------------//
 

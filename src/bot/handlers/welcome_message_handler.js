@@ -10,10 +10,6 @@ const { Discord, client } = require('../discord_client.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const general_chat_channel_id = process.env.BOT_GENERAL_CHANNEL_ID;
-
-//---------------------------------------------------------------------------------------------------------------//
-
 /**
  * @param {Discord.GuildMember} member
  */
@@ -52,25 +48,28 @@ async function welcomeMessageHandler(member) {
         dm_welcome_message_sent_successfully = false;
     }
 
-    try {
-        /** @type {Discord.TextChannel} */
-        const general_chat_channel = await client.channels.fetch(general_chat_channel_id);
-        await general_chat_channel.send(dm_welcome_message_sent_successfully ? {
-            content: `${member}`,
-            embeds: [
-                new Discord.MessageEmbed({
-                    color: 0x60A0FF,
-                    title: 'Welcome to Inertia Lighting!',
-                    description: [
-                        'Please check your DMs for a CAPTCHA message sent by our bot!',
-                        'You need to complete the CAPTCHA to gain access to the server!',
-                    ].join('\n'),
-                }),
-            ],
-        } : welcome_message_options);
-    } catch (error) {
-        console.trace('Failed to send welcome_message to general_chat_channel:', error);
-    }
+    /** @type {Discord.TextBasedChannel} */
+    const welcome_message_channel = await client.channels.fetch('936738838309654610').catch(console.trace);
+    if (!welcome_message_channel) return;
+
+    const guild_welcome_message = await welcome_message_channel.send(dm_welcome_message_sent_successfully ? {
+        content: `${member}`,
+        embeds: [
+            new Discord.MessageEmbed({
+                color: 0x60A0FF,
+                title: 'Welcome to Inertia Lighting!',
+                description: [
+                    'Please check your DMs for a CAPTCHA message sent by our bot!',
+                    'You need to complete the CAPTCHA to gain access to the server!',
+                ].join('\n'),
+            }),
+        ],
+    } : welcome_message_options).catch(console.trace);
+    if (!guild_welcome_message) return;
+
+    setTimeout(() => {
+        welcome_message_channel.messages.delete(guild_welcome_message.id).catch(console.warn);
+    }, 15 * 60_000); // wait 15 minutes before deleting the welcome message
 }
 
 //---------------------------------------------------------------------------------------------------------------//
