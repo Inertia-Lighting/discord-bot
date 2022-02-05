@@ -14,9 +14,15 @@ const moment = require('moment-timezone');
 
 const { Timer } = require('../../utilities.js');
 
-const { Discord, client } = require('../discord_client.js');
+const {
+    Discord,
+    client,
+} = require('../discord_client.js');
 
-const { command_permission_levels } = require('../common/bot.js');
+const {
+    getUserPermissionLevel,
+    command_permission_levels,
+} = require('../common/bot.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -606,7 +612,9 @@ module.exports = {
     permission_level: command_permission_levels.PUBLIC,
     cooldown: 10_000,
     async execute(message, args) {
-        const { user_permission_level, command_name } = args;
+        const { command_name } = args;
+
+        const user_permission_level = getUserPermissionLevel(message.member);
 
         async function supportTicketCommand() {
             /** @type {Discord.Message} */
