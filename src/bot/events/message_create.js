@@ -10,6 +10,7 @@ const { client } = require('../discord_client.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
+const { automatedQuickSupportHandler } = require('../handlers/automated_quick_support_handler.js');
 const { suggestionsCategoryHandler } = require('../handlers/suggestions_category_handler.js');
 const { commandHandler } = require('../handlers/command_handler.js');
 
@@ -44,11 +45,16 @@ module.exports = {
                     `To see a list of commands do \`${command_prefix}help\`!`,
                 ].join('\n'),
             }).catch(console.warn);
+            return;
         }
 
         /* handle commands */
         if (message.content.startsWith(command_prefix)) {
             commandHandler(message);
+            return;
         }
+
+        /* attempt automated quick support */
+        automatedQuickSupportHandler(message).catch(console.trace);
     },
 };

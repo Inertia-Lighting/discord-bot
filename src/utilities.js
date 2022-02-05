@@ -97,6 +97,21 @@ function array_random(array_of_things) {
     return array_of_things[random_range_inclusive(0, array_of_things.length - 1)];
 }
 
+/**
+ * Clamps a number between a minimum and maximum value
+ * @param {number} value
+ * @param {number} min
+ * @param {number} max
+ * @returns {number} the clamped value
+ */
+function math_clamp(value, min, max) {
+    if (typeof value !== 'number') throw new TypeError('\`value\` must be a number');
+    if (typeof min !== 'number') throw new TypeError('\`min\` must be a number');
+    if (typeof max !== 'number') throw new TypeError('\`max\` must be a number');
+
+    return Math.min(Math.max(value, min), max);
+}
+
 //---------------------------------------------------------------------------------------------------------------//
 
 module.exports = {
@@ -106,4 +121,5 @@ module.exports = {
     object_sort,
     array_chunks,
     array_random,
+    math_clamp,
 };
