@@ -90,6 +90,23 @@ module.exports = {
             return;
         }
 
+        try {
+            await member.timeout(duration, reason);
+        } catch (error) {
+            console.trace(error);
+
+            await interaction.editReply({
+                embeds: [
+                    {
+                        color: 0xFF0000,
+                        description: 'An error occurred while trying to timeout this user!',
+                    },
+                ],
+            }).catch(console.warn);
+
+            return;
+        }
+
         const moderation_message_options = {
             content: [
                 `${member}`,
