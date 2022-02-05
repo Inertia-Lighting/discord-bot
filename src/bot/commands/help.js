@@ -8,7 +8,7 @@
 
 const { Discord, client } = require('../discord_client.js');
 
-const { command_permission_levels } = require('../common/bot.js');
+const { getUserPermissionLevel, command_permission_levels } = require('../common/bot.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -20,7 +20,9 @@ module.exports = {
     permission_level: command_permission_levels.PUBLIC,
     cooldown: 2_500,
     async execute(message, args) {
-        const { user_permission_level, command_prefix, command_args } = args;
+        const { command_prefix, command_args } = args;
+
+        const user_permission_level = getUserPermissionLevel(message.member);
 
         const commands_visible_to_user = client.$.commands.filter(cmd =>
             user_permission_level >= cmd.permission_level

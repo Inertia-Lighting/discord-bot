@@ -6,11 +6,17 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const { string_ellipses, Timer } = require('../../utilities.js');
+const {
+    Timer,
+    string_ellipses,
+} = require('../../utilities.js');
 
 const { go_mongo_db } = require('../../mongo/mongo.js');
 
-const { Discord, client } = require('../discord_client.js');
+const {
+    Discord,
+    client,
+} = require('../discord_client.js');
 
 const { command_permission_levels } = require('../common/bot.js');
 
@@ -76,6 +82,11 @@ module.exports = {
                             style: 5,
                             label: 'Products & Downloads',
                             url: 'https://inertia.lighting/products',
+                        }, {
+                            type: 2,
+                            style: 5,
+                            label: 'Testing Game',
+                            url: 'https://demo.inertia.lighting/',
                         },
                     ],
                 },
