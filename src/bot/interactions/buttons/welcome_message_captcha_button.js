@@ -33,14 +33,14 @@ module.exports = {
         }
 
         const welcome_message = await interaction.channel.messages.fetch(interaction.message.id);
-        const member_from_welcome_message = welcome_message.mentions.members.first();
+        const user_from_welcome_message = welcome_message.mentions.users.first();
 
-        if (!(member_from_welcome_message instanceof Discord.GuildMember)) {
+        if (!(user_from_welcome_message instanceof Discord.User)) {
             console.warn(`Unable to fetch member from welcome message: ${interaction.message.id}; skipping...`);
             return;
         }
 
-        if (member_from_welcome_message.id !== member.id) {
+        if (user_from_welcome_message.id !== member.id) {
             await interaction.followUp({
                 ephemeral: true,
                 content: 'You are not the member mentioned in the welcome message.',
