@@ -27,8 +27,24 @@ module.exports = {
         const guild = client.guilds.cache.get(bot_guild_id);
         const member = await guild.members.fetch(interaction.user.id).catch(() => null);
 
-        if (!member) {
+        if (!(member instanceof Discord.GuildMember)) {
             console.warn(`Unable to fetch member from user: ${interaction.user.id}; skipping...`);
+            return;
+        }
+
+        const welcome_message = await interaction.channel.messages.fetch(interaction.message.id);
+        const member_from_welcome_message = welcome_message.mentions.members.first();
+
+        if (!(member_from_welcome_message instanceof Discord.GuildMember)) {
+            console.warn(`Unable to fetch member from welcome message: ${interaction.message.id}; skipping...`);
+            return;
+        }
+
+        if (member_from_welcome_message.id !== member.id) {
+            await interaction.followUp({
+                ephemeral: true,
+                content: 'You are not the member mentioned in the welcome message.',
+            }).catch(console.warn);
             return;
         }
 
@@ -96,7 +112,7 @@ module.exports = {
         });
 
         setTimeout(() => {
-            /* automatically verify the user (if possible) */
+            /* prompt the user to automatically link their accounts (if possible) */
             automaticVerificationHandler(member).catch(console.trace);
         }, 5_000); // wait 5 seconds
     },
