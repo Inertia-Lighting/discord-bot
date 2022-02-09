@@ -30,6 +30,10 @@ module.exports = {
         /* check if the user is blacklisted */
         const [ db_blacklisted_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME, {
             'identity.discord_user_id': support_ticket_owner_id,
+        }, {
+            projection: {
+                '_id': false,
+            },
         });
         if (db_blacklisted_user_data) {
             await interaction.editReply({
