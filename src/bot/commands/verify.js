@@ -11,6 +11,9 @@ const { go_mongo_db } = require('../../mongo/mongo.js');
 const { Discord, client } = require('../discord_client.js');
 
 const { command_permission_levels } = require('../common/bot.js');
+const { disableMessageComponents } = require('../common/message.js');
+
+const { userProfileHandler } = require('../handlers/user_profile_handler.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -21,6 +24,10 @@ module.exports = {
     aliases: ['verify', 'link', 'unverify', 'unlink'],
     permission_level: command_permission_levels.PUBLIC,
     cooldown: 5_000,
+    /**
+     * @param {Discord.Message} message
+     * @param {Object.<string, any>} args
+     */
     async execute(message, args) {
         const { command_prefix, command_args } = args;
 
@@ -32,22 +39,64 @@ module.exports = {
             },
         });
         if (db_user_data) {
-            await message.channel.send({
+            /** @type {Discord.Message} */
+            const bot_msg = await message.channel.send({
                 embeds: [
                     new Discord.MessageEmbed({
-                        color: 0xFF0000,
+                        color: 0xFFFF00,
                         author: {
                             iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                             name: `${client.user.username} | Verification System`,
                         },
                         title: 'You are already verified!',
                         description: [
-                            `${message.author} is already verified and linked to a roblox account in our database!`,
-                            'If you want to modify your linked accounts, please open an **Account Recovery** support ticket.',
+                            `${message.author} is already verified and linked in our database!`,
+                            'Click the \"Your User Profile\" button below to view your profile!',
+                            'To modify your linked accounts, please open an \"Account Recovery\" support ticket.',
                         ].join('\n'),
                     }),
                 ],
-            }).catch(console.warn);
+                components: [
+                    {
+                        type: 1,
+                        components: [
+                            {
+                                type: 2,
+                                style: 2,
+                                custom_id: 'verify_command_user_profile_button',
+                                label: 'Your User Profile',
+                            },
+                        ],
+                    },
+                ],
+            });
+
+            const message_component_collector = await message.channel.createMessageComponentCollector();
+            message_component_collector.on('collect', async (message_component) => {
+                switch (message_component.id) {
+                    case 'verify_command_user_profile_button': {
+                        if (!message_component.isButton()) return;
+
+                        message_component.deferReply({ ephemeral: true });
+
+                        disableMessageComponents(bot_msg);
+
+                        userProfileHandler(message_component, message.author.id);
+
+                        break;
+                    }
+
+                    default: {
+                        return; // keep the message_component_collector running
+                    }
+                }
+
+                message_component_collector.stop();
+            });
+            message_component_collector.on('end', () => {
+                disableMessageComponents(bot_msg);
+            });
+
             return; // don't allow the user to verify if they're already verified
         }
 
