@@ -39,10 +39,10 @@ module.exports = {
             await interaction.editReply({
                 embeds: [
                     new Discord.MessageEmbed({
-                        color: 0x60A0FF,
+                        color: 0xFF0000,
                         author: {
                             iconURL: `${interaction.client.user.displayAvatarURL({ dynamic: true })}`,
-                            name: 'Inertia Lighting | Support Ticket',
+                            name: 'Inertia Lighting | Blacklist System',
                         },
                         description: [
                             '\`\`\`',

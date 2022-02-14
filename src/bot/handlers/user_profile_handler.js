@@ -62,6 +62,17 @@ async function userProfileHandler(deferred_interaction_or_message, discord_user_
         return;
     }
 
+    const [ db_blacklisted_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME, {
+        $or: [
+            { 'identity.discord_user_id': db_user_data.identity.discord_user_id },
+            { 'identity.roblox_user_id': db_user_data.identity.roblox_user_id },
+        ],
+    }, {
+        projection: {
+            '_id': false,
+        },
+    });
+
     const db_roblox_products = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_PRODUCTS_COLLECTION_NAME, {});
 
     const user_product_codes = Object.entries(db_user_data.products)
@@ -84,6 +95,23 @@ async function userProfileHandler(deferred_interaction_or_message, discord_user_
 
     replyToMessageOrEditReplyToInteraction(deferred_interaction_or_message, {
         embeds: [
+            ...(db_blacklisted_user_data ? [
+                new Discord.MessageEmbed({
+                    color: 0xFF0000,
+                    author: {
+                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                        name: 'Inertia Lighting | Blacklist System',
+                    },
+                    description: [
+                        '\`\`\`',
+                        'User is blacklisted from using Inertia Lighting products!',
+                        '\`\`\`',
+                        '\`\`\`json',
+                        `${JSON.stringify(db_blacklisted_user_data, null, 2)}`,
+                        '\`\`\`',
+                    ].join('\n'),
+                }),
+            ] : []),
             new Discord.MessageEmbed({
                 color: 0x60A0FF,
                 author: {
