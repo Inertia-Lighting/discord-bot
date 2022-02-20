@@ -43,12 +43,7 @@ async function commandHandler(message) {
             embeds: [
                 new Discord.MessageEmbed({
                     color: 0xFF0000,
-                    author: {
-                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                        name: `${client.user.username}`,
-                    },
-                    title: 'Unknown Command Error',
-                    description: 'That is not a known command!',
+                    description: 'That command does not exist!',
                 }),
             ],
         });
