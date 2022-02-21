@@ -176,7 +176,7 @@ module.exports = (router, client) => {
         // }, null, 2));
 
         return res.status(200).send(JSON.stringify({
-            'access_key': 'this_isn\'t used anymore',
+            'access_key': 'not_used_anymore',
             'access_key_expiration_epoch': moment().add(5, 'years').valueOf(),
         }, null, 2));
     });
