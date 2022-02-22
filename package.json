@@ -20,16 +20,16 @@
   },
   "homepage": "https://github.com/Inertia-Lighting/inertia-lighting-discord-bot#readme",
   "dependencies": {
-    "axios": "^0.25.0",
+    "axios": "^0.26.0",
     "bcryptjs": "^2.4.3",
-    "body-parser": "^1.19.1",
+    "body-parser": "^1.19.2",
     "bufferutil": "^4.0.6",
     "discord.js": "^13.6.0",
     "dotenv": "^16.0.0",
     "erlpack": "github:discord/erlpack",
-    "express": "^4.17.2",
+    "express": "^4.17.3",
     "fs": "0.0.1-security",
-    "go-mongo-db": "github:Inertia-Lighting/go-mongo-db#v0.0.4-beta",
+    "go-mongo-db": "github:Inertia-Lighting/go-mongo-db#v1.2.0-stable",
     "moment-timezone": "^0.5.34",
     "node-gyp": "^8.4.1",
     "path": "^0.12.7",
@@ -40,9 +40,9 @@
     "zlib-sync": "^0.1.7"
   },
   "devDependencies": {
-    "@babel/core": "^7.17.2",
+    "@babel/core": "^7.17.5",
     "@babel/eslint-parser": "^7.17.0",
-    "eslint": "^8.8.0",
+    "eslint": "^8.9.0",
     "husky": "^7.0.4",
     "is-ci": "^3.0.1"
   },

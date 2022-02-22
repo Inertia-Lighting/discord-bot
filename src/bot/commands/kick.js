@@ -42,6 +42,14 @@ module.exports = {
             return;
         }
 
+        /* handle when a staff member specifies this bot */
+        if (member.id === message.client.user.id) {
+            await message.reply({
+                content: 'You aren\'t allowed to kick me!',
+            }).catch(console.warn);
+            return;
+        }
+
         /* handle when a staff member specifies the guild owner */
         if (member.id === message.guild.ownerId) {
             await message.reply({

@@ -64,6 +64,19 @@ module.exports = {
             return;
         }
 
+        /* handle when a staff member specifies this bot */
+        if (member.id === interaction.client.user.id) {
+            await interaction.editReply({
+                embeds: [
+                    {
+                        color: 0xFFFF00,
+                        description: 'You aren\'t allowed to timeout me!',
+                    },
+                ],
+            }).catch(console.warn);
+            return;
+        }
+
         /* handle when a staff member specifies the guild owner */
         if (member.id === interaction.guild.ownerId) {
             await interaction.editReply({

@@ -6,7 +6,7 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const { Discord } = require('../discord_client.js');
+const Discord = require('discord.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -23,11 +23,6 @@ const user_is_not_allowed_access_to_command_message_options = {
     embeds: [
         new Discord.MessageEmbed({
             color: 0xFF00FF,
-            // do not use this
-            // author: {
-            //     iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-            //     name: `${client.user.username} | Command Access System`,
-            // },
             title: 'Nice try, this command is protected!',
             description: 'You aren\'t allowed to use this command!',
         }),
