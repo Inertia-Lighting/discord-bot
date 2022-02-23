@@ -73,7 +73,7 @@ module.exports = (router, client) => {
             // game_owner_api_token: game_owner_api_token,
             // game_api_salt: game_api_salt,
             game_owner_id: game_owner_id,
-            game_place_id: game_place_id,
+            // game_place_id: game_place_id,
         } = req.body;
 
         /* check if required information is present */
@@ -92,11 +92,11 @@ module.exports = (router, client) => {
                 'message': 'missing (string) \`game_owner_id\` in request body',
             }, null, 2));
         }
-        if (!game_place_id || typeof game_place_id !== 'string') {
-            return res.status(400).send(JSON.stringify({
-                'message': 'missing (string) \`game_place_id\` in request body',
-            }, null, 2));
-        }
+        // if (!game_place_id || typeof game_place_id !== 'string') {
+        //     return res.status(400).send(JSON.stringify({
+        //         'message': 'missing (string) \`game_place_id\` in request body',
+        //     }, null, 2));
+        // }
 
         /* verify a reproducible salt from the game */
         // const reproduced_game_api_salt = await generateGameSalt(game_owner_id, game_place_id, process.env.USER_API_TOKEN_SALT_SECRET_1, process.env.USER_API_TOKEN_SALT_SECRET_2);
