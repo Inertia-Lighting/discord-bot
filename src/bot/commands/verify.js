@@ -77,9 +77,22 @@ module.exports = {
                     case 'verify_command_user_profile_button': {
                         if (!message_component.isButton()) return;
 
-                        message_component.deferReply({ ephemeral: true });
+                        if (message_component.user.id !== message.author.id) {
+                            await message_component.reply({
+                                ephemeral: true,
+                                embeds: [
+                                    new Discord.MessageEmbed({
+                                        color: 0xFFFF00,
+                                        description: 'That button is not for you!',
+                                    }),
+                                ],
+                            }).catch(console.warn);
+                            return;
+                        }
 
-                        disableMessageComponents(bot_msg);
+                        await message_component.deferReply({ ephemeral: true });
+
+                        await disableMessageComponents(bot_msg).catch(console.warn);
 
                         userProfileHandler(message_component, message.author.id);
 
