@@ -89,6 +89,7 @@ function findPotentialMatchingQuickSupportTopics(user_input) {
     for (const quick_support_topic of quick_support_topics) {
         mapped_quick_support_topics.push({
             ...quick_support_topic,
+            /** On a scale from (0 -> 1) */
             similarity_score: generateSimilarityScoreForQuickSupportTopic(user_input, quick_support_topic),
         });
     }
@@ -112,12 +113,12 @@ async function automatedQuickSupportHandler(message) {
     if (message.cleanContent.length < 5) return;
     if (!(/\w+/gi).test(message.cleanContent)) return;
 
-    const matching_qs_topics = findPotentialMatchingQuickSupportTopics(message.cleanContent).slice(0, 2);
+    const matching_qs_topics = findPotentialMatchingQuickSupportTopics(message.cleanContent).slice(0, 3);
     if (matching_qs_topics.length === 0) return;
 
     message.reply({
         content: [
-            `I found ${matching_qs_topics.length} quick support topics that might be related to your message!`,
+            `I found ${matching_qs_topics.length} quick support topic(s) that might be related to your message!`,
         ].join('\n'),
         embeds: matching_qs_topics.map(quick_support_topic => ({
             color: 0x60A0FF,
