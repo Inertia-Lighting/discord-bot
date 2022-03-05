@@ -21,7 +21,7 @@ const { command_permission_levels } = require('../common/bot.js');
 /**
  * Displays moderation actions (for / from) the specified (member / staff member)
  * @param {Discord.Message} message
- * @param {'member'|'staff'} lookup_mode (default: 'member')
+ * @param {'all'|'member'|'staff'} lookup_mode (default: 'member')
  * @returns {Promise<void>}
  */
 async function listModerationActions(message, lookup_mode='member') {
@@ -184,14 +184,17 @@ async function listModerationActions(message, lookup_mode='member') {
                 page_index = page_index < moderation_actions_chunks.length - 1 ? page_index + 1 : 0;
                 break;
             }
+
             case 'next': {
                 page_index = page_index > 0 ? page_index - 1 : moderation_actions_chunks.length - 1;
                 break;
             }
+
             case 'stop': {
                 message_button_collector.stop();
                 break;
             }
+
             default: {
                 break;
             }
@@ -330,24 +333,24 @@ module.exports = {
         switch (sub_command_name) {
             case 'list': {
                 await listModerationActions(message, 'all');
-
                 break;
             }
+
             case 'for': {
                 await listModerationActions(message, 'member');
-
                 break;
             }
+
             case 'from': {
                 await listModerationActions(message, 'staff');
-
                 break;
             }
+
             case 'clear': {
                 await clearModerationActions(message);
-
                 break;
             }
+
             default: {
                 await message.channel.send({
                     embeds: [
@@ -379,7 +382,6 @@ module.exports = {
                         }),
                     ],
                 }).catch(console.warn);
-
                 break;
             }
         }

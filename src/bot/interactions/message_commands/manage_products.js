@@ -8,7 +8,6 @@
 
 const stringSimilarity = require('string-similarity');
 
-const { array_random } = require('../../../utilities.js');
 const { go_mongo_db } = require('../../../mongo/mongo.js');
 
 const {
@@ -27,11 +26,43 @@ module.exports = {
     /** @param {Discord.AutocompleteInteraction|Discord.CommandInteraction} interaction */
     async execute(interaction) {
         if (interaction.isAutocomplete()) {
+            const user_id_to_modify = interaction.options.get('for')?.value;
+            const action_to_perform = interaction.options.getString('action');
+
             /** @type {string} */
             const focused_option = interaction.options.getFocused();
             const search_query = focused_option.toUpperCase();
 
-            const db_roblox_products = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_PRODUCTS_COLLECTION_NAME, {});
+            /* find the user in the database */
+            const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
+                'identity.discord_user_id': user_id_to_modify,
+            }, {
+                projection: {
+                    '_id': false,
+                },
+            });
+
+            if (!db_user_data) {
+                return interaction.respond([]);
+            }
+
+            const user_products_codes = Object.entries(db_user_data.products).filter(
+                ([ product_code, user_owns_product ]) => user_owns_product
+            ).map(
+                ([ product_code ]) => product_code
+            );
+
+            const db_roblox_products = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_PRODUCTS_COLLECTION_NAME, {
+                ...(action_to_perform === 'add' ? {
+                    $nor: user_products_codes.map(product_code => ({
+                        code: product_code
+                    })),
+                } : {
+                    $or: user_products_codes.map(product_code => ({
+                        code: product_code
+                    })),
+                }),
+            });
 
             const mapped_db_roblox_products = [];
             for (const db_roblox_product of db_roblox_products) {
@@ -41,26 +72,28 @@ module.exports = {
                 });
             }
 
-            const matching_db_roblox_products = mapped_db_roblox_products.sort((a, b) => b.similarity_score - a.similarity_score).slice(0, 3);
+            const matching_db_roblox_products = mapped_db_roblox_products.sort(
+                (a, b) => b.similarity_score - a.similarity_score
+            ).sort(
+                (a, b) => {
+                    const first_char_of_query = search_query.at(0);
 
-            // eslint-disable-next-line no-inner-declarations
-            function generateRandomRobloxProduct() {
-                const random_db_roblox_product = array_random(db_roblox_products);
+                    if (a.code.startsWith(first_char_of_query) === b.code.startsWith(first_char_of_query)) return a.code.localeCompare(b.code);
+                    if (a.code.startsWith(first_char_of_query)) return -1;
+                    if (b.code.startsWith(first_char_of_query)) return 1;
 
-                const already_matched_db_roblox_product = matching_db_roblox_products.find(matching_db_roblox_product => matching_db_roblox_product.code === random_db_roblox_product?.code);
+                    return 0;
+                }
+            ).filter(
+                ({ similarity_score, code }, index) => similarity_score >= 0.25 || (similarity_score < 0.25 && index < 10)
+            );
 
-                if (!already_matched_db_roblox_product) return random_db_roblox_product;
-
-                return generateRandomRobloxProduct();
+            if (matching_db_roblox_products.length === 0) {
+                return interaction.respond([]);
             }
 
-            const random_db_roblox_products = Array.from({ length: 3 }, generateRandomRobloxProduct);
-
             interaction.respond(
-                [
-                    ...matching_db_roblox_products,
-                    ...random_db_roblox_products,
-                ].slice(0, 5).map(db_roblox_product => ({
+                matching_db_roblox_products.slice(0, 5).map(db_roblox_product => ({
                     name: db_roblox_product.code,
                     value: db_roblox_product.code,
                 }))
