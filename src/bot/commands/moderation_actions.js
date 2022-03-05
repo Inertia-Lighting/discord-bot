@@ -282,9 +282,7 @@ async function listModerationActions(message, lookup_mode='member') {
             'record.id': db_moderation_action.record.id,
         }, {
             $set: {
-                'record.epoch': Date.now(),
-                'record.reason': updated_ma_reason,
-                'record.staff_member_id': message.author.id,
+                'record.reason': `${updated_ma_reason} <edited by ${message.author.tag} (${message.author.id}) on ${moment().tz('America/New_York').format('YYYY[-]MM[-]DD | hh:mm A | [GMT]ZZ')}>`,
             },
         });
     } catch {
