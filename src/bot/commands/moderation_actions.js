@@ -281,10 +281,10 @@ async function listModerationActions(message, lookup_mode='member') {
         await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_MODERATION_ACTION_RECORDS_COLLECTION_NAME, {
             'record.id': db_moderation_action.record.id,
         }, {
-            'record': {
-                'epoch': Date.now(),
-                'reason': updated_ma_reason,
-                'staff_member_id': message.author.id,
+            $set: {
+                'record.epoch': Date.now(),
+                'record.reason': updated_ma_reason,
+                'record.staff_member_id': message.author.id,
             },
         });
     } catch {
