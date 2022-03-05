@@ -21,18 +21,18 @@ const { command_permission_levels } = require('../common/bot.js');
 /**
  * Displays moderation actions (for / from) the specified (member / staff member)
  * @param {Discord.Message} message
- * @param {'all'|'member'|'staff'} lookup_mode (default: 'member')
+ * @param {'all'|'member'|'staff'|'id'} lookup_mode (default: 'member')
  * @returns {Promise<void>}
  */
 async function listModerationActions(message, lookup_mode='member') {
     if (!(message instanceof Discord.Message)) throw new TypeError('\`message\` must be a Discord.Message');
-    if (!['all', 'member', 'staff'].includes(lookup_mode)) throw new RangeError('\`lookup_mode\` must be \'all\', \'member\', or \'staff\'');
+    if (!['all', 'member', 'staff', 'id'].includes(lookup_mode)) throw new RangeError('\`lookup_mode\` must be \'all\', \'member\', \'staff\', or \'id\'');
 
     /* get the command arguments */
     const sub_command_args = message.content.split(/\s+/g).slice(2);
 
     /* lookup query for database */
-    const db_user_id_lookup_query = (sub_command_args[0] ?? '').replace(/\D/g, '');
+    const lookup_query = (sub_command_args[0] ?? '').replace(/[^\d\w\-]/g, '');
 
     /* send an initial message to the user */
     const bot_message = await message.channel.send({
@@ -48,7 +48,7 @@ async function listModerationActions(message, lookup_mode='member') {
     await Timer(500);
 
     /* check if a valid query was specified */
-    if (lookup_mode !== 'all' && (typeof db_user_id_lookup_query !== 'string' || db_user_id_lookup_query.length === 0)) {
+    if (lookup_mode !== 'all' && (typeof lookup_query !== 'string' || lookup_query.length === 0)) {
         await bot_message.edit({
             embeds: [
                 new Discord.MessageEmbed({
@@ -57,7 +57,7 @@ async function listModerationActions(message, lookup_mode='member') {
                         iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                         name: 'Inertia Lighting | Moderation Actions',
                     },
-                    description: 'You need to specify a valid @user mention!',
+                    description: 'You need to specify a valid lookup query!',
                 }),
             ],
         }).catch(console.warn);
@@ -67,9 +67,11 @@ async function listModerationActions(message, lookup_mode='member') {
     /* fetch all moderation actions from the database */
     const db_moderation_actions = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_MODERATION_ACTION_RECORDS_COLLECTION_NAME, {
         ...(lookup_mode === 'staff' ? {
-            'record.staff_member_id': db_user_id_lookup_query,
+            'record.staff_member_id': lookup_query,
         } : lookup_mode === 'member' ? {
-            'identity.discord_user_id': db_user_id_lookup_query,
+            'identity.discord_user_id': lookup_query,
+        } : lookup_mode === 'id' ? {
+            'record.id': lookup_query,
         } : {
             /* assume that lookup_mode: 'all' is the default */
             /* in that case, we want to return all moderation actions */
@@ -86,7 +88,7 @@ async function listModerationActions(message, lookup_mode='member') {
                         iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                         name: 'Inertia Lighting | Moderation Actions',
                     },
-                    description: 'I wasn\'t able to find any moderation actions for the specified individual!',
+                    description: 'I wasn\'t able to find any moderation actions for the specified lookup query!',
                 }),
             ],
         }).catch(console.warn);
@@ -210,6 +212,107 @@ async function listModerationActions(message, lookup_mode='member') {
     message_button_collector.on('end', async () => {
         await bot_message.delete().catch(console.warn);
     });
+
+    return; // complete async
+}
+
+/**
+ * Update moderation action subcommand
+ * @param {Discord.Message} message
+ */
+ async function updateModerationAction(message) {
+    const sub_command_args = message.content.split(/\s+/g).slice(2);
+
+    const lookup_query = (sub_command_args[0] ?? '').replace(/[^\d\w\-]/g, '');
+    if (lookup_query.length === 0) {
+        message.reply({
+            embeds: [
+                new Discord.MessageEmbed({
+                    color: 0xFFFF00,
+                    author: {
+                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                        name: 'Inertia Lighting | Moderation Actions',
+                    },
+                    description: 'You need to specify a moderation-actions id when using this command.',
+                }),
+            ],
+        }).catch(console.warn);
+        return;
+    }
+
+    const [ db_moderation_action ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_MODERATION_ACTION_RECORDS_COLLECTION_NAME, {
+        'record.id': lookup_query,
+    });
+
+    if (!db_moderation_action) {
+        message.reply({
+            embeds: [
+                new Discord.MessageEmbed({
+                    color: 0xFFFF00,
+                    author: {
+                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                        name: 'Inertia Lighting | Moderation Actions',
+                    },
+                    description: 'Unable to find a moderation action with the specified id!',
+                }),
+            ],
+        }).catch(console.warn);
+        return;
+    }
+
+    const updated_ma_reason = sub_command_args.slice(1).join(' ');
+    if (updated_ma_reason.length < 5) {
+        message.reply({
+            embeds: [
+                new Discord.MessageEmbed({
+                    color: 0xFFFF00,
+                    author: {
+                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                        name: 'Inertia Lighting | Moderation Actions',
+                    },
+                    description: 'The supplied reason was less than 5 characters long, please be more descriptive.',
+                }),
+            ],
+        }).catch(console.warn);
+        return;
+    }
+
+    try {
+        await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_MODERATION_ACTION_RECORDS_COLLECTION_NAME, {
+            'record.id': db_moderation_action.record.id,
+        }, {
+            $set: {
+                'record.reason': `${updated_ma_reason} <edited by ${message.author.tag} (${message.author.id}) on ${moment().tz('America/New_York').format('YYYY[-]MM[-]DD | hh:mm A | [GMT]ZZ')}>`,
+            },
+        });
+    } catch {
+        message.reply({
+            embeds: [
+                new Discord.MessageEmbed({
+                    color: 0xFFFF00,
+                    author: {
+                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                        name: 'Inertia Lighting | Moderation Actions',
+                    },
+                    description: 'Unable to update the moderation action with the specified id!',
+                }),
+            ],
+        }).catch(console.warn);
+        return;
+    }
+
+    message.reply({
+        embeds: [
+            new Discord.MessageEmbed({
+                color: 0x00FF00,
+                author: {
+                    iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                    name: 'Inertia Lighting | Moderation Actions',
+                },
+                description: 'Successfully updated the moderation action with the specified id!',
+            }),
+        ],
+    }).catch(console.warn);
 
     return; // complete async
 }
@@ -346,6 +449,18 @@ module.exports = {
                 break;
             }
 
+            case 'lookup': {
+                await listModerationActions(message, 'id');
+
+                break;
+            }
+
+            case 'update': {
+                await updateModerationAction(message);
+
+                break;
+            }
+
             case 'clear': {
                 await clearModerationActions(message);
                 break;
@@ -366,6 +481,10 @@ module.exports = {
                                 '\`\`\`',
                                 `${command_prefix}${command_name} list`,
                                 '\`\`\`',
+                                'Displaying a moderation action in the server:',
+                                '\`\`\`',
+                                `${command_prefix}${command_name} lookup <MODERATION_ACTION_ID>`,
+                                '\`\`\`',
                                 'Displaying moderation actions for a member in the server:',
                                 '\`\`\`',
                                 `${command_prefix}${command_name} for <MEMBER_MENTION>`,
@@ -373,6 +492,10 @@ module.exports = {
                                 'Displaying moderation actions from a staff member in the server:',
                                 '\`\`\`',
                                 `${command_prefix}${command_name} from <STAFF_MEMBER_MENTION>`,
+                                '\`\`\`',
+                                'Updating a moderation action in the server:',
+                                '\`\`\`',
+                                `${command_prefix}${command_name} update <MODERATION_ACTION_ID> <NEW_REASON>`,
                                 '\`\`\`',
                                 'Clearing all moderation actions for a member in the server:',
                                 '\`\`\`',
