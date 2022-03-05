@@ -260,8 +260,8 @@ async function listModerationActions(message, lookup_mode='member') {
         return;
     }
 
-    const updated_ma_contents = sub_command_args.slice(1).join(' ');
-    if (updated_ma_contents.length < 5) {
+    const updated_ma_reason = sub_command_args.slice(1).join(' ');
+    if (updated_ma_reason.length < 5) {
         message.reply({
             embeds: [
                 new Discord.MessageEmbed({
@@ -270,7 +270,7 @@ async function listModerationActions(message, lookup_mode='member') {
                         iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                         name: 'Inertia Lighting | Moderation Actions',
                     },
-                    description: 'The supplied content was less than 5 characters long, please try again.',
+                    description: 'The supplied reason was less than 5 characters long, please be more descriptive.',
                 }),
             ],
         }).catch(console.warn);
@@ -283,7 +283,7 @@ async function listModerationActions(message, lookup_mode='member') {
         }, {
             'record': {
                 'epoch': Date.now(),
-                'reason': sub_command_args[1] ?? '',
+                'reason': updated_ma_reason,
                 'staff_member_id': message.author.id,
             },
         });
@@ -483,6 +483,10 @@ module.exports = {
                                 '\`\`\`',
                                 `${command_prefix}${command_name} list`,
                                 '\`\`\`',
+                                'Displaying a moderation action in the server:',
+                                '\`\`\`',
+                                `${command_prefix}${command_name} lookup <MODERATION_ACTION_ID>`,
+                                '\`\`\`',
                                 'Displaying moderation actions for a member in the server:',
                                 '\`\`\`',
                                 `${command_prefix}${command_name} for <MEMBER_MENTION>`,
@@ -490,6 +494,10 @@ module.exports = {
                                 'Displaying moderation actions from a staff member in the server:',
                                 '\`\`\`',
                                 `${command_prefix}${command_name} from <STAFF_MEMBER_MENTION>`,
+                                '\`\`\`',
+                                'Updating a moderation action in the server:',
+                                '\`\`\`',
+                                `${command_prefix}${command_name} update <MODERATION_ACTION_ID> <NEW_REASON>`,
                                 '\`\`\`',
                                 'Clearing all moderation actions for a member in the server:',
                                 '\`\`\`',
