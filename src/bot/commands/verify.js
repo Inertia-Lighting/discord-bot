@@ -73,7 +73,7 @@ module.exports = {
 
             const message_component_collector = await message.channel.createMessageComponentCollector();
             message_component_collector.on('collect', async (message_component) => {
-                switch (message_component.id) {
+                switch (message_component.customId) {
                     case 'verify_command_user_profile_button': {
                         if (!message_component.isButton()) return;
 
