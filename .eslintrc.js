@@ -11,7 +11,7 @@ module.exports = {
         'browser': false,
         'node': true,
         'commonjs': true,
-        'es2021': true
+        'es2021': true,
     },
     'extends': 'eslint:recommended',
     'parser': '@babel/eslint-parser',
@@ -32,14 +32,14 @@ module.exports = {
             'error',
             {
                 'after': true,
-                'before': true
-            }
+                'before': true,
+            },
         ],
         'block-scoped-var': 'error',
         'block-spacing': 'error',
         'brace-style': [
             'error',
-            '1tbs'
+            '1tbs',
         ],
         'camelcase': 'off',
         'capitalized-comments': 'off',
@@ -49,17 +49,17 @@ module.exports = {
             'error',
             {
                 'after': true,
-                'before': false
-            }
+                'before': false,
+            },
         ],
         'comma-style': [
             'error',
-            'last'
+            'last',
         ],
         'complexity': 'off',
         'computed-property-spacing': [
             'error',
-            'never'
+            'never',
         ],
         'consistent-return': 'off',
         'consistent-this': 'error',
@@ -67,7 +67,10 @@ module.exports = {
         'default-case': 'error',
         'default-case-last': 'error',
         'default-param-last': 'error',
-        'dot-location': 'error',
+        'dot-location': [
+            'error',
+            'property',
+        ],
         'dot-notation': 'error',
         'eol-last': 'error',
         'eqeqeq': 'error',
@@ -78,8 +81,8 @@ module.exports = {
             'error',
             'declaration',
             {
-                'allowArrowFunctions': true
-            }
+                'allowArrowFunctions': true,
+            },
         ],
         'function-call-argument-newline': [
             'error',
@@ -101,13 +104,13 @@ module.exports = {
             'error',
             {
                 'after': true,
-                'before': true
-            }
+                'before': true,
+            },
         ],
         'line-comment-position': 'off',
         'linebreak-style': [
             'error',
-            'windows'
+            'windows',
         ],
         'lines-around-comment': 'off',
         'lines-between-class-members': 'error',
@@ -122,11 +125,11 @@ module.exports = {
         'max-statements-per-line': 'error',
         'multiline-comment-style': [
             'error',
-            'separate-lines'
+            'separate-lines',
         ],
         'multiline-ternary': [
             'error',
-            'never'
+            'never',
         ],
         'new-parens': 'error',
         'newline-per-chained-call': 'off',
@@ -145,8 +148,8 @@ module.exports = {
         'no-empty': [
             'error',
             {
-                'allowEmptyCatch': true
-            }
+                'allowEmptyCatch': true,
+            },
         ],
         'no-empty-function': 'error',
         'no-eq-null': 'error',
@@ -172,8 +175,8 @@ module.exports = {
         'no-mixed-operators': [
             'error',
             {
-                'allowSamePrecedence': true
-            }
+                'allowSamePrecedence': true,
+            },
         ],
         'no-multi-assign': 'error',
         'no-multi-spaces': 'error',
@@ -191,8 +194,8 @@ module.exports = {
         'no-plusplus': [
             'error',
             {
-                'allowForLoopAfterthoughts': true
-            }
+                'allowForLoopAfterthoughts': true,
+            },
         ],
         'no-promise-executor-return': 'off',
         'no-proto': 'error',
@@ -225,8 +228,8 @@ module.exports = {
             {
                 'vars': 'all',
                 'args': 'none',
-                'ignoreRestSiblings': true
-            }
+                'ignoreRestSiblings': true,
+            },
         ],
         'no-use-before-define': 'error',
         'no-useless-backreference': 'error',
@@ -244,14 +247,14 @@ module.exports = {
         'object-curly-newline': 'error',
         'object-curly-spacing': [
             'error',
-            'always'
+            'always',
         ],
         'object-shorthand': 'off',
         'one-var': 'off',
         'one-var-declaration-per-line': 'error',
         'operator-assignment': [
             'error',
-            'always'
+            'always',
         ],
         'operator-linebreak': 'error',
         'padded-blocks': 'off',
@@ -271,30 +274,30 @@ module.exports = {
         'quote-props': 'off',
         'quotes': [
             'error',
-            'single'
+            'single',
         ],
         'radix': [
             'error',
-            'as-needed'
+            'as-needed',
         ],
         'require-atomic-updates': 'error',
         'require-await': 'off',
         'require-unicode-regexp': 'off',
         'rest-spread-spacing': [
             'error',
-            'never'
+            'never',
         ],
         'semi': 'error',
         'semi-spacing': [
             'error',
             {
                 'after': true,
-                'before': false
-            }
+                'before': false,
+            },
         ],
         'semi-style': [
             'error',
-            'last'
+            'last',
         ],
         'sort-imports': 'error',
         'sort-keys': 'off',
@@ -303,15 +306,15 @@ module.exports = {
         'space-before-function-paren': 'off',
         'space-in-parens': [
             'error',
-            'never'
+            'never',
         ],
         'space-infix-ops': 'off',
         'space-unary-ops': [
             'error',
             {
                 'nonwords': false,
-                'words': true
-            }
+                'words': true,
+            },
         ],
         'spaced-comment': 'off',
         'strict': 'error',
@@ -319,12 +322,12 @@ module.exports = {
         'symbol-description': 'error',
         'template-curly-spacing': [
             'error',
-            'never'
+            'never',
         ],
         'template-tag-spacing': 'error',
         'unicode-bom': [
             'error',
-            'never'
+            'never',
         ],
         'vars-on-top': 'error',
         'wrap-iife': 'error',
@@ -332,7 +335,7 @@ module.exports = {
         'yield-star-spacing': 'error',
         'yoda': [
             'error',
-            'never'
-        ]
-    }
+            'never',
+        ],
+    },
 };
