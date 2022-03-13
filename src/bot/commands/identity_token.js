@@ -23,7 +23,8 @@ module.exports = {
             embeds: [
                 new Discord.MessageEmbed({
                     color: 0x60A0FF,
-                    description: 'Go to <#811341531784413235> to learn more about Identity Tokens!',
+                    title: 'What are Identity Tokens?',
+                    description: 'We don\'t use identity tokens anymore, please just ignore identity tokens anytime that you see it.',
                 }),
             ],
         }).catch(console.warn);
