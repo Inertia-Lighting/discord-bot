@@ -25,6 +25,8 @@ module.exports = {
     identifier: 'manage_products',
     /** @param {Discord.AutocompleteInteraction|Discord.CommandInteraction} interaction */
     async execute(interaction) {
+        const db_roblox_products = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_PRODUCTS_COLLECTION_NAME, {});
+
         if (interaction.isAutocomplete()) {
             const user_id_to_modify = interaction.options.get('for')?.value;
             const action_to_perform = interaction.options.getString('action');
@@ -46,26 +48,13 @@ module.exports = {
                 return interaction.respond([]);
             }
 
-            const user_products_codes = Object.entries(db_user_data.products).filter(
-                ([ product_code, user_owns_product ]) => user_owns_product
-            ).map(
-                ([ product_code ]) => product_code
-            );
-
-            const db_roblox_products = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_PRODUCTS_COLLECTION_NAME, {
-                ...(action_to_perform === 'add' ? {
-                    $nor: user_products_codes.map(product_code => ({
-                        code: product_code
-                    })),
-                } : {
-                    $or: user_products_codes.map(product_code => ({
-                        code: product_code
-                    })),
-                }),
+            const filtered_db_roblox_products = db_roblox_products.filter(db_roblox_product => {
+                const user_owns_product = Boolean(db_user_data.products[db_roblox_product.code]);
+                return action_to_perform === 'add' && !user_owns_product;
             });
 
             const mapped_db_roblox_products = [];
-            for (const db_roblox_product of db_roblox_products) {
+            for (const db_roblox_product of filtered_db_roblox_products) {
                 mapped_db_roblox_products.push({
                     ...db_roblox_product,
                     similarity_score: stringSimilarity.compareTwoStrings(search_query, db_roblox_product.code),
@@ -143,8 +132,6 @@ module.exports = {
 
                 return;
             }
-
-            const db_roblox_products = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_PRODUCTS_COLLECTION_NAME, {});
 
             const db_roblox_product = db_roblox_products.find(db_roblox_product => db_roblox_product.code === potential_product_code);
 
