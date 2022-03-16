@@ -1,7 +1,7 @@
 {
-  "name": "inertia-lighting-discord-bot",
+  "name": "discord-bot-api-server",
   "version": "2.0.0",
-  "description": "Inertia Lighting Discord Bot",
+  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "npm run lint",
@@ -10,44 +10,43 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Inertia-Lighting/inertia-lighting-discord-bot.git"
+    "url": "git+https://github.com/Inertia-Lighting/discord-bot-api-server.git"
   },
   "keywords": [],
   "author": "Inertia Lighting",
   "license": "UNLICENSED",
   "bugs": {
-    "url": "https://github.com/Inertia-Lighting/inertia-lighting-discord-bot/issues"
+    "url": "https://github.com/Inertia-Lighting/discord-bot-api-server/issues"
   },
-  "homepage": "https://github.com/Inertia-Lighting/inertia-lighting-discord-bot#readme",
+  "homepage": "https://github.com/Inertia-Lighting/discord-bot-api-server#readme",
   "dependencies": {
-    "axios": "^0.26.1",
-    "bcryptjs": "^2.4.3",
-    "body-parser": "^1.19.2",
-    "bufferutil": "^4.0.6",
-    "discord.js": "^13.6.0",
-    "dotenv": "^16.0.0",
-    "erlpack": "github:discord/erlpack",
-    "express": "^4.17.3",
-    "fs": "0.0.1-security",
+    "axios": "0.26.1",
+    "bcryptjs": "2.4.3",
+    "body-parser": "1.19.2",
+    "bufferutil": "4.0.6",
+    "discord.js": "13.6.0",
+    "dotenv": "16.0.0",
+    "erlpack": "0.1.4",
+    "express": "4.17.3",
     "go-mongo-db": "github:Inertia-Lighting/go-mongo-db#v1.2.0-stable",
-    "moment-timezone": "^0.5.34",
-    "node-gyp": "^8.4.1",
-    "path": "^0.12.7",
-    "recursive-read-directory": "github:MidSpike/recursive-read-directory",
-    "string-similarity": "^4.0.4",
-    "utf-8-validate": "^5.0.8",
-    "uuid": "^8.3.2",
-    "zlib-sync": "^0.1.7"
+    "moment-timezone": "0.5.34",
+    "node-gyp": "9.0.0",
+    "path": "0.12.7",
+    "recursive-read-directory": "github:MidSpike/recursive-read-directory#v0.0.1-beta",
+    "string-similarity": "4.0.4",
+    "utf-8-validate": "5.0.9",
+    "uuid": "8.3.2",
+    "zlib-sync": "0.1.7"
   },
   "devDependencies": {
-    "@babel/core": "^7.17.5",
-    "@babel/eslint-parser": "^7.17.0",
-    "eslint": "^8.10.0",
-    "husky": "^7.0.4",
-    "is-ci": "^3.0.1"
+    "@babel/core": "7.17.7",
+    "@babel/eslint-parser": "7.17.0",
+    "eslint": "8.11.0",
+    "husky": "7.0.4",
+    "is-ci": "3.0.1"
   },
   "engines": {
-    "node": ">=15.0.0",
-    "npm": ">=6.0.0"
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
   }
 }
