@@ -16,7 +16,7 @@ module.exports = {
     name: 'help',
     description: 'shows a list of commands for you to use.',
     usage: '[command_name]',
-    aliases: ['help'],
+    aliases: ['help', 'commands'],
     permission_level: command_permission_levels.PUBLIC,
     cooldown: 2_500,
     async execute(message, args) {
