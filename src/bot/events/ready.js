@@ -6,8 +6,8 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 const axios = require('axios');
 const moment = require('moment-timezone');
 const recursiveReadDirectory = require('recursive-read-directory');
