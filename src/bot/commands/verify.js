@@ -184,7 +184,12 @@ module.exports = {
                         name: `${client.user.username} | Verification System`,
                     },
                     title: 'You have successfully verified!',
-                    description: 'Go back to the Product Hub to continue.',
+                    description: [
+                        'Go back to the Product Hub to continue.',
+                        '',
+                        'Make sure to stay in our Discord server after making a purchase.',
+                        'Our whitelist requires you to be in our Discord server for it to work.',
+                    ].join('\n'),
                 }),
             ],
         }).catch(console.warn);
