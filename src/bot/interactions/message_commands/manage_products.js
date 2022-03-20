@@ -50,7 +50,10 @@ module.exports = {
 
             const filtered_db_roblox_products = db_roblox_products.filter(db_roblox_product => {
                 const user_owns_product = Boolean(db_user_data.products[db_roblox_product.code]);
-                return action_to_perform === 'add' && !user_owns_product;
+                return (
+                    (action_to_perform === 'add' && !user_owns_product) ||
+                    (action_to_perform === 'remove' && user_owns_product)
+                );
             });
 
             const mapped_db_roblox_products = [];
