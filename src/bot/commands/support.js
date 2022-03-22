@@ -711,10 +711,9 @@ module.exports = {
                 /* pin the category-specific instructions */
                 support_channel.messages.pin(category_instructions_message.id).catch(console.warn);
 
+                /** @type {Discord.Message?} */
                 let notice_to_press_button_message; // declared here so we can access it later
                 setTimeout(async () => {
-                    if (category_instructions_message.deleted) return; // don't continue if the message was deleted
-
                     category_instructions_message.edit({
                         components: [
                             {
