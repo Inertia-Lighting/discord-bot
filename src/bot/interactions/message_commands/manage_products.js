@@ -77,7 +77,9 @@ module.exports = {
                     return 0;
                 }
             ).filter(
-                ({ similarity_score, code }, index) => similarity_score >= 0.25 || (similarity_score < 0.25 && index < 10)
+                ({ similarity_score, code }, index) => search_query.length > 0 ? (
+                    similarity_score >= 0.25 || (similarity_score < 0.25 && index < 10)
+                ) : true
             );
 
             if (matching_db_roblox_products.length === 0) {
