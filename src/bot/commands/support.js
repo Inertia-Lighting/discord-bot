@@ -464,7 +464,7 @@ async function closeSupportTicketChannel(support_channel, save_transcript, membe
                     inline: false,
                 }, {
                     name: 'Creation Date',
-                    value: `${Number.parseInt(support_channel.createdTimestamp / 1000)}`,
+                    value: `<t:${Number.parseInt(support_channel.createdTimestamp / 1000)}:F>`,
                     inline: false,
                 }, {
                     name: 'Topic',
