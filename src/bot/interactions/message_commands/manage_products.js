@@ -50,7 +50,10 @@ module.exports = {
 
             const filtered_db_roblox_products = db_roblox_products.filter(db_roblox_product => {
                 const user_owns_product = Boolean(db_user_data.products[db_roblox_product.code]);
-                return action_to_perform === 'add' && !user_owns_product;
+                return (
+                    (action_to_perform === 'add' && !user_owns_product) ||
+                    (action_to_perform === 'remove' && user_owns_product)
+                );
             });
 
             const mapped_db_roblox_products = [];
@@ -74,7 +77,9 @@ module.exports = {
                     return 0;
                 }
             ).filter(
-                ({ similarity_score, code }, index) => similarity_score >= 0.25 || (similarity_score < 0.25 && index < 10)
+                ({ similarity_score, code }, index) => search_query.length > 0 ? (
+                    similarity_score >= 0.25 || (similarity_score < 0.25 && index < 10)
+                ) : true
             );
 
             if (matching_db_roblox_products.length === 0) {

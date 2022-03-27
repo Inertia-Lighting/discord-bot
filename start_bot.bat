@@ -10,9 +10,7 @@ echo Creating Directories
 if not exist ".\temporary" mkdir ".\temporary"
 
 :start_program
-title Inertia Lighting Discord Bot API Server
-echo Starting Discord Bot API Server
-node --trace-warnings .\index.js
+npm run start
 timeout /T 5 /NOBREAK
 goto :start_program
 

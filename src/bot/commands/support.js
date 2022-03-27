@@ -8,7 +8,6 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
-const moment = require('moment-timezone');
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -26,9 +25,44 @@ const {
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const bot_command_prefix = process.env.BOT_COMMAND_PREFIX;
 const support_tickets_category_id = process.env.BOT_SUPPORT_TICKETS_CATEGORY_ID;
 const support_tickets_transcripts_channel_id = process.env.BOT_SUPPORT_TICKETS_TRANSCRIPTS_CHANNEL_ID;
+
+//---------------------------------------------------------------------------------------------------------------//
+
+const support_instructions_reminder_timeout_in_ms = 5 * 60_000; // 5 minutes
+const support_instructions_collector_timeout_in_ms = 60 * 60_000; // 1 hour
+const user_feedback_survey_collector_timeout_in_ms = 30 * 60_000; // 30 minutes
+
+//---------------------------------------------------------------------------------------------------------------//
+
+const satisfaction_levels = {
+    highest_satisfaction: {
+        label: 'Excellent',
+        description: 'Support went above and beyond expectations!',
+        color: '#00ff00',
+    },
+    high_satisfaction: {
+        label: 'Good',
+        description: 'Support was able to help me without issues!',
+        color: '#77ff00',
+    },
+    medium_satisfaction: {
+        label: 'Decent',
+        description: 'Support was able to help me with little issues!',
+        color: '#ffff00',
+    },
+    low_satisfaction: {
+        label: 'Bad',
+        description: 'Support wasn\'t able to help me properly!',
+        color: '#ff7700',
+    },
+    lowest_satisfaction: {
+        label: 'Horrible',
+        description: 'Support staff need better training!',
+        color: '#ff0000',
+    },
+};
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -52,6 +86,20 @@ const cancel_support_ticket_button = {
     custom_id: 'cancel_support_ticket',
     label: 'Cancel support ticket',
 };
+
+//---------------------------------------------------------------------------------------------------------------//
+
+const template_instructions_text = [
+    '**Please fill out the template shown below.**',
+    '*Number your responses to match each question.*',
+].join('\n');
+
+const template_instructions_footer_text = [
+    '**Please follow the instructions above properly;**',
+    '**to ensure our support staff can assist you.**',
+    '*Once you have completed the instructions, please wait for*',
+    `*the \"${ready_for_support_staff_button.label}\" button to appear.*`,
+].join('\n');
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -86,7 +134,7 @@ const support_categories = new Discord.Collection([
                         name: 'Inertia Lighting | Support Ticket Instructions',
                     },
                     description: [
-                        '**Fill out the template shown below.**',
+                        template_instructions_text,
                         '',
                         '\`(1)\` **What product(s) are you having issues with?**',
                         '',
@@ -129,9 +177,7 @@ const support_categories = new Discord.Collection([
                         '\`   \` Please be very specific about what you are having issues with.',
                         '\`   \` Also let us know what you have already tried to do to fix the issue.',
                         '',
-                        '**Follow the instructions properly or your ticket will be ignored!**',
-                        '*Once you are ready for staff, wait for a green button to appear.*',
-                        '*The green button will automatically appear in a few minutes.*',
+                        template_instructions_footer_text,
                     ].join('\n'),
                 }),
             ],
@@ -153,7 +199,7 @@ const support_categories = new Discord.Collection([
                         name: 'Inertia Lighting | Support Ticket Instructions',
                     },
                     description: [
-                        '**Fill out the template shown below.**',
+                        template_instructions_text,
                         '',
                         '\`(1)\` **What is your current Roblox account?**',
                         '\`   \` *( profile url | roblox id | unknown )*',
@@ -181,9 +227,7 @@ const support_categories = new Discord.Collection([
                         '\`   \` Tell us why you are requesting an account recovery.',
                         '\`   \` Please provide as much information as possible!',
                         '',
-                        '**Follow the instructions properly or your ticket will be ignored!**',
-                        '*Once you are ready for staff, wait for a green button to appear.*',
-                        '*The green button will automatically appear in a few minutes.*',
+                        template_instructions_footer_text,
                     ].join('\n'),
                 }),
             ],
@@ -205,7 +249,7 @@ const support_categories = new Discord.Collection([
                         name: 'Inertia Lighting | Support Ticket Instructions',
                     },
                     description: [
-                        '**Fill out the template shown below.**',
+                        template_instructions_text,
                         '',
                         '\`(1)\` **What product(s) do you want to transfer?**',
                         '',
@@ -224,9 +268,7 @@ const support_categories = new Discord.Collection([
                         '\`   \` *( re-linking account | gifting products | other, please specify )*',
                         '\`   \` Example: re-linking account, no longer using old roblox account',
                         '',
-                        '**Follow the instructions properly or your ticket will be ignored!**',
-                        '*Once you are ready for staff, wait for a green button to appear.*',
-                        '*The green button will automatically appear in a few minutes.*',
+                        template_instructions_footer_text,
                     ].join('\n'),
                 }),
             ],
@@ -248,7 +290,7 @@ const support_categories = new Discord.Collection([
                         name: 'Inertia Lighting | Support Ticket Instructions',
                     },
                     description: [
-                        '**Fill out the template shown below.**',
+                        template_instructions_text,
                         '',
                         '\`(1)\` **What product(s) are involved?**',
                         '',
@@ -262,9 +304,7 @@ const support_categories = new Discord.Collection([
                         '',
                         '\`(4)\` **Fully describe the issue you are encountering.**',
                         '',
-                        '**Follow the instructions properly or your ticket will be ignored!**',
-                        '*Once you are ready for staff, wait for a green button to appear.*',
-                        '*The green button will automatically appear in a few minutes.*',
+                        template_instructions_footer_text,
                     ].join('\n'),
                 }),
             ],
@@ -286,7 +326,7 @@ const support_categories = new Discord.Collection([
                         name: 'Inertia Lighting | Support Ticket Instructions',
                     },
                     description: [
-                        '**Fill out the template shown below.**',
+                        template_instructions_text,
                         '',
                         '\`(1)\` **What is your group called?**',
                         '\`   \` Example: Inertia Lighting (formerly: C-Tech Lighting)',
@@ -307,9 +347,7 @@ const support_categories = new Discord.Collection([
                         '',
                         '\`(7)\` **Why should we partner with you?**',
                         '',
-                        '**Follow the instructions properly or your ticket will be ignored!**',
-                        '*Once you are ready for staff, wait for a green button to appear.*',
-                        '*The green button will automatically appear in a few minutes.*',
+                        template_instructions_footer_text,
                     ].join('\n'),
                 }),
             ],
@@ -334,9 +372,7 @@ const support_categories = new Discord.Collection([
                         '**Tell us why you opened this ticket, and how we can help!**',
                         '*If you have a question, please explain the details.*',
                         '',
-                        '**Follow the instructions properly or your ticket will be ignored!**',
-                        '*Once you are ready for staff, wait for a green button to appear.*',
-                        '*The green button will automatically appear in a few minutes.*',
+                        template_instructions_footer_text,
                     ].join('\n'),
                 }),
             ],
@@ -365,7 +401,7 @@ async function createSupportTicketChannel(guild, guild_member, support_category)
 
     const support_ticket_channel = await guild.channels.create(support_channel_name, {
         type: 'text',
-        topic: `${guild_member} | ${support_category.name} | Opened on ${moment().format('ddd MMM DD YYYY [at] HH:mm:ss [GMT]ZZ')} | Staff may close this using \`${bot_command_prefix}close_ticket\``,
+        topic: `${guild_member} | ${support_category.name} | Opened on <t:${Number.parseInt(Date.now() / 1000)}:F> | Staff may close this ticket using the \`close_ticket\` command.`,
         parent: support_tickets_category,
         permissionOverwrites: [
             ...support_tickets_category.permissionOverwrites.cache.values(), // clone the parent channel permissions
@@ -428,7 +464,7 @@ async function closeSupportTicketChannel(support_channel, save_transcript, membe
                     inline: false,
                 }, {
                     name: 'Creation Date',
-                    value: `${'```'}\n${moment(support_channel.createdTimestamp).tz('America/New_York').format('YYYY[-]MM[-]DD hh:mm A [GMT]ZZ')}\n${'```'}`,
+                    value: `<t:${Number.parseInt(support_channel.createdTimestamp / 1000)}:F>`,
                     inline: false,
                 }, {
                     name: 'Topic',
@@ -464,34 +500,6 @@ async function closeSupportTicketChannel(support_channel, save_transcript, membe
         /* send the feedback survey to the user */
         if (send_feedback_survey) {
             try {
-                const satisfaction_levels = {
-                    'highest_satisfaction': {
-                        name: 'Excellent',
-                        description: 'Support went above and beyond expectations!',
-                        color: '#00ff00',
-                    },
-                    'high_satisfaction': {
-                        name: 'Good',
-                        description: 'Support was able to help me without issues!',
-                        color: '#77ff00',
-                    },
-                    'medium_satisfaction': {
-                        name: 'Decent',
-                        description: 'Support was able to help me with little issues!',
-                        color: '#ffff00',
-                    },
-                    'low_satisfaction': {
-                        name: 'Bad',
-                        description: 'Support wasn\'t able to help me properly!',
-                        color: '#ff7700',
-                    },
-                    'lowest_satisfaction': {
-                        name: 'Horrible',
-                        description: 'Support staff need better training!',
-                        color: '#ff0000',
-                    },
-                };
-
                 const support_ticket_owner_dms = await support_ticket_owner.createDM();
 
                 await support_ticket_owner_dms.send({
@@ -528,11 +536,11 @@ async function closeSupportTicketChannel(support_channel, save_transcript, membe
                                 {
                                     type: 3,
                                     custom_id: 'support_user_feedback_survey_color',
-                                    placeholder: 'Select a rating!',
+                                    placeholder: 'Please select a rating to give our support staff!',
                                     min_values: 1,
                                     max_values: 1,
-                                    options: Object.entries(satisfaction_levels).map(([key, value]) => ({
-                                        label: value.name,
+                                    options: Object.entries(satisfaction_levels).map(([ key, value ]) => ({
+                                        label: value.label,
                                         description: value.description,
                                         value: key,
                                     })),
@@ -544,7 +552,7 @@ async function closeSupportTicketChannel(support_channel, save_transcript, membe
 
                 const user_feedback_survey_components_collector = user_feedback_survey_message.createMessageComponentCollector({
                     filter: (interaction) => interaction.user.id === support_ticket_owner.id,
-                    time: 30 * 60_000,
+                    time: user_feedback_survey_collector_timeout_in_ms,
                     max: 1,
                 });
 
@@ -559,7 +567,7 @@ async function closeSupportTicketChannel(support_channel, save_transcript, membe
 
                             const customer_review_embed = new Discord.MessageEmbed({
                                 color: satisfaction_level.color ?? 0x60A0FF,
-                                title: `User feedback: ${satisfaction_level.name}`,
+                                title: `User feedback: ${satisfaction_level.label}`,
                                 description: `${satisfaction_level.description}`,
                             });
 
@@ -583,7 +591,7 @@ async function closeSupportTicketChannel(support_channel, save_transcript, membe
                         }
 
                         default: {
-                            return; // don't continue if we don't have a valid custom_id
+                            return; // don't continue if a valid custom_id is missing
                         }
                     }
                 });
@@ -711,10 +719,9 @@ module.exports = {
                 /* pin the category-specific instructions */
                 support_channel.messages.pin(category_instructions_message.id).catch(console.warn);
 
+                /** @type {Discord.Message?} */
                 let notice_to_press_button_message; // declared here so we can access it later
                 setTimeout(async () => {
-                    if (category_instructions_message.deleted) return; // don't continue if the message was deleted
-
                     category_instructions_message.edit({
                         components: [
                             {
@@ -727,14 +734,23 @@ module.exports = {
                         ],
                     }).catch(() => null);
 
+                    const time_remaining_to_press_button_in_ms = support_instructions_collector_timeout_in_ms - support_instructions_reminder_timeout_in_ms;
+
                     notice_to_press_button_message = await category_instructions_message.reply({
-                        content: `${message.author}, if you have completed the instructions above; please press the green button above!`,
+                        content: [
+                            `${message.author}, if you have completed the instructions above;`,
+                            `please click the \"${ready_for_support_staff_button.label}\" button.`,
+                            '',
+                            'If you have not completed the instructions above;',
+                            `please complete them within ${Number.parseInt(time_remaining_to_press_button_in_ms / 1000 / 60)} minutes.`,
+                            `After completing the instructions, press the \"${ready_for_support_staff_button.label}\" button.`,
+                        ].join('\n'),
                     }).catch(() => null);
-                }, 5 * 60_000); // 5 minutes
+                }, support_instructions_reminder_timeout_in_ms);
 
                 const category_instructions_message_components_collector = category_instructions_message.createMessageComponentCollector({
                     filter: (interaction) => interaction.user.id === message.author.id,
-                    time: 60 * 60_000, // 1 hour
+                    time: support_instructions_collector_timeout_in_ms,
                 });
 
                 category_instructions_message_components_collector.on('collect', async (interaction) => {
@@ -754,7 +770,14 @@ module.exports = {
                             const qualified_support_role_mentions = matching_support_category.qualified_support_role_ids.map(role_id => `<@&${role_id}>`).join(', ');
 
                             await interaction.channel.send({
-                                content: `${message.author}, Our ${qualified_support_role_mentions} staff will help you with your issue soon!`,
+                                content: [
+                                    `${message.author}, Our ${qualified_support_role_mentions} staff will help you with your issue soon!`,
+                                    '',
+                                    'Our support staff are unscheduled volunteers, so please be patient.',
+                                    '',
+                                    'If you have an urgent issue, like someone making death threats;',
+                                    'please @mention one of our high-ranked staff members!',
+                                ].join('\n'),
                             }).catch(console.warn);
 
                             break;
@@ -775,7 +798,7 @@ module.exports = {
                         }
                     }
 
-                    notice_to_press_button_message?.delete()?.catch(() => null);
+                    if (notice_to_press_button_message) notice_to_press_button_message.delete().catch(console.warn);
                     category_instructions_message_components_collector.stop();
                 });
 

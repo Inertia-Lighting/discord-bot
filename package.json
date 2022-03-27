@@ -6,7 +6,11 @@
   "scripts": {
     "test": "npm run lint",
     "lint": "npx eslint .",
-    "prepare": "is-ci || husky install"
+    "prepare": "is-ci || husky install",
+    "title": "run-script-os",
+    "title:windows": "title Inertia Lighting Discord Bot Api Server",
+    "title:default": "",
+    "start": "npm run title && node --trace-warnings index.js"
   },
   "repository": {
     "type": "git",
@@ -42,7 +46,8 @@
     "@babel/eslint-parser": "7.17.0",
     "eslint": "8.11.0",
     "husky": "7.0.4",
-    "is-ci": "3.0.1"
+    "is-ci": "3.0.1",
+    "run-script-os": "1.1.6"
   },
   "engines": {
     "node": ">=16.0.0",
