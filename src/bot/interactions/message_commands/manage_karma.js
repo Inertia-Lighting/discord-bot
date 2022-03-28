@@ -37,7 +37,7 @@ module.exports = {
 
         const user_to_modify = interaction.options.getUser('for', true);
         const action_to_perform = interaction.options.getString('action', true);
-        const amount_to_modify_by = interaction.options.getNumber('amount', true);
+        const amount_to_modify_by = interaction.options.getInteger('amount', true);
 
         /* find the user in the database */
         const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
@@ -94,6 +94,9 @@ module.exports = {
                 return;
             }
         }
+
+        /* prevent decimals */
+        updated_karma_amount = Math.floor(updated_karma_amount);
 
         const karma_too_small = updated_karma_amount <= Number.MIN_SAFE_INTEGER;
         if (karma_too_small) {
