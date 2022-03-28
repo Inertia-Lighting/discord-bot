@@ -176,8 +176,10 @@ module.exports = {
                     description: [
                         action_to_perform === 'add' ? (
                             `Added \`${amount_to_modify_by}\` karma to ${user_to_modify}.`
-                        ) : (
+                        ) : action_to_perform === 'remove' ? (
                             `Removed \`${amount_to_modify_by}\` karma from ${user_to_modify}.`
+                        ) : (
+                            `Set ${user_to_modify}'s karma to a new amount.`
                         ),
                         `New karma amount: \`${updated_karma_amount}\``,
                     ].join('\n'),
