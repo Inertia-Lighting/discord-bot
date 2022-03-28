@@ -184,7 +184,7 @@ module.exports = {
             interaction.editReply({
                 embeds: [
                     new Discord.MessageEmbed({
-                        color: action_to_perform === 'add' ? 0x00FF00 : 0xFFFF00,
+                        color: action_to_perform === 'add' ? 0x00FF00 : 0xFF0000,
                         author: {
                             iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                             name: 'Inertia Lighting | Products Manager',

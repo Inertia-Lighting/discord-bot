@@ -168,7 +168,13 @@ module.exports = {
         interaction.editReply({
             embeds: [
                 new Discord.MessageEmbed({
-                    color: action_to_perform === 'add' ? 0x00FF00 : 0xFFFF00,
+                    color: action_to_perform === 'add' ? (
+                        0x00FF00
+                    ) : action_to_perform === 'remove' ? (
+                        0xFF0000
+                    ) : (
+                        0x60A0FF
+                    ),
                     author: {
                         iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                         name: 'Inertia Lighting | Karma System',
