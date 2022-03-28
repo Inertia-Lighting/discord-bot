@@ -6,6 +6,7 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
+const { guildMemberAddLogger } = require('../handlers/logs/guild_member_retention.js');
 const { welcomeMessageHandler } = require('../handlers/welcome_message_handler.js');
 const { illegalNicknameHandler } = require('../handlers/illegal_nickname_handler.js');
 
@@ -34,6 +35,9 @@ module.exports = {
         } catch (error) {
             console.trace('Failed to give new-to-the-server roles to the member:', error);
         }
+
+        /* log the member joining */
+        await guildMemberAddLogger(member).catch(console.trace);
 
         /* send the welcome message to the member */
         await welcomeMessageHandler(member).catch(console.trace);
