@@ -14,6 +14,15 @@ const { go_mongo_db } = require('../../mongo/mongo.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
+async function removePotentialVerificationContext(roblox_user_id) {
+    const verification_context = client.$.verification_contexts.find(verification_context => verification_context.roblox_user_id === roblox_user_id);
+    if (!verification_context) return;
+
+    client.$.verification_contexts.delete(verification_context.verification_code);
+}
+
+//---------------------------------------------------------------------------------------------------------------//
+
 /**
  * @param {Discord.GuildMember} member
  */
@@ -189,6 +198,8 @@ async function automaticVerificationHandler(member) {
                     for (const db_roblox_product of db_roblox_products) {
                         user_products[db_roblox_product.code] = false;
                     }
+
+                    await removePotentialVerificationContext(roblox_user_id);
 
                     await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
                         'identity.roblox_user_id': roblox_user_id,
