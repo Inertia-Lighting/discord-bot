@@ -400,7 +400,7 @@ async function createSupportTicketChannel(guild, guild_member, support_category)
     if (potential_open_ticket_channel) throw new Error('A support ticket channel is already open!');
 
     const support_ticket_channel = await guild.channels.create(support_channel_name, {
-        type: 'text',
+        type: 'GUILD_TEXT',
         topic: `${guild_member} | ${support_category.name} | Opened on <t:${Number.parseInt(Date.now() / 1000)}:F> | Staff may close this ticket using the \`close_ticket\` command.`,
         parent: support_tickets_category,
         permissionOverwrites: [
