@@ -9,8 +9,9 @@
 const axios = require('axios');
 
 const { Discord, client } = require('../discord_client.js');
-
 const { go_mongo_db } = require('../../mongo/mongo.js');
+
+const { generateNewUserDocument } = require('../common/database.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -201,16 +202,17 @@ async function automaticVerificationHandler(member) {
 
                     await removePotentialVerificationContext(roblox_user_id);
 
-                    await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
-                        'identity.roblox_user_id': roblox_user_id,
-                    }, {
-                        $set: {
-                            'identity.discord_user_id': member.id,
-                            'products': user_products,
-                        },
-                    }, {
-                        upsert: true,
+                    const new_db_user_data = await generateNewUserDocument({
+                        discord_user_id: member.id,
+                        roblox_user_id: roblox_user_id,
                     });
+
+                    await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, [
+                        {
+                            ...new_db_user_data,
+                            products: user_products,
+                        },
+                    ]);
 
                     dm_channel.send({
                         embeds: [
@@ -226,6 +228,8 @@ async function automaticVerificationHandler(member) {
                                     'While you\'re here, you should check out our website, products, and privacy policy.',
                                     '',
                                     'Thank you for choosing Inertia Lighting!',
+                                    '',
+                                    '*Btw, if you started to verify in the product hub, simply rejoin to be verified!*',
                                 ].join('\n'),
                             }),
                         ],
@@ -265,7 +269,7 @@ async function automaticVerificationHandler(member) {
             await account_selection_menu_message.delete().catch(console.warn);
         });
     } catch (error) {
-        console.warn(error);
+        console.warn('unable to dm user with auto-verification', error);
         return; // unable to dm user
     }
 }
