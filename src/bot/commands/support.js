@@ -436,6 +436,8 @@ async function closeSupportTicketChannel(support_channel, save_transcript, membe
         const support_ticket_topic_name = support_channel.name.match(/([a-zA-Z\-\_])+(?![\-\_])\D/i)?.[0];
         const support_ticket_owner_id = support_channel.name.match(/(?!.*\-)?([0-9])+/i)?.[0];
 
+        const support_category = support_categories.find(support_category => support_category.id === support_ticket_topic_name.toUpperCase());
+
         const support_ticket_owner = await client.users.fetch(support_ticket_owner_id);
 
         const all_messages_in_channel = await support_channel.messages.fetch({ limit: 100 }); // 100 is the max
@@ -453,22 +455,22 @@ async function closeSupportTicketChannel(support_channel, save_transcript, membe
 
         const transcript_embed = new Discord.MessageEmbed({
             color: 0x60A0FF,
-            author: {
-                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                name: 'Inertia Lighting | Support Ticket Transcripts System',
-            },
             fields: [
                 {
                     name: 'Ticket Id',
                     value: `${'```'}\n${support_channel.name}\n${'```'}`,
                     inline: false,
                 }, {
-                    name: 'Creation Date',
+                    name: 'Category',
+                    value: `${'```'}\n${support_category.name}\n${'```'}`,
+                    inline: false,
+                }, {
+                    name: 'Creation Timestamp',
                     value: `<t:${Number.parseInt(support_channel.createdTimestamp / 1000)}:F>`,
                     inline: false,
                 }, {
-                    name: 'Topic',
-                    value: `${'```'}\n${support_ticket_topic_name}\n${'```'}`,
+                    name: 'Closure Timestamp',
+                    value: `<t:${Number.parseInt(Date.now() / 1000)}:F>`,
                     inline: false,
                 }, {
                     name: 'Opened By',
@@ -506,10 +508,6 @@ async function closeSupportTicketChannel(support_channel, save_transcript, membe
                     embeds: [
                         new Discord.MessageEmbed({
                             color: 0x60A0FF,
-                            author: {
-                                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                                name: 'Inertia Lighting | Support Ticket Transcript',
-                            },
                             description: 'Your support ticket transcript is attached to this message.',
                         }),
                     ],
@@ -522,10 +520,6 @@ async function closeSupportTicketChannel(support_channel, save_transcript, membe
                     embeds: [
                         new Discord.MessageEmbed({
                             color: 0x60A0FF,
-                            author: {
-                                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                                name: 'Inertia Lighting | Support Ticket Feedback',
-                            },
                             description: 'How was your most recent support ticket experience?',
                         }),
                     ],
