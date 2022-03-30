@@ -50,7 +50,7 @@ async function guildMemberAddLogger(member) {
                 ].join('\n'),
             }),
         ],
-    });
+    }).catch(console.trace);
 }
 
 /**
@@ -78,7 +78,7 @@ async function guildMemberAddLogger(member) {
                 ].join('\n'),
             }),
         ],
-    });
+    }).catch(console.trace);
 }
 
 //---------------------------------------------------------------------------------------------------------------//
