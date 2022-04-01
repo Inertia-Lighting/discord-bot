@@ -227,7 +227,7 @@ module.exports = (router, client) => {
             await user_purchases_logging_channel.send({
                 embeds: [
                     new Discord.MessageEmbed({
-                        color: 0x00FF00,
+                        color: paypal_order_id ? 0x0000FF : 0x00FF00,
                         author: {
                             iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                             name: 'Inertia Lighting | Confirmed Purchase',
