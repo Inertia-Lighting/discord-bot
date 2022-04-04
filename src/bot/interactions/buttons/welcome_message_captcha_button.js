@@ -8,8 +8,6 @@
 
 const { Discord, client } = require('../../discord_client.js');
 
-const { automaticVerificationHandler } = require('../../handlers/automatic_verification_handler.js');
-
 //---------------------------------------------------------------------------------------------------------------//
 
 const bot_guild_id = process.env.BOT_GUILD_ID;
@@ -73,6 +71,9 @@ module.exports = {
                         '',
                         'Check out our product hub to purchase our products using Robux!',
                         'Alternatively, you can make a purchase using PayPal on our website!',
+                        '',
+                        'If you\'re here to verify your roblox account using a code',
+                        'from our product hub, please continue in <#601972296185282571>.',
                     ].join('\n'),
                 }),
             ],
@@ -81,11 +82,6 @@ module.exports = {
                     type: 1,
                     components: [
                         {
-                            type: 2,
-                            style: 5,
-                            label: 'Our Website',
-                            url: 'https://inertia.lighting/',
-                        }, {
                             type: 2,
                             style: 5,
                             label: 'Our Products',
@@ -105,15 +101,15 @@ module.exports = {
                             style: 5,
                             label: 'Privacy Policy',
                             url: 'https://inertia.lighting/privacy',
+                        }, {
+                            type: 2,
+                            style: 5,
+                            label: 'Terms of Service',
+                            url: 'https://discord.com/channels/601889649601806336/941368100933234700',
                         },
                     ],
                 },
             ],
         });
-
-        setTimeout(() => {
-            /* prompt the user to automatically link their accounts (if possible) */
-            automaticVerificationHandler(member).catch(console.trace);
-        }, 5_000); // wait 5 seconds
     },
 };
