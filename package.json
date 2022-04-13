@@ -42,7 +42,7 @@
     "zlib-sync": "0.1.7"
   },
   "devDependencies": {
-    "@babel/core": "7.17.8",
+    "@babel/core": "7.17.9",
     "@babel/eslint-parser": "7.17.0",
     "eslint": "8.13.0",
     "husky": "7.0.4",
