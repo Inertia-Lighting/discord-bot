@@ -74,7 +74,7 @@ module.exports = {
                             'User is blacklisted from using Inertia Lighting products!',
                             '\`\`\`',
                             '\`\`\`json',
-                            `${JSON.stringify(db_blacklisted_user_data, null, 2)}`,
+                            `${Discord.Util.escapeMarkdown(JSON.stringify(db_blacklisted_user_data, null, 2))}`,
                             '\`\`\`',
                         ].join('\n'),
                     }),
@@ -85,7 +85,11 @@ module.exports = {
                         iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                         name: 'Inertia Lighting | User Lookup System',
                     },
-                    description: `${'```'}json\n${JSON.stringify(db_user_data ?? 'user not found in database', null, 2)}\n${'```'}`,
+                    description: [
+                        '\`\`\`json',
+                        `${Discord.Util.escapeMarkdown(JSON.stringify(db_user_data ?? 'user not found in database', null, 2))}`,
+                        '\`\`\`',
+                    ].join('\n'),
                 }),
             ],
         }).catch(console.warn);

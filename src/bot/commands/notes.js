@@ -466,7 +466,7 @@ async function lookupNotesCommand(message, lookup_method) {
                             `**Date** <t:${`${user_note.record.epoch}`.slice(0, -3)}:f>`,
                             '**Content**',
                             '\`\`\`',
-                            `${string_ellipses(user_note.record.note, 250)}`,
+                            `${string_ellipses(Discord.Util.escapeMarkdown(user_note.record.note), 250)}`,
                             '\`\`\`',
                         ].join('\n')
                     ).join('\n'),

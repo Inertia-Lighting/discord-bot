@@ -107,10 +107,13 @@ module.exports = {
                             name: 'Inertia Lighting | Products',
                         },
                         description: [
-                            `**Product Name** ${public_roblox_product.name}`,
-                            `**Price** ${public_roblox_product.price_in_robux} <:robux:759699085439139871>`,
-                            `**PayPal Price** $${Number.parseFloat(public_roblox_product.price_in_usd).toFixed(2)} USD`,
-                            `\nA brief overview of ${public_roblox_product.name}. \n\`\`\`${string_ellipses(public_roblox_product.description, 1000)}\`\`\``,
+                            `**Product Name:** ${public_roblox_product.name}`,
+                            `**Price:** ${public_roblox_product.price_in_robux} <:robux:759699085439139871>`,
+                            `**PayPal Price:** $${Number.parseFloat(public_roblox_product.price_in_usd).toFixed(2)} USD`,
+                            '**Description:**',
+                            '\`\`\`',
+                            `${string_ellipses(Discord.Util.escapeMarkdown(public_roblox_product.description), 1500)}`,
+                            '\`\`\`',
                         ].join('\n'),
                         image: {
                             url: `https://inertia.lighting/assets/media/images/products/${public_roblox_product.code}.png`,
