@@ -159,7 +159,7 @@ async function listModerationActions(message, lookup_mode='member') {
                             `**Type** \`${moderation_action.record.type}\``,
                             '**Reason**',
                             '\`\`\`',
-                            `${string_ellipses(Discord.Util.escapeMarkdown(moderation_action.record.reason), 250)}`,
+                            `${string_ellipses(Discord.Util.cleanCodeBlockContent(moderation_action.record.reason), 250)}`,
                             '\`\`\`',
                         ].join('\n')
                     ).join('\n'),

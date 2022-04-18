@@ -112,7 +112,7 @@ module.exports = {
                             `**PayPal Price:** $${Number.parseFloat(public_roblox_product.price_in_usd).toFixed(2)} USD`,
                             '**Description:**',
                             '\`\`\`',
-                            `${string_ellipses(Discord.Util.escapeMarkdown(public_roblox_product.description), 1500)}`,
+                            `${string_ellipses(Discord.Util.cleanCodeBlockContent(public_roblox_product.description), 1500)}`,
                             '\`\`\`',
                         ].join('\n'),
                         image: {

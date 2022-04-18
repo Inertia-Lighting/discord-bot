@@ -74,7 +74,7 @@ module.exports = {
                             'User is blacklisted from using Inertia Lighting products!',
                             '\`\`\`',
                             '\`\`\`json',
-                            `${Discord.Util.escapeMarkdown(JSON.stringify(db_blacklisted_user_data, null, 2))}`,
+                            `${Discord.Util.cleanCodeBlockContent(JSON.stringify(db_blacklisted_user_data, null, 2))}`,
                             '\`\`\`',
                         ].join('\n'),
                     }),
@@ -87,7 +87,7 @@ module.exports = {
                     },
                     description: [
                         '\`\`\`json',
-                        `${Discord.Util.escapeMarkdown(JSON.stringify(db_user_data ?? 'user not found in database', null, 2))}`,
+                        `${Discord.Util.cleanCodeBlockContent(JSON.stringify(db_user_data ?? 'user not found in database', null, 2))}`,
                         '\`\`\`',
                     ].join('\n'),
                 }),
