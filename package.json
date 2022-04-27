@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/Inertia-Lighting/discord-bot-api-server#readme",
   "dependencies": {
-    "axios": "0.26.1",
+    "axios": "0.27.2",
     "bcryptjs": "2.4.3",
     "body-parser": "1.20.0",
     "bufferutil": "4.0.6",
