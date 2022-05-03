@@ -34,7 +34,7 @@
     "express": "4.18.1",
     "go-mongo-db": "github:Inertia-Lighting/go-mongo-db#v1.2.0-stable",
     "moment-timezone": "0.5.34",
-    "node-gyp": "8.4.1",
+    "node-gyp": "9.0.0",
     "recursive-read-directory": "github:MidSpike/recursive-read-directory#v0.0.1-beta",
     "string-similarity": "4.0.4",
     "utf-8-validate": "5.0.9",
