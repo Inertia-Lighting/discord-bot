@@ -43,7 +43,7 @@
   },
   "devDependencies": {
     "eslint": "8.14.0",
-    "husky": "7.0.4",
+    "husky": "8.0.1",
     "is-ci": "3.0.1",
     "run-script-os": "1.1.6"
   },
