@@ -8,7 +8,7 @@
 
 const { Discord, client } = require('../../discord_client.js');
 
-const { string_ellipses } = require('../../../utilities.js');
+const { string_ellipses, getMarkdownFriendlyTimestamp } = require('../../../utilities.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -29,6 +29,8 @@ async function guildMemberMessageUpdateLogger(old_message, new_message) {
     const logging_channel = await client.channels.fetch(logging_channel_id);
     if (!(logging_channel instanceof Discord.TextChannel)) throw new Error('Failed to fetch logging channel');
 
+    const message_update_timestamp = getMarkdownFriendlyTimestamp(new_message.editedTimestamp);
+
     await logging_channel.send({
         embeds: [
             new Discord.MessageEmbed({
@@ -44,6 +46,10 @@ async function guildMemberMessageUpdateLogger(old_message, new_message) {
                         value: `@${new_message.author.tag} (${new_message.author.id})`,
                         inline: false,
                     }, {
+                        name: 'Modified',
+                        value: `<t:${message_update_timestamp}:F> (<t:${message_update_timestamp}:R>)`,
+                        inline: false,
+                    }, {
                         name: 'Before',
                         value: string_ellipses(old_message.content, 2048),
                         inline: false,
@@ -53,7 +59,6 @@ async function guildMemberMessageUpdateLogger(old_message, new_message) {
                         inline: false,
                     },
                 ],
-                timestamp: Date.now(),
             }),
         ],
     }).catch(console.trace);
@@ -69,6 +74,8 @@ async function guildMemberMessageDeleteLogger(message) {
     const logging_channel = await client.channels.fetch(logging_channel_id);
     if (!(logging_channel instanceof Discord.TextChannel)) throw new Error('Failed to fetch logging channel');
 
+    const message_delete_timestamp = getMarkdownFriendlyTimestamp(Date.now());
+
     await logging_channel.send({
         embeds: [
             new Discord.MessageEmbed({
@@ -83,6 +90,9 @@ async function guildMemberMessageDeleteLogger(message) {
                         name: 'Author',
                         value: `@${message.author.tag} (${message.author.id})`,
                         inline: false,
+                    }, {
+                        name: 'Deleted',
+                        value: `<t:${message_delete_timestamp}:F> (<t:${message_delete_timestamp}:R>)`,
                     }, {
                         name: 'Content',
                         value: string_ellipses(message.content, 2048),

@@ -8,22 +8,12 @@
 
 const { Discord, client } = require('../../discord_client.js');
 
+const { getMarkdownFriendlyTimestamp } = require('../../../utilities.js');
+
 //---------------------------------------------------------------------------------------------------------------//
 
 const member_retention_logging_channel_id = process.env.BOT_LOGGING_USER_RETENTION_CHANNEL_ID;
 if (typeof member_retention_logging_channel_id !== 'string') throw new TypeError('member_retention_logging_channel_id is not a string');
-
-//---------------------------------------------------------------------------------------------------------------//
-
-/**
- * @param {number} timestamp timestamp in milliseconds
- * @returns {string} base 10 timestamp in seconds
- */
-function getMarkdownFriendlyTimestamp(timestamp) {
-    if (typeof timestamp !== 'number') throw new TypeError('getMarkdownFriendlyTimestamp(): timestamp is not a number');
-
-    return Math.floor(timestamp / 1000).toString(10);
-}
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -65,7 +55,7 @@ async function guildMemberAddLogger(member) {
 /**
  * @param {Discord.GuildMember} member
  */
- async function guildMemberRemoveLogger(member) {
+async function guildMemberRemoveLogger(member) {
     if (!(member instanceof Discord.GuildMember)) throw new TypeError('guildMemberRemoveLogger(): member is not a GuildMember');
 
     const member_retention_logging_channel = await client.channels.fetch(member_retention_logging_channel_id);
