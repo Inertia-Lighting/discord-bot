@@ -35,7 +35,7 @@ async function guildMemberRolesAddedLogger(old_member, new_member) {
                 title: `@${new_member.user.tag} (${new_member.user.id})`,
                 description: [
                     '**Roles added:**',
-                    ...roles_added.map(role => `\`${role.name}\``),
+                    ...roles_added.map(role => `**${role.name}** (${role.id})`),
                 ].join('\n'),
             }),
         ],
@@ -58,11 +58,11 @@ async function guildMemberRolesAddedLogger(old_member, new_member) {
     await logging_channel.send({
         embeds: [
             new Discord.MessageEmbed({
-                color: 0x00FF00,
+                color: 0xFFFF00,
                 title: `@${new_member.user.tag} (${new_member.user.id})`,
                 description: [
                     '**Roles removed:**',
-                    ...roles_removed.map(role => `\`${role.name}\``),
+                    ...roles_removed.map(role => `**${role.name}** (${role.id})`),
                 ].join('\n'),
             }),
         ],
