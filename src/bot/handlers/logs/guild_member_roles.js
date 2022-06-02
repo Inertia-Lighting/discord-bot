@@ -32,7 +32,7 @@ async function guildMemberRolesAddedLogger(old_member, new_member) {
         embeds: [
             new Discord.MessageEmbed({
                 color: 0x00FF00,
-                title: `Roles were added to ${new_member}.`,
+                description: `**Roles were added to ${new_member}.**`,
                 fields: [
                     {
                         name: 'Member',
@@ -66,7 +66,7 @@ async function guildMemberRolesAddedLogger(old_member, new_member) {
         embeds: [
             new Discord.MessageEmbed({
                 color: 0xFFFF00,
-                title: `Roles were removed from ${old_member}.`,
+                description: `**Roles were removed from ${old_member}.**`,
                 fields: [
                     {
                         name: 'Member',
