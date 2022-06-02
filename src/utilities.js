@@ -112,6 +112,16 @@ function math_clamp(value, min, max) {
     return Math.min(Math.max(value, min), max);
 }
 
+/**
+ * @param {number} timestamp timestamp in milliseconds
+ * @returns {string} base 10 timestamp in seconds
+ */
+function getMarkdownFriendlyTimestamp(timestamp) {
+    if (typeof timestamp !== 'number') throw new TypeError('getMarkdownFriendlyTimestamp(): timestamp is not a number');
+
+    return Math.floor(timestamp / 1000).toString(10);
+}
+
 //---------------------------------------------------------------------------------------------------------------//
 
 module.exports = {
@@ -122,4 +132,5 @@ module.exports = {
     array_chunks,
     array_random,
     math_clamp,
+    getMarkdownFriendlyTimestamp,
 };
