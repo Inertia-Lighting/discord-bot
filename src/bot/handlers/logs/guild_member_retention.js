@@ -43,11 +43,20 @@ async function guildMemberAddLogger(member) {
         embeds: [
             new Discord.MessageEmbed({
                 color: 0x00FF00,
-                title: `@${member.user.tag} (${member.user.id})`,
-                description: [
-                    `**Creation:** <t:${user_creation_timestamp}:F> (<t:${user_creation_timestamp}:R>)`,
-                    `**Joined:** <t:${member_joined_timestamp}:F> (<t:${member_joined_timestamp}:R>)`,
-                ].join('\n'),
+                title: 'A member has joined the server!',
+                fields: [
+                    {
+                        name: 'Member',
+                        value: `@${member.user.tag} (${member.user.id})`,
+                        inline: false,
+                    }, {
+                        name: 'Account creation date',
+                        value: `<t:${user_creation_timestamp}:F> (<t:${user_creation_timestamp}:R>)`,
+                    }, {
+                        name: 'Account join date',
+                        value: `<t:${member_joined_timestamp}:F> (<t:${member_joined_timestamp}:R>)`,
+                    },
+                ],
             }),
         ],
     }).catch(console.trace);
@@ -70,12 +79,26 @@ async function guildMemberAddLogger(member) {
         embeds: [
             new Discord.MessageEmbed({
                 color: 0xFFFF00,
-                title: `@${member.user.tag} (${member.user.id})`,
-                description: [
-                    `**Creation:** <t:${user_creation_timestamp}:F> (<t:${user_creation_timestamp}:R>)`,
-                    `**Joined:** <t:${member_joined_timestamp}:F> (<t:${member_joined_timestamp}:R>)`,
-                    `**Left:** <t:${member_left_timestamp}:F> (<t:${member_left_timestamp}:R>)`,
-                ].join('\n'),
+                title: 'A member has left the server!',
+                fields: [
+                    {
+                        name: 'Member',
+                        value: `@${member.user.tag} (${member.user.id})`,
+                        inline: false,
+                    }, {
+                        name: 'Account creation date',
+                        value: `<t:${user_creation_timestamp}:F> (<t:${user_creation_timestamp}:R>)`,
+                    }, {
+                        name: 'Account join date',
+                        value: `<t:${member_joined_timestamp}:F> (<t:${member_joined_timestamp}:R>)`,
+                    }, {
+                        name: 'Account leave date',
+                        value: `<t:${member_left_timestamp}:F> (<t:${member_left_timestamp}:R>)`,
+                    }, {
+                        name: 'Account stayed for',
+                        value: `${Math.floor((member_left_timestamp - member_joined_timestamp) / (1000 * 60 * 60 * 24))} days`,
+                    },
+                ],
             }),
         ],
     }).catch(console.trace);

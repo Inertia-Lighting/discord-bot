@@ -33,16 +33,16 @@ async function guildMemberMessageUpdateLogger(old_message, new_message) {
         embeds: [
             new Discord.MessageEmbed({
                 color: 0xFFFF00,
-                description: `A message was modified in <#${new_message.channelId}>.`,
+                description: `**A message was modified in <#${new_message.channelId}> by <@${new_message.author.id}>.**`,
                 fields: [
                     {
                         name: 'Message',
                         value: `[${new_message.id}](${new_message.url})`,
-                        inline: true,
+                        inline: false,
                     }, {
                         name: 'Author',
                         value: `@${new_message.author.tag} (${new_message.author.id})`,
-                        inline: true,
+                        inline: false,
                     }, {
                         name: 'Before',
                         value: string_ellipses(old_message.content, 2048),
@@ -73,16 +73,16 @@ async function guildMemberMessageDeleteLogger(message) {
         embeds: [
             new Discord.MessageEmbed({
                 color: 0xFFFF00,
-                description: `A message was deleted in <#${message.channelId}>.`,
+                description: `**A message was deleted in <#${message.channelId}> by <@${message.author.id}>.**`,
                 fields: [
                     {
                         name: 'Message',
-                        value: '\`message.id\`',
-                        inline: true,
+                        value: `[${message.id}](${message.url})`,
+                        inline: false,
                     }, {
                         name: 'Author',
                         value: `@${message.author.tag} (${message.author.id})`,
-                        inline: true,
+                        inline: false,
                     }, {
                         name: 'Content',
                         value: string_ellipses(message.content, 2048),

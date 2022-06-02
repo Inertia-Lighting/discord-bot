@@ -32,11 +32,18 @@ async function guildMemberRolesAddedLogger(old_member, new_member) {
         embeds: [
             new Discord.MessageEmbed({
                 color: 0x00FF00,
-                title: `@${new_member.user.tag} (${new_member.user.id})`,
-                description: [
-                    '**Roles added:**',
-                    ...roles_added.map(role => `**${role.name}** (${role.id})`),
-                ].join('\n'),
+                title: `Roles were added to ${new_member}.`,
+                fields: [
+                    {
+                        name: 'Member',
+                        value: `@${new_member.user.tag} (${new_member.user.id})`,
+                        inline: false,
+                    }, {
+                        name: 'Roles added',
+                        value: roles_added.map(role => `<@&${role.id}>`).join('\n'),
+                        inline: false,
+                    },
+                ],
             }),
         ],
     }).catch(console.trace);
@@ -59,11 +66,18 @@ async function guildMemberRolesAddedLogger(old_member, new_member) {
         embeds: [
             new Discord.MessageEmbed({
                 color: 0xFFFF00,
-                title: `@${new_member.user.tag} (${new_member.user.id})`,
-                description: [
-                    '**Roles removed:**',
-                    ...roles_removed.map(role => `**${role.name}** (${role.id})`),
-                ].join('\n'),
+                title: `Roles were removed from ${old_member}.`,
+                fields: [
+                    {
+                        name: 'Member',
+                        value: `@${new_member.user.tag} (${new_member.user.id})`,
+                        inline: false,
+                    }, {
+                        name: 'Roles removed',
+                        value: roles_removed.map(role => `<@&${role.id}>`).join('\n'),
+                        inline: false,
+                    },
+                ],
             }),
         ],
     }).catch(console.trace);
