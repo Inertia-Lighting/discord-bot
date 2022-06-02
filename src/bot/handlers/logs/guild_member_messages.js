@@ -33,7 +33,7 @@ async function guildMemberMessageUpdateLogger(old_message, new_message) {
         embeds: [
             new Discord.MessageEmbed({
                 color: 0xFFFF00,
-                description: `**A message was modified in <#${new_message.channelId}> by <@${new_message.author.id}>.**`,
+                description: `**A message sent by <@${new_message.author.id}> in <#${new_message.channelId}> was modified.**`,
                 fields: [
                     {
                         name: 'Message',
@@ -73,7 +73,7 @@ async function guildMemberMessageDeleteLogger(message) {
         embeds: [
             new Discord.MessageEmbed({
                 color: 0xFFFF00,
-                description: `**A message was deleted in <#${message.channelId}> by <@${message.author.id}>.**`,
+                description: `**A message sent by <@${message.author.id}> in <#${message.channelId}> was deleted.**`,
                 fields: [
                     {
                         name: 'Message',
