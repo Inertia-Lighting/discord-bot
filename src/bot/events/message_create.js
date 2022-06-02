@@ -49,8 +49,8 @@ module.exports = {
         }
 
         /* handle commands */
-        const command_prefix_regex = new RegExp(`^${command_prefix}[a-z0-9_-]+\\s`, 'i');
-        const message_starts_with_command_prefix = command_prefix_regex.test(message.content);
+        const command_prefix_regex = new RegExp(`^${command_prefix}[a-z0-9_-]+`, 'i');
+        const message_starts_with_command_prefix = command_prefix_regex.test(message.cleanContent);
         if (message_starts_with_command_prefix) {
             commandHandler(message);
             return;
