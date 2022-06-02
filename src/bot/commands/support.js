@@ -309,50 +309,52 @@ const support_categories = new Discord.Collection([
                 }),
             ],
         },
-    }, {
-        id: 'PARTNERS',
-        name: 'Partner Requests',
-        description: 'Apply to become a partner of Inertia Lighting.',
-        qualified_support_role_ids: [
-            process.env.BOT_SUPPORT_STAFF_PARTNER_REQUESTS_ROLE_ID,
-        ],
-        automatically_save_when_closed: false,
-        instructions_message_options: {
-            embeds: [
-                new Discord.MessageEmbed({
-                    color: 0x60A0FF,
-                    author: {
-                        iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                        name: 'Inertia Lighting | Support Ticket Instructions',
-                    },
-                    description: [
-                        template_instructions_text,
-                        '',
-                        '\`(1)\` **What is your group called?**',
-                        '\`   \` Example: Inertia Lighting (formerly: C-Tech Lighting)',
-                        '',
-                        '\`(2)\` **Who is the owner of the group?**',
-                        '\`   \` *( discord account | roblox account | etc )*',
-                        '\`   \` Example: <@!163646957783482370>, roblox.com/users/2010759283/profile',
-                        '',
-                        '\`(3)\` **Describe your group in detail.**',
-                        '',
-                        '\`(4)\` **How many people are in your group?**',
-                        '',
-                        '\`(5)\` **Social Links:**',
-                        '\`   \` *( discord, roblox, website, etc )*',
-                        '\`   \` Please provide links to the group\'s public presences.',
-                        '',
-                        '\`(6)\` **Why do you want to partner with us?**',
-                        '',
-                        '\`(7)\` **Why should we partner with you?**',
-                        '',
-                        template_instructions_footer_text,
-                    ].join('\n'),
-                }),
-            ],
-        },
-    }, {
+    },
+    // {
+    //     id: 'PARTNERS',
+    //     name: 'Partner Requests',
+    //     description: 'Apply to become a partner of Inertia Lighting.',
+    //     qualified_support_role_ids: [
+    //         process.env.BOT_SUPPORT_STAFF_PARTNER_REQUESTS_ROLE_ID,
+    //     ],
+    //     automatically_save_when_closed: false,
+    //     instructions_message_options: {
+    //         embeds: [
+    //             new Discord.MessageEmbed({
+    //                 color: 0x60A0FF,
+    //                 author: {
+    //                     iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+    //                     name: 'Inertia Lighting | Support Ticket Instructions',
+    //                 },
+    //                 description: [
+    //                     template_instructions_text,
+    //                     '',
+    //                     '\`(1)\` **What is your group called?**',
+    //                     '\`   \` Example: Inertia Lighting (formerly: C-Tech Lighting)',
+    //                     '',
+    //                     '\`(2)\` **Who is the owner of the group?**',
+    //                     '\`   \` *( discord account | roblox account | etc )*',
+    //                     '\`   \` Example: <@!163646957783482370>, roblox.com/users/2010759283/profile',
+    //                     '',
+    //                     '\`(3)\` **Describe your group in detail.**',
+    //                     '',
+    //                     '\`(4)\` **How many people are in your group?**',
+    //                     '',
+    //                     '\`(5)\` **Social Links:**',
+    //                     '\`   \` *( discord, roblox, website, etc )*',
+    //                     '\`   \` Please provide links to the group\'s public presences.',
+    //                     '',
+    //                     '\`(6)\` **Why do you want to partner with us?**',
+    //                     '',
+    //                     '\`(7)\` **Why should we partner with you?**',
+    //                     '',
+    //                     template_instructions_footer_text,
+    //                 ].join('\n'),
+    //             }),
+    //         ],
+    //     },
+    // },
+    {
         id: 'OTHER',
         name: 'Other & Quick Questions',
         description: 'For all other forms of support.',
@@ -400,7 +402,7 @@ async function createSupportTicketChannel(guild, guild_member, support_category)
     if (potential_open_ticket_channel) throw new Error('A support ticket channel is already open!');
 
     const support_ticket_channel = await guild.channels.create(support_channel_name, {
-        type: 'text',
+        type: 'GUILD_TEXT',
         topic: `${guild_member} | ${support_category.name} | Opened on <t:${Number.parseInt(Date.now() / 1000)}:F> | Staff may close this ticket using the \`close_ticket\` command.`,
         parent: support_tickets_category,
         permissionOverwrites: [
@@ -436,6 +438,8 @@ async function closeSupportTicketChannel(support_channel, save_transcript, membe
         const support_ticket_topic_name = support_channel.name.match(/([a-zA-Z\-\_])+(?![\-\_])\D/i)?.[0];
         const support_ticket_owner_id = support_channel.name.match(/(?!.*\-)?([0-9])+/i)?.[0];
 
+        const support_category = support_categories.find(support_category => support_category.id === support_ticket_topic_name.toUpperCase());
+
         const support_ticket_owner = await client.users.fetch(support_ticket_owner_id);
 
         const all_messages_in_channel = await support_channel.messages.fetch({ limit: 100 }); // 100 is the max
@@ -453,22 +457,22 @@ async function closeSupportTicketChannel(support_channel, save_transcript, membe
 
         const transcript_embed = new Discord.MessageEmbed({
             color: 0x60A0FF,
-            author: {
-                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                name: 'Inertia Lighting | Support Ticket Transcripts System',
-            },
             fields: [
                 {
                     name: 'Ticket Id',
                     value: `${'```'}\n${support_channel.name}\n${'```'}`,
                     inline: false,
                 }, {
-                    name: 'Creation Date',
+                    name: 'Category',
+                    value: `${'```'}\n${support_category.name}\n${'```'}`,
+                    inline: false,
+                }, {
+                    name: 'Creation Timestamp',
                     value: `<t:${Number.parseInt(support_channel.createdTimestamp / 1000)}:F>`,
                     inline: false,
                 }, {
-                    name: 'Topic',
-                    value: `${'```'}\n${support_ticket_topic_name}\n${'```'}`,
+                    name: 'Closure Timestamp',
+                    value: `<t:${Number.parseInt(Date.now() / 1000)}:F>`,
                     inline: false,
                 }, {
                     name: 'Opened By',
@@ -506,10 +510,6 @@ async function closeSupportTicketChannel(support_channel, save_transcript, membe
                     embeds: [
                         new Discord.MessageEmbed({
                             color: 0x60A0FF,
-                            author: {
-                                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                                name: 'Inertia Lighting | Support Ticket Transcript',
-                            },
                             description: 'Your support ticket transcript is attached to this message.',
                         }),
                     ],
@@ -522,10 +522,6 @@ async function closeSupportTicketChannel(support_channel, save_transcript, membe
                     embeds: [
                         new Discord.MessageEmbed({
                             color: 0x60A0FF,
-                            author: {
-                                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                                name: 'Inertia Lighting | Support Ticket Feedback',
-                            },
                             description: 'How was your most recent support ticket experience?',
                         }),
                     ],

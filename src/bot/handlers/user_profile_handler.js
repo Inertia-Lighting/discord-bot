@@ -73,7 +73,9 @@ async function userProfileHandler(deferred_interaction_or_message, discord_user_
         },
     });
 
-    const db_roblox_products = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_PRODUCTS_COLLECTION_NAME, {});
+    const db_roblox_products = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_PRODUCTS_COLLECTION_NAME, {
+        'public': true,
+    });
 
     const user_product_codes = Object.entries(db_user_data.products)
                                      .filter(([ product_code, user_owns_product ]) => user_owns_product)
@@ -125,6 +127,9 @@ async function userProfileHandler(deferred_interaction_or_message, discord_user_
                     }, {
                         name: 'Roblox',
                         value: `[${`@${roblox_user_data.name}` ?? 'n/a'}](https://roblox.com/users/${db_user_data.identity.roblox_user_id}/profile) (${roblox_user_data.displayName ?? 'n/a'})`,
+                    }, {
+                        name: 'Karma',
+                        value: `${db_user_data.karma ?? 0}`,
                     }, {
                         name: 'Products',
                         value: `${user_products.length === 0 ? 'n/a' : user_products.map(product => `- ${product.name}`).join('\n')}`,

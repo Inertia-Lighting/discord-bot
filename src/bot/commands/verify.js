@@ -12,6 +12,7 @@ const { Discord, client } = require('../discord_client.js');
 
 const { command_permission_levels } = require('../common/bot.js');
 const { disableMessageComponents } = require('../common/message.js');
+const { generateNewUserDocument } = require('../common/database.js');
 
 const { userProfileHandler } = require('../handlers/user_profile_handler.js');
 
@@ -114,9 +115,16 @@ module.exports = {
         }
 
         const verification_code_to_lookup = `${command_args[0]}`.trim();
+
+        /**
+         * @type {{
+         *  verification_code: string,
+         *  roblox_user_id: string,
+         * }}
+         */
         const verification_context = client.$.verification_contexts.get(verification_code_to_lookup);
 
-        if (!verification_context) {
+        if (typeof verification_context !== 'object') {
             await message.channel.send({
                 embeds: [
                     new Discord.MessageEmbed({
@@ -151,7 +159,7 @@ module.exports = {
             return;
         }
 
-        /* quickly remove the verification context b/c it is no longer needed */
+        /* remove the verification context b/c it is no longer needed */
         client.$.verification_contexts.delete(verification_context.verification_code);
 
         const db_roblox_products = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_PRODUCTS_COLLECTION_NAME, {});
@@ -162,19 +170,49 @@ module.exports = {
             updated_user_products[db_roblox_product.code] = false;
         }
 
-        /* update the user in the database with the correct information */
-        await go_mongo_db.update(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
-            'identity.roblox_user_id': verification_context.roblox_user_id,
-        }, {
-            $set: {
-                'identity.discord_user_id': message.author.id,
-                'products': updated_user_products,
-            },
-        }, {
-            upsert: true,
+        const existing_user_documents = await go_mongo_db.count(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
+            $or: [
+                { 'identity.discord_user_id': message.author.id },
+                { 'identity.roblox_user_id': verification_context.roblox_user_id },
+            ],
         });
 
-        /* inform the user that their verification was successful */
+        if (existing_user_documents > 0) {
+            await message.channel.send({
+                embeds: [
+                    new Discord.MessageEmbed({
+                        color: 0xFFFF00,
+                        author: {
+                            iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                            name: `${client.user.username} | Verification System`,
+                        },
+                        title: 'Failed to verify!',
+                        description: [
+                            'Something went wrong while verifying your account!',
+                            '',
+                            'Debug Information:',
+                            `roblox_user_id (${verification_context.roblox_user_id}) already exists in the database!`,
+                        ].join('\n'),
+                    }),
+                ],
+            }).catch(console.warn);
+            return;
+        }
+
+        const new_db_user_data = await generateNewUserDocument({
+            discord_user_id: message.author.id,
+            roblox_user_id: verification_context.roblox_user_id,
+        });
+
+        /* create the user in the database */
+        await go_mongo_db.add(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, [
+            {
+                ...new_db_user_data,
+                products: updated_user_products,
+            },
+        ]);
+
+        /* inform the user */
         await message.channel.send({
             embeds: [
                 new Discord.MessageEmbed({

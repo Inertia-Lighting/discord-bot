@@ -4,10 +4,7 @@
 Inertia Lighting allows you to report any security vulnerabilities via the official method below!
 
 ### Official Contact Method
-1. Open an **other** support ticket:
-    - send `!support` in `#bot-commands` inside of [our discord](https://discord.inertia.lighting/)
-    - choose the **other** category
-    - follow any instructions in the support ticket
+1. Open a support ticket in [our discord](https://discord.inertia.lighting/) server.
 
 2. Please include the following message in your ticket:
     ```
@@ -17,8 +14,7 @@ Inertia Lighting allows you to report any security vulnerabilities via the offic
 
 3. You will receive a response as soon as we acknowledge your report!
 
-### Supported Branches
-| Version | Supported          |
-| ------- | ------------------ |
-| master  | :white_check_mark: |
-| other   | :x:                |
+### Allowed Branches
+| Branch Name | Supported          |
+| ----------- | ------------------ |
+| master      | :white_check_mark: |

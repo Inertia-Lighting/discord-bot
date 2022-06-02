@@ -114,7 +114,9 @@ module.exports = (router, client) => {
         }
 
         /* fetch all products from the database */
-        const db_roblox_products = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_PRODUCTS_COLLECTION_NAME, {});
+        const db_roblox_products = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_PRODUCTS_COLLECTION_NAME, {
+            'public': true,
+        });
 
         /* handle an edge-case where a product_code might be present more than once */
         const specified_product_codes = Array.from(new Set(product_codes));
@@ -225,7 +227,7 @@ module.exports = (router, client) => {
             await user_purchases_logging_channel.send({
                 embeds: [
                     new Discord.MessageEmbed({
-                        color: 0x00FF00,
+                        color: paypal_order_id ? 0x0000FF : 0x00FF00,
                         author: {
                             iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
                             name: 'Inertia Lighting | Confirmed Purchase',

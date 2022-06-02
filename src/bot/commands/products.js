@@ -42,11 +42,10 @@ module.exports = {
         /* create a small user-experience delay */
         await Timer(500);
 
-        /* fetch all products from the database */
-        const db_roblox_products = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_PRODUCTS_COLLECTION_NAME, {});
-
-        /* filter out non-public products */
-        const public_roblox_products = db_roblox_products.filter(product => product.public);
+        /* fetch products from the database */
+        const db_roblox_products = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_PRODUCTS_COLLECTION_NAME, {
+            'public': true,
+        });
 
         await bot_message.edit({
             components: [
@@ -97,7 +96,7 @@ module.exports = {
         let page_index = 0;
 
         async function editEmbedWithNextProduct() {
-            const public_roblox_product = public_roblox_products[page_index];
+            const public_roblox_product = db_roblox_products[page_index];
 
             await bot_message.edit({
                 embeds: [
@@ -108,10 +107,13 @@ module.exports = {
                             name: 'Inertia Lighting | Products',
                         },
                         description: [
-                            `**Product Name** ${public_roblox_product.name}`,
-                            `**Price** ${public_roblox_product.price_in_robux} <:robux:759699085439139871>`,
-                            `**PayPal Price** $${Number.parseFloat(public_roblox_product.price_in_usd).toFixed(2)} USD`,
-                            `\nA brief overview of ${public_roblox_product.name}. \n\`\`\`${string_ellipses(public_roblox_product.description, 1000)}\`\`\``,
+                            `**Product Name:** ${public_roblox_product.name}`,
+                            `**Price:** ${public_roblox_product.price_in_robux} <:robux:759699085439139871>`,
+                            `**PayPal Price:** $${Number.parseFloat(public_roblox_product.price_in_usd).toFixed(2)} USD`,
+                            '**Description:**',
+                            '\`\`\`',
+                            `${string_ellipses(Discord.Util.cleanCodeBlockContent(public_roblox_product.description), 1500)}`,
+                            '\`\`\`',
                         ].join('\n'),
                         image: {
                             url: `https://inertia.lighting/assets/media/images/products/${public_roblox_product.code}.png`,
@@ -136,11 +138,11 @@ module.exports = {
 
             switch (button_interaction.customId) {
                 case 'previous': {
-                    page_index = page_index < public_roblox_products.length - 1 ? page_index + 1 : 0;
+                    page_index = page_index < db_roblox_products.length - 1 ? page_index + 1 : 0;
                     break;
                 }
                 case 'next': {
-                    page_index = page_index > 0 ? page_index - 1 : public_roblox_products.length - 1;
+                    page_index = page_index > 0 ? page_index - 1 : db_roblox_products.length - 1;
                     break;
                 }
                 case 'stop': {
