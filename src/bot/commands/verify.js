@@ -128,6 +128,10 @@ module.exports = {
             data: {
                 verification_code: verification_code_to_lookup,
             },
+        }).catch(error => {
+            console.warn(error);
+
+            return error;
         });
 
         if (fetch_pending_verification_response.status !== 200 || !fetch_pending_verification_response.data) {
@@ -174,9 +178,13 @@ module.exports = {
                 'Authorization': `InertiaAuthUserVerificationEndpoints ${process.env.API_BASE64_ENCODED_TOKEN_FOR_USER_VERIFICATION_ENDPOINTS}`,
             },
             data: {
-                verification_code: fetch_pending_verification_response.data.code,
+                verification_code: fetch_pending_verification_response.data.verification_code,
                 discord_user_id: message.author.id,
             },
+        }).catch(error => {
+            console.warn(error);
+
+            return error;
         });
 
         if (update_pending_verification_response.status !== 200 || !update_pending_verification_response.data) {
