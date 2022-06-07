@@ -6,13 +6,14 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
+const { default: axios } = require('axios');
+
 const { go_mongo_db } = require('../../mongo/mongo.js');
 
 const { Discord, client } = require('../discord_client.js');
 
 const { command_permission_levels } = require('../common/bot.js');
 const { disableMessageComponents } = require('../common/message.js');
-const { generateNewUserDocument } = require('../common/database.js');
 
 const { userProfileHandler } = require('../handlers/user_profile_handler.js');
 
@@ -107,6 +108,7 @@ module.exports = {
 
                 message_component_collector.stop();
             });
+
             message_component_collector.on('end', () => {
                 disableMessageComponents(bot_msg);
             });
@@ -116,15 +118,19 @@ module.exports = {
 
         const verification_code_to_lookup = `${command_args[0]}`.trim();
 
-        /**
-         * @type {{
-         *  verification_code: string,
-         *  roblox_user_id: string,
-         * }}
-         */
-        const verification_context = client.$.verification_contexts.get(verification_code_to_lookup);
+        const fetch_pending_verification_response = await axios({
+            method: 'post',
+            url: 'https://api.inertia.lighting/v2/user/verification/context/fetch',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `InertiaAuthUserVerificationEndpoints ${process.env.API_BASE64_ENCODED_TOKEN_FOR_USER_VERIFICATION_ENDPOINTS}`,
+            },
+            data: {
+                verification_code: verification_code_to_lookup,
+            },
+        });
 
-        if (typeof verification_context !== 'object') {
+        if (fetch_pending_verification_response.status !== 200 || !fetch_pending_verification_response.data) {
             await message.channel.send({
                 embeds: [
                     new Discord.MessageEmbed({
@@ -156,28 +162,24 @@ module.exports = {
                     },
                 ],
             }).catch(console.warn);
+
             return;
         }
 
-        /* remove the verification context b/c it is no longer needed */
-        client.$.verification_contexts.delete(verification_context.verification_code);
-
-        const db_roblox_products = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_PRODUCTS_COLLECTION_NAME, {});
-
-        /** @type {Object<string, boolean>} */
-        const updated_user_products = {};
-        for (const db_roblox_product of db_roblox_products) {
-            updated_user_products[db_roblox_product.code] = false;
-        }
-
-        const existing_user_documents = await go_mongo_db.count(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
-            $or: [
-                { 'identity.discord_user_id': message.author.id },
-                { 'identity.roblox_user_id': verification_context.roblox_user_id },
-            ],
+        const update_pending_verification_response = await axios({
+            method: 'post',
+            url: 'https://api.inertia.lighting/v2/user/verification/context/update',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `InertiaAuthUserVerificationEndpoints ${process.env.API_BASE64_ENCODED_TOKEN_FOR_USER_VERIFICATION_ENDPOINTS}`,
+            },
+            data: {
+                verification_code: fetch_pending_verification_response.data.code,
+                discord_user_id: message.author.id,
+            },
         });
 
-        if (existing_user_documents > 0) {
+        if (update_pending_verification_response.status !== 200 || !update_pending_verification_response.data) {
             await message.channel.send({
                 embeds: [
                     new Discord.MessageEmbed({
@@ -191,26 +193,14 @@ module.exports = {
                             'Something went wrong while verifying your account!',
                             '',
                             'Debug Information:',
-                            `roblox_user_id (${verification_context.roblox_user_id}) already exists in the database!`,
+                            `roblox_user_id (${fetch_pending_verification_response.data.roblox_user_id}) already exists in the database!`,
                         ].join('\n'),
                     }),
                 ],
             }).catch(console.warn);
+
             return;
         }
-
-        const new_db_user_data = await generateNewUserDocument({
-            discord_user_id: message.author.id,
-            roblox_user_id: verification_context.roblox_user_id,
-        });
-
-        /* create the user in the database */
-        await go_mongo_db.add(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, [
-            {
-                ...new_db_user_data,
-                products: updated_user_products,
-            },
-        ]);
 
         /* inform the user */
         await message.channel.send({
