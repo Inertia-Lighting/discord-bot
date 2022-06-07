@@ -86,7 +86,7 @@ async function guildMemberRemoveLogger(member) {
                         value: `<t:${member_left_timestamp}:F> (<t:${member_left_timestamp}:R>)`,
                     }, {
                         name: 'Account stayed for',
-                        value: `${Math.floor((member_left_timestamp - member_joined_timestamp) / (1000 * 60 * 60 * 24))} days`,
+                        value: `${Math.floor((member_left_timestamp - member_joined_timestamp) / (60 * 60 * 24))} days`,
                     },
                 ],
             }),
