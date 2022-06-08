@@ -170,24 +170,34 @@ module.exports = {
             return;
         }
 
-        const update_pending_verification_response = await axios({
-            method: 'post',
-            url: 'https://api.inertia.lighting/v2/user/verification/context/update',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `InertiaAuthUserVerificationEndpoints ${process.env.API_BASE64_ENCODED_TOKEN_FOR_USER_VERIFICATION_ENDPOINTS}`,
-            },
-            data: {
-                verification_code: fetch_pending_verification_response.data.verification_code,
-                discord_user_id: message.author.id,
-            },
-        }).catch(error => {
-            console.warn(error);
+        try {
+            await axios({
+                method: 'post',
+                url: 'https://api.inertia.lighting/v2/user/verification/context/update',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `InertiaAuthUserVerificationEndpoints ${process.env.API_BASE64_ENCODED_TOKEN_FOR_USER_VERIFICATION_ENDPOINTS}`,
+                },
+                data: {
+                    verification_code: fetch_pending_verification_response.data.verification_code,
+                    discord_user_id: message.author.id,
+                },
+            });
 
-            return error;
-        });
+            await axios({
+                method: 'post',
+                url: 'https://api.inertia.lighting/v2/user/verification/context/submit',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `InertiaAuthUserVerificationEndpoints ${process.env.API_BASE64_ENCODED_TOKEN_FOR_USER_VERIFICATION_ENDPOINTS}`,
+                },
+                data: {
+                    verification_code: fetch_pending_verification_response.data.verification_code,
+                },
+            });
+        } catch (error) {
+            console.error(error);
 
-        if (update_pending_verification_response.status !== 200 || !update_pending_verification_response.data) {
             await message.channel.send({
                 embeds: [
                     new Discord.MessageEmbed({
