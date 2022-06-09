@@ -76,7 +76,7 @@ module.exports = {
                         title: 'Here\'s a list of all commands that you may use!',
                         description: [
                             `You can send \`${command_prefix}help [command name]\` to get info on a specific command!`,
-                            `\`\`\`${commands_visible_to_user_with_prefix.join('\n')}\`\`\``,
+                            `\`\`\`\n${commands_visible_to_user_with_prefix.join('\n')}\n\`\`\``,
                         ].join('\n'),
                     }),
                 ],

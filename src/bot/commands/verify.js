@@ -31,7 +31,7 @@ module.exports = {
      * @param {Object.<string, any>} args
      */
     async execute(message, args) {
-        const { command_prefix, command_args } = args;
+        const { command_args } = args;
 
         const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
             'identity.discord_user_id': message.author.id,
@@ -117,37 +117,15 @@ module.exports = {
             return; // don't allow the user to verify if they're already verified
         }
 
-        const verification_code_to_lookup = `${command_args[0]}`.trim();
+        const verification_code_to_lookup = `${command_args[0]}`.replace(/\s+/gi).trim();
 
-        const fetch_pending_verification_response = await axios({
-            method: 'post',
-            url: 'https://api.inertia.lighting/v2/user/verification/context/fetch',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `InertiaAuthUserVerificationEndpoints ${process.env.API_BASE64_ENCODED_TOKEN_FOR_USER_VERIFICATION_ENDPOINTS}`,
-            },
-            data: {
-                verification_code: verification_code_to_lookup,
-            },
-            validateStatus: (status) => status < 500,
-        });
-
-        if (fetch_pending_verification_response.status !== 200 || !fetch_pending_verification_response.data) {
+        if (verification_code_to_lookup.length === 0) {
             await message.channel.send({
                 embeds: [
                     new Discord.MessageEmbed({
                         color: 0xFFFF00,
-                        author: {
-                            iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                            name: `${client.user.username} | Verification System`,
-                        },
-                        title: 'Invalid verification code!',
-                        description: [
-                            'This command is used to verify your roblox account in our database.',
-                            '',
-                            'You need to use the verification code given to you by our Product Hub!',
-                            `Example: \`${command_prefix}verify CODE_HERE\``,
-                        ].join('\n'),
+                        title: 'Missing Verification Code',
+                        description: 'You need to provide a verification code to verify!',
                     }),
                 ],
                 components: [
@@ -168,6 +146,58 @@ module.exports = {
             return;
         }
 
+        let fetch_pending_verification_response;
+        try {
+            fetch_pending_verification_response = await axios({
+                method: 'post',
+                url: 'https://api.inertia.lighting/v2/user/verification/context/fetch',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `InertiaAuthUserVerificationEndpoints ${process.env.API_BASE64_ENCODED_TOKEN_FOR_USER_VERIFICATION_ENDPOINTS}`,
+                },
+                data: {
+                    verification_code: verification_code_to_lookup,
+                },
+                validateStatus: (status) => [ 200, 404 ].includes(status),
+            });
+        } catch (error) {
+            console.error(error);
+
+            await message.channel.send({
+                embeds: [
+                    new Discord.MessageEmbed({
+                        color: 0xFFFF00,
+                        description: [
+                            'There was an error while verifying your account.',
+                            'Please contact our support staff for assistance!',
+                        ].join('\n'),
+                    }),
+                ],
+            }).catch(console.warn);
+
+            return;
+        }
+
+        if (fetch_pending_verification_response.status === 404) {
+            await message.channel.send({
+                embeds: [
+                    new Discord.MessageEmbed({
+                        color: 0xFFFF00,
+                        author: {
+                            iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
+                            name: `${client.user.username} | Verification System`,
+                        },
+                        title: 'Unknown Verification Code',
+                        description: [
+                            'That verification code was not recognized!',
+                        ].join('\n'),
+                    }),
+                ],
+            }).catch(console.warn);
+
+            return;
+        }
+
         try {
             await axios({
                 method: 'post',
@@ -180,7 +210,7 @@ module.exports = {
                     verification_code: fetch_pending_verification_response.data.verification_code,
                     discord_user_id: message.author.id,
                 },
-                validateStatus: (status) => status < 500,
+                validateStatus: (status) => status === 200,
             });
 
             await axios({
@@ -193,7 +223,7 @@ module.exports = {
                 data: {
                     verification_code: fetch_pending_verification_response.data.verification_code,
                 },
-                validateStatus: (status) => status < 500,
+                validateStatus: (status) => status === 200,
             });
         } catch (error) {
             console.error(error);
@@ -209,9 +239,11 @@ module.exports = {
                         title: 'Failed to verify!',
                         description: [
                             'Something went wrong while verifying your account!',
-                            '',
-                            'Debug Information:',
-                            `roblox_user_id (${fetch_pending_verification_response.data.roblox_user_id}) already exists in the database!`,
+                            ...(axios.isAxiosError(error) ? [
+                                '',
+                                'Debug Information:',
+                                `\`\`\`js\n${error.response?.data ?? 'Unknown error, please contact support!'}\n\`\`\``,
+                            ] : [])
                         ].join('\n'),
                     }),
                 ],
@@ -231,10 +263,10 @@ module.exports = {
                     },
                     title: 'You have successfully verified!',
                     description: [
-                        'Go back to the Product Hub to continue.',
+                        'You can now return to the Product Hub to continue.',
                         '',
                         'Make sure to stay in our Discord server after making a purchase.',
-                        'Our whitelist requires you to be in our Discord server for it to work.',
+                        'Our whitelist requires you to be in our Discord server.',
                     ].join('\n'),
                 }),
             ],
