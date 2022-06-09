@@ -51,11 +51,11 @@ async function guildMemberMessageUpdateLogger(old_message, new_message) {
                         inline: false,
                     }, {
                         name: 'Before',
-                        value: string_ellipses(old_message.content, 2048),
+                        value: old_message.content.length > 0 ? string_ellipses(Discord.Util.escapeMarkdown(old_message.content), 2048) : '\`n/a\`',
                         inline: false,
                     }, {
                         name: 'After',
-                        value: string_ellipses(new_message.content, 2048),
+                        value: new_message.content.length > 0 ? string_ellipses(Discord.Util.escapeMarkdown(new_message.content), 2048) : '\`n/a\`',
                         inline: false,
                     },
                 ],
@@ -95,7 +95,7 @@ async function guildMemberMessageDeleteLogger(message) {
                         value: `<t:${message_delete_timestamp}:F> (<t:${message_delete_timestamp}:R>)`,
                     }, {
                         name: 'Content',
-                        value: string_ellipses(message.content, 2048),
+                        value: message.content.length > 0 ? string_ellipses(Discord.Util.escapeMarkdown(message.content), 2048) : '\`n/a\`',
                         inline: false,
                     },
                 ],

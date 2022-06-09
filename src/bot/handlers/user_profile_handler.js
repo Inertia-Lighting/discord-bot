@@ -88,10 +88,14 @@ async function userProfileHandler(deferred_interaction_or_message, discord_user_
         method: 'get',
         url: `https://users.roblox.com/v1/users/${encodeURIComponent(db_user_data.identity.roblox_user_id)}`,
         timeout: 30_000, // 30 seconds
+        validateStatus: (status) => status === 200,
     }).catch(error => {
         console.trace(error);
         return {
-            data: {},
+            data: {
+                name: 'Unknown User',
+                displayName: 'Unknown User',
+            },
         };
     });
 

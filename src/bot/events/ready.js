@@ -36,8 +36,18 @@ const setProductPricesInDB = async () => {
     for (const db_roblox_product of db_roblox_products) {
         let product_price_in_robux;
         try {
-            const response = await axios.get(`https://api.roblox.com/marketplace/productDetails?productId=${encodeURIComponent(db_roblox_product.roblox_product_id)}`);
+            const response = await axios({
+                method: 'get',
+                url: `https://api.roblox.com/marketplace/productDetails?productId=${encodeURIComponent(db_roblox_product.roblox_product_id)}`,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                validateStatus: (status) => status === 200,
+            });
+
             product_price_in_robux = response?.data?.PriceInRobux ?? null;
+
+            if (!product_price_in_robux) throw new Error('Failed to fetch product price from Roblox!');
         } catch {
             console.warn(`Unable to fetch price for product: ${db_roblox_product.code}; skipping product!`);
             continue; // skip this product since the price cannot be fetched

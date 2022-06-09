@@ -79,8 +79,10 @@ module.exports = {
                     case 'verify_command_user_profile_button': {
                         if (!message_component.isButton()) return;
 
+                        await message_component.deferReply({ ephemeral: true });
+
                         if (message_component.user.id !== message.author.id) {
-                            await message_component.reply({
+                            await message_component.followUp({
                                 ephemeral: true,
                                 embeds: [
                                     new Discord.MessageEmbed({
@@ -89,10 +91,9 @@ module.exports = {
                                     }),
                                 ],
                             }).catch(console.warn);
+
                             return;
                         }
-
-                        await message_component.deferReply({ ephemeral: true });
 
                         await disableMessageComponents(bot_msg).catch(console.warn);
 
@@ -128,10 +129,7 @@ module.exports = {
             data: {
                 verification_code: verification_code_to_lookup,
             },
-        }).catch(error => {
-            console.warn(error);
-
-            return error;
+            validateStatus: (status) => status < 500,
         });
 
         if (fetch_pending_verification_response.status !== 200 || !fetch_pending_verification_response.data) {
@@ -182,6 +180,7 @@ module.exports = {
                     verification_code: fetch_pending_verification_response.data.verification_code,
                     discord_user_id: message.author.id,
                 },
+                validateStatus: (status) => status < 500,
             });
 
             await axios({
@@ -194,6 +193,7 @@ module.exports = {
                 data: {
                     verification_code: fetch_pending_verification_response.data.verification_code,
                 },
+                validateStatus: (status) => status < 500,
             });
         } catch (error) {
             console.error(error);
