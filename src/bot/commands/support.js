@@ -654,7 +654,7 @@ module.exports = {
                                 max_values: 1,
                                 options: support_categories.map(({ id, name, description }) => ({
                                     label: name,
-                                    description: description.slice(0, 50), // truncate for discord
+                                    description: description.slice(0, 100), // truncate for discord
                                     value: id,
                                 })),
                             },
