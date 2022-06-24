@@ -14,7 +14,7 @@ const guild_staff_role_id = process.env.BOT_STAFF_ROLE_ID;
 const guild_moderator_role_id = process.env.BOT_MODERATOR_ROLE_ID;
 const guild_admin_role_id = process.env.BOT_ADMIN_ROLE_ID;
 const guild_team_leaders_role_id = process.env.BOT_TEAM_LEADERS_ROLE_ID;
-const guild_board_of_directors_role_id = process.env.BOT_BOARD_OF_DIRECTORS_ROLE_ID;
+const guild_directors_role_id = process.env.BOT_DIRECTORS_ROLE_ID;
 const guild_founders_role_id = process.env.BOT_FOUNDERS_ROLE_ID;
 
 //---------------------------------------------------------------------------------------------------------------//
@@ -37,7 +37,7 @@ const command_permission_levels = {
     MODERATORS: 3,
     ADMINS: 4,
     TEAM_LEADERS: 5,
-    BOARD_OF_DIRECTORS: 6,
+    DIRECTORS: 6,
     FOUNDERS: 7,
 };
 
@@ -62,8 +62,8 @@ function getUserPermissionLevel(guild_member) {
         user_permission_level = command_permission_levels.TEAM_LEADERS;
     }
 
-    if (guild_member.roles.cache.has(guild_board_of_directors_role_id)) {
-        user_permission_level = command_permission_levels.BOARD_OF_DIRECTORS;
+    if (guild_member.roles.cache.has(guild_directors_role_id)) {
+        user_permission_level = command_permission_levels.DIRECTORS;
     }
 
     if (guild_member.roles.cache.has(guild_founders_role_id)) {
