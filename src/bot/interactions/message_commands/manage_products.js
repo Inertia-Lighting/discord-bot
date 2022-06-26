@@ -12,7 +12,6 @@ const { go_mongo_db } = require('../../../mongo/mongo.js');
 
 const {
     Discord,
-    client,
 } = require('../../discord_client.js');
 
 //---------------------------------------------------------------------------------------------------------------//
@@ -103,6 +102,7 @@ module.exports = {
                     embeds: [
                         new Discord.MessageEmbed({
                             color: 0xFF00FF,
+                            title: 'Inertia Lighting | Products Manager',
                             description: 'You aren\'t allowed to use this command!',
                         }),
                     ],
@@ -130,6 +130,7 @@ module.exports = {
                     embeds: [
                         new Discord.MessageEmbed({
                             color: 0xFFFF00,
+                            title: 'Inertia Lighting | Products Manager',
                             description: `${user_to_modify} does not exist in the database!`,
                         }),
                     ],
@@ -145,6 +146,7 @@ module.exports = {
                     embeds: [
                         new Discord.MessageEmbed({
                             color: 0xFFFF00,
+                            title: 'Inertia Lighting | Products Manager',
                             description: `\`${potential_product_code}\` is not a valid product code!`,
                         }),
                     ],
@@ -169,10 +171,7 @@ module.exports = {
                     embeds: [
                         new Discord.MessageEmbed({
                             color: 0xFF0000,
-                            author: {
-                                iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                                name: 'Inertia Lighting | Products Manager',
-                            },
+                            title: 'Inertia Lighting | Products Manager',
                             description: 'An error occurred while modifying the user\'s products!',
                         }),
                     ],
@@ -181,14 +180,22 @@ module.exports = {
                 return;
             }
 
+            const logging_channel = await interaction.guild.channels.fetch(process.env.BOT_LOGGING_PRODUCTS_MANAGER_CHANNEL_ID);
+            logging_channel.send({
+                embeds: [
+                    new Discord.MessageEmbed({
+                        color: action_to_perform === 'add' ? 0x00FF00 : 0xFF0000,
+                        title: 'Inertia Lighting | Products Manager',
+                        description: `${interaction.user} ${action_to_perform === 'add' ? 'added' : 'removed'} \`${db_roblox_product.code}\` ${action_to_perform === 'add' ? 'to' : 'from'} ${user_to_modify}.`,
+                    }),
+                ],
+            }).catch(console.warn);
+
             interaction.editReply({
                 embeds: [
                     new Discord.MessageEmbed({
                         color: action_to_perform === 'add' ? 0x00FF00 : 0xFF0000,
-                        author: {
-                            iconURL: `${client.user.displayAvatarURL({ dynamic: true })}`,
-                            name: 'Inertia Lighting | Products Manager',
-                        },
+                        title: 'Inertia Lighting | Products Manager',
                         description: `${action_to_perform === 'add' ? 'Added' : 'Removed'} \`${db_roblox_product.code}\` ${action_to_perform === 'add' ? 'to' : 'from'} ${user_to_modify}.`,
                     }),
                 ],
