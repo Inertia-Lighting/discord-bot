@@ -42,7 +42,7 @@
     "zlib-sync": "0.1.7"
   },
   "devDependencies": {
-    "eslint": "8.18.0",
+    "eslint": "8.19.0",
     "husky": "8.0.1",
     "is-ci": "3.0.1",
     "run-script-os": "1.1.6"
