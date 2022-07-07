@@ -1,6 +1,6 @@
 {
-  "name": "discord-bot-api-server",
-  "version": "2.0.0",
+  "name": "discord-bot",
+  "version": "3.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -8,30 +8,27 @@
     "lint": "npx eslint .",
     "prepare": "is-ci || husky install",
     "title": "run-script-os",
-    "title:windows": "title Inertia Lighting Discord Bot Api Server",
+    "title:windows": "title Inertia Lighting Discord Bot",
     "title:default": "",
     "start": "npm run title && node --trace-warnings index.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Inertia-Lighting/discord-bot-api-server.git"
+    "url": "git+https://github.com/Inertia-Lighting/discord-bot.git"
   },
   "keywords": [],
   "author": "Inertia Lighting",
   "license": "UNLICENSED",
   "bugs": {
-    "url": "https://github.com/Inertia-Lighting/discord-bot-api-server/issues"
+    "url": "https://github.com/Inertia-Lighting/discord-bot/issues"
   },
-  "homepage": "https://github.com/Inertia-Lighting/discord-bot-api-server#readme",
+  "homepage": "https://github.com/Inertia-Lighting/discord-bot#readme",
   "dependencies": {
     "axios": "0.27.2",
-    "bcryptjs": "2.4.3",
-    "body-parser": "1.20.0",
     "bufferutil": "4.0.6",
     "discord.js": "13.8.1",
     "dotenv": "16.0.1",
     "erlpack": "0.1.4",
-    "express": "4.18.1",
     "go-mongo-db": "github:Inertia-Lighting/go-mongo-db#v1.2.0-stable",
     "moment-timezone": "0.5.34",
     "node-gyp": "8.4.1",

@@ -1,6 +1,6 @@
 # Inertia Lighting Discord Bot
 
-[![CodeQL](https://github.com/Inertia-Lighting/discord-bot-api-server/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/Inertia-Lighting/discord-bot-api-server/actions/workflows/codeql-analysis.yml)
+[![CodeQL](https://github.com/Inertia-Lighting/discord-bot/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/Inertia-Lighting/discord-bot/actions/workflows/codeql-analysis.yml)
 
 ## About
 
@@ -11,4 +11,5 @@ Any attempt to use it without explicit permission is prohibited.
 Assume that all works contained in this repository are copyrighted and protected under law.
 
 ## Copyright
+
 Copyright &copy; Inertia Lighting | All Rights Reserved
