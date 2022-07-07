@@ -114,6 +114,7 @@ module.exports = {
             const user_to_modify = interaction.options.getUser('for', true);
             const action_to_perform = interaction.options.getString('action', true);
             const potential_product_code = interaction.options.getString('product_code', true);
+            const reason = interaction.options.getString('reason', true) || 'No reason was specified.';
 
             /* find the user in the database */
             const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
@@ -187,6 +188,12 @@ module.exports = {
                         color: action_to_perform === 'add' ? 0x00FF00 : 0xFF0000,
                         title: 'Inertia Lighting | Products Manager',
                         description: `${interaction.user} ${action_to_perform === 'add' ? 'added' : 'removed'} \`${db_roblox_product.code}\` ${action_to_perform === 'add' ? 'to' : 'from'} ${user_to_modify}.`,
+                        fields: [
+                            {
+                                name: 'Reason',
+                                value: `${reason}`,
+                            },
+                        ],
                     }),
                 ],
             }).catch(console.warn);
@@ -197,6 +204,12 @@ module.exports = {
                         color: action_to_perform === 'add' ? 0x00FF00 : 0xFF0000,
                         title: 'Inertia Lighting | Products Manager',
                         description: `${action_to_perform === 'add' ? 'Added' : 'Removed'} \`${db_roblox_product.code}\` ${action_to_perform === 'add' ? 'to' : 'from'} ${user_to_modify}.`,
+                        fields: [
+                            {
+                                name: 'Reason',
+                                value: `${reason}`,
+                            },
+                        ],
                     }),
                 ],
             }).catch(console.warn);
