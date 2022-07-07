@@ -38,6 +38,7 @@ module.exports = {
         const user_to_modify = interaction.options.getUser('for', true);
         const action_to_perform = interaction.options.getString('action', true);
         const amount_to_modify_by = interaction.options.getInteger('amount', true);
+        const reason = interaction.options.getString('reason', true) || 'No reason was specified.';
 
         /* find the user in the database */
         const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME, process.env.MONGO_USERS_COLLECTION_NAME, {
@@ -189,6 +190,12 @@ module.exports = {
                         ),
                         `New karma amount: \`${updated_karma_amount}\``,
                     ].join('\n'),
+                    fields: [
+                        {
+                            name: 'Reason',
+                            value: `${reason}`,
+                        },
+                    ],
                 }),
             ],
         }).catch(console.warn);
