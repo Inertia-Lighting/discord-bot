@@ -513,7 +513,6 @@ async function createTranscriptForSupportTicket(support_ticket_channel) {
                 })) ?? null,
                 attachments: message.attachments.map(attachment => ({
                     name: attachment.name ?? null,
-                    size: attachment.size ?? null,
                     url: attachment.url ?? null,
                 })) ?? null,
                 stickers: message.stickers.map(sticker => ({
@@ -547,7 +546,7 @@ async function createTranscriptForSupportTicket(support_ticket_channel) {
                 id: support_ticket_owner_id ?? null,
             },
         },
-        messages: transcript_messages ?? null,
+        messages: transcript_messages?.reverse() ?? null, // reverse the array to get the messages in order of creation
     };
 }
 
