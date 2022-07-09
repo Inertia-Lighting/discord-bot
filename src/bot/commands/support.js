@@ -568,15 +568,12 @@ async function closeSupportTicketChannel(support_channel, save_transcript, membe
         const support_ticket_owner_id = support_channel.name.match(/(?!.*\-)?([0-9])+/i)?.[0];
 
         const support_category = support_categories.find(support_category => support_category.id === support_ticket_topic_name.toUpperCase());
-
         const support_ticket_owner = await client.users.fetch(support_ticket_owner_id);
 
-        const all_messages_in_channel = await support_channel.messages.fetch({ limit: 100 }); // 100 is the max
-        const all_messages_in_channel_processed = Array.from(all_messages_in_channel.values()).reverse();
-
-        const all_channel_participants = Array.from(new Set(all_messages_in_channel_processed.map(msg => msg.author.id)));
-
         const transcript_data = await createTranscriptForSupportTicket(support_channel);
+
+        const channel_participant_ids = new Set(transcript_data.messages.map(msg => msg.author.id));
+
         const temp_file_path = path.join(process.cwd(), 'temporary', `transcript_${support_channel.name}.json`);
         fs.writeFileSync(temp_file_path, JSON.stringify(transcript_data, null, 2), { flag: 'w' });
 
@@ -614,7 +611,7 @@ async function closeSupportTicketChannel(support_channel, save_transcript, membe
                     inline: true,
                 }, {
                     name: 'Participants',
-                    value: `${all_channel_participants.map(user_id => `<@!${user_id}>`).join(' - ')}`,
+                    value: `${Array.from(channel_participant_ids).map(user_id => `<@!${user_id}>`).join(' - ')}`,
                     inline: false,
                 },
             ],
