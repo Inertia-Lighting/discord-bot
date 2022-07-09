@@ -50,7 +50,13 @@ async function interactionHandler(unknown_interaction) {
     });
 
     /* check if the interaction exists */
-    if (!client_interaction) return;
+    if (!client_interaction) {
+        console.warn(`Unknown interaction: ${unknown_interaction}`);
+
+        unknown_interaction?.reply('Sorry but this command doesn\'t work right now!');
+
+        return;
+    }
 
     /* interaction logging */
     console.info({
