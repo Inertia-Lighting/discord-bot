@@ -168,7 +168,7 @@ const support_categories = new Discord.Collection([
                         '\`   \` Click on the \`Select All\` button.',
                         '\`   \` Right-click the text again.',
                         '\`   \` Click on the \`Copy\` button.',
-                        '\`   \` Use a service like [Pastebin](https://pastebin.com/) to upload the text to.',
+                        '\`   \` Use a service like [Source Bin](https://sourceb.in/) or [Pastebin](https://pastebin.com/) to upload the text to.',
                         '\`   \` Send us the link here.',
                         '',
                         '\`(7)\` **What are you having issues with?**',
