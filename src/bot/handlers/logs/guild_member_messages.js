@@ -79,7 +79,7 @@ async function guildMemberMessageDeleteLogger(message) {
     await logging_channel.send({
         embeds: [
             new Discord.MessageEmbed({
-                color: 0xFFFF00,
+                color: 0xFF5500,
                 description: `**A message sent by <@${message.author.id}> in <#${message.channelId}> was deleted.**`,
                 fields: [
                     {
