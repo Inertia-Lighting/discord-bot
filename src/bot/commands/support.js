@@ -32,6 +32,7 @@ const support_tickets_transcripts_channel_id = process.env.BOT_SUPPORT_TICKETS_T
 
 const support_instructions_reminder_timeout_in_ms = 5 * 60_000; // 5 minutes
 const support_instructions_collector_timeout_in_ms = 60 * 60_000; // 1 hour
+const support_ticket_cleanup_timeout_in_ms = 10_000; // 10 seconds
 const user_feedback_survey_collector_timeout_in_ms = 30 * 60_000; // 30 minutes
 
 //---------------------------------------------------------------------------------------------------------------//
@@ -422,6 +423,134 @@ async function createSupportTicketChannel(guild, guild_member, support_category)
 }
 
 /**
+ * @typedef {{
+ *  id: string | null,
+ *  type: string | null,
+ *  system: boolean | null,
+ *  nonce: string | null,
+ *  author: {
+ *     id: string | null,
+ *     display_name: string | null,
+ *  },
+ *  created_timestamp: number | null,
+ *  edited_timestamp: number | null,
+ *  content: string | null,
+ *  clean_content: string | null,
+ *  embeds: {
+ *   type: string | null,
+ *   title: string | null,
+ *   description: string | null,
+ *   fields: {
+ *      name: string | null,
+ *      value: string | null,
+ *   }[],
+ *   thumbnail_url: string | null,
+ *   image_url: string | null,
+ *  } | null,
+ *  attachments: unknown[] | null,
+ *  stickers: unknown[] | null,
+ *  components: unknown[] | null,
+ * }} TranscriptMessageData
+ *
+ * @typedef {{
+ *  metadata: {
+ *   channel: {
+ *      id: string | null,
+ *      name: string | null,
+ *      topic: string | null,
+ *   },
+ *   user: {
+ *      id: string | null,
+ *   },
+ *  },
+ */
+
+/**
+ * Creates a JSON-transcript from a support ticket channel
+ * @param {Discord.TextChannel} support_ticket_channel
+ */
+async function createTranscriptForSupportTicket(support_ticket_channel) {
+    /** @type {TranscriptMessageData[]} */
+    const transcript_messages = [];
+
+    let before_message_id;
+    do {
+        const messages = await support_ticket_channel.messages.fetch({
+            before: before_message_id ?? undefined,
+            limit: 100,
+        });
+
+        if (messages.size === 0) break;
+
+        const oldest_message_id = messages.last().id ?? undefined;
+
+        if (before_message_id && oldest_message_id === before_message_id) break;
+
+        for (const [ message_id, message ] of messages) {
+            transcript_messages.push({
+                id: message_id ?? null,
+                type: message.type ?? null,
+                system: message.system ?? null,
+                nonce: message.nonce ?? null,
+                author: {
+                    id: message.author.id ?? null,
+                    display_name: message.author.displayName ?? null,
+                },
+                created_timestamp: message.createdTimestamp ?? null,
+                edited_timestamp: message.editedTimestamp ?? null,
+                content: message.content ?? null,
+                clean_content: message.cleanContent ?? null,
+                embeds: message.embeds.map(embed => ({
+                    type: embed.type ?? null,
+                    title: embed.title ?? null,
+                    description: embed.description ?? null,
+                    fields: embed.fields.map(field => ({
+                        name: field.name ?? null,
+                        value: field.value ?? null,
+                    })),
+                    thumbnail_url: embed.thumbnail?.url ?? null,
+                    image_url: embed.image?.url ?? null,
+                })) ?? null,
+                attachments: message.attachments.map(attachment => ({
+                    name: attachment.name ?? null,
+                    url: attachment.url ?? null,
+                })) ?? null,
+                stickers: message.stickers.map(sticker => ({
+                    name: sticker.name ?? null,
+                    url: sticker.url ?? null,
+                })) ?? null,
+                components: message.components.map(component => ({
+                    type: component.type ?? null,
+                    data: component.data ?? null,
+                })) ?? null,
+            });
+        }
+
+        before_message_id = oldest_message_id;
+
+        await Timer(2_500); // prevent rate-limiting
+    } while (before_message_id);
+
+    const support_ticket_owner_id = support_ticket_channel.name.match(/(?!.*\-)?([0-9])+/i)?.[0];
+    if (!support_ticket_owner_id) throw new Error('Unable to find the support ticket owner id!');
+
+    return {
+        metadata: {
+            channel: {
+                id: support_ticket_channel.id ?? null,
+                name: support_ticket_channel.name ?? null,
+                topic: support_ticket_channel.topic ?? null,
+                created_timestamp: support_ticket_channel.createdTimestamp ?? null,
+            },
+            user: {
+                id: support_ticket_owner_id ?? null,
+            },
+        },
+        messages: transcript_messages?.reverse() ?? null, // reverse the array to get the messages in order of creation
+    };
+}
+
+/**
  * Closes a support ticket channel
  * @param {Discord.TextChannel} support_channel
  * @param {Boolean} save_transcript
@@ -431,7 +560,7 @@ async function createSupportTicketChannel(guild, guild_member, support_category)
  */
 async function closeSupportTicketChannel(support_channel, save_transcript, member_that_closed_ticket, send_feedback_survey=false) {
     await support_channel.send({
-        content: `${member_that_closed_ticket ? `${member_that_closed_ticket},` : 'automatically'} closing support ticket in 5 seconds...`,
+        content: `${member_that_closed_ticket ? `${member_that_closed_ticket},` : 'automatically'} closing support ticket in 10 seconds...`,
     }).catch(console.warn);
 
     if (save_transcript && member_that_closed_ticket) {
@@ -439,16 +568,14 @@ async function closeSupportTicketChannel(support_channel, save_transcript, membe
         const support_ticket_owner_id = support_channel.name.match(/(?!.*\-)?([0-9])+/i)?.[0];
 
         const support_category = support_categories.find(support_category => support_category.id === support_ticket_topic_name.toUpperCase());
-
         const support_ticket_owner = await client.users.fetch(support_ticket_owner_id);
 
-        const all_messages_in_channel = await support_channel.messages.fetch({ limit: 100 }); // 100 is the max
-        const all_messages_in_channel_processed = Array.from(all_messages_in_channel.values()).reverse();
+        const transcript_data = await createTranscriptForSupportTicket(support_channel);
 
-        const all_channel_participants = Array.from(new Set(all_messages_in_channel_processed.map(msg => msg.author.id)));
+        const channel_participant_ids = new Set(transcript_data.messages.map(msg => msg.author.id));
 
         const temp_file_path = path.join(process.cwd(), 'temporary', `transcript_${support_channel.name}.json`);
-        fs.writeFileSync(temp_file_path, JSON.stringify(all_messages_in_channel_processed, null, 2), { flag: 'w' });
+        fs.writeFileSync(temp_file_path, JSON.stringify(transcript_data, null, 2), { flag: 'w' });
 
         const createTranscriptAttachment = () => {
             const temp_file_read_stream = fs.createReadStream(temp_file_path);
@@ -484,7 +611,7 @@ async function closeSupportTicketChannel(support_channel, save_transcript, membe
                     inline: true,
                 }, {
                     name: 'Participants',
-                    value: `${all_channel_participants.map(user_id => `<@!${user_id}>`).join(' - ')}`,
+                    value: `${Array.from(channel_participant_ids).map(user_id => `<@!${user_id}>`).join(' - ')}`,
                     inline: false,
                 },
             ],
@@ -604,7 +731,7 @@ async function closeSupportTicketChannel(support_channel, save_transcript, membe
         fs.unlinkSync(temp_file_path);
     }
 
-    await Timer(5000); // wait 5 seconds before deleting the channel
+    await Timer(support_ticket_cleanup_timeout_in_ms); // wait 10 seconds before deleting the channel
 
     await support_channel.delete().catch(console.warn);
 
