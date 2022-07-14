@@ -50,7 +50,11 @@ async function interactionHandler(unknown_interaction) {
     });
 
     /* check if the interaction exists */
-    if (!client_interaction) {
+    if (
+        !client_interaction &&
+        unknown_interaction.type === 'APPLICATION_COMMAND' &&
+        unknown_interaction.command.type === 'CHAT_INPUT'
+    ) {
         console.warn(`Unknown interaction: ${unknown_interaction}`);
 
         unknown_interaction?.reply('Sorry but this command doesn\'t work right now!');
