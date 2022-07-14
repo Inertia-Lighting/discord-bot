@@ -53,7 +53,7 @@ async function interactionHandler(unknown_interaction) {
     if (
         !client_interaction
     ) {
-        console.warn(`Unknown interaction: ${unknown_interaction}`);
+        console.warn('Unknown interaction:', { unknown_interaction });
 
         if (
             unknown_interaction.type === 'APPLICATION_COMMAND' &&
