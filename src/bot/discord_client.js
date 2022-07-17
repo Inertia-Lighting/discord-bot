@@ -46,7 +46,6 @@ const client = new Discord.Client({
 
 client.$ = {
     commands: new Discord.Collection(),
-    interactions: new Discord.Collection(),
 };
 
 //---------------------------------------------------------------------------------------------------------------//

@@ -6,7 +6,7 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-const { client } = require('../discord_client.js');
+const { interactions } = require('../common/interaction.js');
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -27,24 +27,39 @@ const { client } = require('../discord_client.js');
  */
 async function interactionHandler(unknown_interaction) {
     /** @type {CustomInteraction?} */
-    const client_interaction = client.$.interactions.find(client_interaction => {
-        const unknown_interaction_identifier = unknown_interaction.type === 'MESSAGE_COMPONENT' ? (
-            unknown_interaction.customId
-        ) : (
-            unknown_interaction.type === 'APPLICATION_COMMAND' ? (
-                unknown_interaction.commandName
-            ) : (
-                unknown_interaction.type === 'APPLICATION_COMMAND_AUTOCOMPLETE' ? (
-                    unknown_interaction.commandName
-                ) : (
-                    unknown_interaction.type === 'PING' ? (
-                        unknown_interaction.id
-                    ) : (
-                        null
-                    )
-                )
-            )
-        );
+    const client_interaction = interactions.find(client_interaction => {
+        let unknown_interaction_identifier;
+        switch (unknown_interaction.type) {
+            case 'MESSAGE_COMPONENT': {
+                unknown_interaction_identifier = unknown_interaction.customId;
+                break;
+            }
+
+            case 'MODAL_SUBMIT': {
+                unknown_interaction_identifier = unknown_interaction.customId;
+                break;
+            }
+
+            case 'APPLICATION_COMMAND': {
+                unknown_interaction_identifier = unknown_interaction.commandName;
+                break;
+            }
+
+            case 'APPLICATION_COMMAND_AUTOCOMPLETE': {
+                unknown_interaction_identifier = unknown_interaction.commandName;
+                break;
+            }
+
+            case 'PING': {
+                unknown_interaction_identifier = unknown_interaction.id;
+                break;
+            }
+
+            default: {
+                unknown_interaction_identifier = undefined;
+                break;
+            }
+        }
 
         return client_interaction.identifier === unknown_interaction_identifier;
     });
@@ -59,7 +74,7 @@ async function interactionHandler(unknown_interaction) {
             unknown_interaction.type === 'APPLICATION_COMMAND' &&
             unknown_interaction.command.type === 'CHAT_INPUT'
         ) {
-            unknown_interaction?.reply('Sorry but this command doesn\'t work right now!');
+            unknown_interaction.reply('Sorry but this command doesn\'t work right now!');
         }
 
         return;
