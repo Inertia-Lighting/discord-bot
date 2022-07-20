@@ -26,7 +26,7 @@
   "dependencies": {
     "axios": "0.27.2",
     "bufferutil": "4.0.6",
-    "discord.js": "13.8.1",
+    "discord.js": "14.0.3",
     "dotenv": "16.0.1",
     "erlpack": "0.1.4",
     "go-mongo-db": "github:Inertia-Lighting/go-mongo-db#v1.2.0-stable",
