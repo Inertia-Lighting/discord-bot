@@ -12,6 +12,7 @@ const { client } = require('../discord_client.js');
 
 const { automatedQuickSupportHandler } = require('../handlers/automated_quick_support_handler.js');
 const { suggestionsCategoryHandler } = require('../handlers/suggestions_category_handler.js');
+const { oneWordStoryChannelHandler } = require('../handlers/one_word_story_channel_handler.js');
 const { commandHandler } = require('../handlers/command_handler.js');
 
 //---------------------------------------------------------------------------------------------------------------//
@@ -19,6 +20,8 @@ const { commandHandler } = require('../handlers/command_handler.js');
 const command_prefix = process.env.BOT_COMMAND_PREFIX;
 
 const suggestions_category_id = process.env.BOT_SUGGESTIONS_CATEGORY_ID;
+
+const one_word_story_channel_id = process.env.BOT_ONE_WORD_STORY_CHANNEL_ID;
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -34,6 +37,12 @@ module.exports = {
         /* handle messages sent in suggestions channels */
         if (message.channel.parent?.id === suggestions_category_id) {
             suggestionsCategoryHandler(message);
+            return;
+        }
+
+        /* handle messages sent in the one-word-story channel */
+        if (message.channel.id === one_word_story_channel_id) {
+            oneWordStoryChannelHandler(message);
             return;
         }
 
