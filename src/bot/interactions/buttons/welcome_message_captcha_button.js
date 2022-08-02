@@ -6,6 +6,8 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
+const { Timer } = require('../../../utilities');
+
 const { Discord, client } = require('../../discord_client.js');
 
 //---------------------------------------------------------------------------------------------------------------//
@@ -52,6 +54,9 @@ module.exports = {
         } catch (error) {
             console.trace('Failed to give new-server-member roles to the member:', error);
         }
+
+        /* wait 1 second to avoid any potential race conditions */
+        await Timer(1_000);
 
         /* remove the new-to-the-server roles from the user */
         try {
