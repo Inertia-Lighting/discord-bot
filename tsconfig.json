@@ -1,0 +1,35 @@
+{
+    "defaultSeverity": "error",
+    "compilerOptions": {
+        "baseUrl": ".",
+        "rootDir": "./src",
+        "outDir": "./dist",
+        "allowJs": true,
+        "checkJs": false,
+        "target": "ESNext",
+        "module": "CommonJS",
+        "moduleResolution": "Node",
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
+        "strictNullChecks": true,
+        "allowSyntheticDefaultImports": true,
+        "forceConsistentCasingInFileNames": true,
+        "strict": true,
+        "skipLibCheck": true,
+        "sourceMap": true,
+        "declaration": false,
+        "typeRoots": [
+            "@types"
+        ],
+        "paths": {
+            "@root/*": [ "src/*" ],
+        }
+    },
+    "exclude": [
+        "node_modules",
+        "dist"
+    ],
+    "include": [
+        "src",
+    ]
+}
