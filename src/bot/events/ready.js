@@ -53,7 +53,7 @@ const setProductPricesInDB = async () => {
             continue; // skip this product since the price cannot be fetched
         }
 
-        const parsed_product_price_in_robux = Number.parseInt(product_price_in_robux); // Robux can only be an integer
+        const parsed_product_price_in_robux = Number.parseInt(product_price_in_robux, 10); // Robux can only be an integer
 
         if (Number.isNaN(parsed_product_price_in_robux)) {
             console.warn(`Unable to parse price for product: ${db_roblox_product.code}; skipping product!`);

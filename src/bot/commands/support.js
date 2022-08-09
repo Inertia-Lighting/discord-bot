@@ -404,7 +404,7 @@ async function createSupportTicketChannel(guild, guild_member, support_category)
 
     const support_ticket_channel = await guild.channels.create(support_channel_name, {
         type: 'GUILD_TEXT',
-        topic: `${guild_member} | ${support_category.name} | Opened on <t:${Number.parseInt(Date.now() / 1000)}:F> | Staff may close this ticket using the \`close_ticket\` command.`,
+        topic: `${guild_member} | ${support_category.name} | Opened on <t:${Number.parseInt(Date.now() / 1000, 10)}:F> | Staff may close this ticket using the \`close_ticket\` command.`,
         parent: support_tickets_category,
         permissionOverwrites: [
             ...support_tickets_category.permissionOverwrites.cache.values(), // clone the parent channel permissions
@@ -595,11 +595,11 @@ async function closeSupportTicketChannel(support_channel, save_transcript, membe
                     inline: false,
                 }, {
                     name: 'Creation Timestamp',
-                    value: `<t:${Number.parseInt(support_channel.createdTimestamp / 1000)}:F>`,
+                    value: `<t:${Number.parseInt(support_channel.createdTimestamp / 1000, 10)}:F>`,
                     inline: false,
                 }, {
                     name: 'Closure Timestamp',
-                    value: `<t:${Number.parseInt(Date.now() / 1000)}:F>`,
+                    value: `<t:${Number.parseInt(Date.now() / 1000, 10)}:F>`,
                     inline: false,
                 }, {
                     name: 'Opened By',
@@ -865,7 +865,7 @@ module.exports = {
                             `please click the \"${ready_for_support_staff_button.label}\" button.`,
                             '',
                             'If you have not completed the instructions above;',
-                            `please complete them within ${Number.parseInt(time_remaining_to_press_button_in_ms / 1000 / 60)} minutes.`,
+                            `please complete them within ${Number.parseInt(time_remaining_to_press_button_in_ms / 1000 / 60, 10)} minutes.`,
                             `After completing the instructions, press the \"${ready_for_support_staff_button.label}\" button.`,
                         ].join('\n'),
                     }).catch(() => null);

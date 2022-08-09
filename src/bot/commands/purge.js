@@ -20,7 +20,7 @@ module.exports = {
     async execute(message, args) {
         const { command_args } = args;
 
-        const amount_of_messages_to_remove = Number.parseInt(command_args[0]);
+        const amount_of_messages_to_remove = Number.parseInt(command_args[0], 10);
 
         /* validate the amount of messages to purge */
         if (Number.isNaN(amount_of_messages_to_remove) || amount_of_messages_to_remove < 1 || amount_of_messages_to_remove > 100) {
@@ -47,5 +47,5 @@ module.exports = {
         await message.reply({
             content: `${message.author}, purged ${number_of_messages_removed} / ${amount_of_messages_to_remove} message(s) from the channel.`,
         }).catch(console.warn);
-    }
+    },
 };

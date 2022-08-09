@@ -305,7 +305,7 @@
             "single"
         ],
         "radix": [
-            "warn",
+            "error",
             "always"
         ],
         "require-atomic-updates": "error",

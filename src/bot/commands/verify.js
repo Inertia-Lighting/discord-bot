@@ -243,7 +243,7 @@ module.exports = {
                                 '',
                                 'Debug Information:',
                                 `\`\`\`js\n${error.response?.data ?? 'Unknown error, please contact support!'}\n\`\`\``,
-                            ] : [])
+                            ] : []),
                         ].join('\n'),
                     }),
                 ],
