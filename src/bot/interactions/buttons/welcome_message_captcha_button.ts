@@ -18,7 +18,7 @@ const new_to_the_server_role_ids = (process.env.BOT_NEW_TO_THE_SERVER_AUTO_ROLE_
 
 //---------------------------------------------------------------------------------------------------------------//
 
-module.exports = {
+export default {
     identifier: 'welcome_message_captcha_button',
     async execute(interaction: Discord.ButtonInteraction) {
         interaction.deferUpdate();

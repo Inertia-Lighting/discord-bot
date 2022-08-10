@@ -17,9 +17,8 @@ const allowed_role_ids: string[] = [
 
 //---------------------------------------------------------------------------------------------------------------//
 
-module.exports = {
+export default {
     identifier: 'automatic_roles_menu',
-    /** @param {Discord.SelectMenuInteraction} interaction */
     async execute(interaction: Discord.SelectMenuInteraction) {
         if (!interaction.inCachedGuild()) return;
 

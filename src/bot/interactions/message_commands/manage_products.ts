@@ -16,7 +16,7 @@ const database_support_staff_role_id = process.env.BOT_SUPPORT_STAFF_DATABASE_RO
 
 //---------------------------------------------------------------------------------------------------------------//
 
-module.exports = {
+export default {
     identifier: 'manage_products',
     async execute(
         interaction: Discord.AutocompleteInteraction | Discord.CommandInteraction

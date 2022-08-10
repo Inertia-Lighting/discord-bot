@@ -26,6 +26,6 @@ function disableMessageComponents(message: Discord.Message): Promise<Discord.Mes
 
 //---------------------------------------------------------------------------------------------------------------//
 
-module.exports = {
+export {
     disableMessageComponents,
 };

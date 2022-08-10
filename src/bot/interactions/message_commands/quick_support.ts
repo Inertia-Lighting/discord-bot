@@ -26,9 +26,8 @@ type QuickSupportTopics = QuickSupportTopic[];
 
 //---------------------------------------------------------------------------------------------------------------//
 
-module.exports = {
+export default {
     identifier: 'quick_support',
-    /** @param {Discord.AutocompleteInteraction|Discord.CommandInteraction} interaction */
     async execute(
         interaction: Discord.AutocompleteInteraction | Discord.CommandInteraction,
     ) {

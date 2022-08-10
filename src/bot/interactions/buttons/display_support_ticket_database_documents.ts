@@ -14,7 +14,7 @@ import { go_mongo_db } from '../../../mongo/mongo.js';
 
 //---------------------------------------------------------------------------------------------------------------//
 
-module.exports = {
+export default {
     identifier: 'display_support_ticket_database_documents',
     async execute(
         interaction: Discord.ButtonInteraction

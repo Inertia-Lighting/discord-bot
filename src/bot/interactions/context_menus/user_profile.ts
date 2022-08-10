@@ -12,7 +12,7 @@ import { userProfileHandler } from '../../handlers/user_profile_handler.js';
 
 //---------------------------------------------------------------------------------------------------------------//
 
-module.exports = {
+export default {
     identifier: 'User Profile',
     async execute(
         interaction: Discord.ContextMenuInteraction

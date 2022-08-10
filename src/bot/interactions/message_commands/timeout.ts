@@ -10,7 +10,7 @@ import { command_permission_levels, getUserPermissionLevel, user_is_not_allowed_
 
 //---------------------------------------------------------------------------------------------------------------//
 
-module.exports = {
+export default {
     identifier: 'timeout',
     async execute(interaction: Discord.CommandInteraction<'cached'>) {
         if (!interaction.isCommand()) return;

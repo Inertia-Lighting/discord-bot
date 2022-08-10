@@ -16,7 +16,12 @@ async function main() {
 
     /* register events */
     for (const event_file of event_files) {
-        const { default: bot_event } = await import(path.join(event_files_path, event_file));
+        const { default: bot_event } = await import(path.join(event_files_path, event_file)) as {
+            default: {
+                name: string;
+                handler: (...args: unknown[]) => Promise<void>;
+            },
+        };
         client.on(bot_event.name, bot_event.handler);
     }
 }
