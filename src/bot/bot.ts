@@ -11,7 +11,7 @@ import { client } from './discord_client.js';
 //---------------------------------------------------------------------------------------------------------------//
 
 async function main() {
-    const event_files_path = path.join(process.cwd(), './dist/bot/events/');
+    const event_files_path = path.join(process.cwd(), 'dist', 'bot', 'events');
     const event_files = fs.readdirSync(event_files_path).filter(file => file.endsWith('.js'));
 
     /* register events */

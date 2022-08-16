@@ -106,19 +106,27 @@ export default {
         console.log('----------------------------------------------------------------------------------------------------------------');
 
         /* register commands */
-        const command_files_path = path.join(process.cwd(), './dist/bot/commands/');
-        const command_files = fs.readdirSync(command_files_path).filter(file => file.endsWith('.js'));
+        const command_files_path = path.join(process.cwd(), 'dist', 'bot', 'commands');
+        const command_files = recursiveReadDirectory(command_files_path);
         for (const command_file of command_files) {
-            const bot_command = require(path.join(command_files_path, command_file));
+            if (!command_file.endsWith('.js')) continue;
+
+            const command_file_path = path.join(command_files_path, command_file);
+
+            const { default: bot_command } = await import(command_file_path);
+
             (client.$.commands as Discord.Collection<string, unknown>).set(bot_command.name, bot_command);
         }
 
         /* register interactions */
-        const interaction_files_path = path.join(process.cwd(), './dist/bot/interactions/');
+        const interaction_files_path = path.join(process.cwd(), 'dist', 'bot', 'interactions');
         const interaction_file_names = recursiveReadDirectory(interaction_files_path);
         for (const interaction_file_name of interaction_file_names) {
+            if (!interaction_file_name.endsWith('.js')) continue;
+
             const interaction_file_path = path.join(interaction_files_path, interaction_file_name);
-            const interaction = require(interaction_file_path);
+
+            const { default: interaction } = await import(interaction_file_path);
 
             const interaction_exists = (client.$.interactions as Discord.Collection<string, unknown>).has(interaction.identifier);
             if (interaction_exists) {
