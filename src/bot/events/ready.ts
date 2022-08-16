@@ -4,8 +4,6 @@
 
 import { DbProductData } from '@root/types/types.js';
 
-import fs from 'node:fs';
-
 import path from 'node:path';
 
 import axios from 'axios';

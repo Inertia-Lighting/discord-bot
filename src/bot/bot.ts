@@ -2,21 +2,25 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-import fs from 'node:fs';
-
 import path from 'node:path';
 
 import { client } from './discord_client.js';
 
+const recursiveReadDirectory = require('recursive-read-directory');
+
 //---------------------------------------------------------------------------------------------------------------//
 
 async function main() {
-    const event_files_path = path.join(process.cwd(), 'dist', 'bot', 'events');
-    const event_files = fs.readdirSync(event_files_path).filter(file => file.endsWith('.js'));
-
     /* register events */
+    const event_files_path = path.join(process.cwd(), 'dist', 'bot', 'events');
+    const event_files = recursiveReadDirectory(event_files_path);
+
     for (const event_file of event_files) {
-        const { default: bot_event } = await import(path.join(event_files_path, event_file)) as {
+        if (!event_file.endsWith('.js')) continue;
+
+        const event_file_path = path.join(event_files_path, event_file);
+
+        const { default: bot_event } = await import(event_file_path) as {
             default: {
                 name: string;
                 handler: (...args: unknown[]) => Promise<void>;
