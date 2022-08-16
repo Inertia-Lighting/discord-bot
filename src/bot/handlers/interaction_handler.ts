@@ -2,14 +2,9 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-import { Discord, client } from '../discord_client.js';
+import * as Discord from 'discord.js';
 
-//---------------------------------------------------------------------------------------------------------------//
-
-type CustomInteraction = {
-    identifier: string,
-    execute: (interaction: Discord.Interaction) => Promise<void>,
-};
+import { interactions } from '../common/interaction.js';
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -17,19 +12,21 @@ type CustomInteraction = {
  * Handles raw interaction payloads from Discord
  */
 async function interactionHandler(unknown_interaction: Discord.Interaction) {
-    const client_interaction: CustomInteraction | undefined = (
-        client.$.interactions as Discord.Collection<string, CustomInteraction>
-    ).find(client_interaction => {
+    const client_interaction = interactions.find(client_interaction => {
         const unknown_interaction_identifier = unknown_interaction.isMessageComponent() ? (
             unknown_interaction.customId
         ) : (
-            unknown_interaction.isApplicationCommand() ? (
-                unknown_interaction.commandName
+            unknown_interaction.isModalSubmit() ? (
+                unknown_interaction.customId
             ) : (
-                unknown_interaction.isAutocomplete() ? (
+                unknown_interaction.isApplicationCommand() ? (
                     unknown_interaction.commandName
                 ) : (
-                    unknown_interaction.id
+                    unknown_interaction.isAutocomplete() ? (
+                        unknown_interaction.commandName
+                    ) : (
+                        unknown_interaction.id
+                    )
                 )
             )
         );
