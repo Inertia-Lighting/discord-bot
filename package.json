@@ -2,27 +2,31 @@
   "name": "discord-bot",
   "version": "3.0.0",
   "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "npm run lint",
-    "lint": "npx eslint .",
-    "prepare": "is-ci || husky install",
-    "title": "run-script-os",
-    "title:windows": "title Inertia Lighting Discord Bot",
-    "title:default": "",
-    "start": "npm run title && node --trace-warnings index.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Inertia-Lighting/discord-bot.git"
-  },
   "keywords": [],
   "author": "Inertia Lighting",
   "license": "UNLICENSED",
-  "bugs": {
-    "url": "https://github.com/Inertia-Lighting/discord-bot/issues"
+  "main": "./dist/index.js",
+  "_moduleAliases": {
+    "@root": "./dist"
   },
-  "homepage": "https://github.com/Inertia-Lighting/discord-bot#readme",
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
+  "scripts": {
+    "husky": "is-ci || husky install",
+    "lint": "npx eslint .",
+    "clean": "run-script-os",
+    "clean:windows": "if exist \".\\dist\" rmdir /s /q \".\\dist\"",
+    "clean:linux": "rm -rf ./dist",
+    "build": "npm run clean && tsc --build",
+    "prepare": "npm run husky && npm run lint && npm run build",
+    "test": "npm run prepare",
+    "title": "run-script-os",
+    "title:windows": "title Inertia Lighting Discord Bot",
+    "title:default": "",
+    "start": "npm run prepare && npm run title && node --trace-warnings --enable-source-maps --require dotenv/config ."
+  },
   "dependencies": {
     "axios": "0.27.2",
     "bufferutil": "4.0.6",
@@ -30,6 +34,7 @@
     "dotenv": "16.0.1",
     "erlpack": "0.1.4",
     "go-mongo-db": "github:Inertia-Lighting/go-mongo-db#v1.2.0-stable",
+    "module-alias": "2.2.2",
     "moment-timezone": "0.5.34",
     "node-gyp": "8.4.1",
     "recursive-read-directory": "github:MidSpike/recursive-read-directory#v0.0.1-beta",
@@ -39,13 +44,14 @@
     "zlib-sync": "0.1.7"
   },
   "devDependencies": {
+    "@types/string-similarity": "^4.0.0",
+    "@types/uuid": "^8.3.4",
+    "@typescript-eslint/eslint-plugin": "5.33.0",
+    "@typescript-eslint/parser": "5.33.0",
     "eslint": "8.21.0",
     "husky": "8.0.1",
     "is-ci": "3.0.1",
-    "run-script-os": "1.1.6"
-  },
-  "engines": {
-    "node": ">=16.0.0",
-    "npm": ">=8.0.0"
+    "run-script-os": "1.1.6",
+    "typescript": "^4.7.4"
   }
 }

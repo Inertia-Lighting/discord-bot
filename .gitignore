@@ -17,6 +17,9 @@
 # vscode extensions
 .VSCodeCounter
 
+# TypeScript Output
+dist/
+
 # node stuff
 node_modules
 npm
