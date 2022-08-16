@@ -106,7 +106,7 @@ export default {
         console.log('----------------------------------------------------------------------------------------------------------------');
 
         /* register commands */
-        const command_files_path = path.join(process.cwd(), './src/bot/commands/');
+        const command_files_path = path.join(process.cwd(), './dist/bot/commands/');
         const command_files = fs.readdirSync(command_files_path).filter(file => file.endsWith('.js'));
         for (const command_file of command_files) {
             const bot_command = require(path.join(command_files_path, command_file));
@@ -114,7 +114,7 @@ export default {
         }
 
         /* register interactions */
-        const interaction_files_path = path.join(process.cwd(), './src/bot/interactions/');
+        const interaction_files_path = path.join(process.cwd(), './dist/bot/interactions/');
         const interaction_file_names = recursiveReadDirectory(interaction_files_path);
         for (const interaction_file_name of interaction_file_names) {
             const interaction_file_path = path.join(interaction_files_path, interaction_file_name);
