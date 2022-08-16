@@ -390,7 +390,7 @@ async function createSupportTicketChannel(
 
     const support_ticket_channel = await guild.channels.create(support_channel_name, {
         type: 'GUILD_TEXT',
-        topic: `${guild_member} | ${support_category.name} | Opened on <t:${Date.now() / 1000}:F> | Staff may close this ticket using the \`close_ticket\` command.`,
+        topic: `${guild_member} | ${support_category.name} | Opened on <t:${Math.floor(Date.now() / 1000)}:F> | Staff may close this ticket using the \`close_ticket\` command.`,
         parent: support_tickets_category,
         permissionOverwrites: [
             ...support_tickets_category.permissionOverwrites.cache.values(), // clone the parent channel permissions
@@ -581,11 +581,11 @@ async function closeSupportTicketChannel(
                     inline: false,
                 }, {
                     name: 'Creation Timestamp',
-                    value: `<t:${support_channel.createdTimestamp / 1000}:F>`,
+                    value: `<t:${Math.floor(support_channel.createdTimestamp / 1000)}:F>`,
                     inline: false,
                 }, {
                     name: 'Closure Timestamp',
-                    value: `<t:${Date.now() / 1000}:F>`,
+                    value: `<t:${Math.floor(Date.now() / 1000)}:F>`,
                     inline: false,
                 }, {
                     name: 'Opened By',
