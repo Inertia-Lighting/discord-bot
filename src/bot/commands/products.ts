@@ -1,4 +1,6 @@
-/* Copyright © Inertia Lighting | All Rights Reserved */
+//------------------------------------------------------------//
+//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
+//------------------------------------------------------------//
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -17,7 +19,7 @@ export default {
     description: 'lists all of the products',
     aliases: ['products'],
     permission_level: command_permission_levels.PUBLIC,
-    cooldown: 10_000,
+    cooldown: 2_500,
     async execute(
         message: Discord.Message<true>,
         args: {

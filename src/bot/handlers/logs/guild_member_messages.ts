@@ -1,4 +1,6 @@
-/* Copyright © Inertia Lighting | All Rights Reserved */
+//------------------------------------------------------------//
+//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
+//------------------------------------------------------------//
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -84,7 +86,7 @@ async function guildMemberMessageDeleteLogger(message: Discord.Message) {
                         value: `<t:${message_delete_timestamp}:F> (<t:${message_delete_timestamp}:R>)`,
                     }, {
                         name: 'Content',
-                        value: message.content.length > 0 ? string_ellipses(Discord.Util.escapeMarkdown(message.content), 2048) : '\`n/a\`',
+                        value: message.content.length > 0 ? string_ellipses(Discord.escapeMarkdown(message.content), 2048) : '\`n/a\`',
                         inline: false,
                     },
                 ],

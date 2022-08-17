@@ -1,4 +1,6 @@
-/* Copyright © Inertia Lighting | All Rights Reserved */
+//------------------------------------------------------------//
+//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
+//------------------------------------------------------------//
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -423,7 +425,7 @@ export default {
     description: 'displays moderation actions from the database',
     aliases: ['moderation_actions', 'ma'],
     permission_level: command_permission_levels.STAFF,
-    cooldown: 10_000,
+    cooldown: 1_500,
     async execute(
         message: Discord.Message<true>,
         args: {

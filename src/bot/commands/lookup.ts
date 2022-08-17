@@ -1,4 +1,6 @@
-/* Copyright © Inertia Lighting | All Rights Reserved */
+//------------------------------------------------------------//
+//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
+//------------------------------------------------------------//
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -15,7 +17,7 @@ export default {
     description: 'looks up a specified user in the database',
     aliases: ['lookup'],
     permission_level: command_permission_levels.STAFF,
-    cooldown: 2_500,
+    cooldown: 1_500,
     async execute(
         message: Discord.Message<true>,
         args: {

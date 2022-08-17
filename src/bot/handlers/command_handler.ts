@@ -1,4 +1,6 @@
-/* Copyright © Inertia Lighting | All Rights Reserved */
+//------------------------------------------------------------//
+//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
+//------------------------------------------------------------//
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -74,7 +76,7 @@ async function commandHandler(message: Discord.Message) {
     }
 
     /* command cooldown */
-    const command_cooldown_in_ms = command.cooldown ?? 5_000;
+    const command_cooldown_in_ms = command.cooldown ?? 1_500;
     const last_command_epoch_for_user = command_cooldown_tracker.get(message.author.id)?.last_command_epoch ?? Date.now() - command_cooldown_in_ms;
     const current_command_epoch = Date.now();
     command_cooldown_tracker.set(message.author.id, { last_command_epoch: current_command_epoch });

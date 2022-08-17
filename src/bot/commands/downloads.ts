@@ -1,4 +1,6 @@
-/* Copyright © Inertia Lighting | All Rights Reserved */
+//------------------------------------------------------------//
+//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
+//------------------------------------------------------------//
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -13,7 +15,7 @@ export default {
     description: 'why does this even exist',
     aliases: ['downloads', 'download', 'roles', 'retrieve', 'get'],
     permission_level: command_permission_levels.PUBLIC,
-    cooldown: 10_000,
+    cooldown: 500,
     async execute(
         message: Discord.Message<true>,
         args: {

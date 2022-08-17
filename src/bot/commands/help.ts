@@ -1,4 +1,6 @@
-/* Copyright © Inertia Lighting | All Rights Reserved */
+//------------------------------------------------------------//
+//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
+//------------------------------------------------------------//
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -29,7 +31,7 @@ export default {
     usage: '[command_name]',
     aliases: ['help', 'commands'],
     permission_level: command_permission_levels.PUBLIC,
-    cooldown: 2_500,
+    cooldown: 500,
     async execute(
         message: Discord.Message<true>,
         args: {

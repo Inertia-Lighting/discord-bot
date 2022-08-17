@@ -1,4 +1,6 @@
-/* Copyright © Inertia Lighting | All Rights Reserved */
+//------------------------------------------------------------//
+//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
+//------------------------------------------------------------//
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -168,6 +170,7 @@ export default {
     description: 'blacklists a specified user in the database',
     aliases: ['blacklist'],
     permission_level: command_permission_levels.ADMINS,
+    cooldown: 1_500,
     async execute(
         message: Discord.Message<true>,
         args: {

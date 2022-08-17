@@ -1,4 +1,6 @@
-/* Copyright © Inertia Lighting | All Rights Reserved */
+//------------------------------------------------------------//
+//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
+//------------------------------------------------------------//
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -719,7 +721,7 @@ export default {
     description: 'support tickets and stuff',
     aliases: ['support', 'close_ticket'],
     permission_level: command_permission_levels.PUBLIC,
-    cooldown: 10_000,
+    cooldown: 5_000,
     async execute(
         message: Discord.Message<true>,
         args: {

@@ -1,4 +1,6 @@
-/* Copyright © Inertia Lighting | All Rights Reserved */
+//------------------------------------------------------------//
+//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
+//------------------------------------------------------------//
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -14,7 +16,7 @@ export default {
     usage: '<amount_of_messages>',
     aliases: ['purge', 'clear'],
     permission_level: command_permission_levels.ADMINS,
-    cooldown: 5_000,
+    cooldown: 1_500,
     async execute(
         message: Discord.Message<true>,
         args: {
