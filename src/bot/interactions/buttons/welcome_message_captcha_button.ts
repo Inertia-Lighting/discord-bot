@@ -2,13 +2,11 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-'use strict';
-
-//---------------------------------------------------------------------------------------------------------------//
-
 import { Timer } from '../../../utilities';
 
 import { Discord, client } from '../../discord_client.js';
+
+import { CustomEmbed } from '@root/bot/common/message';
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -67,8 +65,7 @@ export default {
         /* welcome the user to the server */
         await interaction.editReply({
             embeds: [
-                new Discord.MessageEmbed({
-                    color: 0x60A0FF,
+                CustomEmbed.from({
                     title: 'Welcome to Inertia Lighting!',
                     description: [
                         'Thank you for joining our server, and welcome to what\'s possible!',

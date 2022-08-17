@@ -4,16 +4,17 @@
 
 import * as Discord from 'discord.js';
 
-import { logModerationActionToDatabase } from '../../handlers/log_moderation_action_handler.js';
+import { logModerationActionToDatabase } from '../../handlers/log_moderation_action_handler';
 
-import { command_permission_levels, getUserPermissionLevel, user_is_not_allowed_access_to_command_message_options } from '../../common/bot.js';
+import { command_permission_levels, getUserPermissionLevel, user_is_not_allowed_access_to_command_message_options } from '../../common/bot';
 
 //---------------------------------------------------------------------------------------------------------------//
 
 export default {
     identifier: 'timeout',
-    async execute(interaction: Discord.CommandInteraction<'cached'>) {
-        if (!interaction.isCommand()) return;
+    async execute(interaction: Discord.ChatInputCommandInteraction) {
+        if (!interaction.isChatInputCommand()) return;
+        if (!interaction.inCachedGuild()) return;
 
         await interaction.deferReply();
 
@@ -27,10 +28,8 @@ export default {
         }
         const staff_member = interaction_guild_member;
 
-        /** @type {GuildMember} */
         const member = await interaction.guild.members.fetch({
-            user: interaction.options.getMember('member', true),
-            limit: 1,
+            user: interaction.options.getUser('member', true),
         });
         const duration = interaction.options.getInteger('duration', true); // in milliseconds
         const reason = interaction.options.getString('reason', false) || 'no reason was specified';

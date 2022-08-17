@@ -12,6 +12,8 @@ import * as Discord from 'discord.js';
 
 import { go_mongo_db } from '../../../mongo/mongo.js';
 
+import { CustomEmbed } from '@root/bot/common/message.js';
+
 //---------------------------------------------------------------------------------------------------------------//
 
 export default {
@@ -38,10 +40,10 @@ export default {
         if (db_blacklisted_user_data) {
             await interaction.editReply({
                 embeds: [
-                    new Discord.MessageEmbed({
-                        color: 0xFF0000,
+                    CustomEmbed.from({
+                        color: CustomEmbed.colors.RED,
                         author: {
-                            iconURL: `${interaction.client.user!.displayAvatarURL({ dynamic: true })}`,
+                            icon_url: `${interaction.client.user!.displayAvatarURL({ forceStatic: false })}`,
                             name: 'Inertia Lighting | Blacklist System',
                         },
                         description: [
@@ -69,10 +71,9 @@ export default {
         });
         await interaction.editReply({
             embeds: [
-                new Discord.MessageEmbed({
-                    color: 0x60A0FF,
+                CustomEmbed.from({
                     author: {
-                        iconURL: `${interaction.client.user!.displayAvatarURL({ dynamic: true })}`,
+                        icon_url: `${interaction.client.user!.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | User Document',
                     },
                     title: 'This embed is for our support staff.',
