@@ -16,6 +16,8 @@ import { go_mongo_db } from '../../mongo/mongo.js';
 
 import { Discord, client } from '../discord_client.js';
 
+import { interactions } from '../common/interaction.js';
+
 import { illegalNicknameHandler } from '../handlers/illegal_nickname_handler.js';
 
 const recursiveReadDirectory = require('recursive-read-directory');
@@ -126,13 +128,13 @@ export default {
 
             const { default: interaction } = await import(interaction_file_path);
 
-            const interaction_exists = (client.$.interactions as Discord.Collection<string, unknown>).has(interaction.identifier);
+            const interaction_exists = interactions.has(interaction.identifier);
             if (interaction_exists) {
                 console.warn(`Interaction: ${interaction.name}; already exists; skipping \'${interaction_file_path}\'.`);
                 continue;
             }
 
-            (client.$.interactions as Discord.Collection<string, unknown>).set(interaction.identifier, interaction);
+            interactions.set(interaction.identifier, interaction);
         }
 
         /* set the product prices in the database after 1 minute */
