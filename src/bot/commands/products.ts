@@ -2,13 +2,13 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-import { Timer, string_ellipses } from '../../utilities.js';
+import { Timer, string_ellipses } from '../../utilities';
 
-import { go_mongo_db } from '../../mongo/mongo.js';
+import { go_mongo_db } from '../../mongo/mongo';
 
-import { Discord, client } from '../discord_client.js';
+import { Discord, client } from '../discord_client';
 
-import { command_permission_levels } from '../common/bot.js';
+import { command_permission_levels } from '../common/bot';
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -52,7 +52,7 @@ export default {
                             style: 2,
                             custom_id: 'previous',
                             emoji: {
-                                id: null,
+                                id: undefined,
                                 name: '⬅️',
                             },
                         }, {
@@ -60,7 +60,7 @@ export default {
                             style: 2,
                             custom_id: 'next',
                             emoji: {
-                                id: null,
+                                id: undefined,
                                 name: '➡️',
                             },
                         }, {
@@ -68,7 +68,7 @@ export default {
                             style: 2,
                             custom_id: 'stop',
                             emoji: {
-                                id: null,
+                                id: undefined,
                                 name: '⏹️',
                             },
                         }, {

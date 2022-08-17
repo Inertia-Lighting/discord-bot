@@ -2,9 +2,9 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-import { command_permission_levels } from '../common/bot.js';
+import { command_permission_levels } from '../common/bot';
 
-import { Discord, client } from '../discord_client.js';
+import { Discord, client } from '../discord_client';
 
 import { Timer, array_chunks, string_ellipses } from '../../utilities';
 
@@ -408,7 +408,7 @@ async function lookupNotesCommand(message: Discord.Message, lookup_method: 'user
                             style: 2,
                             custom_id: 'previous',
                             emoji: {
-                                id: null,
+                                id: undefined,
                                 name: '⬅️',
                             },
                         }, {
@@ -416,7 +416,7 @@ async function lookupNotesCommand(message: Discord.Message, lookup_method: 'user
                             style: 2,
                             custom_id: 'next',
                             emoji: {
-                                id: null,
+                                id: undefined,
                                 name: '➡️',
                             },
                         }, {
@@ -424,7 +424,7 @@ async function lookupNotesCommand(message: Discord.Message, lookup_method: 'user
                             style: 2,
                             custom_id: 'stop',
                             emoji: {
-                                id: null,
+                                id: undefined,
                                 name: '⏹️',
                             },
                         },
@@ -455,7 +455,7 @@ async function lookupNotesCommand(message: Discord.Message, lookup_method: 'user
                             `**Date** <t:${`${user_note.record.epoch}`.slice(0, -3)}:f>`,
                             '**Content**',
                             '\`\`\`',
-                            `${string_ellipses(Discord.Util.cleanCodeBlockContent(user_note.record.note), 250)}`,
+                            `${string_ellipses(Discord.escapeMarkdown(user_note.record.note), 250)}`,
                             '\`\`\`',
                         ].join('\n')
                     ).join('\n'),

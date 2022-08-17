@@ -4,7 +4,7 @@
 
 import { Timer } from '../../../utilities';
 
-import { Discord, client } from '../../discord_client.js';
+import { Discord, client } from '../../discord_client';
 
 import { CustomEmbed } from '@root/bot/common/message';
 

@@ -2,13 +2,9 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-'use strict';
+import { Discord } from '../../discord_client';
 
-//---------------------------------------------------------------------------------------------------------------//
-
-import { Discord } from '../../discord_client.js';
-
-import { userProfileHandler } from '../../handlers/user_profile_handler.js';
+import { userProfileHandler } from '../../handlers/user_profile_handler';
 
 import { CustomEmbed } from '@root/bot/common/message';
 

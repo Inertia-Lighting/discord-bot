@@ -2,9 +2,9 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-import { Discord } from '../discord_client.js';
+import { Discord } from '../discord_client';
 
-import { interactionHandler } from '../handlers/interaction_handler.js';
+import { interactionHandler } from '../handlers/interaction_handler';
 
 //---------------------------------------------------------------------------------------------------------------//
 

@@ -2,7 +2,7 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-import { Discord } from '../discord_client.js';
+import { Discord } from '../discord_client';
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -20,7 +20,7 @@ function disableMessageComponents(message: Discord.Message): Promise<Discord.Mes
                 ...component.toJSON(),
                 disabled: true,
             })),
-        })) as unknown as Discord.MessageActionRow[],
+        })) as unknown as Discord.ActionRow<Discord.MessageActionRowComponent>[],
     }));
 }
 

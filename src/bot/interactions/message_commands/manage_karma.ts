@@ -2,15 +2,11 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-'use strict';
+import { Discord, client } from '../../discord_client';
 
-//---------------------------------------------------------------------------------------------------------------//
+import { go_mongo_db } from '../../../mongo/mongo';
 
-import { Discord, client } from '../../discord_client.js';
-
-import { go_mongo_db } from '../../../mongo/mongo.js';
-
-import { command_permission_levels, getUserPermissionLevel, user_is_not_allowed_access_to_command_message_options } from '../../common/bot.js';
+import { command_permission_levels, getUserPermissionLevel, user_is_not_allowed_access_to_command_message_options } from '../../common/bot';
 
 import { CustomEmbed } from '@root/bot/common/message';
 
@@ -63,8 +59,7 @@ export default {
             return;
         }
 
-        /** @type {number} */
-        const initial_karma_amount = db_user_data.karma ?? 0;
+        const initial_karma_amount: number = db_user_data.karma ?? 0;
 
         let updated_karma_amount;
         switch (action_to_perform) {

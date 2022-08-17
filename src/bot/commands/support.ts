@@ -6,11 +6,11 @@ import fs from 'node:fs';
 
 import path from 'node:path';
 
-import { Timer } from '../../utilities.js';
+import { Timer } from '../../utilities';
 
-import { Discord, client } from '../discord_client.js';
+import { Discord, client } from '../discord_client';
 
-import { command_permission_levels, getUserPermissionLevel } from '../common/bot.js';
+import { command_permission_levels, getUserPermissionLevel } from '../common/bot';
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -90,6 +90,42 @@ const template_instructions_footer_text = [
     '*Once you have completed the instructions, please wait for*',
     `*the \"${ready_for_support_staff_button.label}\" button to appear.*`,
 ].join('\n');
+
+//---------------------------------------------------------------------------------------------------------------//
+
+type TranscriptMessageData = {
+    id: string | null;
+    type: number | null;
+    system: boolean | null;
+    nonce: string | number | null;
+    author: {
+        id: string | null;
+        display_name: string | null;
+    };
+    created_timestamp: number | null;
+    edited_timestamp: number | null;
+    content: string | null;
+    clean_content: string | null;
+    embeds: Discord.APIEmbed[] | null;
+    attachments: unknown[] | null;
+    stickers: unknown[] | null;
+    components: unknown[] | null;
+};
+
+type TranscriptData = {
+    metadata: {
+        channel: {
+            id: string | null;
+            name: string | null;
+            topic: string | null;
+            created_timestamp: number | null;
+        };
+        user: {
+            id: string | null;
+        };
+    };
+    messages: TranscriptMessageData[];
+};
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -388,19 +424,20 @@ async function createSupportTicketChannel(
     const potential_open_ticket_channel = guild.channels.cache.find(channel => channel.parentId === support_tickets_category.id && channel.name === support_channel_name);
     if (potential_open_ticket_channel) throw new Error('A support ticket channel is already open!');
 
-    const support_ticket_channel = await guild.channels.create(support_channel_name, {
-        type: 'GUILD_TEXT',
+    const support_ticket_channel = await guild.channels.create({
+        name: support_channel_name,
+        type: Discord.ChannelType.GuildText,
         topic: `${guild_member} | ${support_category.name} | Opened on <t:${Math.floor(Date.now() / 1000)}:F> | Staff may close this ticket using the \`close_ticket\` command.`,
         parent: support_tickets_category,
         permissionOverwrites: [
             ...support_tickets_category.permissionOverwrites.cache.values(), // clone the parent channel permissions
             {
                 id: process.env.BOT_STAFF_ROLE_ID as string,
-                allow: [ 'VIEW_CHANNEL' ],
-                deny: [ 'SEND_MESSAGES' ], // staff must wait for the user to active the support ticket
+                allow: [ Discord.PermissionFlagsBits.ViewChannel ],
+                deny: [ Discord.PermissionFlagsBits.SendMessages ], // staff must wait for the user to active the support ticket
             }, {
                 id: guild_member.id,
-                allow: [ 'VIEW_CHANNEL', 'SEND_MESSAGES' ],
+                allow: [ Discord.PermissionFlagsBits.ViewChannel, Discord.PermissionFlagsBits.SendMessages ],
             },
         ],
     });
@@ -409,55 +446,12 @@ async function createSupportTicketChannel(
 }
 
 /**
- * @typedef {{
- *  id: string | null,
- *  type: string | null,
- *  system: boolean | null,
- *  nonce: string | null,
- *  author: {
- *     id: string | null,
- *     display_name: string | null,
- *  },
- *  created_timestamp: number | null,
- *  edited_timestamp: number | null,
- *  content: string | null,
- *  clean_content: string | null,
- *  embeds: {
- *   type: string | null,
- *   title: string | null,
- *   description: string | null,
- *   fields: {
- *      name: string | null,
- *      value: string | null,
- *   }[],
- *   thumbnail_url: string | null,
- *   image_url: string | null,
- *  } | null,
- *  attachments: unknown[] | null,
- *  stickers: unknown[] | null,
- *  components: unknown[] | null,
- * }} TranscriptMessageData
- *
- * @typedef {{
- *  metadata: {
- *   channel: {
- *      id: string | null,
- *      name: string | null,
- *      topic: string | null,
- *   },
- *   user: {
- *      id: string | null,
- *   },
- *  },
- */
-
-/**
  * Creates a JSON-transcript from a support ticket channel
- * @param {Discord.TextChannel} support_ticket_channel
  */
-async function createTranscriptForSupportTicket(support_ticket_channel: Discord.TextChannel) {
-    /** @type {TranscriptMessageData[]} */
-    const transcript_messages = [];
+async function createTranscriptForSupportTicket(
+    support_ticket_channel: Discord.TextChannel,
+): Promise<TranscriptData> {
+    const transcript_messages: TranscriptMessageData[] = [];
 
     let before_message_id;
     do {
@@ -486,17 +480,7 @@ async function createTranscriptForSupportTicket(support_ticket_channel: Discord.
                 edited_timestamp: message.editedTimestamp ?? null,
                 content: message.content ?? null,
                 clean_content: message.cleanContent ?? null,
-                embeds: message.embeds.map(embed => ({
-                    type: embed.type ?? null,
-                    title: embed.title ?? null,
-                    description: embed.description ?? null,
-                    fields: embed.fields.map(field => ({
-                        name: field.name ?? null,
-                        value: field.value ?? null,
-                    })),
-                    thumbnail_url: embed.thumbnail?.url ?? null,
-                    image_url: embed.image?.url ?? null,
-                })) ?? null,
+                embeds: message.embeds.map(embed => embed.toJSON() ?? null),
                 attachments: message.attachments.map(attachment => ({
                     name: attachment.name ?? null,
                     url: attachment.url ?? null,
@@ -530,7 +514,7 @@ async function createTranscriptForSupportTicket(support_ticket_channel: Discord.
             },
         },
         messages: transcript_messages?.reverse() ?? null, // reverse the array to get the messages in order of creation
-    };
+    } as TranscriptData;
 }
 
 /**
@@ -565,7 +549,7 @@ async function closeSupportTicketChannel(
 
         const createTranscriptAttachment = () => {
             const temp_file_read_stream = fs.createReadStream(temp_file_path);
-            return new Discord.MessageAttachment(temp_file_read_stream);
+            return new Discord.AttachmentBuilder(temp_file_read_stream);
         };
 
         const transcript_embed = new Discord.MessageEmbed({
@@ -606,7 +590,7 @@ async function closeSupportTicketChannel(
         /* send the transcript to transcripts channel */
         const support_ticket_transcripts_channel = await client.channels.fetch(support_tickets_transcripts_channel_id);
         if (!support_ticket_transcripts_channel) throw new Error('Unable to find the support ticket transcripts channel!');
-        if (!support_ticket_transcripts_channel.isText()) throw new Error('The support ticket transcripts channel is not a text channel!');
+        if (!support_ticket_transcripts_channel.isTextBased()) throw new Error('The support ticket transcripts channel is not a text channel!');
 
         const transcript_message = await support_ticket_transcripts_channel.send({
             embeds: [
@@ -789,7 +773,7 @@ export default {
             if (!category_selection_message) throw new Error('Unable to send the support ticket category selection message!');
 
             const category_selection_menu_interaction_collector = await category_selection_message.createMessageComponentCollector({
-                componentType: 'SELECT_MENU',
+                componentType: Discord.ComponentType.SelectMenu,
                 filter: (interaction) => interaction.user.id === message.author.id,
                 time: 5 * 60_000,
             });

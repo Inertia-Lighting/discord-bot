@@ -2,7 +2,7 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-import { Discord, client } from '../../discord_client.js';
+import { Discord, client } from '../../discord_client';
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -20,7 +20,7 @@ async function guildMemberRolesAddedLogger(
 
     const logging_channel = await client.channels.fetch(logging_channel_id);
     if (!logging_channel) throw new Error('Failed to fetch logging channel');
-    if (!logging_channel.isText()) throw new TypeError('logging_channel is not a text channel');
+    if (!logging_channel.isTextBased()) throw new TypeError('logging_channel is not a text channel');
 
     const roles_added = new_member.roles.cache.filter(role => !old_member.roles.cache.has(role.id));
 
@@ -54,7 +54,7 @@ async function guildMemberRolesRemovedLogger(
 
     const logging_channel = await client.channels.fetch(logging_channel_id);
     if (!logging_channel) throw new Error('Failed to fetch logging channel');
-    if (!logging_channel.isText()) throw new TypeError('logging_channel is not a text channel');
+    if (!logging_channel.isTextBased()) throw new TypeError('logging_channel is not a text channel');
 
     const roles_removed = old_member.roles.cache.filter(role => !new_member.roles.cache.has(role.id));
 

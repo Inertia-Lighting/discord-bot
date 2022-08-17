@@ -4,13 +4,13 @@
 
 import moment from 'moment-timezone';
 
-import { Timer, array_chunks, string_ellipses } from '../../utilities.js';
+import { Timer, array_chunks, string_ellipses } from '../../utilities';
 
-import { go_mongo_db } from '../../mongo/mongo.js';
+import { go_mongo_db } from '../../mongo/mongo';
 
-import { Discord, client } from '../discord_client.js';
+import { Discord, client } from '../discord_client';
 
-import { command_permission_levels } from '../common/bot.js';
+import { command_permission_levels } from '../common/bot';
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -104,7 +104,7 @@ async function listModerationActions(
                         style: 2,
                         custom_id: 'previous',
                         emoji: {
-                            id: null,
+                            id: undefined,
                             name: '⬅️',
                         },
                     }, {
@@ -112,7 +112,7 @@ async function listModerationActions(
                         style: 2,
                         custom_id: 'next',
                         emoji: {
-                            id: null,
+                            id: undefined,
                             name: '➡️',
                         },
                     }, {
@@ -120,7 +120,7 @@ async function listModerationActions(
                         style: 2,
                         custom_id: 'stop',
                         emoji: {
-                            id: null,
+                            id: undefined,
                             name: '⏹️',
                         },
                     },
@@ -158,7 +158,7 @@ async function listModerationActions(
                             `**Type** \`${moderation_action.record.type}\``,
                             '**Reason**',
                             '\`\`\`',
-                            `${string_ellipses(Discord.Util.cleanCodeBlockContent(moderation_action.record.reason), 250)}`,
+                            `${string_ellipses(Discord.escapeMarkdown(moderation_action.record.reason), 250)}`,
                             '\`\`\`',
                         ].join('\n')
                     ).join('\n'),

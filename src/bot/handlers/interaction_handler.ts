@@ -4,7 +4,7 @@
 
 import * as Discord from 'discord.js';
 
-import { interactions } from '../common/interaction.js';
+import { interactions } from '../common/interaction';
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -13,37 +13,44 @@ import { interactions } from '../common/interaction.js';
  */
 async function interactionHandler(unknown_interaction: Discord.Interaction) {
     const client_interaction = interactions.find(client_interaction => {
-        const unknown_interaction_identifier = unknown_interaction.isMessageComponent() ? (
-            unknown_interaction.customId
-        ) : (
-            unknown_interaction.isModalSubmit() ? (
-                unknown_interaction.customId
-            ) : (
-                unknown_interaction.isApplicationCommand() ? (
-                    unknown_interaction.commandName
-                ) : (
-                    unknown_interaction.isAutocomplete() ? (
-                        unknown_interaction.commandName
-                    ) : (
-                        unknown_interaction.id
-                    )
-                )
-            )
-        );
+        let unknown_interaction_identifier: string;
+
+        switch (unknown_interaction.type) {
+            case Discord.InteractionType.ApplicationCommand: {
+                unknown_interaction_identifier = unknown_interaction.commandName;
+                break;
+            }
+
+            case Discord.InteractionType.MessageComponent: {
+                unknown_interaction_identifier = unknown_interaction.customId;
+                break;
+            }
+
+            case Discord.InteractionType.ApplicationCommandAutocomplete: {
+                unknown_interaction_identifier = unknown_interaction.commandName;
+                break;
+            }
+
+            case Discord.InteractionType.ModalSubmit: {
+                unknown_interaction_identifier = unknown_interaction.customId;
+                break;
+            }
+
+            default: {
+                unknown_interaction_identifier = (unknown_interaction as Discord.Interaction).id;
+
+                break;
+            }
+        }
 
         return client_interaction.identifier === unknown_interaction_identifier;
     });
 
     /* check if the interaction exists */
-    if (
-        !client_interaction
-    ) {
+    if (!client_interaction) {
         console.warn('Unknown interaction:', { unknown_interaction });
 
-        if (
-            unknown_interaction.isApplicationCommand() &&
-            unknown_interaction.command?.type === 'CHAT_INPUT'
-        ) {
+        if (unknown_interaction.isChatInputCommand()) {
             unknown_interaction.reply('Sorry but this command doesn\'t work right now!');
         }
 

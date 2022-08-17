@@ -2,9 +2,9 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-import { Discord, client } from '../../discord_client.js';
+import { Discord, client } from '../../discord_client';
 
-import { getMarkdownFriendlyTimestamp } from '../../../utilities.js';
+import { getMarkdownFriendlyTimestamp } from '../../../utilities';
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -18,7 +18,7 @@ async function guildMemberAddLogger(member: Discord.GuildMember) {
 
     const member_retention_logging_channel = await client.channels.fetch(member_retention_logging_channel_id);
     if (!member_retention_logging_channel) throw new Error('Failed to fetch logging channel');
-    if (!member_retention_logging_channel.isText()) throw new TypeError('member_retention_logging_channel is not a text channel');
+    if (!member_retention_logging_channel.isTextBased()) throw new TypeError('member_retention_logging_channel is not a text channel');
 
     const user_creation_timestamp = getMarkdownFriendlyTimestamp(member.user.createdTimestamp);
     const member_joined_timestamp = getMarkdownFriendlyTimestamp(member.joinedTimestamp ?? Date.now());
@@ -51,7 +51,7 @@ async function guildMemberRemoveLogger(member: Discord.GuildMember) {
 
     const member_retention_logging_channel = await client.channels.fetch(member_retention_logging_channel_id);
     if (!member_retention_logging_channel) throw new Error('Failed to fetch logging channel');
-    if (!member_retention_logging_channel.isText()) throw new TypeError('member_retention_logging_channel is not a text channel');
+    if (!member_retention_logging_channel.isTextBased()) throw new TypeError('member_retention_logging_channel is not a text channel');
 
     const user_creation_timestamp = getMarkdownFriendlyTimestamp(member.user.createdTimestamp);
     const member_joined_timestamp = getMarkdownFriendlyTimestamp(member.joinedTimestamp ?? Date.now());

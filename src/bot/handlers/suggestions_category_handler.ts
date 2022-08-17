@@ -2,9 +2,9 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-import { Timer, string_ellipses } from '../../utilities.js';
+import { Timer, string_ellipses } from '../../utilities';
 
-import { Discord } from '../discord_client.js';
+import { Discord } from '../discord_client';
 
 //---------------------------------------------------------------------------------------------------------------//
 

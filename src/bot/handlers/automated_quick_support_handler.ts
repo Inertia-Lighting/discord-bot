@@ -4,11 +4,11 @@
 
 import { compareTwoStrings } from 'string-similarity';
 
-import { go_mongo_db } from '../../mongo/mongo.js';
+import { go_mongo_db } from '../../mongo/mongo';
 
-import { Discord, client } from '../discord_client.js';
+import { Discord, client } from '../discord_client';
 
-import { math_clamp } from '../../utilities.js';
+import { math_clamp } from '../../utilities';
 
 //---------------------------------------------------------------------------------------------------------------//
 

@@ -2,9 +2,9 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-import { Discord, client } from '../../discord_client.js';
+import { Discord, client } from '../../discord_client';
 
-import { getMarkdownFriendlyTimestamp, string_ellipses } from '../../../utilities.js';
+import { getMarkdownFriendlyTimestamp, string_ellipses } from '../../../utilities';
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -43,11 +43,11 @@ async function guildMemberMessageUpdateLogger(old_message: Discord.Message, new_
                         inline: false,
                     }, {
                         name: 'Before',
-                        value: old_message.content.length > 0 ? string_ellipses(Discord.Util.escapeMarkdown(old_message.content), 2048) : '\`n/a\`',
+                        value: old_message.content.length > 0 ? string_ellipses(Discord.escapeMarkdown(old_message.content), 2048) : '\`n/a\`',
                         inline: false,
                     }, {
                         name: 'After',
-                        value: new_message.content.length > 0 ? string_ellipses(Discord.Util.escapeMarkdown(new_message.content), 2048) : '\`n/a\`',
+                        value: new_message.content.length > 0 ? string_ellipses(Discord.escapeMarkdown(new_message.content), 2048) : '\`n/a\`',
                         inline: false,
                     },
                 ],

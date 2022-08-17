@@ -2,13 +2,9 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-'use strict';
+import { Discord, client } from '../discord_client';
 
-//---------------------------------------------------------------------------------------------------------------//
-
-import { Discord, client } from '../discord_client.js';
-
-import { command_permission_levels, getUserPermissionLevel, user_is_not_allowed_access_to_command_message_options } from '../common/bot.js';
+import { command_permission_levels, getUserPermissionLevel, user_is_not_allowed_access_to_command_message_options } from '../common/bot';
 
 //---------------------------------------------------------------------------------------------------------------//
 

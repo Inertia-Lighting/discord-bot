@@ -2,9 +2,9 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-import { Discord } from '../discord_client.js';
+import { Discord } from '../discord_client';
 
-import { guildMemberRemoveLogger } from '../handlers/logs/guild_member_retention.js';
+import { guildMemberRemoveLogger } from '../handlers/logs/guild_member_retention';
 
 //---------------------------------------------------------------------------------------------------------------//
 

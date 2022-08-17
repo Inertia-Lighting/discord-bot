@@ -2,13 +2,13 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-import { Discord } from '../discord_client.js';
+import { Discord } from '../discord_client';
 
-import { guildMemberAddLogger } from '../handlers/logs/guild_member_retention.js';
+import { guildMemberAddLogger } from '../handlers/logs/guild_member_retention';
 
-import { welcomeMessageHandler } from '../handlers/welcome_message_handler.js';
+import { welcomeMessageHandler } from '../handlers/welcome_message_handler';
 
-import { illegalNicknameHandler } from '../handlers/illegal_nickname_handler.js';
+import { illegalNicknameHandler } from '../handlers/illegal_nickname_handler';
 
 //---------------------------------------------------------------------------------------------------------------//
 

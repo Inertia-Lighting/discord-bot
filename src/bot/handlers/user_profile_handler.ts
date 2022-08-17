@@ -4,9 +4,9 @@
 
 import axios from 'axios';
 
-import { go_mongo_db } from '../../mongo/mongo.js';
+import { go_mongo_db } from '../../mongo/mongo';
 
-import { Discord, client } from '../discord_client.js';
+import { Discord, client } from '../discord_client';
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -15,7 +15,7 @@ function replyToMessageOrEditReplyToInteraction(
     message_payload: Discord.WebhookEditMessageOptions | Discord.ReplyMessageOptions,
 ) {
     if (
-        deferred_interaction_or_message instanceof Discord.BaseCommandInteraction ||
+        deferred_interaction_or_message instanceof Discord.ChatInputCommandInteraction ||
         deferred_interaction_or_message instanceof Discord.MessageComponentInteraction
     ) {
         deferred_interaction_or_message.editReply(message_payload).catch(console.warn);

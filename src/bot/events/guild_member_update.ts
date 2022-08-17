@@ -4,9 +4,9 @@ import { Discord } from '../discord_client';
 
 //---------------------------------------------------------------------------------------------------------------//
 
-import { illegalNicknameHandler } from '../handlers/illegal_nickname_handler.js';
+import { illegalNicknameHandler } from '../handlers/illegal_nickname_handler';
 
-import { guildMemberRolesAddedLogger, guildMemberRolesRemovedLogger } from '../handlers/logs/guild_member_roles.js';
+import { guildMemberRolesAddedLogger, guildMemberRolesRemovedLogger } from '../handlers/logs/guild_member_roles';
 
 //---------------------------------------------------------------------------------------------------------------//
 

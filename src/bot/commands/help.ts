@@ -2,9 +2,9 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-import { Discord, client } from '../discord_client.js';
+import { Discord, client } from '../discord_client';
 
-import { command_permission_levels, getUserPermissionLevel } from '../common/bot.js';
+import { command_permission_levels, getUserPermissionLevel } from '../common/bot';
 
 //---------------------------------------------------------------------------------------------------------------//
 

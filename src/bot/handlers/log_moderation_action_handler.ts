@@ -4,7 +4,7 @@
 
 import { v4 as uuid_v4 } from 'uuid';
 
-import { go_mongo_db } from '../../mongo/mongo.js';
+import { go_mongo_db } from '../../mongo/mongo';
 
 //---------------------------------------------------------------------------------------------------------------//
 
