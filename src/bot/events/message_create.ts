@@ -25,7 +25,7 @@ const one_word_story_channel_id = process.env.BOT_ONE_WORD_STORY_CHANNEL_ID as s
 //---------------------------------------------------------------------------------------------------------------//
 
 export default {
-    name: 'messageCreate',
+    name: Discord.Events.MessageCreate,
     async handler(message: Discord.Message) {
         /* don't allow bots */
         if (message.author.bot) return;
