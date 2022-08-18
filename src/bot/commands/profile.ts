@@ -10,6 +10,8 @@ import { command_permission_levels } from '../common/bot';
 
 import { userProfileHandler } from '../handlers/user_profile_handler';
 
+import { CustomEmbed } from '../common/message';
+
 //---------------------------------------------------------------------------------------------------------------//
 
 export default {
@@ -36,10 +38,10 @@ export default {
         if (user_lookup_query.length > 0 && !user) {
             await message.channel.send({
                 embeds: [
-                    new Discord.MessageEmbed({
-                        color: 0xFFFF00,
+                    CustomEmbed.from({
+                        color: CustomEmbed.colors.YELLOW,
                         author: {
-                            iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+                            icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                             name: 'Inertia Lighting | User Profiles',
                         },
                         title: 'Invalid User Mention',

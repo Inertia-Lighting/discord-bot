@@ -12,7 +12,7 @@ import { Discord, client } from '../discord_client';
 
 import { command_permission_levels } from '../common/bot';
 
-import { disableMessageComponents } from '../common/message';
+import { CustomEmbed, disableMessageComponents } from '../common/message';
 
 import { userProfileHandler } from '../handlers/user_profile_handler';
 
@@ -45,10 +45,10 @@ export default {
             /** @type {Discord.Message} */
             const bot_msg = await message.channel.send({
                 embeds: [
-                    new Discord.MessageEmbed({
+                    CustomEmbed.from({
                         color: 0xFFFF00,
                         author: {
-                            iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+                            icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                             name: `${client.user!.username} | Verification System`,
                         },
                         title: 'You are already verified!',
@@ -86,7 +86,7 @@ export default {
                             await message_component.followUp({
                                 ephemeral: true,
                                 embeds: [
-                                    new Discord.MessageEmbed({
+                                    CustomEmbed.from({
                                         color: 0xFFFF00,
                                         description: 'That button is not for you!',
                                     }),
@@ -123,7 +123,7 @@ export default {
         if (verification_code_to_lookup.length === 0) {
             await message.channel.send({
                 embeds: [
-                    new Discord.MessageEmbed({
+                    CustomEmbed.from({
                         color: 0xFFFF00,
                         title: 'Missing Verification Code',
                         description: 'You need to provide a verification code to verify!',
@@ -166,7 +166,7 @@ export default {
 
             await message.channel.send({
                 embeds: [
-                    new Discord.MessageEmbed({
+                    CustomEmbed.from({
                         color: 0xFFFF00,
                         description: [
                             'There was an error while verifying your account.',
@@ -182,10 +182,10 @@ export default {
         if (fetch_pending_verification_response.status === 404) {
             await message.channel.send({
                 embeds: [
-                    new Discord.MessageEmbed({
+                    CustomEmbed.from({
                         color: 0xFFFF00,
                         author: {
-                            iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+                            icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                             name: `${client.user!.username} | Verification System`,
                         },
                         title: 'Unknown Verification Code',
@@ -231,10 +231,10 @@ export default {
 
             await message.channel.send({
                 embeds: [
-                    new Discord.MessageEmbed({
+                    CustomEmbed.from({
                         color: 0xFFFF00,
                         author: {
-                            iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+                            icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                             name: `${client.user!.username} | Verification System`,
                         },
                         title: 'Failed to verify!',
@@ -256,10 +256,10 @@ export default {
         /* inform the user */
         await message.channel.send({
             embeds: [
-                new Discord.MessageEmbed({
+                CustomEmbed.from({
                     color: 0x00FF00,
                     author: {
-                        iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+                        icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                         name: `${client.user!.username} | Verification System`,
                     },
                     title: 'You have successfully verified!',

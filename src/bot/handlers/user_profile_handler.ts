@@ -8,6 +8,8 @@ import axios from 'axios';
 
 import { go_mongo_db } from '../../mongo/mongo';
 
+import { CustomEmbed } from '../common/message';
+
 import { Discord, client } from '../discord_client';
 
 //---------------------------------------------------------------------------------------------------------------//
@@ -45,10 +47,10 @@ async function userProfileHandler(
     if (!db_user_data) {
         replyToMessageOrEditReplyToInteraction(deferred_interaction_or_message, {
             embeds: [
-                new Discord.MessageEmbed({
-                    color: 0xFFFF00,
+                CustomEmbed.from({
+                    color: CustomEmbed.colors.YELLOW,
                     author: {
-                        iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+                        icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | User Profile System',
                     },
                     title: 'Unknown User',
@@ -106,10 +108,10 @@ async function userProfileHandler(
     replyToMessageOrEditReplyToInteraction(deferred_interaction_or_message, {
         embeds: [
             ...(db_blacklisted_user_data ? [
-                new Discord.MessageEmbed({
-                    color: 0xFF0000,
+                CustomEmbed.from({
+                    color: CustomEmbed.colors.RED,
                     author: {
-                        iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+                        icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | Blacklist System',
                     },
                     description: [
@@ -122,10 +124,9 @@ async function userProfileHandler(
                     ].join('\n'),
                 }),
             ] : []),
-            new Discord.MessageEmbed({
-                color: 0x60A0FF,
+            CustomEmbed.from({
                 author: {
-                    iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+                    icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                     name: 'Inertia Lighting | User Profile System',
                 },
                 fields: [

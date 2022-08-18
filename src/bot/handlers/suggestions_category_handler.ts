@@ -6,6 +6,8 @@
 
 import { Timer, string_ellipses } from '../../utilities';
 
+import { CustomEmbed } from '../common/message';
+
 import { Discord } from '../discord_client';
 
 //---------------------------------------------------------------------------------------------------------------//
@@ -26,10 +28,9 @@ async function suggestionsCategoryHandler(message: Discord.Message) {
     /* suggestion embed */
     const bot_suggestion_message = await suggestions_channel.send({
         embeds: [
-            new Discord.MessageEmbed({
-                color: 0x60A0FF,
+            CustomEmbed.from({
                 author: {
-                    iconURL: `${message.author.displayAvatarURL({ dynamic: true })}`,
+                    icon_url: `${message.author.displayAvatarURL({ forceStatic: false })}`,
                     name: `@${message.member.user.tag} (${message.member.id})`,
                 },
                 description: `${suggestion_text}`,

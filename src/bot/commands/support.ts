@@ -14,6 +14,8 @@ import { Discord, client } from '../discord_client';
 
 import { command_permission_levels, getUserPermissionLevel } from '../common/bot';
 
+import { CustomEmbed } from '../common/message';
+
 //---------------------------------------------------------------------------------------------------------------//
 
 const support_tickets_category_id = process.env.BOT_SUPPORT_TICKETS_CATEGORY_ID as string;
@@ -32,7 +34,7 @@ const satisfaction_levels = {
     highest_satisfaction: {
         label: 'Excellent',
         description: 'Support went above and beyond expectations!',
-        color: 0x00ff00,
+        color: CustomEmbed.colors.GREEN,
     },
     high_satisfaction: {
         label: 'Good',
@@ -42,7 +44,7 @@ const satisfaction_levels = {
     medium_satisfaction: {
         label: 'Decent',
         description: 'Support was able to help me with little issues!',
-        color: 0xffff00,
+        color: CustomEmbed.colors.YELLOW,
     },
     low_satisfaction: {
         label: 'Bad',
@@ -52,7 +54,7 @@ const satisfaction_levels = {
     lowest_satisfaction: {
         label: 'Horrible',
         description: 'Support staff need better training!',
-        color: 0xff0000,
+        color: CustomEmbed.colors.RED,
     },
 };
 
@@ -151,10 +153,9 @@ const support_categories = new Discord.Collection([
         automatically_save_when_closed: true,
         instructions_message_options: {
             embeds: [
-                new Discord.MessageEmbed({
-                    color: 0x60A0FF,
+                CustomEmbed.from({
                     author: {
-                        iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+                        icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | Support Ticket Instructions',
                     },
                     description: [
@@ -214,10 +215,9 @@ const support_categories = new Discord.Collection([
         automatically_save_when_closed: true,
         instructions_message_options: {
             embeds: [
-                new Discord.MessageEmbed({
-                    color: 0x60A0FF,
+                CustomEmbed.from({
                     author: {
-                        iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+                        icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | Support Ticket Instructions',
                     },
                     description: [
@@ -266,10 +266,9 @@ const support_categories = new Discord.Collection([
         automatically_save_when_closed: true,
         instructions_message_options: {
             embeds: [
-                new Discord.MessageEmbed({
-                    color: 0x60A0FF,
+                CustomEmbed.from({
                     author: {
-                        iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+                        icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | Support Ticket Instructions',
                     },
                     description: [
@@ -307,10 +306,9 @@ const support_categories = new Discord.Collection([
         automatically_save_when_closed: true,
         instructions_message_options: {
             embeds: [
-                new Discord.MessageEmbed({
-                    color: 0x60A0FF,
+                CustomEmbed.from({
                     author: {
-                        iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+                        icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | Support Ticket Instructions',
                     },
                     description: [
@@ -344,10 +342,9 @@ const support_categories = new Discord.Collection([
     //     automatically_save_when_closed: false,
     //     instructions_message_options: {
     //         embeds: [
-    //             new Discord.MessageEmbed({
-    //                 color: 0x60A0FF,
+    //             CustomEmbed.from({
     //                 author: {
-    //                     iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+    //                     icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
     //                     name: 'Inertia Lighting | Support Ticket Instructions',
     //                 },
     //                 description: [
@@ -388,10 +385,9 @@ const support_categories = new Discord.Collection([
         automatically_save_when_closed: false,
         instructions_message_options: {
             embeds: [
-                new Discord.MessageEmbed({
-                    color: 0x60A0FF,
+                CustomEmbed.from({
                     author: {
-                        iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+                        icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | Support Ticket Instructions',
                     },
                     description: [
@@ -554,8 +550,7 @@ async function closeSupportTicketChannel(
             return new Discord.AttachmentBuilder(temp_file_read_stream);
         };
 
-        const transcript_embed = new Discord.MessageEmbed({
-            color: 0x60A0FF,
+        const transcript_embed = CustomEmbed.from({
             fields: [
                 {
                     name: 'Ticket Id',
@@ -611,8 +606,7 @@ async function closeSupportTicketChannel(
 
                 await support_ticket_owner_dms.send({
                     embeds: [
-                        new Discord.MessageEmbed({
-                            color: 0x60A0FF,
+                        CustomEmbed.from({
                             description: 'Your support ticket transcript is attached to this message.',
                         }),
                     ],
@@ -623,8 +617,7 @@ async function closeSupportTicketChannel(
 
                 const user_feedback_survey_message = await support_ticket_owner_dms.send({
                     embeds: [
-                        new Discord.MessageEmbed({
-                            color: 0x60A0FF,
+                        CustomEmbed.from({
                             description: 'How was your most recent support ticket experience?',
                         }),
                     ],
@@ -664,7 +657,7 @@ async function closeSupportTicketChannel(
                         case 'support_user_feedback_survey_color': {
                             const satisfaction_level = satisfaction_levels[interaction.values[0] as keyof typeof satisfaction_levels];
 
-                            const customer_review_embed = new Discord.MessageEmbed({
+                            const customer_review_embed = CustomEmbed.from({
                                 color: satisfaction_level.color ?? 0x60A0FF,
                                 title: `User feedback: ${satisfaction_level.label}`,
                                 description: `${satisfaction_level.description}`,
@@ -679,8 +672,7 @@ async function closeSupportTicketChannel(
 
                             await user_feedback_survey_message.edit({
                                 embeds: [
-                                    new Discord.MessageEmbed({
-                                        color: 0x60A0FF,
+                                    CustomEmbed.from({
                                         title: 'Thanks for the feedback!',
                                     }),
                                 ],
@@ -739,10 +731,10 @@ export default {
             const category_selection_message = await message.channel.send({
                 content: `${message.author}`,
                 embeds: [
-                    new Discord.MessageEmbed({
-                        color: 0x60A0FF,
+                    CustomEmbed.from({
+
                         author: {
-                            iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+                            icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                             name: 'Inertia Lighting | Support System',
                         },
                         description: [

@@ -101,7 +101,7 @@ async function automatedQuickSupportHandler(message: Discord.Message) {
         embeds: matching_qs_topics.map(quick_support_topic => ({
             color: 0x60A0FF,
             author: {
-                iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+                iconURL: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                 name: 'Inertia Lighting | Automatic Quick Support',
             },
             title: quick_support_topic.title,

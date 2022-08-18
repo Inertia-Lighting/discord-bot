@@ -12,6 +12,8 @@ import { Discord, client } from '../discord_client';
 
 import { command_permission_levels } from '../common/bot';
 
+import { CustomEmbed } from '../common/message';
+
 //---------------------------------------------------------------------------------------------------------------//
 
 export default {
@@ -29,8 +31,7 @@ export default {
         /* send an initial message to the user */
         const bot_message = await message.channel.send({
             embeds: [
-                new Discord.MessageEmbed({
-                    color: 0x60A0FF,
+                CustomEmbed.from({
                     description: 'Loading products...',
                 }),
             ],
@@ -97,10 +98,9 @@ export default {
 
             await bot_message.edit({
                 embeds: [
-                    new Discord.MessageEmbed({
-                        color: 0x60A0FF,
+                    CustomEmbed.from({
                         author: {
-                            iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+                            icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                             name: 'Inertia Lighting | Products',
                         },
                         description: [

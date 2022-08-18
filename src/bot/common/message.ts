@@ -37,6 +37,7 @@ class CustomEmbed {
         BLUE: 0x0000FF,
         INDIGO: 0x550088,
         VIOLET: 0xAA00FF,
+        MAGENTA: 0xFF00FF,
     };
 
     static from(options: Discord.APIEmbed): Discord.EmbedBuilder {

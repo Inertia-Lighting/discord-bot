@@ -8,6 +8,8 @@ import { Discord, client } from '../../discord_client';
 
 import { getMarkdownFriendlyTimestamp, string_ellipses } from '../../../utilities';
 
+import { CustomEmbed } from '@root/bot/common/message';
+
 //---------------------------------------------------------------------------------------------------------------//
 
 const logging_channel_id = process.env.BOT_LOGGING_CHANNEL_ID as string;
@@ -27,8 +29,8 @@ async function guildMemberMessageUpdateLogger(old_message: Discord.Message, new_
 
     await logging_channel.send({
         embeds: [
-            new Discord.MessageEmbed({
-                color: 0xFFFF00,
+            CustomEmbed.from({
+                color: CustomEmbed.colors.YELLOW,
                 description: `**A message sent by <@${new_message.author.id}> in <#${new_message.channelId}> was modified.**`,
                 fields: [
                     {
@@ -69,8 +71,8 @@ async function guildMemberMessageDeleteLogger(message: Discord.Message) {
 
     await logging_channel.send({
         embeds: [
-            new Discord.MessageEmbed({
-                color: 0xFF5500,
+            CustomEmbed.from({
+                color: CustomEmbed.colors.ORANGE,
                 description: `**A message sent by <@${message.author.id}> in <#${message.channelId}> was deleted.**`,
                 fields: [
                     {

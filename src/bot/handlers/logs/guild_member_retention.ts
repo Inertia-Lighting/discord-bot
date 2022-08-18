@@ -8,6 +8,8 @@ import { Discord, client } from '../../discord_client';
 
 import { getMarkdownFriendlyTimestamp } from '../../../utilities';
 
+import { CustomEmbed } from '@root/bot/common/message';
+
 //---------------------------------------------------------------------------------------------------------------//
 
 const member_retention_logging_channel_id = process.env.BOT_LOGGING_USER_RETENTION_CHANNEL_ID as string;
@@ -27,8 +29,8 @@ async function guildMemberAddLogger(member: Discord.GuildMember) {
 
     await member_retention_logging_channel.send({
         embeds: [
-            new Discord.MessageEmbed({
-                color: 0x00FF00,
+            CustomEmbed.from({
+                color: CustomEmbed.colors.GREEN,
                 title: 'A member has joined the server!',
                 fields: [
                     {
@@ -61,8 +63,8 @@ async function guildMemberRemoveLogger(member: Discord.GuildMember) {
 
     await member_retention_logging_channel.send({
         embeds: [
-            new Discord.MessageEmbed({
-                color: 0xFFFF00,
+            CustomEmbed.from({
+                color: CustomEmbed.colors.YELLOW,
                 title: 'A member has left the server!',
                 fields: [
                     {

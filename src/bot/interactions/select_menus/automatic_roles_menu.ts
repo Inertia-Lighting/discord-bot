@@ -6,6 +6,8 @@
 
 import { Discord } from '../../discord_client';
 
+import { CustomEmbed } from '@root/bot/common/message';
+
 //---------------------------------------------------------------------------------------------------------------//
 
 const allowed_role_ids: string[] = [
@@ -47,8 +49,7 @@ export default {
 
         await interaction.editReply({
             embeds: [
-                new Discord.MessageEmbed({
-                    color: 0x60A0FF,
+                CustomEmbed.from({
                     title: 'Automatic Roles',
                     description: [
                         'Your roles have been updated to be the following:',

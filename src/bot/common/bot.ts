@@ -6,6 +6,8 @@
 
 import * as Discord from 'discord.js';
 
+import { CustomEmbed } from './message';
+
 //---------------------------------------------------------------------------------------------------------------//
 
 const guild_staff_role_id = process.env.BOT_STAFF_ROLE_ID as string;
@@ -19,8 +21,8 @@ const guild_founders_role_id = process.env.BOT_FOUNDERS_ROLE_ID as string;
 
 const user_is_not_allowed_access_to_command_message_options = {
     embeds: [
-        new Discord.MessageEmbed({
-            color: 0xFF00FF,
+        CustomEmbed.from({
+            color: CustomEmbed.colors.MAGENTA,
             title: 'Nice try, this command is protected!',
             description: 'You aren\'t allowed to use this command!',
         }),

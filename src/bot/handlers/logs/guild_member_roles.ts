@@ -4,6 +4,8 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
+import { CustomEmbed } from '@root/bot/common/message';
+
 import { Discord, client } from '../../discord_client';
 
 //---------------------------------------------------------------------------------------------------------------//
@@ -28,8 +30,8 @@ async function guildMemberRolesAddedLogger(
 
     await logging_channel.send({
         embeds: [
-            new Discord.MessageEmbed({
-                color: 0x00FF00,
+            CustomEmbed.from({
+                color: CustomEmbed.colors.GREEN,
                 description: `**Roles were added to ${new_member}.**`,
                 fields: [
                     {
@@ -62,8 +64,8 @@ async function guildMemberRolesRemovedLogger(
 
     await logging_channel.send({
         embeds: [
-            new Discord.MessageEmbed({
-                color: 0xFFFF00,
+            CustomEmbed.from({
+                color: CustomEmbed.colors.YELLOW,
                 description: `**Roles were removed from ${old_member}.**`,
                 fields: [
                     {
