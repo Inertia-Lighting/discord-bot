@@ -17,6 +17,7 @@ const client = new Discord.Client({
         repliedUser: true,
     },
     intents: [
+        Discord.GatewayIntentBits.MessageContent,
         Discord.GatewayIntentBits.Guilds,
         Discord.GatewayIntentBits.GuildMembers,
         Discord.GatewayIntentBits.GuildBans,
