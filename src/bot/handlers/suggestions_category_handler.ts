@@ -13,13 +13,19 @@ async function suggestionsCategoryHandler(message: Discord.Message) {
     if (message.author.system || message.author.bot) return;
     if (message.content.length === 0) return;
 
-    /* don't allow staff to create suggestions */
-    if (message.member.roles.cache.has(process.env.BOT_STAFF_ROLE_ID as string)) return;
+    let message_content = message.content;
+
+    /* don't allow staff to create suggestions, unless their message begins with bypass */
+    if (message.member.roles.cache.has(process.env.BOT_STAFF_ROLE_ID as string) && !message_content.startsWith('!bypass')) {
+        return;
+    } else if (message_content.startsWith('!bypass ')) {
+        message_content = message_content.substring(7);
+    }
 
     const suggestions_channel = message.channel;
 
     /* suggestion text */
-    const suggestion_text = string_ellipses(message.content, 1000);
+    const suggestion_text = string_ellipses(message_content, 1000);
 
     /* suggestion embed */
     const bot_suggestion_message = await suggestions_channel.send({
