@@ -19,7 +19,7 @@ function replyToMessageOrEditReplyToInteraction(
     message_payload: Discord.WebhookEditMessageOptions | Discord.ReplyMessageOptions,
 ) {
     if (
-        deferred_interaction_or_message instanceof Discord.ChatInputCommandInteraction ||
+        deferred_interaction_or_message instanceof Discord.CommandInteraction ||
         deferred_interaction_or_message instanceof Discord.MessageComponentInteraction
     ) {
         deferred_interaction_or_message.editReply(message_payload).catch(console.warn);
