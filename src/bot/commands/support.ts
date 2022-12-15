@@ -139,7 +139,7 @@ type SupportCategory = {
     description: string;
     qualified_support_role_ids: Discord.Snowflake[];
     automatically_save_when_closed: boolean;
-    instructions_message_options: Discord.MessageOptions;
+    instructions_message_options: Discord.BaseMessageOptions;
 };
 
 const support_categories = new Discord.Collection([

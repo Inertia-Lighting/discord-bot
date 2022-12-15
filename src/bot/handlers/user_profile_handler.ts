@@ -16,7 +16,7 @@ import { Discord, client } from '../discord_client';
 
 function replyToMessageOrEditReplyToInteraction(
     deferred_interaction_or_message: Discord.Interaction | Discord.Message,
-    message_payload: Discord.WebhookEditMessageOptions | Discord.ReplyMessageOptions,
+    message_payload: Discord.BaseMessageOptions,
 ) {
     if (
         deferred_interaction_or_message instanceof Discord.CommandInteraction ||
