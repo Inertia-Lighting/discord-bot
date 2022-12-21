@@ -14,8 +14,8 @@ import { CustomEmbed } from '../common/message';
 
 export default {
     name: 'support',
-    description: 'support tickets and stuff',
-    aliases: ['support', 'close_ticket'],
+    description: 'redirect to support channel',
+    aliases: ['support'],
     permission_level: command_permission_levels.PUBLIC,
     cooldown: 5_000,
     async execute(
