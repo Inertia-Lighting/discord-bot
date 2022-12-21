@@ -138,6 +138,7 @@ export default {
             }
 
             interactions.set(interaction.identifier, interaction);
+            console.log(`registed ${interaction.identifier}, ${interaction}`);
         }
 
         /* set the product prices in the database after 1 minute */
