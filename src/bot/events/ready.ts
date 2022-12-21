@@ -120,7 +120,6 @@ export default {
 
             (client.$.commands as Discord.Collection<string, unknown>).set(bot_command.name, bot_command);
         }
-
         /* register interactions */
         const interaction_files_path = path.join(process.cwd(), 'dist', 'bot', 'interactions');
         const interaction_file_names = recursiveReadDirectory(interaction_files_path);
@@ -138,7 +137,6 @@ export default {
             }
 
             interactions.set(interaction.identifier, interaction);
-            console.log(`registed ${interaction.identifier}, ${interaction}`);
         }
 
         /* set the product prices in the database after 1 minute */

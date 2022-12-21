@@ -120,9 +120,9 @@ async function closeSupportTicketChannel(
     member_that_closed_ticket: Discord.GuildMember | undefined,
     send_feedback_survey: boolean = false
 ): Promise<Discord.TextChannel> {
-    await support_channel.send({
-        content: `${member_that_closed_ticket ? `${member_that_closed_ticket},` : 'automatically'} closing support ticket in 10 seconds...`,
-    }).catch(console.warn);
+    // await support_channel.send({
+    //     content: `${member_that_closed_ticket ? `${member_that_closed_ticket},` : 'automatically'} closing support ticket in 10 seconds...`,
+    // }).catch(console.warn);
 
     if (save_transcript && member_that_closed_ticket) {
         const support_ticket_topic_name = support_channel.name.match(/([a-zA-Z\-\_])+(?![\-\_])\D/i)?.[0];
@@ -140,6 +140,8 @@ async function closeSupportTicketChannel(
             saveImages: false,
             poweredBy: false,
         });
+
+        const channel_participant_ids = support_channel.members.map(member => member.user.id);
 
         const transcript_embed = CustomEmbed.from({
             fields: [
@@ -167,6 +169,10 @@ async function closeSupportTicketChannel(
                     name: 'Closed By',
                     value: `<@!${member_that_closed_ticket.id}>`,
                     inline: true,
+                }, {
+                    name: 'Participants',
+                    value: `${Array.from(channel_participant_ids).map(user_id => `<@!${user_id}>`).join(' - ')}`,
+                    inline: false,
                 },
             ],
         });
@@ -238,7 +244,7 @@ async function closeSupportTicketChannel(
                 user_feedback_survey_components_collector.on('collect', async (interaction) => {
                     await interaction.deferUpdate();
 
-                    if (!interaction.isSelectMenu()) return;
+                    if (!interaction.isStringSelectMenu()) return;
 
                     switch (interaction.customId) {
                         case 'support_user_feedback_survey_color': {

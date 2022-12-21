@@ -29,8 +29,8 @@ export default {
             return;
         }
 
-        const channel_exists_in_support_tickets_category = interaction.channelId === support_tickets_category_id;
-        const channel_is_not_transcripts_channel = interaction.channelId !== support_tickets_transcripts_channel_id;
+        const channel_exists_in_support_tickets_category = interaction.channel?.parentId === support_tickets_category_id;
+        const channel_is_not_transcripts_channel = interaction.channel?.id !== support_tickets_transcripts_channel_id;
         if (!(channel_exists_in_support_tickets_category && channel_is_not_transcripts_channel)) {
             interaction.reply({
                 content: 'This channel is not an active support ticket.',
@@ -46,5 +46,8 @@ export default {
 
         closeSupportTicketChannel(interaction.channel as Discord.TextChannel, true, interaction.member, true);
 
+        interaction.reply({
+            content: `${interaction.member} closing support ticket in 10 seconds...`,
+        });
     },
 };
