@@ -17,7 +17,7 @@ const support_tickets_transcripts_channel_id = process.env.BOT_SUPPORT_TICKETS_T
 
 export default {
     identifier: 'close_ticket',
-    async execute(interaction: Discord.ChatInputCommandInteraction) {
+    async execute(interaction: Discord.AutocompleteInteraction | Discord.ChatInputCommandInteraction) {
         if (!interaction.isChatInputCommand()) return;
         if (!interaction.inCachedGuild()) return;
         const user_permission_level = getUserPermissionLevel(interaction.member);
