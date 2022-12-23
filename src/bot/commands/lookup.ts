@@ -1,12 +1,16 @@
-/* Copyright © Inertia Lighting | All Rights Reserved */
+//------------------------------------------------------------//
+//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
+//------------------------------------------------------------//
 
 //---------------------------------------------------------------------------------------------------------------//
 
-import { go_mongo_db } from '../../mongo/mongo.js';
+import { go_mongo_db } from '../../mongo/mongo';
 
-import { Discord, client } from '../discord_client.js';
+import { Discord, client } from '../discord_client';
 
-import { command_permission_levels } from '../common/bot.js';
+import { command_permission_levels } from '../common/bot';
+
+import { CustomEmbed } from '../common/message';
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -15,7 +19,7 @@ export default {
     description: 'looks up a specified user in the database',
     aliases: ['lookup'],
     permission_level: command_permission_levels.STAFF,
-    cooldown: 2_500,
+    cooldown: 1_500,
     async execute(
         message: Discord.Message<true>,
         args: {
@@ -65,10 +69,9 @@ export default {
         await message.channel.send({
             embeds: [
                 ...(db_blacklisted_user_data ? [
-                    new Discord.MessageEmbed({
-                        color: 0x60A0FF,
+                    CustomEmbed.from({
                         author: {
-                            iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+                            icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                             name: 'Inertia Lighting | User Blacklist System',
                         },
                         description: [
@@ -76,20 +79,19 @@ export default {
                             'User is blacklisted from using Inertia Lighting products!',
                             '\`\`\`',
                             '\`\`\`json',
-                            `${Discord.Util.cleanCodeBlockContent(JSON.stringify(db_blacklisted_user_data, null, 2))}`,
+                            `${Discord.cleanCodeBlockContent(JSON.stringify(db_blacklisted_user_data, null, 2))}`,
                             '\`\`\`',
                         ].join('\n'),
                     }),
                 ] : []),
-                new Discord.MessageEmbed({
-                    color: 0x60A0FF,
+                CustomEmbed.from({
                     author: {
-                        iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+                        icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | User Lookup System',
                     },
                     description: [
                         '\`\`\`json',
-                        `${Discord.Util.cleanCodeBlockContent(JSON.stringify(db_user_data ?? 'user not found in database', null, 2))}`,
+                        `${Discord.cleanCodeBlockContent(JSON.stringify(db_user_data ?? 'user not found in database', null, 2))}`,
                         '\`\`\`',
                     ].join('\n'),
                 }),

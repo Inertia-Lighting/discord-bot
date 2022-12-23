@@ -1,8 +1,12 @@
-/* Copyright © Inertia Lighting | All Rights Reserved */
+//------------------------------------------------------------//
+//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
+//------------------------------------------------------------//
 
 //---------------------------------------------------------------------------------------------------------------//
 
-import { Discord, client } from '../../discord_client.js';
+import { CustomEmbed } from '@root/bot/common/message';
+
+import { Discord, client } from '../../discord_client';
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -20,14 +24,14 @@ async function guildMemberRolesAddedLogger(
 
     const logging_channel = await client.channels.fetch(logging_channel_id);
     if (!logging_channel) throw new Error('Failed to fetch logging channel');
-    if (!logging_channel.isText()) throw new TypeError('logging_channel is not a text channel');
+    if (!logging_channel.isTextBased()) throw new TypeError('logging_channel is not a text channel');
 
     const roles_added = new_member.roles.cache.filter(role => !old_member.roles.cache.has(role.id));
 
     await logging_channel.send({
         embeds: [
-            new Discord.MessageEmbed({
-                color: 0x00FF00,
+            CustomEmbed.from({
+                color: CustomEmbed.colors.GREEN,
                 description: `**Roles were added to ${new_member}.**`,
                 fields: [
                     {
@@ -54,14 +58,14 @@ async function guildMemberRolesRemovedLogger(
 
     const logging_channel = await client.channels.fetch(logging_channel_id);
     if (!logging_channel) throw new Error('Failed to fetch logging channel');
-    if (!logging_channel.isText()) throw new TypeError('logging_channel is not a text channel');
+    if (!logging_channel.isTextBased()) throw new TypeError('logging_channel is not a text channel');
 
     const roles_removed = old_member.roles.cache.filter(role => !new_member.roles.cache.has(role.id));
 
     await logging_channel.send({
         embeds: [
-            new Discord.MessageEmbed({
-                color: 0xFFFF00,
+            CustomEmbed.from({
+                color: CustomEmbed.colors.YELLOW,
                 description: `**Roles were removed from ${old_member}.**`,
                 fields: [
                     {

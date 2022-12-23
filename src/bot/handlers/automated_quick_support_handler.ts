@@ -1,14 +1,16 @@
-/* Copyright © Inertia Lighting | All Rights Reserved */
+//------------------------------------------------------------//
+//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
+//------------------------------------------------------------//
 
 //---------------------------------------------------------------------------------------------------------------//
 
 import { compareTwoStrings } from 'string-similarity';
 
-import { go_mongo_db } from '../../mongo/mongo.js';
+import { go_mongo_db } from '../../mongo/mongo';
 
-import { Discord, client } from '../discord_client.js';
+import { Discord, client } from '../discord_client';
 
-import { math_clamp } from '../../utilities.js';
+import { math_clamp } from '../../utilities';
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -99,7 +101,7 @@ async function automatedQuickSupportHandler(message: Discord.Message) {
         embeds: matching_qs_topics.map(quick_support_topic => ({
             color: 0x60A0FF,
             author: {
-                iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+                iconURL: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                 name: 'Inertia Lighting | Automatic Quick Support',
             },
             title: quick_support_topic.title,

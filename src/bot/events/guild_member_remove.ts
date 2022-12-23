@@ -1,10 +1,12 @@
-/* Copyright © Inertia Lighting | All Rights Reserved */
+//------------------------------------------------------------//
+//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
+//------------------------------------------------------------//
 
 //---------------------------------------------------------------------------------------------------------------//
 
-import { Discord } from '../discord_client.js';
+import { Discord } from '../discord_client';
 
-import { guildMemberRemoveLogger } from '../handlers/logs/guild_member_retention.js';
+import { guildMemberRemoveLogger } from '../handlers/logs/guild_member_retention';
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -14,7 +16,7 @@ if (typeof bot_guild_id !== 'string') throw new TypeError('bot_guild_id is not a
 //---------------------------------------------------------------------------------------------------------------//
 
 export default {
-    name: 'guildMemberRemove',
+    name: Discord.Events.GuildMemberRemove,
     async handler(member: Discord.GuildMember) {
         if (member.user.system) return; // don't operate on system accounts
         if (member.user.bot) return; // don't operate on bots to prevent feedback-loops

@@ -12,4 +12,4 @@ Assume that all works contained in this repository are copyrighted and protected
 
 ## Copyright
 
-Copyright &copy; Inertia Lighting | All Rights Reserved
+Copyright &copy; Inertia Lighting, Some Rights Reserved

@@ -1,16 +1,18 @@
-/* Copyright © Inertia Lighting | All Rights Reserved */
+//------------------------------------------------------------//
+//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
+//------------------------------------------------------------//
 
 //---------------------------------------------------------------------------------------------------------------//
 
-import { Discord, client } from '../discord_client.js';
+import { Discord, client } from '../discord_client';
 
-import { automatedQuickSupportHandler } from '../handlers/automated_quick_support_handler.js';
+import { automatedQuickSupportHandler } from '../handlers/automated_quick_support_handler';
 
-import { suggestionsCategoryHandler } from '../handlers/suggestions_category_handler.js';
+import { suggestionsCategoryHandler } from '../handlers/suggestions_category_handler';
 
-import { oneWordStoryChannelHandler } from '../handlers/one_word_story_channel_handler.js';
+import { oneWordStoryChannelHandler } from '../handlers/one_word_story_channel_handler';
 
-import { commandHandler } from '../handlers/command_handler.js';
+import { commandHandler } from '../handlers/command_handler';
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -23,13 +25,19 @@ const one_word_story_channel_id = process.env.BOT_ONE_WORD_STORY_CHANNEL_ID as s
 //---------------------------------------------------------------------------------------------------------------//
 
 export default {
-    name: 'messageCreate',
+    name: Discord.Events.MessageCreate,
     async handler(message: Discord.Message) {
         /* don't allow bots */
         if (message.author.bot) return;
 
+        /* don't allow system accounts */
+        if (message.author.system) return;
+
+        /* only allow messages from inside of a guild */
+        if (!message.inGuild()) return;
+
         /* only allow text channels */
-        if (message.channel.type !== 'GUILD_TEXT') return;
+        if (!message.channel.isTextBased()) return;
 
         /* handle messages sent in suggestions channels */
         if (message.channel.parent?.id === suggestions_category_id) {

@@ -1,4 +1,6 @@
-/* Copyright © Inertia Lighting | All Rights Reserved */
+//------------------------------------------------------------//
+//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
+//------------------------------------------------------------//
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -14,7 +16,7 @@ if (typeof bot_guild_id !== 'string') throw new TypeError('bot_guild_id is not a
 //---------------------------------------------------------------------------------------------------------------//
 
 export default {
-    name: 'messageDelete',
+    name: Discord.Events.MessageDelete,
     async handler(message: Discord.Message) {
         if (message.author.system) return; // don't operate on system accounts
         if (message.author.bot) return; // don't operate on bots to prevent feedback-loops

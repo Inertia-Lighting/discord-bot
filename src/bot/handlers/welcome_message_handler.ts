@@ -1,12 +1,13 @@
-/* Copyright © Inertia Lighting | All Rights Reserved */
+//------------------------------------------------------------//
+//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
+//------------------------------------------------------------//
 
 //---------------------------------------------------------------------------------------------------------------//
 
-'use strict';
+import { CustomEmbed } from '../common/message';
 
-//---------------------------------------------------------------------------------------------------------------//
+import { Discord, client } from '../discord_client';
 
-import { Discord, client } from '../discord_client.js';
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -14,8 +15,7 @@ async function welcomeMessageHandler(member: Discord.GuildMember) {
     const welcome_message_options = {
         content: `${member}`,
         embeds: [
-            new Discord.MessageEmbed({
-                color: 0x60A0FF,
+            CustomEmbed.from({
                 title: 'Welcome to Inertia Lighting!',
                 description: [
                     'Please click the button so that we know you are a human!',
@@ -51,8 +51,7 @@ async function welcomeMessageHandler(member: Discord.GuildMember) {
     const guild_welcome_message = await welcome_message_channel.send(dm_welcome_message_sent_successfully ? {
         content: `${member}`,
         embeds: [
-            new Discord.MessageEmbed({
-                color: 0x60A0FF,
+            CustomEmbed.from({
                 title: 'Welcome to Inertia Lighting!',
                 description: [
                     'Please check your DMs for a CAPTCHA message sent by our bot!',

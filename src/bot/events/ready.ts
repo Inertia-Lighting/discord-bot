@@ -1,8 +1,10 @@
-/* Copyright © Inertia Lighting | All Rights Reserved */
+//------------------------------------------------------------//
+//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
+//------------------------------------------------------------//
 
 //---------------------------------------------------------------------------------------------------------------//
 
-import { DbProductData } from '@root/types/types.js';
+import { DbProductData } from '@root/types/types';
 
 import path from 'node:path';
 
@@ -10,15 +12,15 @@ import axios from 'axios';
 
 import moment from 'moment-timezone';
 
-import { Timer } from '../../utilities.js';
+import { Timer } from '../../utilities';
 
-import { go_mongo_db } from '../../mongo/mongo.js';
+import { go_mongo_db } from '../../mongo/mongo';
 
-import { Discord, client } from '../discord_client.js';
+import { Discord, client } from '../discord_client';
 
-import { interactions } from '../common/interaction.js';
+import { interactions } from '../common/interaction';
 
-import { illegalNicknameHandler } from '../handlers/illegal_nickname_handler.js';
+import { illegalNicknameHandler } from '../handlers/illegal_nickname_handler';
 
 const recursiveReadDirectory = require('recursive-read-directory');
 
@@ -77,7 +79,8 @@ const setProductPricesInDB = async () => {
 const updateBotNickname = async () => {
     const bot_guild = await client.guilds.fetch(bot_guild_id);
 
-    await bot_guild.me!.setNickname(`${process.env.BOT_COMMAND_PREFIX} | ${client.user!.username}`, 'fixing my nickname').catch(console.trace);
+    const bot_member = await bot_guild.members.fetchMe();
+    bot_member.setNickname(`${process.env.BOT_COMMAND_PREFIX} | ${client.user!.username}`, 'fixing my nickname').catch(console.trace);
 
     return; // complete async
 };
@@ -98,7 +101,7 @@ const removeIllegalNicknames = async () => {
 //---------------------------------------------------------------------------------------------------------------//
 
 export default {
-    name: 'ready',
+    name: Discord.Events.ClientReady,
     async handler() {
         const ready_timestamp = `${moment()}`;
         console.log('----------------------------------------------------------------------------------------------------------------');
@@ -117,7 +120,6 @@ export default {
 
             (client.$.commands as Discord.Collection<string, unknown>).set(bot_command.name, bot_command);
         }
-
         /* register interactions */
         const interaction_files_path = path.join(process.cwd(), 'dist', 'bot', 'interactions');
         const interaction_file_names = recursiveReadDirectory(interaction_files_path);

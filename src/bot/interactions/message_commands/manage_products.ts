@@ -1,14 +1,18 @@
-/* Copyright © Inertia Lighting | All Rights Reserved */
+//------------------------------------------------------------//
+//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
+//------------------------------------------------------------//
 
 //---------------------------------------------------------------------------------------------------------------//
 
-import { DbProductData, DbUserData } from '@root/types/types.js';
+import { DbProductData, DbUserData } from '@root/types/types';
 
 import { compareTwoStrings } from 'string-similarity';
 
-import { go_mongo_db } from '../../../mongo/mongo.js';
+import { go_mongo_db } from '../../../mongo/mongo';
 
-import { Discord } from '../../discord_client.js';
+import { Discord } from '../../discord_client';
+
+import { CustomEmbed } from '@root/bot/common/message';
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -19,7 +23,7 @@ const database_support_staff_role_id = process.env.BOT_SUPPORT_STAFF_DATABASE_RO
 export default {
     identifier: 'manage_products',
     async execute(
-        interaction: Discord.AutocompleteInteraction | Discord.CommandInteraction
+        interaction: Discord.AutocompleteInteraction | Discord.ChatInputCommandInteraction
     ) {
         const db_roblox_products = (await go_mongo_db.find(process.env.MONGO_DATABASE_NAME as string, process.env.MONGO_PRODUCTS_COLLECTION_NAME as string, {})) as unknown[] as DbProductData[];
 
@@ -88,7 +92,7 @@ export default {
                     value: db_roblox_product.code,
                 }))
             );
-        } else if (interaction.isCommand()) {
+        } else if (interaction.isChatInputCommand()) {
             await interaction.deferReply();
 
             const interaction_guild_member = await interaction.guild!.members.fetch(interaction.user.id);
@@ -97,8 +101,8 @@ export default {
             if (!interaction_guild_member.roles.cache.has(database_support_staff_role_id)) {
                 interaction.editReply({
                     embeds: [
-                        new Discord.MessageEmbed({
-                            color: 0xFF00FF,
+                        CustomEmbed.from({
+                            color: CustomEmbed.colors.VIOLET,
                             title: 'Inertia Lighting | Products Manager',
                             description: 'You aren\'t allowed to use this command!',
                         }),
@@ -126,8 +130,8 @@ export default {
             if (!db_user_data) {
                 interaction.editReply({
                     embeds: [
-                        new Discord.MessageEmbed({
-                            color: 0xFFFF00,
+                        CustomEmbed.from({
+                            color: CustomEmbed.colors.YELLOW,
                             title: 'Inertia Lighting | Products Manager',
                             description: `${user_to_modify} does not exist in the database!`,
                         }),
@@ -142,8 +146,8 @@ export default {
             if (!db_roblox_product) {
                 interaction.followUp({
                     embeds: [
-                        new Discord.MessageEmbed({
-                            color: 0xFFFF00,
+                        CustomEmbed.from({
+                            color: CustomEmbed.colors.YELLOW,
                             title: 'Inertia Lighting | Products Manager',
                             description: `\`${potential_product_code}\` is not a valid product code!`,
                         }),
@@ -167,8 +171,8 @@ export default {
 
                 interaction.editReply({
                     embeds: [
-                        new Discord.MessageEmbed({
-                            color: 0xFF0000,
+                        CustomEmbed.from({
+                            color: CustomEmbed.colors.RED,
                             title: 'Inertia Lighting | Products Manager',
                             description: 'An error occurred while modifying the user\'s products!',
                         }),
@@ -181,8 +185,8 @@ export default {
             const logging_channel = (await interaction.guild!.channels.fetch(process.env.BOT_LOGGING_PRODUCTS_MANAGER_CHANNEL_ID as string)) as Discord.TextBasedChannel;
             logging_channel.send({
                 embeds: [
-                    new Discord.MessageEmbed({
-                        color: action_to_perform === 'add' ? 0x00FF00 : 0xFF0000,
+                    CustomEmbed.from({
+                        color: action_to_perform === 'add' ? CustomEmbed.colors.GREEN : CustomEmbed.colors.RED,
                         title: 'Inertia Lighting | Products Manager',
                         description: `${interaction.user} ${action_to_perform === 'add' ? 'added' : 'removed'} \`${db_roblox_product.code}\` ${action_to_perform === 'add' ? 'to' : 'from'} ${user_to_modify}.`,
                         fields: [
@@ -197,8 +201,8 @@ export default {
 
             interaction.editReply({
                 embeds: [
-                    new Discord.MessageEmbed({
-                        color: action_to_perform === 'add' ? 0x00FF00 : 0xFF0000,
+                    CustomEmbed.from({
+                        color: action_to_perform === 'add' ? CustomEmbed.colors.GREEN : CustomEmbed.colors.RED,
                         title: 'Inertia Lighting | Products Manager',
                         description: `${action_to_perform === 'add' ? 'Added' : 'Removed'} \`${db_roblox_product.code}\` ${action_to_perform === 'add' ? 'to' : 'from'} ${user_to_modify}.`,
                         fields: [

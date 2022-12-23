@@ -1,12 +1,14 @@
-/* Copyright © Inertia Lighting | All Rights Reserved */
+//------------------------------------------------------------//
+//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
+//------------------------------------------------------------//
 
 //---------------------------------------------------------------------------------------------------------------//
 
-import { Discord } from '../discord_client.js';
+import { Discord } from '../discord_client';
 
-import { command_permission_levels } from '../common/bot.js';
+import { command_permission_levels } from '../common/bot';
 
-import { logModerationActionToDatabase } from '../handlers/log_moderation_action_handler.js';
+import { logModerationActionToDatabase } from '../handlers/log_moderation_action_handler';
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -16,7 +18,7 @@ export default {
     usage: '@mention reason',
     aliases: ['warn'],
     permission_level: command_permission_levels.MODERATORS,
-    cooldown: 2_000,
+    cooldown: 1_500,
     async execute(
         message: Discord.Message<true>,
         args: {

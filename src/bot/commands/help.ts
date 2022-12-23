@@ -1,10 +1,14 @@
-/* Copyright © Inertia Lighting | All Rights Reserved */
+//------------------------------------------------------------//
+//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
+//------------------------------------------------------------//
 
 //---------------------------------------------------------------------------------------------------------------//
 
-import { Discord, client } from '../discord_client.js';
+import { Discord, client } from '../discord_client';
 
-import { command_permission_levels, getUserPermissionLevel } from '../common/bot.js';
+import { command_permission_levels, getUserPermissionLevel } from '../common/bot';
+
+import { CustomEmbed } from '../common/message';
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -29,7 +33,7 @@ export default {
     usage: '[command_name]',
     aliases: ['help', 'commands'],
     permission_level: command_permission_levels.PUBLIC,
-    cooldown: 2_500,
+    cooldown: 500,
     async execute(
         message: Discord.Message<true>,
         args: {
@@ -57,10 +61,10 @@ export default {
             if (specified_command) {
                 message.channel.send({
                     embeds: [
-                        new Discord.MessageEmbed({
+                        CustomEmbed.from({
                             color: 0x60A0FF,
                             author: {
-                                iconURL: `${message.author.displayAvatarURL({ dynamic: true })}`,
+                                icon_url: `${message.author.displayAvatarURL({ forceStatic: false })}`,
                                 name: `${message.author.tag}`,
                             },
                             description: [
@@ -87,10 +91,10 @@ export default {
             );
             message.channel.send({
                 embeds: [
-                    new Discord.MessageEmbed({
+                    CustomEmbed.from({
                         color: 0x60A0FF,
                         author: {
-                            iconURL: `${message.author.displayAvatarURL({ dynamic: true })}`,
+                            icon_url: `${message.author.displayAvatarURL({ forceStatic: false })}`,
                             name: `${message.author.tag}`,
                         },
                         title: 'Here\'s a list of all commands that you may use!',

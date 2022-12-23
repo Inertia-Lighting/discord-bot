@@ -1,10 +1,12 @@
-/* Copyright © Inertia Lighting | All Rights Reserved */
+//------------------------------------------------------------//
+//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
+//------------------------------------------------------------//
 
 //---------------------------------------------------------------------------------------------------------------//
 
 import path from 'node:path';
 
-import { client } from './discord_client.js';
+import { client } from './discord_client';
 
 const recursiveReadDirectory = require('recursive-read-directory');
 

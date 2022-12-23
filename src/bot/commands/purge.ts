@@ -1,10 +1,12 @@
-/* Copyright © Inertia Lighting | All Rights Reserved */
+//------------------------------------------------------------//
+//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
+//------------------------------------------------------------//
 
 //---------------------------------------------------------------------------------------------------------------//
 
-import { command_permission_levels } from '../common/bot.js';
+import { command_permission_levels } from '../common/bot';
 
-import { Discord } from '../discord_client.js';
+import { Discord } from '../discord_client';
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -14,7 +16,7 @@ export default {
     usage: '<amount_of_messages>',
     aliases: ['purge', 'clear'],
     permission_level: command_permission_levels.ADMINS,
-    cooldown: 5_000,
+    cooldown: 1_500,
     async execute(
         message: Discord.Message<true>,
         args: {

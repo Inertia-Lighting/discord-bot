@@ -1,10 +1,12 @@
-/* Copyright © Inertia Lighting | All Rights Reserved */
+//------------------------------------------------------------//
+//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
+//------------------------------------------------------------//
 
 //---------------------------------------------------------------------------------------------------------------//
 
-import { Timer } from '../../utilities.js';
+import { Timer } from '../../utilities';
 
-import { Discord } from '../discord_client.js';
+import { Discord } from '../discord_client';
 
 //---------------------------------------------------------------------------------------------------------------//
 

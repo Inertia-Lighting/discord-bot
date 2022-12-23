@@ -1,14 +1,16 @@
-/* Copyright © Inertia Lighting | All Rights Reserved */
+//------------------------------------------------------------//
+//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
+//------------------------------------------------------------//
 
 //---------------------------------------------------------------------------------------------------------------//
 
-import { Discord } from '../discord_client.js';
+import { Discord } from '../discord_client';
 
-import { guildMemberAddLogger } from '../handlers/logs/guild_member_retention.js';
+import { guildMemberAddLogger } from '../handlers/logs/guild_member_retention';
 
-import { welcomeMessageHandler } from '../handlers/welcome_message_handler.js';
+import { welcomeMessageHandler } from '../handlers/welcome_message_handler';
 
-import { illegalNicknameHandler } from '../handlers/illegal_nickname_handler.js';
+import { illegalNicknameHandler } from '../handlers/illegal_nickname_handler';
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -25,7 +27,7 @@ const new_to_the_server_role_ids = new_to_the_server_role_ids_string.split(',');
 //---------------------------------------------------------------------------------------------------------------//
 
 export default {
-    name: 'guildMemberAdd',
+    name: Discord.Events.GuildMemberAdd,
     async handler(member: Discord.GuildMember) {
         if (member.user.system) return; // don't operate on system accounts
         if (member.user.bot) return; // don't operate on bots to prevent feedback-loops

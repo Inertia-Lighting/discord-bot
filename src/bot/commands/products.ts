@@ -1,14 +1,18 @@
-/* Copyright © Inertia Lighting | All Rights Reserved */
+//------------------------------------------------------------//
+//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
+//------------------------------------------------------------//
 
 //---------------------------------------------------------------------------------------------------------------//
 
-import { Timer, string_ellipses } from '../../utilities.js';
+import { Timer, string_ellipses } from '../../utilities';
 
-import { go_mongo_db } from '../../mongo/mongo.js';
+import { go_mongo_db } from '../../mongo/mongo';
 
-import { Discord, client } from '../discord_client.js';
+import { Discord, client } from '../discord_client';
 
-import { command_permission_levels } from '../common/bot.js';
+import { command_permission_levels } from '../common/bot';
+
+import { CustomEmbed } from '../common/message';
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -17,7 +21,7 @@ export default {
     description: 'lists all of the products',
     aliases: ['products'],
     permission_level: command_permission_levels.PUBLIC,
-    cooldown: 10_000,
+    cooldown: 2_500,
     async execute(
         message: Discord.Message<true>,
         args: {
@@ -27,8 +31,7 @@ export default {
         /* send an initial message to the user */
         const bot_message = await message.channel.send({
             embeds: [
-                new Discord.MessageEmbed({
-                    color: 0x60A0FF,
+                CustomEmbed.from({
                     description: 'Loading products...',
                 }),
             ],
@@ -52,7 +55,7 @@ export default {
                             style: 2,
                             custom_id: 'previous',
                             emoji: {
-                                id: null,
+                                id: undefined,
                                 name: '⬅️',
                             },
                         }, {
@@ -60,7 +63,7 @@ export default {
                             style: 2,
                             custom_id: 'next',
                             emoji: {
-                                id: null,
+                                id: undefined,
                                 name: '➡️',
                             },
                         }, {
@@ -68,7 +71,7 @@ export default {
                             style: 2,
                             custom_id: 'stop',
                             emoji: {
-                                id: null,
+                                id: undefined,
                                 name: '⏹️',
                             },
                         }, {
@@ -95,10 +98,9 @@ export default {
 
             await bot_message.edit({
                 embeds: [
-                    new Discord.MessageEmbed({
-                        color: 0x60A0FF,
+                    CustomEmbed.from({
                         author: {
-                            iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+                            icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                             name: 'Inertia Lighting | Products',
                         },
                         description: [
@@ -107,7 +109,7 @@ export default {
                             `**PayPal Price:** $${Number.parseFloat(public_roblox_product.price_in_usd).toFixed(2)} USD`,
                             '**Description:**',
                             '\`\`\`',
-                            `${string_ellipses(Discord.Util.cleanCodeBlockContent(public_roblox_product.description), 1500)}`,
+                            `${string_ellipses(Discord.cleanCodeBlockContent(public_roblox_product.description), 1500)}`,
                             '\`\`\`',
                         ].join('\n'),
                         image: {

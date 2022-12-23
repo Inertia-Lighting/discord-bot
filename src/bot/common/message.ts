@@ -1,8 +1,10 @@
-/* Copyright © Inertia Lighting | All Rights Reserved */
+//------------------------------------------------------------//
+//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
+//------------------------------------------------------------//
 
 //---------------------------------------------------------------------------------------------------------------//
 
-import { Discord } from '../discord_client.js';
+import { Discord } from '../discord_client';
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -20,12 +22,34 @@ function disableMessageComponents(message: Discord.Message): Promise<Discord.Mes
                 ...component.toJSON(),
                 disabled: true,
             })),
-        })) as unknown as Discord.MessageActionRow[],
+        })) as unknown as Discord.ActionRow<Discord.MessageActionRowComponent>[],
     }));
+}
+
+class CustomEmbed {
+    static colors = {
+        BRAND: 0x60A0FF,
+        WHITE: 0xFFFFFF,
+        RED: 0xFF0000,
+        ORANGE: 0xFF5500,
+        YELLOW: 0xFFFF00,
+        GREEN: 0x00FF00,
+        BLUE: 0x0000FF,
+        INDIGO: 0x550088,
+        VIOLET: 0xAA00FF,
+        MAGENTA: 0xFF00FF,
+    };
+
+    static from(options: Discord.APIEmbed): Discord.EmbedBuilder {
+        options.color ??= this.colors.BRAND;
+
+        return Discord.EmbedBuilder.from(options);
+    }
 }
 
 //---------------------------------------------------------------------------------------------------------------//
 
 export {
     disableMessageComponents,
+    CustomEmbed,
 };

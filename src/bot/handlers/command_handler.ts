@@ -1,14 +1,14 @@
-/* Copyright © Inertia Lighting | All Rights Reserved */
+//------------------------------------------------------------//
+//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
+//------------------------------------------------------------//
 
 //---------------------------------------------------------------------------------------------------------------//
 
-'use strict';
+import { Discord, client } from '../discord_client';
 
-//---------------------------------------------------------------------------------------------------------------//
+import { command_permission_levels, getUserPermissionLevel, user_is_not_allowed_access_to_command_message_options } from '../common/bot';
 
-import { Discord, client } from '../discord_client.js';
-
-import { command_permission_levels, getUserPermissionLevel, user_is_not_allowed_access_to_command_message_options } from '../common/bot.js';
+import { CustomEmbed } from '../common/message';
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -51,8 +51,8 @@ async function commandHandler(message: Discord.Message) {
     if (!command) {
         await message.reply({
             embeds: [
-                new Discord.MessageEmbed({
-                    color: 0xFF0000,
+                CustomEmbed.from({
+                    color: CustomEmbed.colors.RED,
                     description: 'That command does not exist!',
                 }),
             ],
@@ -78,7 +78,7 @@ async function commandHandler(message: Discord.Message) {
     }
 
     /* command cooldown */
-    const command_cooldown_in_ms = command.cooldown ?? 5_000;
+    const command_cooldown_in_ms = command.cooldown ?? 1_500;
     const last_command_epoch_for_user = command_cooldown_tracker.get(message.author.id)?.last_command_epoch ?? Date.now() - command_cooldown_in_ms;
     const current_command_epoch = Date.now();
     command_cooldown_tracker.set(message.author.id, { last_command_epoch: current_command_epoch });
@@ -87,10 +87,10 @@ async function commandHandler(message: Discord.Message) {
     if (user_triggered_command_cooldown && !user_is_a_staff_member) {
         await message.reply({
             embeds: [
-                new Discord.MessageEmbed({
-                    color: 0xFFFF00,
+                CustomEmbed.from({
+                    color: CustomEmbed.colors.YELLOW,
                     author: {
-                        iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+                        icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                         name: `${client.user!.username} | Command Cooldown System`,
                     },
                     description: `\`${command_name}\` is on a cooldown of  \`${command_cooldown_in_ms / 1000}s\`!`,
@@ -124,10 +124,10 @@ async function commandHandler(message: Discord.Message) {
 
         await message.reply({
             embeds: [
-                new Discord.MessageEmbed({
+                CustomEmbed.from({
                     color: 0xFF0000,
                     author: {
-                        iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+                        icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                         name: `${client.user!.username}`,
                     },
                     title: 'Command Error',

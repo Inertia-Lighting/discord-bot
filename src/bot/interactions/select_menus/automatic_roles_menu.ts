@@ -1,8 +1,12 @@
-/* Copyright © Inertia Lighting | All Rights Reserved */
+//------------------------------------------------------------//
+//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
+//------------------------------------------------------------//
 
 //---------------------------------------------------------------------------------------------------------------//
 
-import { Discord } from '../../discord_client.js';
+import { Discord } from '../../discord_client';
+
+import { CustomEmbed } from '@root/bot/common/message';
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -45,8 +49,7 @@ export default {
 
         await interaction.editReply({
             embeds: [
-                new Discord.MessageEmbed({
-                    color: 0x60A0FF,
+                CustomEmbed.from({
                     title: 'Automatic Roles',
                     description: [
                         'Your roles have been updated to be the following:',

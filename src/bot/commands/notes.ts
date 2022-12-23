@@ -1,14 +1,18 @@
-/* Copyright © Inertia Lighting | All Rights Reserved */
+//------------------------------------------------------------//
+//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
+//------------------------------------------------------------//
 
 //---------------------------------------------------------------------------------------------------------------//
 
-import { command_permission_levels } from '../common/bot.js';
+import { command_permission_levels } from '../common/bot';
 
-import { Discord, client } from '../discord_client.js';
+import { Discord, client } from '../discord_client';
 
 import { Timer, array_chunks, string_ellipses } from '../../utilities';
 
 import { UserNote, createNoteForUser, lookupNoteForUser, lookupNotesForUser, purgeNotesFromUser, removeNoteFromUser, updateNoteForUser } from '../handlers/user_notes_handler';
+
+import { CustomEmbed } from '../common/message';
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -25,10 +29,10 @@ async function createNoteCommand(message: Discord.Message) {
     } catch {
         message.reply({
             embeds: [
-                new Discord.MessageEmbed({
-                    color: 0xFFFF00,
+                CustomEmbed.from({
+                    color: CustomEmbed.colors.YELLOW,
                     author: {
-                        iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+                        icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | User Notes',
                     },
                     description: `\"${lookup_query}\" is not a valid user...`,
@@ -43,10 +47,10 @@ async function createNoteCommand(message: Discord.Message) {
     if (note_contents.length < 5) {
         message.reply({
             embeds: [
-                new Discord.MessageEmbed({
-                    color: 0xFFFF00,
+                CustomEmbed.from({
+                    color: CustomEmbed.colors.YELLOW,
                     author: {
-                        iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+                        icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | User Notes',
                     },
                     description: 'The supplied note was less then 5 characters, please be more descriptive next time.',
@@ -67,10 +71,10 @@ async function createNoteCommand(message: Discord.Message) {
     if (!note_was_created_successfully) {
         message.reply({
             embeds: [
-                new Discord.MessageEmbed({
-                    color: 0xFF0000,
+                CustomEmbed.from({
+                    color: CustomEmbed.colors.RED,
                     author: {
-                        iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+                        icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | User Notes',
                     },
                     description: 'An error occurred while creating a note for the user.',
@@ -82,10 +86,10 @@ async function createNoteCommand(message: Discord.Message) {
 
     message.reply({
         embeds: [
-            new Discord.MessageEmbed({
-                color: 0x00FF00,
+            CustomEmbed.from({
+                color: CustomEmbed.colors.GREEN,
                 author: {
-                    iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+                    icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                     name: 'Inertia Lighting | User Notes',
                 },
                 description: 'Successfully created note for user.',
@@ -104,10 +108,10 @@ async function updateNoteCommand(message: Discord.Message) {
     if (lookup_query.length === 0) {
         message.reply({
             embeds: [
-                new Discord.MessageEmbed({
-                    color: 0xFFFF00,
+                CustomEmbed.from({
+                    color: CustomEmbed.colors.YELLOW,
                     author: {
-                        iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+                        icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | User Notes',
                     },
                     description: 'You need to specify a note id when using this command.',
@@ -124,10 +128,10 @@ async function updateNoteCommand(message: Discord.Message) {
     if (!note_in_database) {
         message.reply({
             embeds: [
-                new Discord.MessageEmbed({
-                    color: 0xFFFF00,
+                CustomEmbed.from({
+                    color: CustomEmbed.colors.YELLOW,
                     author: {
-                        iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+                        icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | User Notes',
                     },
                     description: 'Unable to find specified note id in the database!',
@@ -141,10 +145,10 @@ async function updateNoteCommand(message: Discord.Message) {
     if (note_contents.length < 5) {
         message.reply({
             embeds: [
-                new Discord.MessageEmbed({
-                    color: 0xFFFF00,
+                CustomEmbed.from({
+                    color: CustomEmbed.colors.YELLOW,
                     author: {
-                        iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+                        icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | User Notes',
                     },
                     description: 'The supplied note was less then 5 characters, please be more descriptive next time.',
@@ -164,10 +168,10 @@ async function updateNoteCommand(message: Discord.Message) {
     if (!successfully_updated_note) {
         message.reply({
             embeds: [
-                new Discord.MessageEmbed({
-                    color: 0xFF0000,
+                CustomEmbed.from({
+                    color: CustomEmbed.colors.RED,
                     author: {
-                        iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+                        icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | User Notes',
                     },
                     description: 'An error occurred while updating a note for the user.',
@@ -178,10 +182,10 @@ async function updateNoteCommand(message: Discord.Message) {
     }
     message.reply({
         embeds: [
-            new Discord.MessageEmbed({
-                color: 0x00FF00,
+            CustomEmbed.from({
+                color: CustomEmbed.colors.GREEN,
                 author: {
-                    iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+                    icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                     name: 'Inertia Lighting | User Notes',
                 },
                 description: 'Successfully updated note for user.',
@@ -200,10 +204,10 @@ async function removeNoteCommand(message: Discord.Message) {
     if (lookup_query.length === 0) {
         message.reply({
             embeds: [
-                new Discord.MessageEmbed({
-                    color: 0xFFFF00,
+                CustomEmbed.from({
+                    color: CustomEmbed.colors.YELLOW,
                     author: {
-                        iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+                        icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | User Notes',
                     },
                     description: 'You need to specify a note id when using this command.',
@@ -220,10 +224,10 @@ async function removeNoteCommand(message: Discord.Message) {
     if (!note_in_database) {
         message.reply({
             embeds: [
-                new Discord.MessageEmbed({
-                    color: 0xFFFF00,
+                CustomEmbed.from({
+                    color: CustomEmbed.colors.YELLOW,
                     author: {
-                        iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+                        icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | User Notes',
                     },
                     description: 'That note ID was not found in the database!',
@@ -238,10 +242,10 @@ async function removeNoteCommand(message: Discord.Message) {
     if (!successfully_removed_note) {
         message.reply({
             embeds: [
-                new Discord.MessageEmbed({
-                    color: 0xFF0000,
+                CustomEmbed.from({
+                    color: CustomEmbed.colors.RED,
                     author: {
-                        iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+                        icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | User Notes',
                     },
                     description: 'An error occurred while removing a note for the user.',
@@ -253,10 +257,10 @@ async function removeNoteCommand(message: Discord.Message) {
 
     message.reply({
         embeds: [
-            new Discord.MessageEmbed({
-                color: 0x00FF00,
+            CustomEmbed.from({
+                color: CustomEmbed.colors.GREEN,
                 author: {
-                    iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+                    icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                     name: 'Inertia Lighting | User Notes',
                 },
                 description: 'Successfully removed a note from user.',
@@ -278,10 +282,10 @@ async function purgeNotesCommand(message: Discord.Message) {
     } catch {
         message.reply({
             embeds: [
-                new Discord.MessageEmbed({
-                    color: 0xFFFF00,
+                CustomEmbed.from({
+                    color: CustomEmbed.colors.YELLOW,
                     author: {
-                        iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+                        icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | User Notes',
                     },
                     description: `\"${lookup_query}\" is not a valid user...`,
@@ -297,10 +301,10 @@ async function purgeNotesCommand(message: Discord.Message) {
     if (!successfully_purged_notes) {
         message.reply({
             embeds: [
-                new Discord.MessageEmbed({
-                    color: 0xFF0000,
+                CustomEmbed.from({
+                    color: CustomEmbed.colors.RED,
                     author: {
-                        iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+                        icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | User Notes',
                     },
                     description: `An error occurred while removing all notes from <@${lookup_query}>.`,
@@ -312,10 +316,10 @@ async function purgeNotesCommand(message: Discord.Message) {
 
     message.reply({
         embeds: [
-            new Discord.MessageEmbed({
-                color: 0x00FF00,
+            CustomEmbed.from({
+                color: CustomEmbed.colors.GREEN,
                 author: {
-                    iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+                    icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                     name: 'Inertia Lighting | User Notes',
                 },
                 description: `Successfully removed all notes from <@${lookup_query}>.`,
@@ -338,10 +342,10 @@ async function lookupNotesCommand(message: Discord.Message, lookup_method: 'user
         } catch {
             message.reply({
                 embeds: [
-                    new Discord.MessageEmbed({
-                        color: 0xFFFF00,
+                    CustomEmbed.from({
+                        color: CustomEmbed.colors.YELLOW,
                         author: {
-                            iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+                            icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                             name: 'Inertia Lighting | User Notes',
                         },
                         description: `\"${lookup_query}\" was not a valid user id.`,
@@ -355,8 +359,7 @@ async function lookupNotesCommand(message: Discord.Message, lookup_method: 'user
 
     const bot_message = await message.reply({
         embeds: [
-            new Discord.MessageEmbed({
-                color: 0x60A0FF,
+            CustomEmbed.from({
                 description: 'Loading user notes...',
             }),
         ],
@@ -380,10 +383,10 @@ async function lookupNotesCommand(message: Discord.Message, lookup_method: 'user
     if (user_notes.length === 0 || (lookup_method === 'note_id' && message.mentions.users.size > 0)) {
         await bot_message.edit({
             embeds: [
-                new Discord.MessageEmbed({
-                    color: 0xFFFF00,
+                CustomEmbed.from({
+                    color: CustomEmbed.colors.YELLOW,
                     author: {
-                        iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+                        icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | User Notes',
                     },
                     description: 'I wasn\'t able to find any user notes for the specified query!',
@@ -408,7 +411,7 @@ async function lookupNotesCommand(message: Discord.Message, lookup_method: 'user
                             style: 2,
                             custom_id: 'previous',
                             emoji: {
-                                id: null,
+                                id: undefined,
                                 name: '⬅️',
                             },
                         }, {
@@ -416,7 +419,7 @@ async function lookupNotesCommand(message: Discord.Message, lookup_method: 'user
                             style: 2,
                             custom_id: 'next',
                             emoji: {
-                                id: null,
+                                id: undefined,
                                 name: '➡️',
                             },
                         }, {
@@ -424,7 +427,7 @@ async function lookupNotesCommand(message: Discord.Message, lookup_method: 'user
                             style: 2,
                             custom_id: 'stop',
                             emoji: {
-                                id: null,
+                                id: undefined,
                                 name: '⏹️',
                             },
                         },
@@ -441,10 +444,9 @@ async function lookupNotesCommand(message: Discord.Message, lookup_method: 'user
 
         await bot_message.edit({
             embeds: [
-                new Discord.MessageEmbed({
-                    color: 0x60A0FF,
+                CustomEmbed.from({
                     author: {
-                        iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+                        icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | User Notes',
                     },
                     description: user_notes_chunk.map(user_note =>
@@ -455,7 +457,7 @@ async function lookupNotesCommand(message: Discord.Message, lookup_method: 'user
                             `**Date** <t:${`${user_note.record.epoch}`.slice(0, -3)}:f>`,
                             '**Content**',
                             '\`\`\`',
-                            `${string_ellipses(Discord.Util.cleanCodeBlockContent(user_note.record.note), 250)}`,
+                            `${string_ellipses(Discord.escapeMarkdown(user_note.record.note), 250)}`,
                             '\`\`\`',
                         ].join('\n')
                     ).join('\n'),
@@ -514,6 +516,7 @@ export default {
     description: 'N/A',
     aliases: ['notes'],
     permission_level: command_permission_levels.STAFF,
+    cooldown: 1_500,
     async execute(
         message: Discord.Message<true>,
         args: {
@@ -565,10 +568,9 @@ export default {
             default: {
                 await message.reply({
                     embeds: [
-                        new Discord.MessageEmbed({
-                            color: 0x60A0FF,
+                        CustomEmbed.from({
                             author: {
-                                iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+                                icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                                 name: 'Inertia Lighting | User Notes',
                             },
                             title: 'Here are the available sub-commands!',

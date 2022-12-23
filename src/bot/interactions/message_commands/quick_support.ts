@@ -1,17 +1,18 @@
-/* Copyright © Inertia Lighting | All Rights Reserved */
-
-//---------------------------------------------------------------------------------------------------------------//
-
-'use strict';
+//------------------------------------------------------------//
+//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
+//------------------------------------------------------------//
 
 //---------------------------------------------------------------------------------------------------------------//
 
 import { compareTwoStrings } from 'string-similarity';
 
-import { array_random } from '../../../utilities.js';
-import { go_mongo_db } from '../../../mongo/mongo.js';
+import { array_random } from '../../../utilities';
 
-import { Discord, client } from '../../discord_client.js';
+import { go_mongo_db } from '../../../mongo/mongo';
+
+import { Discord, client } from '../../discord_client';
+
+import { CustomEmbed } from '@root/bot/common/message';
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -29,7 +30,7 @@ type QuickSupportTopics = QuickSupportTopic[];
 export default {
     identifier: 'quick_support',
     async execute(
-        interaction: Discord.AutocompleteInteraction | Discord.CommandInteraction,
+        interaction: Discord.AutocompleteInteraction | Discord.ChatInputCommandInteraction,
     ) {
         if (interaction.isAutocomplete()) {
             const search_query = interaction.options.getFocused();
@@ -81,7 +82,7 @@ export default {
                     value: qs_topic.id,
                 }))
             );
-        } else if (interaction.isCommand()) {
+        } else if (interaction.isChatInputCommand()) {
             await interaction.deferReply();
 
             const quick_support_topic_id = interaction.options.get('topic', true)?.value;
@@ -93,8 +94,7 @@ export default {
             if (!quick_support_topic) {
                 interaction.followUp({
                     embeds: [
-                        new Discord.MessageEmbed({
-                            color: 0x60A0FF,
+                        CustomEmbed.from({
                             description: 'Unable to find a matching quick support topic.',
                         }),
                     ],
@@ -104,10 +104,10 @@ export default {
 
             interaction.followUp({
                 embeds: [
-                    new Discord.MessageEmbed({
+                    CustomEmbed.from({
                         color: 0x60A0FF,
                         author: {
-                            iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+                            icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                             name: 'Inertia Lighting | Quick Support System',
                         },
                         title: `${quick_support_topic.title}`,

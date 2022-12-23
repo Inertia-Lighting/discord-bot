@@ -1,25 +1,26 @@
-/* Copyright © Inertia Lighting | All Rights Reserved */
+//------------------------------------------------------------//
+//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
+//------------------------------------------------------------//
 
 //---------------------------------------------------------------------------------------------------------------//
 
-'use strict';
+import { Discord, client } from '../../discord_client';
 
-//---------------------------------------------------------------------------------------------------------------//
+import { go_mongo_db } from '../../../mongo/mongo';
 
-import { Discord, client } from '../../discord_client.js';
+import { command_permission_levels, getUserPermissionLevel, user_is_not_allowed_access_to_command_message_options } from '../../common/bot';
 
-import { go_mongo_db } from '../../../mongo/mongo.js';
-
-import { command_permission_levels, getUserPermissionLevel, user_is_not_allowed_access_to_command_message_options } from '../../common/bot.js';
+import { CustomEmbed } from '@root/bot/common/message';
 
 //---------------------------------------------------------------------------------------------------------------//
 
 export default {
     identifier: 'manage_karma',
     async execute(
-        interaction: Discord.AutocompleteInteraction | Discord.CommandInteraction<'cached'>
+        interaction: Discord.AutocompleteInteraction | Discord.ChatInputCommandInteraction
     ) {
-        if (!interaction.isCommand()) return;
+        if (!interaction.isChatInputCommand()) return;
+        if (!interaction.inCachedGuild()) return;
 
         await interaction.deferReply();
 
@@ -50,8 +51,8 @@ export default {
         if (!db_user_data) {
             interaction.editReply({
                 embeds: [
-                    new Discord.MessageEmbed({
-                        color: 0xFFFF00,
+                    CustomEmbed.from({
+                        color: CustomEmbed.colors.YELLOW,
                         description: `${user_to_modify} does not exist in the database!`,
                     }),
                 ],
@@ -60,8 +61,7 @@ export default {
             return;
         }
 
-        /** @type {number} */
-        const initial_karma_amount = db_user_data.karma ?? 0;
+        const initial_karma_amount: number = db_user_data.karma ?? 0;
 
         let updated_karma_amount;
         switch (action_to_perform) {
@@ -83,8 +83,8 @@ export default {
             default: {
                 interaction.editReply({
                     embeds: [
-                        new Discord.MessageEmbed({
-                            color: 0xFFFF00,
+                        CustomEmbed.from({
+                            color: CustomEmbed.colors.RED,
                             description: `Invalid action: \`${action_to_perform}\``,
                         }),
                     ],
@@ -100,8 +100,8 @@ export default {
         if (karma_too_small) {
             interaction.editReply({
                 embeds: [
-                    new Discord.MessageEmbed({
-                        color: 0xFF0000,
+                    CustomEmbed.from({
+                        color: CustomEmbed.colors.YELLOW,
                         description: 'New karma amount is too small!',
                     }),
                 ],
@@ -113,8 +113,8 @@ export default {
         if (karma_too_large) {
             interaction.editReply({
                 embeds: [
-                    new Discord.MessageEmbed({
-                        color: 0xFF0000,
+                    CustomEmbed.from({
+                        color: CustomEmbed.colors.YELLOW,
                         description: 'New karma amount is too large!',
                     }),
                 ],
@@ -126,8 +126,8 @@ export default {
         if (karma_is_not_a_number) {
             interaction.editReply({
                 embeds: [
-                    new Discord.MessageEmbed({
-                        color: 0xFF0000,
+                    CustomEmbed.from({
+                        color: CustomEmbed.colors.YELLOW,
                         description: 'New karma amount is not a valid number!',
                     }),
                 ],
@@ -149,10 +149,10 @@ export default {
 
             interaction.editReply({
                 embeds: [
-                    new Discord.MessageEmbed({
-                        color: 0xFF0000,
+                    CustomEmbed.from({
+                        color: CustomEmbed.colors.RED,
                         author: {
-                            iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+                            icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                             name: 'Inertia Lighting | Karma System',
                         },
                         description: 'An error occurred while modifying the user\'s karma!',
@@ -165,16 +165,16 @@ export default {
 
         interaction.editReply({
             embeds: [
-                new Discord.MessageEmbed({
+                CustomEmbed.from({
                     color: action_to_perform === 'add' ? (
-                        0x00FF00
+                        CustomEmbed.colors.GREEN
                     ) : action_to_perform === 'remove' ? (
-                        0xFF0000
+                        CustomEmbed.colors.RED
                     ) : (
-                        0x60A0FF
+                        CustomEmbed.colors.BRAND
                     ),
                     author: {
-                        iconURL: `${client.user!.displayAvatarURL({ dynamic: true })}`,
+                        icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | Karma System',
                     },
                     description: [

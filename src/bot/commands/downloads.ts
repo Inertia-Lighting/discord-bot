@@ -1,10 +1,14 @@
-/* Copyright © Inertia Lighting | All Rights Reserved */
+//------------------------------------------------------------//
+//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
+//------------------------------------------------------------//
 
 //---------------------------------------------------------------------------------------------------------------//
 
-import { Discord } from '../discord_client.js';
+import { Discord } from '../discord_client';
 
-import { command_permission_levels } from '../common/bot.js';
+import { command_permission_levels } from '../common/bot';
+
+import { CustomEmbed } from '../common/message';
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -13,7 +17,7 @@ export default {
     description: 'why does this even exist',
     aliases: ['downloads', 'download', 'roles', 'retrieve', 'get'],
     permission_level: command_permission_levels.PUBLIC,
-    cooldown: 10_000,
+    cooldown: 500,
     async execute(
         message: Discord.Message<true>,
         args: {
@@ -22,8 +26,7 @@ export default {
     ) {
         message.channel.send({
             embeds: [
-                new Discord.MessageEmbed({
-                    color: 0x60A0FF,
+                CustomEmbed.from({
                     description: 'You can download purchased products from our website!',
                 }),
             ],

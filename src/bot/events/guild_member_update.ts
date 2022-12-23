@@ -1,12 +1,14 @@
-/* Copyright © Inertia Lighting | All Rights Reserved */
+//------------------------------------------------------------//
+//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
+//------------------------------------------------------------//
 
 import { Discord } from '../discord_client';
 
 //---------------------------------------------------------------------------------------------------------------//
 
-import { illegalNicknameHandler } from '../handlers/illegal_nickname_handler.js';
+import { illegalNicknameHandler } from '../handlers/illegal_nickname_handler';
 
-import { guildMemberRolesAddedLogger, guildMemberRolesRemovedLogger } from '../handlers/logs/guild_member_roles.js';
+import { guildMemberRolesAddedLogger, guildMemberRolesRemovedLogger } from '../handlers/logs/guild_member_roles';
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -16,7 +18,7 @@ if (typeof bot_guild_id !== 'string') throw new TypeError('bot_guild_id is not a
 //---------------------------------------------------------------------------------------------------------------//
 
 export default {
-    name: 'guildMemberUpdate',
+    name: Discord.Events.GuildMemberUpdate,
     async handler(old_member: Discord.GuildMember, new_member: Discord.GuildMember) {
         if (!old_member || !new_member) return; // ensure both members are defined
 
