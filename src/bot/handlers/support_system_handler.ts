@@ -141,7 +141,7 @@ async function closeSupportTicketChannel(
             poweredBy: false,
         });
 
-        const channel_participant_ids = (await support_channel.messages.fetch().then(msgs => msgs.filter(member => member.author.id))).map(member => member.author.id);
+        const channel_participant_ids = new Set(await (await support_channel.messages.fetch().then(msgs => msgs.filter(member => member.author.id))).map(member => member.author.id));
 
         const transcript_embed = CustomEmbed.from({
             fields: [
