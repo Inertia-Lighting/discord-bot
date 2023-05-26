@@ -12,6 +12,8 @@ import { Discord, client } from '../discord_client';
 //---------------------------------------------------------------------------------------------------------------//
 
 async function welcomeMessageHandler(member: Discord.GuildMember) {
+    console.trace('welcomeMessageHandler is deprecated');
+
     const welcome_message_options = {
         content: `${member}`,
         embeds: [

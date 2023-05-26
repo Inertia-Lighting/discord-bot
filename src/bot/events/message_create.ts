@@ -10,7 +10,7 @@ import { automatedQuickSupportHandler } from '../handlers/automated_quick_suppor
 
 import { suggestionsCategoryHandler } from '../handlers/suggestions_category_handler';
 
-import { oneWordStoryChannelHandler } from '../handlers/one_word_story_channel_handler';
+// import { oneWordStoryChannelHandler } from '../handlers/one_word_story_channel_handler';
 
 import { commandHandler } from '../handlers/command_handler';
 
@@ -20,7 +20,7 @@ const command_prefix = process.env.BOT_COMMAND_PREFIX as string;
 
 const suggestions_category_id = process.env.BOT_SUGGESTIONS_CATEGORY_ID as string;
 
-const one_word_story_channel_id = process.env.BOT_ONE_WORD_STORY_CHANNEL_ID as string;
+// const one_word_story_channel_id = process.env.BOT_ONE_WORD_STORY_CHANNEL_ID as string;
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -45,11 +45,11 @@ export default {
             return;
         }
 
-        /* handle messages sent in the one-word-story channel */
-        if (message.channel.id === one_word_story_channel_id) {
-            oneWordStoryChannelHandler(message);
-            return;
-        }
+        // /* handle messages sent in the one-word-story channel */
+        // if (message.channel.id === one_word_story_channel_id) {
+        //     oneWordStoryChannelHandler(message);
+        //     return;
+        // }
 
         /* respond to mentions of this bot */
         if (message.content.startsWith(`<@!${client.user!.id}>`)) {

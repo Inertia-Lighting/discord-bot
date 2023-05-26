@@ -17,7 +17,7 @@ export default {
     description: 'bans a user from the server',
     usage: '@mention reason',
     aliases: ['ban'],
-    permission_level: command_permission_levels.MODERATORS,
+    permission_level: command_permission_levels.ADMINS,
     cooldown: 1_500,
     async execute(
         message: Discord.Message<true>,

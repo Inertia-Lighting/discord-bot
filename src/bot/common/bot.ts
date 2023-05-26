@@ -22,7 +22,7 @@ const guild_founders_role_id = process.env.BOT_FOUNDERS_ROLE_ID as string;
 const user_is_not_allowed_access_to_command_message_options = {
     embeds: [
         CustomEmbed.from({
-            color: CustomEmbed.colors.MAGENTA,
+            color: CustomEmbed.colors.VIOLET,
             title: 'Nice try, this command is protected!',
             description: 'You aren\'t allowed to use this command!',
         }),

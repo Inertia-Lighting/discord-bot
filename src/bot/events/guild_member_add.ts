@@ -8,7 +8,7 @@ import { Discord } from '../discord_client';
 
 import { guildMemberAddLogger } from '../handlers/logs/guild_member_retention';
 
-import { welcomeMessageHandler } from '../handlers/welcome_message_handler';
+// import { welcomeMessageHandler } from '../handlers/welcome_message_handler';
 
 import { illegalNicknameHandler } from '../handlers/illegal_nickname_handler';
 
@@ -50,8 +50,8 @@ export default {
         /* log members joining */
         await guildMemberAddLogger(member).catch(console.trace);
 
-        /* send the welcome message to the member */
-        await welcomeMessageHandler(member).catch(console.trace);
+        // /* send the welcome message to the member */
+        // await welcomeMessageHandler(member).catch(console.trace);
 
         /* handle nicknames for new members */
         await illegalNicknameHandler(member).catch(console.trace);
