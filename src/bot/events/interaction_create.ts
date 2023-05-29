@@ -6,7 +6,7 @@
 
 import { Discord } from '../discord_client';
 
-import { interactionHandler } from '../handlers/interaction_handler';
+import { CustomInteractionsManager } from '../common/managers/custom_interactions_manager';
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -17,6 +17,6 @@ export default {
         if (interaction.user.bot) return; // don't allow bots to interact
 
         /* handle interactions */
-        interactionHandler(interaction);
+        CustomInteractionsManager.handleInteractionFromDiscord(interaction.client, interaction);
     },
 };
