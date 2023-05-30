@@ -11,27 +11,27 @@ import { logModerationActionToDatabase } from '../handlers/log_moderation_action
 //------------------------------------------------------------//
 
 export default new CustomInteraction({
-    identifier: 'ban',
+    identifier: 'kick',
     type: Discord.InteractionType.ApplicationCommand,
     data: {
         type: Discord.ApplicationCommandType.ChatInput,
-        description: 'Bans a member from the guild.',
+        description: 'kicks a user from the server',
         options: [
             {
                 name: 'member',
                 type: Discord.ApplicationCommandOptionType.User,
-                description: 'The member who you want to ban.',
+                description: 'The member who you want to kick.',
                 required: true,
             }, {
                 name: 'reason',
                 type: Discord.ApplicationCommandOptionType.String,
-                description: 'The reason why you want to ban.',
+                description: 'The reason why you want to kick.',
                 required: true,
             },
         ],
     },
     metadata: {
-        required_access_level: CustomInteractionAccessLevel.Admins,
+        required_access_level: CustomInteractionAccessLevel.Moderators,
     },
     handler: async (discord_client, interaction) => {
         if (!interaction.isChatInputCommand()) return;
@@ -41,11 +41,11 @@ export default new CustomInteraction({
         await interaction.deferReply({ ephemeral: false });
 
         const staff_member = interaction.member;
-        const member_to_ban = interaction.options.getMember('member');
-        const ban_reason = interaction.options.getString('reason');
+        const member_to_kick = interaction.options.getMember('member');
+        const kick_reason = interaction.options.getString('reason');
 
         /* handle when a reason is not specified */
-        if (!ban_reason) {
+        if (!kick_reason) {
             await interaction.deleteReply();
             await interaction.reply({
                 ephemeral: true,
@@ -55,7 +55,7 @@ export default new CustomInteraction({
         }
 
         /* handle when a member is not specified */
-        if (!member_to_ban) {
+        if (!member_to_kick) {
             await interaction.deleteReply();
             await interaction.reply({
                 ephemeral: true,
@@ -65,58 +65,58 @@ export default new CustomInteraction({
         }
 
         /* handle when a staff member specifies themself */
-        if (staff_member.id === member_to_ban.id) {
+        if (staff_member.id === member_to_kick.id) {
             await interaction.deleteReply();
             await interaction.reply({
                 ephemeral: true,
-                content: 'You aren\'t allowed to ban yourself!',
+                content: 'You aren\'t allowed to kick yourself!',
             }).catch(console.trace);
             return;
         }
 
         /* handle when a staff member specifies this bot */
-        if (member_to_ban.id === discord_client.user?.id) {
+        if (member_to_kick.id === discord_client.user?.id) {
             await interaction.deleteReply();
             await interaction.reply({
                 ephemeral: true,
-                content: 'You aren\'t allowed to ban me!',
+                content: 'You aren\'t allowed to kick me!',
             }).catch(console.trace);
             return;
         }
 
         /* handle when a staff member specifies the guild owner */
-        if (member_to_ban.id === interaction.guild.ownerId) {
+        if (member_to_kick.id === interaction.guild.ownerId) {
             await interaction.deleteReply();
             await interaction.reply({
                 ephemeral: true,
-                content: 'You aren\'t allowed to ban the owner of this server!',
+                content: 'You aren\'t allowed to kick the owner of this server!',
             }).catch(console.trace);
             return;
         }
 
         /* handle when a staff member tries to moderate someone with an equal/higher role */
-        if (staff_member.roles.highest.comparePositionTo(member_to_ban.roles.highest) <= 0) {
+        if (staff_member.roles.highest.comparePositionTo(member_to_kick.roles.highest) <= 0) {
             await interaction.deleteReply();
             await interaction.reply({
                 ephemeral: true,
-                content: 'You aren\'t allowed to ban someone with an equal/higher role!',
+                content: 'You aren\'t allowed to kick someone with an equal/higher role!',
             }).catch(console.trace);
             return;
         }
 
         const moderation_message_options = {
             content: [
-                `${member_to_ban}`,
-                `You were banned from the Inertia Lighting discord by ${staff_member.user} for:`,
+                `${member_to_kick}`,
+                `You were kicked from the Inertia Lighting discord by ${staff_member.user} for:`,
                 '\`\`\`',
-                `${ban_reason}`,
+                `${kick_reason}`,
                 '\`\`\`',
             ].join('\n'),
         };
 
         /* dm the member */
         try {
-            const dm_channel = await member_to_ban.createDM();
+            const dm_channel = await member_to_kick.createDM();
             await dm_channel.send(moderation_message_options);
         } catch {
             // ignore any errors
@@ -127,24 +127,24 @@ export default new CustomInteraction({
 
         /* perform the moderation action on the member */
         try {
-            await member_to_ban.ban({ reason: ban_reason });
+            await member_to_kick.kick(kick_reason);
         } catch (error) {
             console.trace(error);
             await interaction.deleteReply();
             await interaction.reply({
                 ephemeral: true,
-                content: 'Failed to ban that member!',
+                content: 'Failed to kick that member!',
             }).catch(console.warn);
             return;
         }
 
          /* log to the database */
          const successfully_logged_to_database = await logModerationActionToDatabase({
-            discord_user_id: member_to_ban.id,
+            discord_user_id: member_to_kick.id,
         }, {
-            type: 'BAN',
+            type: 'KICK',
             epoch: Date.now(),
-            reason: ban_reason,
+            reason: kick_reason,
             staff_member_id: staff_member.id,
         });
 
