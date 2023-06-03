@@ -28,5 +28,6 @@ export default new CustomInteraction({
 
         await interaction.deferReply({ ephemeral: false });
 
+        /** @todo */
     },
 });

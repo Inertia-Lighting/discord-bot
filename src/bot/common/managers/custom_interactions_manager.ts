@@ -25,7 +25,7 @@ type CustomInteractionMetadata = {
     required_access_level?: number,
 };
 
-type CustomInteractionHandler = (discord_client: Discord.Client, interaction: Discord.Interaction) => Promise<void>;
+type CustomInteractionHandler = (discord_client: Discord.Client<true>, interaction: Discord.Interaction) => Promise<void>;
 
 //------------------------------------------------------------//
 

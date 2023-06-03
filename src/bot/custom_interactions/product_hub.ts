@@ -36,11 +36,11 @@ export default new CustomInteraction({
             ],
             components: [
                 {
-                    type: 1,
+                    type: Discord.ComponentType.ActionRow,
                     components: [
                         {
-                            type: 2,
-                            style: 5,
+                            type: Discord.ComponentType.Button,
+                            style: Discord.ButtonStyle.Link,
                             label: 'Product Hub',
                             url: 'https://product-hub.inertia.lighting/',
                         },
