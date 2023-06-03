@@ -16,7 +16,7 @@ import { CustomInteraction, CustomInteractionAccessLevel } from '../common/manag
 async function findUserInUsersDatabase(user_lookup_query: string) {
     if (typeof user_lookup_query !== 'string') throw new TypeError('\`user_lookup_query\` must be a string');
 
-    const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME as string, process.env.MONGO_USERS_COLLECTION_NAME as string, {
+    const [db_user_data] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME as string, process.env.MONGO_USERS_COLLECTION_NAME as string, {
         $or: [
             { 'identity.discord_user_id': user_lookup_query },
             { 'identity.roblox_user_id': user_lookup_query },
@@ -38,10 +38,10 @@ async function findUserInUsersDatabase(user_lookup_query: string) {
 /**
  * Fetches a user in the blacklisted-users database
  */
- async function findUserInBlacklistedUsersDatabase(user_lookup_query: string) {
+async function findUserInBlacklistedUsersDatabase(user_lookup_query: string) {
     if (typeof user_lookup_query !== 'string') throw new TypeError('\`user_lookup_query\` must be a string');
 
-    const [ db_blacklisted_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME as string, process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME as string, {
+    const [db_blacklisted_user_data] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME as string, process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME as string, {
         $or: [
             { 'identity.discord_user_id': user_lookup_query },
             { 'identity.roblox_user_id': user_lookup_query },
@@ -161,17 +161,108 @@ async function isStaffMemberAllowedToBlacklistUser(
 
 //------------------------------------------------------------//
 
+async function blacklistAddSubcommand(
+    interaction: Discord.CommandInteraction,
+    user_id_to_add: Discord.Snowflake,
+    reason: string,
+): Promise<void> {
+    /** @todo */
+}
+
+async function blacklistRemoveSubcommand(
+    interaction: Discord.CommandInteraction,
+    user_id_to_remove: Discord.Snowflake,
+    reason: string,
+): Promise<void> {
+    /** @todo */
+}
+
+async function blacklistLookupSubcommand(
+    interaction: Discord.CommandInteraction,
+    user_id_type: 'discord' | 'roblox',
+    user_id: string,
+): Promise<void> {
+    /** @todo */
+}
+
+//------------------------------------------------------------//
+
 export default new CustomInteraction({
     identifier: 'blacklist',
     type: Discord.InteractionType.ApplicationCommand,
     data: {
         type: Discord.ApplicationCommandType.ChatInput,
-        description: 'Blacklists a specified user in the database',
+        description: 'Blacklists a user from being able to use products.',
         options: [
             {
-                name: 'action',
-                description: 'add, remove, lookup',
+                name: 'add',
+                description: 'Add a user to the blacklist.',
                 type: Discord.ApplicationCommandOptionType.Subcommand,
+                options: [
+                    {
+                        name: 'user',
+                        type: Discord.ApplicationCommandOptionType.User,
+                        description: 'Who is getting blacklisted?',
+                        required: true,
+                    }, {
+                        name: 'reason',
+                        type: Discord.ApplicationCommandOptionType.String,
+                        description: 'Why are they getting blacklisted',
+                        minLength: 1,
+                        maxLength: 256,
+                        required: true,
+                    },
+                ],
+            }, {
+                name: 'remove',
+                description: 'Remove a user from the blacklist.',
+                type: Discord.ApplicationCommandOptionType.Subcommand,
+                options: [
+                    {
+                        name: 'user',
+                        type: Discord.ApplicationCommandOptionType.User,
+                        description: 'Who is getting removed from the blacklist?',
+                        required: true,
+                    }, {
+                        name: 'reason',
+                        type: Discord.ApplicationCommandOptionType.String,
+                        description: 'Why are they getting removed from the blacklist?',
+                        minLength: 1,
+                        maxLength: 256,
+                        required: true,
+                    },
+                ],
+            }, {
+                name: 'lookup',
+                description: 'Lookup a user to see if they are blacklisted.',
+                type: Discord.ApplicationCommandOptionType.SubcommandGroup,
+                options: [
+                    {
+                        name: 'discord',
+                        type: Discord.ApplicationCommandOptionType.Subcommand,
+                        description: 'Lookup a Discord user.',
+                        options: [
+                            {
+                                name: 'user',
+                                type: Discord.ApplicationCommandOptionType.User,
+                                description: 'Who are you looking up?',
+                                required: true,
+                            },
+                        ],
+                    }, {
+                        name: 'roblox',
+                        type: Discord.ApplicationCommandOptionType.Subcommand,
+                        description: 'Lookup a Roblox user id.',
+                        options: [
+                            {
+                                name: 'user-id',
+                                type: Discord.ApplicationCommandOptionType.String,
+                                description: 'Who are you looking up?',
+                                required: true,
+                            },
+                        ],
+                    },
+                ],
             },
         ],
     },
@@ -185,8 +276,67 @@ export default new CustomInteraction({
 
         await interaction.deferReply({ ephemeral: false });
 
-        await interaction.editReply({
-            content: `Pong: ${discord_client.ws.ping}`,
-        });
+        const sub_command_name = interaction.options.getSubcommand(true);
+        const sub_command_group_name = interaction.options.getSubcommandGroup(false);
+
+        switch (sub_command_group_name ?? sub_command_name) {
+            case 'add': {
+                /* `/blacklist add` */
+                const user_id_to_add = interaction.options.getUser('user', true).id;
+                const reason = interaction.options.getString('reason', true);
+
+                await blacklistAddSubcommand(interaction, user_id_to_add, reason);
+
+                break;
+            }
+
+            case 'remove': {
+                /* `/blacklist remove` */
+                const user_id_to_remove = interaction.options.getUser('user', true).id;
+                const reason = interaction.options.getString('reason', true);
+
+                await blacklistRemoveSubcommand(interaction, user_id_to_remove, reason);
+
+                break;
+            }
+
+            case 'lookup': {
+                /* `/blacklist lookup` */
+
+                switch (sub_command_name) {
+                    case 'discord': {
+                        /* `/blacklist lookup discord` */
+                        const user_to_lookup = interaction.options.getUser('user', true);
+
+                        await blacklistLookupSubcommand(interaction, 'discord', user_to_lookup.id);
+
+                        break;
+                    }
+
+                    case 'roblox': {
+                        /* `/blacklist lookup roblox` */
+                        const user_id_to_lookup = interaction.options.getString('user-id', true);
+
+                        await blacklistLookupSubcommand(interaction, 'roblox', user_id_to_lookup);
+
+                        break;
+                    }
+
+                    default: {
+                        /** @todo display an error */
+
+                        break;
+                    }
+                }
+
+                break;
+            }
+
+            default: {
+                /** @todo display an error */
+
+                break;
+            }
+        }
     },
 });
