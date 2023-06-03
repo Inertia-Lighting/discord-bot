@@ -6,21 +6,36 @@ import * as Discord from 'discord.js';
 
 import { go_mongo_db } from '@root/mongo/mongo';
 
-import { CustomInteraction, CustomInteractionAccessLevel } from '../common/managers/custom_interactions_manager';
+import { CustomInteraction, CustomInteractionAccessLevel } from '@root/bot/common/managers/custom_interactions_manager';
+
+//------------------------------------------------------------//
+
+const db_database_name = `${process.env.MONGO_DATABASE_NAME ?? ''}`;
+if (db_database_name.length < 1) throw new Error('Environment variable: MONGO_DATABASE_NAME; is not set correctly.');
+
+const db_users_collection_name = `${process.env.MONGO_USERS_COLLECTION_NAME ?? ''}`;
+if (db_users_collection_name.length < 1) throw new Error('Environment variable: MONGO_USERS_COLLECTION_NAME; is not set correctly.');
+
+const db_blacklisted_users_collection_name = `${process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME ?? ''}`;
+if (db_blacklisted_users_collection_name.length < 1) throw new Error('Environment variable: MONGO_BLACKLISTED_USERS_COLLECTION_NAME; is not set correctly.');
 
 //------------------------------------------------------------//
 
 /**
  * Fetches a user in the users database
  */
-async function findUserInUsersDatabase(user_lookup_query: string) {
+async function findUserInUsersDatabase(
+    user_lookup_type: 'discord' | 'roblox',
+    user_lookup_query: string,
+) {
     if (typeof user_lookup_query !== 'string') throw new TypeError('\`user_lookup_query\` must be a string');
 
-    const [db_user_data] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME as string, process.env.MONGO_USERS_COLLECTION_NAME as string, {
-        $or: [
-            { 'identity.discord_user_id': user_lookup_query },
-            { 'identity.roblox_user_id': user_lookup_query },
-        ],
+    const [ db_user_data ] = await go_mongo_db.find(db_database_name, db_users_collection_name, {
+        ...(user_lookup_type === 'discord' ? {
+            'identity.discord_user_id': user_lookup_query,
+        } : {
+            'identity.roblox_user_id': user_lookup_query,
+        }),
     }, {
         projection: {
             '_id': false,
@@ -38,14 +53,18 @@ async function findUserInUsersDatabase(user_lookup_query: string) {
 /**
  * Fetches a user in the blacklisted-users database
  */
-async function findUserInBlacklistedUsersDatabase(user_lookup_query: string) {
+async function findUserInBlacklistedUsersDatabase(
+    user_lookup_type: 'discord' | 'roblox',
+    user_lookup_query: string,
+) {
     if (typeof user_lookup_query !== 'string') throw new TypeError('\`user_lookup_query\` must be a string');
 
-    const [db_blacklisted_user_data] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME as string, process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME as string, {
-        $or: [
-            { 'identity.discord_user_id': user_lookup_query },
-            { 'identity.roblox_user_id': user_lookup_query },
-        ],
+    const [ db_blacklisted_user_data ] = await go_mongo_db.find(db_database_name, db_blacklisted_users_collection_name, {
+        ...(user_lookup_type === 'discord' ? {
+            'identity.discord_user_id': user_lookup_query,
+        } : {
+            'identity.roblox_user_id': user_lookup_query,
+        }),
     }, {
         projection: {
             '_id': false,
@@ -67,7 +86,7 @@ async function findUserInBlacklistedUsersDatabase(user_lookup_query: string) {
  * Adds a user to the blacklisted-users database
  */
 async function addUserToBlacklistedUsersDatabase(
-    { discord_user_id, roblox_user_id }: {
+    identity: {
         discord_user_id: string,
         roblox_user_id: string,
     },
@@ -77,25 +96,21 @@ async function addUserToBlacklistedUsersDatabase(
         staff_member_id: string,
     },
 ): Promise<boolean> {
-    if (typeof discord_user_id !== 'string') throw new TypeError('\`discord_user_id\` must be a string');
-    if (typeof roblox_user_id !== 'string') throw new TypeError('\`roblox_user_id\` must be a string');
+    if (typeof identity.discord_user_id !== 'string') throw new TypeError('\`identity.discord_user_id\` must be a string');
+    if (typeof identity.roblox_user_id !== 'string') throw new TypeError('\`identity.roblox_user_id\` must be a string');
     if (typeof epoch !== 'number') throw new TypeError('\`epoch\` must be a number');
     if (typeof reason !== 'string') throw new TypeError('\`reason\` must be a string');
     if (typeof staff_member_id !== 'string') throw new TypeError('\`staff_member_id\` must be a string');
 
     try {
-        await go_mongo_db.update(process.env.MONGO_DATABASE_NAME as string, process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME as string, {
-            'identity.discord_user_id': discord_user_id,
-            'identity.roblox_user_id': roblox_user_id,
-        }, {
-            $set: {
+        await go_mongo_db.add(db_database_name, db_blacklisted_users_collection_name, [
+            {
+                'identity': identity,
                 'epoch': epoch,
                 'reason': reason,
                 'staff_member_id': staff_member_id,
             },
-        }, {
-            upsert: true,
-        });
+        ]);
     } catch (error) {
         console.trace(error);
         return false; // user was not added to blacklist
@@ -108,18 +123,17 @@ async function addUserToBlacklistedUsersDatabase(
  * Removes a user from the blacklisted-users database
  */
 async function removeUserFromBlacklistedUsersDatabase(
-    { discord_user_id, roblox_user_id }: {
+    identity: {
         discord_user_id: string,
         roblox_user_id: string,
     },
 ): Promise<boolean> {
-    if (typeof discord_user_id !== 'string') throw new TypeError('\`discord_user_id\` must be a string');
-    if (typeof roblox_user_id !== 'string') throw new TypeError('\`roblox_user_id\` must be a string');
+    if (typeof identity.discord_user_id !== 'string') throw new TypeError('\`identity.discord_user_id\` must be a string');
+    if (typeof identity.roblox_user_id !== 'string') throw new TypeError('\`identity.roblox_user_id\` must be a string');
 
     try {
-        await go_mongo_db.remove(process.env.MONGO_DATABASE_NAME as string, process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME as string, {
-            'identity.discord_user_id': discord_user_id,
-            'identity.roblox_user_id': roblox_user_id,
+        await go_mongo_db.remove(db_database_name, db_blacklisted_users_collection_name, {
+            'identity': identity,
         });
     } catch (error) {
         console.trace(error);
@@ -166,7 +180,57 @@ async function blacklistAddSubcommand(
     user_id_to_add: Discord.Snowflake,
     reason: string,
 ): Promise<void> {
-    /** @todo */
+    if (!interaction.inCachedGuild()) return; // if the interaction did not originate from a cached guild, ignore it
+
+    const db_user_data = await findUserInUsersDatabase('discord', user_id_to_add);
+    if (!db_user_data) {
+        /** @todo make this look nicer */
+        await interaction.editReply({
+            content: 'That user is not in the database, so they cannot be added to the blacklist.',
+        });
+
+        return;
+    }
+
+    const is_staff_member_allowed_to_blacklist_user = await isStaffMemberAllowedToBlacklistUser(interaction.guild, interaction.user.id, user_id_to_add);
+    if (!is_staff_member_allowed_to_blacklist_user) {
+        /** @todo make this look nicer */
+        await interaction.editReply({
+            content: 'You are not allowed to blacklist that user.',
+        });
+
+        return;
+    }
+
+    const is_user_already_blacklisted = await findUserInBlacklistedUsersDatabase('discord', user_id_to_add);
+    if (is_user_already_blacklisted) {
+        /** @todo make this look nicer */
+        await interaction.editReply({
+            content: 'That user is already blacklisted.',
+        });
+
+        return;
+    }
+
+    const was_user_added_to_blacklist = await addUserToBlacklistedUsersDatabase(db_user_data.identity, {
+        epoch: Date.now(),
+        reason: reason,
+        staff_member_id: interaction.user.id,
+    });
+
+    if (!was_user_added_to_blacklist) {
+        /** @todo make this look nicer */
+        await interaction.editReply({
+            content: 'An error was encountered while trying to blacklist that user.',
+        });
+
+        return;
+    }
+
+    /** @todo make this look nicer */
+    await interaction.editReply({
+        content: 'That user has been blacklisted.',
+    });
 }
 
 async function blacklistRemoveSubcommand(
@@ -174,7 +238,52 @@ async function blacklistRemoveSubcommand(
     user_id_to_remove: Discord.Snowflake,
     reason: string,
 ): Promise<void> {
-    /** @todo */
+    if (!interaction.inCachedGuild()) return; // if the interaction did not originate from a cached guild, ignore it
+
+    const db_user_data = await findUserInUsersDatabase('discord', user_id_to_remove);
+    if (!db_user_data) {
+        /** @todo make this look nicer */
+        await interaction.editReply({
+            content: 'That user is not in the database, so they cannot be removed from the blacklist.',
+        });
+
+        return;
+    }
+
+    const is_staff_member_allowed_to_blacklist_user = await isStaffMemberAllowedToBlacklistUser(interaction.guild, interaction.user.id, user_id_to_remove);
+    if (!is_staff_member_allowed_to_blacklist_user) {
+        /** @todo make this look nicer */
+        await interaction.editReply({
+            content: 'You are not allowed to remove that user from the blacklist.',
+        });
+
+        return;
+    }
+
+    const is_user_already_blacklisted = await findUserInBlacklistedUsersDatabase('discord', user_id_to_remove);
+    if (!is_user_already_blacklisted) {
+        /** @todo make this look nicer */
+        await interaction.editReply({
+            content: 'That user is not blacklisted, so they cannot be removed from the blacklist.',
+        });
+
+        return;
+    }
+
+    const was_user_removed_from_blacklist = await removeUserFromBlacklistedUsersDatabase(db_user_data.identity);
+    if (!was_user_removed_from_blacklist) {
+        /** @todo make this look nicer */
+        await interaction.editReply({
+            content: 'An error was encountered while trying to remove that user from the blacklist.',
+        });
+
+        return;
+    }
+
+    /** @todo make this look nicer */
+    await interaction.editReply({
+        content: 'That user has been removed from the blacklist.',
+    });
 }
 
 async function blacklistLookupSubcommand(
@@ -182,7 +291,27 @@ async function blacklistLookupSubcommand(
     user_id_type: 'discord' | 'roblox',
     user_id: string,
 ): Promise<void> {
-    /** @todo */
+    if (!interaction.inCachedGuild()) return; // if the interaction did not originate from a cached guild, ignore it
+
+    const db_user_blacklist_data = await findUserInBlacklistedUsersDatabase(user_id_type, user_id);
+    if (!db_user_blacklist_data) {
+        await interaction.editReply({
+            content: 'That user is not blacklisted.',
+        });
+
+        return;
+    }
+
+    /** @todo make this look nicer */
+    await interaction.editReply({
+        content: [
+            `**Discord:** \`${db_user_blacklist_data.identity.discord_user_id}\``,
+            `**Roblox:** \`${db_user_blacklist_data.identity.roblox_user_id}\``,
+            `**Reason:** ${db_user_blacklist_data.reason}`,
+            `**Staff Member:** <@${db_user_blacklist_data.staff_member_id}>`,
+            `**Epoch:** ${db_user_blacklist_data.epoch}`,
+        ].join('\n'),
+    });
 }
 
 //------------------------------------------------------------//
