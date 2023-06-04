@@ -48,7 +48,7 @@
     "module-alias": "2.2.3",
     "moment-timezone": "0.5.43",
     "node-gyp": "9.3.1",
-    "recursive-read-directory": "github:MidSpike/recursive-read-directory#v0.0.1-beta",
+    "recursive-read-directory": "github:MidSpike/recursive-read-directory#v0.4.0-beta",
     "string-similarity": "4.0.4",
     "utf-8-validate": "6.0.3",
     "uuid": "9.0.0"
