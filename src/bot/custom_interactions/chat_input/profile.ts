@@ -4,17 +4,26 @@
 
 import * as Discord from 'discord.js';
 
-import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionsManager } from '@root/bot/common/managers/custom_interactions_manager';
+import { CustomInteraction, CustomInteractionAccessLevel } from '@root/bot/common/managers/custom_interactions_manager';
+
+import { userProfileHandler } from '@root/bot/handlers/user_profile_handler';
 
 //------------------------------------------------------------//
 
 export default new CustomInteraction({
-    identifier: 'help',
+    identifier: 'profile',
     type: Discord.InteractionType.ApplicationCommand,
     data: {
         type: Discord.ApplicationCommandType.ChatInput,
-        description: 'Lists all available commands for you to use!',
-        options: [],
+        description: 'Fetches a user\'s profile with a list of their products.',
+        options: [
+            {
+                name: 'user',
+                type: Discord.ApplicationCommandOptionType.User,
+                description: 'The user to fetch the profile of, defaults to yourself.',
+                required: false,
+            },
+        ],
     },
     metadata: {
         required_access_level: CustomInteractionAccessLevel.Public,
@@ -26,14 +35,8 @@ export default new CustomInteraction({
 
         await interaction.deferReply({ ephemeral: false });
 
-        const chat_input_custom_interactions = CustomInteractionsManager.interactions.filter(
-            (custom_interaction) =>
-                custom_interaction.type === Discord.InteractionType.ApplicationCommand &&
-                'type' in custom_interaction.data &&
-                custom_interaction.data.type === Discord.ApplicationCommandType.ChatInput
-        );
+        const user = interaction.options.getUser('user', false) ?? interaction.user;
 
-        /** @todo finish the command */
-        console.log(chat_input_custom_interactions); // temporary to suppress eslint
+        await userProfileHandler(interaction, user.id);
     },
 });

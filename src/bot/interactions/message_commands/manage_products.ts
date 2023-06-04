@@ -199,7 +199,7 @@ export default {
                 ],
             }).catch(console.warn);
 
-            interaction.editReply({
+            await interaction.editReply({
                 embeds: [
                     CustomEmbed.from({
                         color: action_to_perform === 'add' ? CustomEmbed.colors.GREEN : CustomEmbed.colors.RED,
