@@ -4,9 +4,7 @@
 
 import * as Discord from 'discord.js';
 
-// import { CustomEmbed } from '../common/message';
-
-import { CustomInteraction, CustomInteractionAccessLevel } from '../common/managers/custom_interactions_manager';
+import { CustomInteraction, CustomInteractionAccessLevel } from '@root/bot/common/managers/custom_interactions_manager';
 
 //------------------------------------------------------------//
 

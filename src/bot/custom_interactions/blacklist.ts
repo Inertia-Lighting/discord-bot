@@ -4,7 +4,13 @@
 
 import * as Discord from 'discord.js';
 
+import { DbBlacklistedUserIdentity, DbBlacklistedUserRecord, DbUserData, DbUserIdentity } from '@root/types/types';
+
+import { getMarkdownFriendlyTimestamp } from '@root/utilities';
+
 import { go_mongo_db } from '@root/mongo/mongo';
+
+import { CustomEmbed } from '@root/bot/common/message';
 
 import { CustomInteraction, CustomInteractionAccessLevel } from '@root/bot/common/managers/custom_interactions_manager';
 
@@ -27,25 +33,26 @@ if (db_blacklisted_users_collection_name.length < 1) throw new Error('Environmen
 async function findUserInUsersDatabase(
     user_lookup_type: 'discord' | 'roblox',
     user_lookup_query: string,
-) {
+): Promise<Omit<DbUserData, '_id'>> {
     if (typeof user_lookup_query !== 'string') throw new TypeError('\`user_lookup_query\` must be a string');
 
-    const [ db_user_data ] = await go_mongo_db.find(db_database_name, db_users_collection_name, {
-        ...(user_lookup_type === 'discord' ? {
-            'identity.discord_user_id': user_lookup_query,
-        } : {
-            'identity.roblox_user_id': user_lookup_query,
-        }),
-    }, {
+    const find_query: {
+        identity: Partial<DbUserIdentity>,
+    } = {
+        identity: {
+            ...(user_lookup_type === 'discord' ? {
+                'discord_user_id': user_lookup_query,
+            } : {
+                'roblox_user_id': user_lookup_query,
+            }),
+        },
+    };
+
+    const [ db_user_data ] = await go_mongo_db.find(db_database_name, db_users_collection_name, find_query, {
         projection: {
             '_id': false,
         },
-    }) as unknown as {
-        identity: {
-            discord_user_id: string,
-            roblox_user_id: string,
-        },
-    }[];
+    }) as unknown as Omit<DbUserData, '_id'>[];
 
     return db_user_data;
 }
@@ -56,28 +63,26 @@ async function findUserInUsersDatabase(
 async function findUserInBlacklistedUsersDatabase(
     user_lookup_type: 'discord' | 'roblox',
     user_lookup_query: string,
-) {
+): Promise<Omit<DbBlacklistedUserRecord, '_id'>> {
     if (typeof user_lookup_query !== 'string') throw new TypeError('\`user_lookup_query\` must be a string');
 
-    const [ db_blacklisted_user_data ] = await go_mongo_db.find(db_database_name, db_blacklisted_users_collection_name, {
-        ...(user_lookup_type === 'discord' ? {
-            'identity.discord_user_id': user_lookup_query,
-        } : {
-            'identity.roblox_user_id': user_lookup_query,
-        }),
-    }, {
+    const find_query: {
+        identity: Partial<DbBlacklistedUserIdentity>,
+    } = {
+        identity: {
+            ...(user_lookup_type === 'discord' ? {
+                'discord_user_id': user_lookup_query,
+            } : {
+                'roblox_user_id': user_lookup_query,
+            }),
+        },
+    };
+
+    const [ db_blacklisted_user_data ] = await go_mongo_db.find(db_database_name, db_blacklisted_users_collection_name, find_query, {
         projection: {
             '_id': false,
         },
-    }) as unknown as {
-        identity: {
-            discord_user_id: string,
-            roblox_user_id: string,
-        },
-        staff_member_id: string,
-        epoch: number,
-        reason: string,
-    }[];
+    }) as unknown as Omit<DbBlacklistedUserRecord, '_id'>[];
 
     return db_blacklisted_user_data;
 }
@@ -102,15 +107,15 @@ async function addUserToBlacklistedUsersDatabase(
     if (typeof reason !== 'string') throw new TypeError('\`reason\` must be a string');
     if (typeof staff_member_id !== 'string') throw new TypeError('\`staff_member_id\` must be a string');
 
+    const user_blacklist_data: Omit<DbBlacklistedUserRecord, '_id'> = {
+        'identity': identity,
+        'epoch': epoch,
+        'reason': reason,
+        'staff_member_id': staff_member_id,
+    };
+
     try {
-        await go_mongo_db.add(db_database_name, db_blacklisted_users_collection_name, [
-            {
-                'identity': identity,
-                'epoch': epoch,
-                'reason': reason,
-                'staff_member_id': staff_member_id,
-            },
-        ]);
+        await go_mongo_db.add(db_database_name, db_blacklisted_users_collection_name, [ user_blacklist_data ]);
     } catch (error) {
         console.trace(error);
         return false; // user was not added to blacklist
@@ -186,7 +191,7 @@ async function blacklistAddSubcommand(
     if (!db_user_data) {
         /** @todo make this look nicer */
         await interaction.editReply({
-            content: 'That user is not in the database, so they cannot be added to the blacklist.',
+            content: 'That discord user is not in the database, so they cannot be added to the blacklist.',
         });
 
         return;
@@ -229,7 +234,14 @@ async function blacklistAddSubcommand(
 
     /** @todo make this look nicer */
     await interaction.editReply({
-        content: 'That user has been blacklisted.',
+        embeds: [
+            CustomEmbed.from({
+                title: 'Added User to Blacklist',
+                description: [
+                    `Discord User: \`${db_user_data.identity.discord_user_id}\`; was added to the blacklist by <@${interaction.user.id}>.`,
+                ].join('\n'),
+            }),
+        ],
     });
 }
 
@@ -244,7 +256,7 @@ async function blacklistRemoveSubcommand(
     if (!db_user_data) {
         /** @todo make this look nicer */
         await interaction.editReply({
-            content: 'That user is not in the database, so they cannot be removed from the blacklist.',
+            content: 'That discord user is not in the database, so they cannot be removed from the blacklist.',
         });
 
         return;
@@ -280,9 +292,15 @@ async function blacklistRemoveSubcommand(
         return;
     }
 
-    /** @todo make this look nicer */
     await interaction.editReply({
-        content: 'That user has been removed from the blacklist.',
+        embeds: [
+            CustomEmbed.from({
+                title: 'Removed User From Blacklist',
+                description: [
+                    `Discord User: \`${db_user_data.identity.discord_user_id}\`; was removed from the blacklist by <@${interaction.user.id}>.`,
+                ].join('\n'),
+            }),
+        ],
     });
 }
 
@@ -302,15 +320,24 @@ async function blacklistLookupSubcommand(
         return;
     }
 
-    /** @todo make this look nicer */
+    const discord_friendly_timestamp = getMarkdownFriendlyTimestamp(db_user_blacklist_data.epoch);
+
     await interaction.editReply({
-        content: [
-            `**Discord:** \`${db_user_blacklist_data.identity.discord_user_id}\``,
-            `**Roblox:** \`${db_user_blacklist_data.identity.roblox_user_id}\``,
-            `**Reason:** ${db_user_blacklist_data.reason}`,
-            `**Staff Member:** <@${db_user_blacklist_data.staff_member_id}>`,
-            `**Epoch:** ${db_user_blacklist_data.epoch}`,
-        ].join('\n'),
+        embeds: [
+            CustomEmbed.from({
+                title: 'Blacklist Lookup',
+                description: [
+                    `**Discord:** \`${db_user_blacklist_data.identity.discord_user_id}\``,
+                    `**Roblox:** \`${db_user_blacklist_data.identity.roblox_user_id}\``,
+                    `**Staff Member:** \`${db_user_blacklist_data.staff_member_id}\``,
+                    `**Epoch:** <t:${discord_friendly_timestamp}:R>`,
+                    '**Reason:**',
+                    '\`\`\`',
+                    db_user_blacklist_data.reason,
+                    '\`\`\`',
+                ].join('\n'),
+            }),
+        ],
     });
 }
 
@@ -408,9 +435,14 @@ export default new CustomInteraction({
         const sub_command_name = interaction.options.getSubcommand(true);
         const sub_command_group_name = interaction.options.getSubcommandGroup(false);
 
+        /**
+         * The nullish coalescing operator (`??`) is used here because sub command groups can be siblings with sub commands.
+         * This will allow us to grab the first nested command whether it is a sub command or a sub command group.
+         */
         switch (sub_command_group_name ?? sub_command_name) {
             case 'add': {
                 /* `/blacklist add` */
+
                 const user_id_to_add = interaction.options.getUser('user', true).id;
                 const reason = interaction.options.getString('reason', true);
 
@@ -421,6 +453,7 @@ export default new CustomInteraction({
 
             case 'remove': {
                 /* `/blacklist remove` */
+
                 const user_id_to_remove = interaction.options.getUser('user', true).id;
                 const reason = interaction.options.getString('reason', true);
 
@@ -435,6 +468,7 @@ export default new CustomInteraction({
                 switch (sub_command_name) {
                     case 'discord': {
                         /* `/blacklist lookup discord` */
+
                         const user_to_lookup = interaction.options.getUser('user', true);
 
                         await blacklistLookupSubcommand(interaction, 'discord', user_to_lookup.id);
@@ -444,6 +478,7 @@ export default new CustomInteraction({
 
                     case 'roblox': {
                         /* `/blacklist lookup roblox` */
+
                         const user_id_to_lookup = interaction.options.getString('user-id', true);
 
                         await blacklistLookupSubcommand(interaction, 'roblox', user_id_to_lookup);
@@ -452,7 +487,9 @@ export default new CustomInteraction({
                     }
 
                     default: {
-                        /** @todo display an error */
+                        await interaction.editReply({
+                            content: 'Unrecognized subcommand was provided for the `/blacklist lookup` subcommand group.',
+                        });
 
                         break;
                     }
@@ -462,7 +499,9 @@ export default new CustomInteraction({
             }
 
             default: {
-                /** @todo display an error */
+                await interaction.editReply({
+                    content: 'Unrecognized subcommand was provided for the `/blacklist` command.',
+                });
 
                 break;
             }

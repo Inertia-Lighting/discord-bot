@@ -6,7 +6,7 @@
 
 import * as Discord from 'discord.js';
 
-import { logModerationActionToDatabase } from '../../handlers/log_moderation_action_handler';
+import { ModerationActionType, addModerationActionToDatabase } from '@root/bot/handlers/moderation_action_handler';
 
 import { command_permission_levels, getUserPermissionLevel, user_is_not_allowed_access_to_command_message_options } from '../../common/bot';
 
@@ -127,10 +127,10 @@ export default {
         await interaction.editReply(moderation_message_options).catch(console.warn);
 
         /* log to the database */
-        await logModerationActionToDatabase({
+        await addModerationActionToDatabase({
             discord_user_id: member.id,
         }, {
-            type: 'TIMEOUT',
+            type: ModerationActionType.Timeout,
             epoch: Date.now(),
             reason: `${reason} (duration: ${duration / 60_000} minutes)`,
             staff_member_id: staff_member.id,

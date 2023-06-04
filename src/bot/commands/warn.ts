@@ -8,7 +8,7 @@ import { Discord } from '../discord_client';
 
 import { command_permission_levels } from '../common/bot';
 
-import { logModerationActionToDatabase } from '../handlers/log_moderation_action_handler';
+import { ModerationActionType, addModerationActionToDatabase } from '@root/bot/handlers/moderation_action_handler';
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -95,10 +95,10 @@ export default {
         await message.channel.send(moderation_message_options).catch(console.warn);
 
         /* log to the database */
-        const successfully_logged_to_database = await logModerationActionToDatabase({
+        const successfully_logged_to_database = await addModerationActionToDatabase({
             discord_user_id: member.id,
         }, {
-            type: 'WARN',
+            type: ModerationActionType.Warn,
             epoch: Date.now(),
             reason: reason,
             staff_member_id: message.member!.id,

@@ -4,9 +4,9 @@
 
 import * as Discord from 'discord.js';
 
-import { CustomInteraction, CustomInteractionAccessLevel } from '../common/managers/custom_interactions_manager';
+import { CustomInteraction, CustomInteractionAccessLevel } from '@root/bot/common/managers/custom_interactions_manager';
 
-import { logModerationActionToDatabase } from '../handlers/log_moderation_action_handler';
+import { ModerationActionType, addModerationActionToDatabase } from '@root/bot/handlers/moderation_action_handler';
 
 //------------------------------------------------------------//
 
@@ -133,11 +133,11 @@ export default new CustomInteraction({
             return;
         }
 
-        /* log to the database */
-        const successfully_logged_to_database = await logModerationActionToDatabase({
+        /* add the moderation action to the database */
+        const successfully_logged_to_database = await addModerationActionToDatabase({
             discord_user_id: member_to_ban.id,
         }, {
-            type: 'BAN',
+            type: ModerationActionType.Ban,
             epoch: Date.now(),
             reason: ban_reason,
             staff_member_id: staff_member.id,

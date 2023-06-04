@@ -110,10 +110,10 @@ export function math_clamp(
 }
 
 /**
- * Returns a valid discord timestamp from a unix timestamp
+ * Returns a valid discord timestamp from a unix epoch (in milliseconds)
  */
-export function getMarkdownFriendlyTimestamp(timestamp: number): string {
-    if (typeof timestamp !== 'number') throw new TypeError('getMarkdownFriendlyTimestamp(): timestamp is not a number');
+export function getMarkdownFriendlyTimestamp(unix_epoch_ms: number): string {
+    if (typeof unix_epoch_ms !== 'number') throw new TypeError('getMarkdownFriendlyTimestamp(): unix_epoch_ms is not a number');
 
-    return Math.floor(timestamp / 1000).toString(10);
+    return Math.floor(unix_epoch_ms / 1000).toString(10);
 }
