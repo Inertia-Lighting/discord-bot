@@ -423,7 +423,7 @@ export default new CustomInteraction({
         ],
     },
     metadata: {
-        required_access_level: CustomInteractionAccessLevel.Admins,
+        required_access_level: CustomInteractionAccessLevel.TeamLeaders,
     },
     handler: async (discord_client, interaction) => {
         if (!interaction.isChatInputCommand()) return;

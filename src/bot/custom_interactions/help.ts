@@ -4,7 +4,7 @@
 
 import * as Discord from 'discord.js';
 
-import { CustomInteraction, CustomInteractionAccessLevel } from '@root/bot/common/managers/custom_interactions_manager';
+import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionsManager } from '@root/bot/common/managers/custom_interactions_manager';
 
 //------------------------------------------------------------//
 
@@ -26,6 +26,14 @@ export default new CustomInteraction({
 
         await interaction.deferReply({ ephemeral: false });
 
-        /** @todo */
+        const chat_input_custom_interactions = CustomInteractionsManager.interactions.filter(
+            (custom_interaction) =>
+                custom_interaction.type === Discord.InteractionType.ApplicationCommand &&
+                'type' in custom_interaction.data &&
+                custom_interaction.data.type === Discord.ApplicationCommandType.ChatInput
+        );
+
+        /** @todo finish the command */
+        console.log(chat_input_custom_interactions); // temporary to suppress eslint
     },
 });
