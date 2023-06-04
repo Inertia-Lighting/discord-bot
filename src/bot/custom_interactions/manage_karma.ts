@@ -2,44 +2,86 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 //------------------------------------------------------------//
 
-//---------------------------------------------------------------------------------------------------------------//
+import * as Discord from 'discord.js';
 
-import { Discord, client } from '../../discord_client';
-
-import { go_mongo_db } from '../../../mongo/mongo';
-
-import { command_permission_levels, getUserPermissionLevel, user_is_not_allowed_access_to_command_message_options } from '../../common/bot';
+import { go_mongo_db } from '@root/mongo/mongo';
 
 import { CustomEmbed } from '@root/bot/common/message';
 
-//---------------------------------------------------------------------------------------------------------------//
+import { CustomInteraction, CustomInteractionAccessLevel } from '@root/bot/common/managers/custom_interactions_manager';
 
-export default {
+//------------------------------------------------------------//
+
+const db_database_name = `${process.env.MONGO_DATABASE_NAME ?? ''}`;
+if (db_database_name.length < 1) throw new Error('Environment variable: MONGO_DATABASE_NAME; is not set correctly.');
+
+const db_users_collection_name = `${process.env.MONGO_USERS_COLLECTION_NAME ?? ''}`;
+if (db_users_collection_name.length < 1) throw new Error('Environment variable: MONGO_USERS_COLLECTION_NAME; is not set correctly.');
+
+//------------------------------------------------------------//
+
+export default new CustomInteraction({
     identifier: 'manage_karma',
-    async execute(
-        interaction: Discord.AutocompleteInteraction | Discord.ChatInputCommandInteraction
-    ) {
+    type: Discord.InteractionType.ApplicationCommand,
+    data: {
+        type: Discord.ApplicationCommandType.ChatInput,
+        description: 'Manages a user\'s karma.',
+        options: [
+            {
+                name: 'for',
+                type: Discord.ApplicationCommandOptionType.User,
+                description: 'The member who you want to manage karma for.',
+                required: true,
+            }, {
+                name: 'action',
+                type: Discord.ApplicationCommandOptionType.String,
+                description: 'The action you want to perform.',
+                choices: [
+                    {
+                        name: 'Add',
+                        value: 'add',
+                    }, {
+                        name: 'Remove',
+                        value: 'remove',
+                    }, {
+                        name: 'Set',
+                        value: 'set',
+                    },
+                ],
+                required: true,
+            }, {
+                name: 'amount',
+                type: Discord.ApplicationCommandOptionType.Integer,
+                description: 'The amount of karma to add, remove, or set.',
+                minValue: 0,
+                maxValue: 1_000_000,
+                required: true,
+            }, {
+                name: 'reason',
+                type: Discord.ApplicationCommandOptionType.String,
+                description: 'The reason why you want to manage karma.',
+                minLength: 1,
+                maxLength: 256,
+                required: true,
+            },
+        ],
+    },
+    metadata: {
+        required_access_level: CustomInteractionAccessLevel.Moderators,
+    },
+    handler: async (discord_client, interaction) => {
         if (!interaction.isChatInputCommand()) return;
         if (!interaction.inCachedGuild()) return;
 
         await interaction.deferReply();
 
-        const interaction_guild_member = await interaction.guild.members.fetch(interaction.user.id);
-
-        const user_permission_level = getUserPermissionLevel(interaction_guild_member);
-        const user_has_access_to_command = user_permission_level >= command_permission_levels.ADMINS;
-        if (!user_has_access_to_command) {
-            interaction.editReply(user_is_not_allowed_access_to_command_message_options).catch(console.warn);
-            return;
-        }
-
         const user_to_modify = interaction.options.getUser('for', true);
         const action_to_perform = interaction.options.getString('action', true);
         const amount_to_modify_by = interaction.options.getInteger('amount', true);
-        const reason = interaction.options.getString('reason', true) || 'No reason was specified.';
+        const reason = interaction.options.getString('reason', true);
 
         /* find the user in the database */
-        const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME as string, process.env.MONGO_USERS_COLLECTION_NAME as string, {
+        const [ db_user_data ] = await go_mongo_db.find(db_database_name, db_users_collection_name, {
             'identity.discord_user_id': user_to_modify.id,
         }, {
             projection: {
@@ -106,6 +148,7 @@ export default {
                     }),
                 ],
             }).catch(console.warn);
+
             return;
         }
 
@@ -119,6 +162,7 @@ export default {
                     }),
                 ],
             }).catch(console.warn);
+
             return;
         }
 
@@ -132,11 +176,12 @@ export default {
                     }),
                 ],
             }).catch(console.warn);
+
             return;
         }
 
         try {
-            await go_mongo_db.update(process.env.MONGO_DATABASE_NAME as string, process.env.MONGO_USERS_COLLECTION_NAME as string, {
+            await go_mongo_db.update(db_database_name, db_users_collection_name, {
                 'identity.discord_user_id': db_user_data.identity.discord_user_id,
                 'identity.roblox_user_id': db_user_data.identity.roblox_user_id,
             }, {
@@ -152,7 +197,7 @@ export default {
                     CustomEmbed.from({
                         color: CustomEmbed.colors.RED,
                         author: {
-                            icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
+                            icon_url: `${discord_client.user.displayAvatarURL({ forceStatic: false })}`,
                             name: 'Inertia Lighting | Karma System',
                         },
                         description: 'An error occurred while modifying the user\'s karma!',
@@ -163,7 +208,7 @@ export default {
             return;
         }
 
-        interaction.editReply({
+        await interaction.editReply({
             embeds: [
                 CustomEmbed.from({
                     color: action_to_perform === 'add' ? (
@@ -174,7 +219,7 @@ export default {
                         CustomEmbed.colors.BRAND
                     ),
                     author: {
-                        icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
+                        icon_url: `${discord_client.user.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | Karma System',
                     },
                     description: [
@@ -197,4 +242,4 @@ export default {
             ],
         }).catch(console.warn);
     },
-};
+});

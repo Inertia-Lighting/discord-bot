@@ -15,7 +15,7 @@ export default new CustomInteraction({
     type: Discord.InteractionType.ApplicationCommand,
     data: {
         type: Discord.ApplicationCommandType.ChatInput,
-        description: 'why does this even exist',
+        description: 'why does this even exist?',
         options: [],
     },
     metadata: {

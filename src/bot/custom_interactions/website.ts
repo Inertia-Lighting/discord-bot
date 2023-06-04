@@ -11,7 +11,7 @@ import { CustomInteraction, CustomInteractionAccessLevel } from '@root/bot/commo
 //------------------------------------------------------------//
 
 export default new CustomInteraction({
-    identifier: 'product_hub',
+    identifier: 'website',
     type: Discord.InteractionType.ApplicationCommand,
     data: {
         type: Discord.ApplicationCommandType.ChatInput,
@@ -31,7 +31,7 @@ export default new CustomInteraction({
         await interaction.editReply({
             embeds: [
                 CustomEmbed.from({
-                    description: 'Check out our Product Hub!',
+                    description: 'Check out our website!',
                 }),
             ],
             components: [
@@ -41,8 +41,8 @@ export default new CustomInteraction({
                         {
                             type: Discord.ComponentType.Button,
                             style: Discord.ButtonStyle.Link,
-                            label: 'Product Hub',
-                            url: 'https://product-hub.inertia.lighting/',
+                            label: 'Website',
+                            url: 'https://inertia.lighting/',
                         },
                     ],
                 },

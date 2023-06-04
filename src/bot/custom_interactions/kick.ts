@@ -26,6 +26,8 @@ export default new CustomInteraction({
                 name: 'reason',
                 type: Discord.ApplicationCommandOptionType.String,
                 description: 'The reason why you want to kick.',
+                minLength: 1,
+                maxLength: 256,
                 required: true,
             },
         ],
