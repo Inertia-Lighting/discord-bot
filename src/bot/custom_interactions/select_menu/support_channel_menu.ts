@@ -41,7 +41,7 @@ export default new CustomInteraction({
     type: Discord.InteractionType.MessageComponent,
     data: undefined,
     metadata: {
-        required_access_level: CustomInteractionAccessLevel.Moderators,
+        required_access_level: CustomInteractionAccessLevel.Public,
     },
     handler: async (discord_client, interaction) => {
         if (!interaction.isStringSelectMenu()) return;

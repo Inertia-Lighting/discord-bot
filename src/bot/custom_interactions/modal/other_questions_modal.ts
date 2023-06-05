@@ -8,13 +8,21 @@ import { Discord, client } from '../../discord_client';
 
 import { CustomEmbed } from '@root/bot/common/message';
 
+import { CustomInteraction, CustomInteractionAccessLevel } from '@root/bot/common/managers/custom_interactions_manager';
+
 import { createSupportTicketChannel } from '@root/bot/handlers/support_system_handler';
 
 //---------------------------------------------------------------------------------------------------------------//
 
-export default {
+export default new CustomInteraction({
     identifier: 'other_questions_modal',
-    async execute(interaction: Discord.ModalSubmitInteraction) {
+    type: Discord.InteractionType.ModalSubmit,
+    data: undefined,
+    metadata: {
+        required_access_level: CustomInteractionAccessLevel.Public,
+    },
+    handler: async (discord_client, interaction) => {
+        if (!interaction.isModalSubmit()) return;
         if (!interaction.inCachedGuild()) return;
 
         await interaction.deferReply({ ephemeral: true });
@@ -25,7 +33,7 @@ export default {
 
         interaction.editReply({
             content: [
-                'You selected Product Tech Support!',
+                'You selected Other & Questions!',
                 `Go to ${support_channel} to continue.`,
             ].join('\n'),
         });
@@ -53,4 +61,4 @@ export default {
             ],
         });
     },
-};
+});
