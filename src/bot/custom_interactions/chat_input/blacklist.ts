@@ -148,7 +148,7 @@ async function removeUserFromBlacklistedUsersDatabase(
     return true; // user was removed from blacklist
 }
 
-//---------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------------------//
 
 /**
  * Check if the staff member is allowed to blacklist the potential user.

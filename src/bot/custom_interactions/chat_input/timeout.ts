@@ -2,15 +2,13 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 //------------------------------------------------------------//
 
-//---------------------------------------------------------------------------------------------------------------//
-
 import * as Discord from 'discord.js';
 
 import { CustomInteraction, CustomInteractionAccessLevel } from '@root/bot/common/managers/custom_interactions_manager';
 
 import { ModerationActionType, addModerationActionToDatabase } from '@root/bot/handlers/moderation_action_handler';
 
-//---------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------------------//
 
 export default new CustomInteraction({
     identifier: 'timeout',

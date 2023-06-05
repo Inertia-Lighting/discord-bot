@@ -2,8 +2,6 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 //------------------------------------------------------------//
 
-//------------------------------------------------------------//
-
 import axios from 'axios';
 
 import { go_mongo_db } from '../../mongo/mongo';
