@@ -19,7 +19,10 @@ if (typeof bot_guild_id !== 'string') throw new TypeError('bot_guild_id is not a
 
 export default {
     name: Discord.Events.GuildMemberUpdate,
-    async handler(old_member: Discord.GuildMember, new_member: Discord.GuildMember) {
+    async handler(
+        old_member: Discord.GuildMember,
+        new_member: Discord.GuildMember,
+    ) {
         if (!old_member || !new_member) return; // ensure both members are defined
 
         if (new_member.user.system) return; // don't operate on system accounts

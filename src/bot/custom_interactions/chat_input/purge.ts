@@ -4,7 +4,7 @@
 
 import * as Discord from 'discord.js';
 
-import { CustomInteraction, CustomInteractionAccessLevel } from '@root/bot/common/managers/custom_interactions_manager';
+import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/bot/common/managers/custom_interactions_manager';
 
 //------------------------------------------------------------//
 
@@ -26,6 +26,7 @@ export default new CustomInteraction({
         ],
     },
     metadata: {
+        required_run_context: CustomInteractionRunContext.Guild,
         required_access_level: CustomInteractionAccessLevel.Admins,
     },
     handler: async (discord_client, interaction) => {

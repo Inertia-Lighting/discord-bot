@@ -2,11 +2,9 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 //------------------------------------------------------------//
 
-import { CustomInteraction, CustomInteractionAccessLevel } from '@root/bot/common/managers/custom_interactions_manager';
+import * as Discord from 'discord.js';
 
-//------------------------------------------------------------//
-
-import { Discord } from '../../discord_client';
+import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/bot/common/managers/custom_interactions_manager';
 
 //------------------------------------------------------------//
 
@@ -41,6 +39,7 @@ export default new CustomInteraction({
     type: Discord.InteractionType.MessageComponent,
     data: undefined,
     metadata: {
+        required_run_context: CustomInteractionRunContext.Guild,
         required_access_level: CustomInteractionAccessLevel.Public,
     },
     handler: async (discord_client, interaction) => {

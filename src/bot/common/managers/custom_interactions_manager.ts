@@ -10,24 +10,8 @@ import recursiveReadDirectory from 'recursive-read-directory';
 
 //------------------------------------------------------------//
 
-type DistributiveOmit<T, K extends keyof T> = T extends unknown ? Omit<T, K> : never;
-
-//------------------------------------------------------------//
-
-type CustomInteractionIdentifier = string;
-
-type CustomInteractionType = Discord.InteractionType;
-
-type CustomInteractionData = DistributiveOmit<Discord.ApplicationCommandData, 'name'> | undefined;
-
-type CustomInteractionMetadata = {
-    [key: string]: unknown,
-    required_access_level?: number,
-};
-
-type CustomInteractionHandler = (discord_client: Discord.Client<true>, interaction: Discord.Interaction) => Promise<void>;
-
-//------------------------------------------------------------//
+const bot_guild_id = `${process.env.BOT_GUILD_ID ?? ''}`;
+if (bot_guild_id.length < 1) throw new Error('Environment variable: BOT_GUILD_ID; was not set correctly!');
 
 const guild_staff_role_id = `${process.env.BOT_STAFF_ROLE_ID ?? ''}`;
 if (guild_staff_role_id.length < 1) throw new Error('Environment variable: BOT_STAFF_ROLE_ID; was not set correctly!');
@@ -48,6 +32,32 @@ const guild_company_management_role_id = `${process.env.BOT_COMPANY_MANAGEMENT_R
 if (guild_company_management_role_id.length < 1) throw new Error('Environment variable: BOT_COMPANY_MANAGEMENT_ROLE_ID; was not set correctly!');
 
 //------------------------------------------------------------//
+
+type DistributiveOmit<T, K extends keyof T> = T extends unknown ? Omit<T, K> : never;
+
+//------------------------------------------------------------//
+
+type CustomInteractionIdentifier = string;
+
+type CustomInteractionType = Discord.InteractionType;
+
+type CustomInteractionData = DistributiveOmit<Discord.ApplicationCommandData, 'name'> | undefined;
+
+type CustomInteractionMetadata = {
+    [key: string]: unknown,
+    required_run_context: CustomInteractionRunContext,
+    required_access_level: CustomInteractionAccessLevel,
+};
+
+type CustomInteractionHandler = (discord_client: Discord.Client<true>, interaction: Discord.Interaction) => Promise<void>;
+
+//------------------------------------------------------------//
+
+export enum CustomInteractionRunContext {
+    Global = 1,
+    Guild = 2,
+    DirectMessage = 3,
+}
 
 export enum CustomInteractionAccessLevel {
     Public = 1,
@@ -104,56 +114,10 @@ export class CustomInteraction {
     }
 
     public async handler(
-        discord_client: Discord.Client,
+        discord_client: Discord.Client<true>,
         interaction: Discord.Interaction,
     ) {
-        const required_access_level = this.metadata.required_access_level;
-        if (required_access_level) {
-            if (!interaction.inCachedGuild()) throw new Error('required_access_level was supplied, however the interaction was not from a cached guild');
-
-            const access_levels_for_user = [ CustomInteractionAccessLevel.Public ]; // default access level
-
-            const member = await interaction.guild.members.fetch(interaction.member);
-
-            const member_roles_cache = member.roles.cache;
-
-            if (member_roles_cache.has(guild_staff_role_id)) {
-                access_levels_for_user.push(CustomInteractionAccessLevel.Staff);
-            }
-
-            if (member_roles_cache.has(guild_customer_service_role_id)) {
-                access_levels_for_user.push(CustomInteractionAccessLevel.CustomerService);
-            }
-
-            if (member_roles_cache.has(guild_moderators_role_id)) {
-                access_levels_for_user.push(CustomInteractionAccessLevel.Moderators);
-            }
-
-            if (member_roles_cache.has(guild_admins_role_id)) {
-                access_levels_for_user.push(CustomInteractionAccessLevel.Admins);
-            }
-
-            if (member_roles_cache.has(guild_team_leaders_role_id)) {
-                access_levels_for_user.push(CustomInteractionAccessLevel.TeamLeaders);
-            }
-
-            if (member_roles_cache.has(guild_company_management_role_id)) {
-                access_levels_for_user.push(CustomInteractionAccessLevel.CompanyManagement);
-            }
-
-            const highest_access_level_for_user = Math.max(...access_levels_for_user);
-            if (highest_access_level_for_user < required_access_level) {
-                if (interaction.isRepliable()) {
-                    await interaction.reply({
-                        content: 'You are not allowed to use this command!',
-                    });
-                }
-
-                return; // prevent the user from running the interaction
-            }
-        }
-
-        this._handler(discord_client, interaction);
+        await this._handler(discord_client, interaction);
     }
 }
 
@@ -213,7 +177,7 @@ export class CustomInteractionsManager {
     }
 
     public static async handleInteractionFromDiscord(
-        discord_client: Discord.Client,
+        discord_client: Discord.Client<true>,
         interaction: Discord.Interaction,
     ): Promise<void> {
         /* ensure the discord client is ready */
@@ -252,14 +216,79 @@ export class CustomInteractionsManager {
                 break;
             }
         }
-        const client_interaction = CustomInteractionsManager.interactions.get(unknown_interaction_identifier);
+
+        const custom_interaction = CustomInteractionsManager.interactions.get(unknown_interaction_identifier);
 
         /* ensure the client interaction exists before handling it */
-        if (!client_interaction) return;
+        if (!custom_interaction) return;
+
+        /* if the interaction is from a guild, ensure it is from the bot's guild */
+        if (
+            interaction.inGuild() &&
+            interaction.guildId !== bot_guild_id
+        ) return; // ignore the interaction
+
+        /* ensure the interaction is from a guild if the interaction requires it */
+        if (
+            custom_interaction.metadata.guild_only &&
+            !interaction.inCachedGuild()
+        ) throw new Error('This interaction is restricted to only work in guilds');
+
+        const required_access_level = custom_interaction.metadata.required_access_level;
+
+        if (
+            typeof required_access_level !== 'number' &&
+            interaction.isChatInputCommand()
+        ) throw new Error('required_access_level was not found for this interaction');
+
+        if (typeof required_access_level === 'number') {
+            if (!interaction.inCachedGuild()) throw new Error('required_access_level was supplied, however the interaction was not from a cached guild');
+
+            const access_levels_for_user = [ CustomInteractionAccessLevel.Public ]; // default access level
+
+            const member = await interaction.guild.members.fetch(interaction.member);
+
+            const member_roles_cache = member.roles.cache;
+
+            if (member_roles_cache.has(guild_staff_role_id)) {
+                access_levels_for_user.push(CustomInteractionAccessLevel.Staff);
+            }
+
+            if (member_roles_cache.has(guild_customer_service_role_id)) {
+                access_levels_for_user.push(CustomInteractionAccessLevel.CustomerService);
+            }
+
+            if (member_roles_cache.has(guild_moderators_role_id)) {
+                access_levels_for_user.push(CustomInteractionAccessLevel.Moderators);
+            }
+
+            if (member_roles_cache.has(guild_admins_role_id)) {
+                access_levels_for_user.push(CustomInteractionAccessLevel.Admins);
+            }
+
+            if (member_roles_cache.has(guild_team_leaders_role_id)) {
+                access_levels_for_user.push(CustomInteractionAccessLevel.TeamLeaders);
+            }
+
+            if (member_roles_cache.has(guild_company_management_role_id)) {
+                access_levels_for_user.push(CustomInteractionAccessLevel.CompanyManagement);
+            }
+
+            const highest_access_level_for_user = Math.max(...access_levels_for_user);
+            if (highest_access_level_for_user < required_access_level) {
+                if (interaction.isRepliable()) {
+                    await interaction.reply({
+                        content: 'You are not allowed to use this command!',
+                    });
+                }
+
+                return; // prevent the user from running the interaction
+            }
+        }
 
         try {
-            console.log(`CustomInteractionsManager.handleInteractionFromDiscord(): running handler for interaction: ${client_interaction.identifier}`);
-            await client_interaction.handler(discord_client, interaction);
+            console.log(`CustomInteractionsManager.handleInteractionFromDiscord(): running handler for interaction: ${custom_interaction.identifier}`);
+            await custom_interaction.handler(discord_client, interaction);
         } catch (error) {
             console.trace(error);
 

@@ -19,19 +19,22 @@ if (db_users_collection_name.length < 1) throw new Error('Environment variable: 
 //------------------------------------------------------------//
 
 export default new CustomInteraction({
-    identifier: 'User Profile',
-    type: Discord.InteractionType.ApplicationCommand,
+    identifier: 'verify_command_user_profile_button',
+    type: Discord.InteractionType.MessageComponent,
     data: undefined,
     metadata: {
         required_run_context: CustomInteractionRunContext.Guild,
-        required_access_level: CustomInteractionAccessLevel.TeamLeaders,
+        required_access_level: CustomInteractionAccessLevel.Public,
     },
     handler: async (discord_client, interaction) => {
         if (!interaction.inCachedGuild()) return;
-        if (!interaction.isUserContextMenuCommand()) return;
+        if (!interaction.isButton()) return;
 
         await interaction.deferReply({ ephemeral: true });
 
-        await userProfileHandler(interaction, interaction.targetUser.id);
+        const original_interaction_user_id = interaction.message.interaction?.user.id;
+        const user_id = original_interaction_user_id ?? interaction.user.id;
+
+        await userProfileHandler(interaction, user_id);
     },
 });

@@ -28,7 +28,9 @@ const new_to_the_server_role_ids = new_to_the_server_role_ids_string.split(',');
 
 export default {
     name: Discord.Events.GuildMemberAdd,
-    async handler(member: Discord.GuildMember) {
+    async handler(
+        member: Discord.GuildMember,
+    ) {
         if (member.user.system) return; // don't operate on system accounts
         if (member.user.bot) return; // don't operate on bots to prevent feedback-loops
         if (member.guild.id !== bot_guild_id) return; // don't operate on other guilds

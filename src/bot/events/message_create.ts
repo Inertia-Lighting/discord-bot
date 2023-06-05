@@ -26,7 +26,9 @@ const suggestions_category_id = process.env.BOT_SUGGESTIONS_CATEGORY_ID as strin
 
 export default {
     name: Discord.Events.MessageCreate,
-    async handler(message: Discord.Message) {
+    async handler(
+        message: Discord.Message,
+    ) {
         /* don't allow bots */
         if (message.author.bot) return;
 

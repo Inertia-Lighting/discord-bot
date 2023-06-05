@@ -4,7 +4,7 @@
 
 import * as Discord from 'discord.js';
 
-import { CustomInteraction, CustomInteractionAccessLevel } from '@root/bot/common/managers/custom_interactions_manager';
+import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/bot/common/managers/custom_interactions_manager';
 
 import { closeSupportTicketChannel } from '@root/bot/handlers/support_system_handler';
 
@@ -27,6 +27,7 @@ export default new CustomInteraction({
         options: [],
     },
     metadata: {
+        required_run_context: CustomInteractionRunContext.Guild,
         required_access_level: CustomInteractionAccessLevel.CustomerService,
     },
     handler: async (discord_client, interaction) => {

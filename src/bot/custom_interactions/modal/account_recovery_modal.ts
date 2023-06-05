@@ -2,47 +2,55 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 //------------------------------------------------------------//
 
-//---------------------------------------------------------------------------------------------------------------//
-
-import { Discord, client } from '../../discord_client';
+import * as Discord from 'discord.js';
 
 import { CustomEmbed } from '@root/bot/common/message';
 
-import { CustomInteraction, CustomInteractionAccessLevel } from '@root/bot/common/managers/custom_interactions_manager';
+import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/bot/common/managers/custom_interactions_manager';
 
 import { createSupportTicketChannel } from '@root/bot/handlers/support_system_handler';
 
-//---------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------------------//
+
+const bot_database_support_staff_role_id = `${process.env.BOT_SUPPORT_STAFF_DATABASE_ROLE_ID ?? ''}`;
+if (bot_database_support_staff_role_id.length < 1) throw new Error('Environment variable: BOT_SUPPORT_STAFF_DATABASE_ROLE_ID; is not set correctly.');
+
+//------------------------------------------------------------//
 
 export default new CustomInteraction({
     identifier: 'account_recovery_modal',
     type: Discord.InteractionType.ModalSubmit,
     data: undefined,
     metadata: {
+        required_run_context: CustomInteractionRunContext.Guild,
         required_access_level: CustomInteractionAccessLevel.Public,
     },
     handler: async (discord_client, interaction) => {
-        if (!interaction.isModalSubmit()) return;
         if (!interaction.inCachedGuild()) return;
+        if (!interaction.isModalSubmit()) return;
 
         await interaction.deferReply({ ephemeral: true });
 
-        const modal_fields = interaction.fields;
+        const old_roblox_account_id = interaction.fields.getTextInputValue('old_roblox');
+        const new_roblox_account_id = interaction.fields.getTextInputValue('new_roblox');
+        const old_discord_user_id = interaction.fields.getTextInputValue('old_discord');
+        const new_discord_user_id = interaction.fields.getTextInputValue('new_discord');
+        const recovery_reason = interaction.fields.getTextInputValue('recovery_reason');
 
-        const support_channel = await createSupportTicketChannel(interaction.guild, interaction.member!, 'RECOVERY');
+        const support_channel = await createSupportTicketChannel(interaction.guild, interaction.member, 'RECOVERY');
 
-        interaction.editReply({
+        await interaction.editReply({
             content: [
-                'You selected Transfer Products!',
+                'You selected Account Recovery!',
                 `Go to ${support_channel} to continue.`,
             ].join('\n'),
         });
 
-        support_channel.send({
+        await support_channel.send({
             content: [
                 `${interaction.member}, welcome to your support ticket,`,
                 '',
-                `Our <@&${process.env.BOT_SUPPORT_STAFF_DATABASE_ROLE_ID as string}> support staff are unscheduled volunteers, so please be patient.`,
+                `Our <@&${bot_database_support_staff_role_id}> support staff are unscheduled volunteers, so please be patient.`,
                 '',
                 'If you have an urgent issue, like someone making death threats;',
                 'please @mention one of our high-ranked staff members!',
@@ -50,24 +58,24 @@ export default new CustomInteraction({
             embeds: [
                 CustomEmbed.from({
                     author: {
-                        icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
+                        icon_url: `${discord_client.user.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | Support System',
                     },
                     description: [
                         '**What is your old Roblox account ID?**',
-                        `${modal_fields.getTextInputValue('old_roblox')}`,
+                        `${old_roblox_account_id}`,
                         '',
                         '**What is your new Roblox account ID?**',
-                        `${modal_fields.getTextInputValue('new_roblox')}`,
+                        `${new_roblox_account_id}`,
                         '',
                         '**What is your old Discord user ID?**',
-                        `${modal_fields.getTextInputValue('old_discord')}`,
+                        `${old_discord_user_id}`,
                         '',
                         '**What is your new Discord user ID?**',
-                        `${modal_fields.getTextInputValue('new_discord')}`,
+                        `${new_discord_user_id}`,
                         '',
                         '**Why do you need to recover your account?**',
-                        `${modal_fields.getTextInputValue('recovery_reason')}`,
+                        `${recovery_reason}`,
                     ].join('\n'),
                 }),
             ],

@@ -12,7 +12,7 @@ import { go_mongo_db } from '@root/mongo/mongo';
 
 import { CustomEmbed } from '@root/bot/common/message';
 
-import { CustomInteraction, CustomInteractionAccessLevel } from '@root/bot/common/managers/custom_interactions_manager';
+import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/bot/common/managers/custom_interactions_manager';
 
 //------------------------------------------------------------//
 
@@ -423,6 +423,7 @@ export default new CustomInteraction({
         ],
     },
     metadata: {
+        required_run_context: CustomInteractionRunContext.Guild,
         required_access_level: CustomInteractionAccessLevel.TeamLeaders,
     },
     handler: async (discord_client, interaction) => {

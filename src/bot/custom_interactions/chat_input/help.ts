@@ -6,7 +6,7 @@ import * as Discord from 'discord.js';
 
 import { CustomEmbed } from '@root/bot/common/message';
 
-import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionsManager } from '@root/bot/common/managers/custom_interactions_manager';
+import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext, CustomInteractionsManager } from '@root/bot/common/managers/custom_interactions_manager';
 
 //------------------------------------------------------------//
 
@@ -19,6 +19,7 @@ export default new CustomInteraction({
         options: [],
     },
     metadata: {
+        required_run_context: CustomInteractionRunContext.Guild,
         required_access_level: CustomInteractionAccessLevel.Public,
     },
     handler: async (discord_client, interaction) => {

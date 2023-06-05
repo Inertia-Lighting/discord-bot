@@ -12,13 +12,13 @@ import { createSupportTicketChannel } from '@root/bot/handlers/support_system_ha
 
 //------------------------------------------------------------//
 
-const bot_other_support_staff_role_id = `${process.env.BOT_SUPPORT_STAFF_OTHER_ROLE_ID ?? ''}`;
-if (bot_other_support_staff_role_id.length < 1) throw new Error('Environment variable: BOT_SUPPORT_STAFF_OTHER_ROLE_ID; is not set correctly.');
+const bot_database_support_staff_role_id = `${process.env.BOT_SUPPORT_STAFF_DATABASE_ROLE_ID ?? ''}`;
+if (bot_database_support_staff_role_id.length < 1) throw new Error('Environment variable: BOT_SUPPORT_STAFF_DATABASE_ROLE_ID; is not set correctly.');
 
 //------------------------------------------------------------//
 
 export default new CustomInteraction({
-    identifier: 'other_questions_modal',
+    identifier: 'product_transfer_modal',
     type: Discord.InteractionType.ModalSubmit,
     data: undefined,
     metadata: {
@@ -31,13 +31,16 @@ export default new CustomInteraction({
 
         await interaction.deferReply({ ephemeral: true });
 
-        const question = interaction.fields.getTextInputValue('question');
+        const products = interaction.fields.getTextInputValue('products');
+        const discord_transfer_to = interaction.fields.getTextInputValue('discord_transfer_to');
+        const roblox_transfer_to = interaction.fields.getTextInputValue('roblox_transfer_to');
+        const transfer_reason = interaction.fields.getTextInputValue('transfer_reason');
 
-        const support_channel = await createSupportTicketChannel(interaction.guild, interaction.member!, 'OTHER');
+        const support_channel = await createSupportTicketChannel(interaction.guild, interaction.member, 'TRANSFERS');
 
         await interaction.editReply({
             content: [
-                'You selected Other & Questions!',
+                'You selected Account Recovery!',
                 `Go to ${support_channel} to continue.`,
             ].join('\n'),
         });
@@ -46,7 +49,7 @@ export default new CustomInteraction({
             content: [
                 `${interaction.member}, welcome to your support ticket,`,
                 '',
-                `Our <@&${bot_other_support_staff_role_id}> support staff are unscheduled volunteers, so please be patient.`,
+                `Our <@&${bot_database_support_staff_role_id}> support staff are unscheduled volunteers, so please be patient.`,
                 '',
                 'If you have an urgent issue, like someone making death threats;',
                 'please @mention one of our high-ranked staff members!',
@@ -58,8 +61,17 @@ export default new CustomInteraction({
                         name: 'Inertia Lighting | Support System',
                     },
                     description: [
-                        '**What can we help you with?**',
-                        `${question}`,
+                        '**What product(s) do you want to transfer?**',
+                        `${products}`,
+                        '',
+                        '**Discord user ID that you\'re transferring to?**',
+                        `${discord_transfer_to}`,
+                        '',
+                        '**Roblox account that you\'re transferring to?**',
+                        `${roblox_transfer_to}`,
+                        '',
+                        '**Why are you transferring your product(s)?**',
+                        `${transfer_reason}`,
                     ].join('\n'),
                 }),
             ],

@@ -12,13 +12,13 @@ import { createSupportTicketChannel } from '@root/bot/handlers/support_system_ha
 
 //------------------------------------------------------------//
 
-const bot_other_support_staff_role_id = `${process.env.BOT_SUPPORT_STAFF_OTHER_ROLE_ID ?? ''}`;
-if (bot_other_support_staff_role_id.length < 1) throw new Error('Environment variable: BOT_SUPPORT_STAFF_OTHER_ROLE_ID; is not set correctly.');
+const bot_product_issues_support_staff_role_id = `${process.env.BOT_SUPPORT_STAFF_PRODUCT_ISSUES_ROLE_ID ?? ''}`;
+if (bot_product_issues_support_staff_role_id.length < 1) throw new Error('Environment variable: BOT_SUPPORT_STAFF_PRODUCT_ISSUES_ROLE_ID; is not set correctly.');
 
 //------------------------------------------------------------//
 
 export default new CustomInteraction({
-    identifier: 'other_questions_modal',
+    identifier: 'support_issues_modal',
     type: Discord.InteractionType.ModalSubmit,
     data: undefined,
     metadata: {
@@ -31,13 +31,17 @@ export default new CustomInteraction({
 
         await interaction.deferReply({ ephemeral: true });
 
-        const question = interaction.fields.getTextInputValue('question');
+        const answer_for_product = interaction.fields.getTextInputValue('product');
+        const answer_for_read_me = interaction.fields.getTextInputValue('read_me');
+        const answer_for_http = interaction.fields.getTextInputValue('http');
+        const answer_for_output = interaction.fields.getTextInputValue('output');
+        const answer_for_issue = interaction.fields.getTextInputValue('issue');
 
-        const support_channel = await createSupportTicketChannel(interaction.guild, interaction.member!, 'OTHER');
+        const support_channel = await createSupportTicketChannel(interaction.guild, interaction.member, 'TRANSFERS');
 
         await interaction.editReply({
             content: [
-                'You selected Other & Questions!',
+                'You selected Product Tech Support!',
                 `Go to ${support_channel} to continue.`,
             ].join('\n'),
         });
@@ -46,7 +50,7 @@ export default new CustomInteraction({
             content: [
                 `${interaction.member}, welcome to your support ticket,`,
                 '',
-                `Our <@&${bot_other_support_staff_role_id}> support staff are unscheduled volunteers, so please be patient.`,
+                `Our <@&${bot_product_issues_support_staff_role_id}> support staff are unscheduled volunteers, so please be patient.`,
                 '',
                 'If you have an urgent issue, like someone making death threats;',
                 'please @mention one of our high-ranked staff members!',
@@ -58,8 +62,20 @@ export default new CustomInteraction({
                         name: 'Inertia Lighting | Support System',
                     },
                     description: [
-                        '**What can we help you with?**',
-                        `${question}`,
+                        '**What product(s) are you having issue(s) with?**',
+                        `${answer_for_product}`,
+                        '',
+                        '**Did you read the README? (Yes or No)**',
+                        `${answer_for_read_me}`,
+                        '',
+                        '**Did you enable HTTP Request (Yes, No, or Idk)**',
+                        `${answer_for_http}`,
+                        '',
+                        '**Please provide us with a link to your output.**',
+                        `${answer_for_output}`,
+                        '',
+                        '**What are you having issues with?**',
+                        `${answer_for_issue}`,
                     ].join('\n'),
                 }),
             ],
