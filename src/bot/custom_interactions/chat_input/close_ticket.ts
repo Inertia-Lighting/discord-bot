@@ -2,32 +2,39 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 //------------------------------------------------------------//
 
-//---------------------------------------------------------------------------------------------------------------//
+import * as Discord from 'discord.js';
 
-import { Discord } from '../../discord_client';
-
-import { command_permission_levels, getUserPermissionLevel } from '@root/bot/common/bot';
+import { CustomInteraction, CustomInteractionAccessLevel } from '@root/bot/common/managers/custom_interactions_manager';
 
 import { closeSupportTicketChannel } from '@root/bot/handlers/support_system_handler';
 
-const support_tickets_category_id = process.env.BOT_SUPPORT_TICKETS_CATEGORY_ID as string;
-const support_tickets_transcripts_channel_id = process.env.BOT_SUPPORT_TICKETS_TRANSCRIPTS_CHANNEL_ID as string;
+//------------------------------------------------------------//
 
-//---------------------------------------------------------------------------------------------------------------//
+const support_tickets_category_id = `${process.env.BOT_SUPPORT_TICKETS_CATEGORY_ID ?? ''}`;
+if (support_tickets_category_id.length < 1) throw new Error('Environment variable: BOT_SUPPORT_TICKETS_CATEGORY_ID; is not set correctly.');
 
-export default {
+const support_tickets_transcripts_channel_id = `${process.env.BOT_SUPPORT_TICKETS_TRANSCRIPTS_CHANNEL_ID ?? ''}`;
+if (support_tickets_transcripts_channel_id.length < 1) throw new Error('Environment variable: BOT_SUPPORT_TICKETS_TRANSCRIPTS_CHANNEL_ID; is not set correctly.');
+
+//------------------------------------------------------------//
+
+export default new CustomInteraction({
     identifier: 'close_ticket',
-    async execute(interaction: Discord.AutocompleteInteraction | Discord.ChatInputCommandInteraction) {
+    type: Discord.InteractionType.ApplicationCommand,
+    data: {
+        type: Discord.ApplicationCommandType.ChatInput,
+        description: 'Used by staff to close support tickets.',
+        options: [],
+    },
+    metadata: {
+        required_access_level: CustomInteractionAccessLevel.CustomerService,
+    },
+    handler: async (discord_client, interaction) => {
         if (!interaction.isChatInputCommand()) return;
         if (!interaction.inCachedGuild()) return;
-        const user_permission_level = getUserPermissionLevel(interaction.member);
+        if (!interaction.channel) return;
 
-        if (user_permission_level < command_permission_levels.STAFF) {
-            interaction.reply({
-                content: 'Sorry, only staff may close active support tickets.',
-            }).catch(console.warn);
-            return;
-        }
+        await interaction.deferReply({ ephemeral: false });
 
         const channel_exists_in_support_tickets_category = interaction.channel?.parentId === support_tickets_category_id;
         const channel_is_not_transcripts_channel = interaction.channel?.id !== support_tickets_transcripts_channel_id;
@@ -50,4 +57,4 @@ export default {
             content: `${interaction.member} closing support ticket in 10 seconds...`,
         });
     },
-};
+});
