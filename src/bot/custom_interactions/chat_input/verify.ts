@@ -206,7 +206,7 @@ async function verifyHandler(
                     'You can now return to the Product Hub to continue.',
                     '',
                     'Make sure to stay in our Discord server after making a purchase.',
-                    'Our whitelist requires you to be in our Discord server.',
+                    'Our license system requires you to be in our Discord server.',
                 ].join('\n'),
             }),
         ],

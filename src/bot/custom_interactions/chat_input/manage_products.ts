@@ -28,30 +28,66 @@ if (db_users_collection_name.length < 1) throw new Error('Environment variable: 
 const db_support_staff_role_id = `${process.env.BOT_SUPPORT_STAFF_DATABASE_ROLE_ID ?? ''}`;
 if (db_support_staff_role_id.length < 1) throw new Error('Environment variable: BOT_SUPPORT_STAFF_DATABASE_ROLE_ID; is not set correctly.');
 
+const bot_logging_products_manager_channel_id = `${process.env.BOT_LOGGING_PRODUCTS_MANAGER_CHANNEL_ID ?? ''}`;
+if (bot_logging_products_manager_channel_id.length < 1) throw new Error('Environment variable: BOT_LOGGING_PRODUCTS_MANAGER_CHANNEL_ID; is not set correctly.');
+
+//------------------------------------------------------------//
+
+class DbProductsCache {
+    public static readonly cache_lifetime_ms = 1 * 60_000; // 1 minute
+
+    public static cache_expiration_epoch_ms = 0; // default to expired so it will be fetched on first call
+
+    public static cache: DbProductData[] = [];
+
+    public static async fetch(
+        bypass_cache: boolean = false,
+    ): Promise<DbProductData[]> {
+        const now_epoch_ms = Date.now();
+
+        if (
+            bypass_cache ||
+            this.cache_expiration_epoch_ms < now_epoch_ms
+        ) {
+            const db_roblox_products = await go_mongo_db.find(db_database_name, db_products_collection_name, {}) as unknown[] as DbProductData[];
+
+            this.cache_expiration_epoch_ms = now_epoch_ms + this.cache_lifetime_ms;
+            this.cache = db_roblox_products;
+
+            return db_roblox_products;
+        }
+
+        return this.cache;
+    }
+
+}
+
 //------------------------------------------------------------//
 
 async function manageProductsAutoCompleteHandler(
     interaction: Discord.AutocompleteInteraction,
 ): Promise<void> {
-    const db_roblox_products = await go_mongo_db.find(db_database_name, db_products_collection_name, {}) as unknown[] as DbProductData[];
+    const db_roblox_products = await DbProductsCache.fetch(false);
 
-    const user_id_to_modify = interaction.options.get('for')?.value; // required to be like this because of weird discord.js bug
+    const user_id_to_modify = interaction.options.get('for')?.value; // required to be like this because of a weird discord.js bug
     const action_to_perform = interaction.options.getString('action');
 
     const focused_option = interaction.options.getFocused();
     const search_query = focused_option.toUpperCase();
 
     /* find the user in the database */
-    const [ db_user_data ] = (await go_mongo_db.find(db_database_name, db_users_collection_name, {
+    const [ db_user_data ] = await go_mongo_db.find(db_database_name, db_users_collection_name, {
         'identity.discord_user_id': user_id_to_modify,
     }, {
         projection: {
             '_id': false,
         },
-    })) as unknown[] as DbUserData[];
+    }) as unknown[] as DbUserData[];
 
     if (!db_user_data) {
-        return interaction.respond([]);
+        await interaction.respond([]);
+
+        return;
     }
 
     const filtered_db_roblox_products = db_roblox_products.filter(db_roblox_product => {
@@ -62,6 +98,12 @@ async function manageProductsAutoCompleteHandler(
             (action_to_perform === 'remove' && user_owns_product)
         );
     });
+
+    if (filtered_db_roblox_products.length < 1) {
+        await interaction.respond([]);
+
+        return;
+    }
 
     const mapped_db_roblox_products = [];
     for (const db_roblox_product of filtered_db_roblox_products) {
@@ -90,7 +132,9 @@ async function manageProductsAutoCompleteHandler(
     );
 
     if (matching_db_roblox_products.length === 0) {
-        return interaction.respond([]);
+        await interaction.respond([]);
+
+        return;
     }
 
     interaction.respond(
@@ -104,14 +148,15 @@ async function manageProductsAutoCompleteHandler(
 async function manageProductsChatInputCommandHandler(
     interaction: Discord.ChatInputCommandInteraction,
 ): Promise<void> {
+    if (!interaction.inCachedGuild()) return;
+
     await interaction.deferReply({ ephemeral: false });
 
-    const db_roblox_products = await go_mongo_db.find(db_database_name, db_products_collection_name, {}) as unknown[] as DbProductData[];
-
-    const interaction_guild_member = await interaction.guild!.members.fetch(interaction.user.id);
+    const interaction_guild_member = await interaction.guild.members.fetch(interaction.user.id);
 
     /* check if the user is allowed to use this command */
-    if (!interaction_guild_member.roles.cache.has(db_support_staff_role_id)) {
+    const staff_member_is_permitted = interaction_guild_member.roles.cache.has(db_support_staff_role_id);
+    if (!staff_member_is_permitted) {
         interaction.editReply({
             embeds: [
                 CustomEmbed.from({
@@ -131,7 +176,7 @@ async function manageProductsChatInputCommandHandler(
     const reason = interaction.options.getString('reason', true);
 
     /* find the user in the database */
-    const [ db_user_data ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME as string, process.env.MONGO_USERS_COLLECTION_NAME as string, {
+    const [ db_user_data ] = await go_mongo_db.find(db_database_name, db_users_collection_name, {
         'identity.discord_user_id': user_to_modify.id,
     }, {
         projection: {
@@ -141,7 +186,7 @@ async function manageProductsChatInputCommandHandler(
 
     /* check if the user exists */
     if (!db_user_data) {
-        interaction.editReply({
+        await interaction.editReply({
             embeds: [
                 CustomEmbed.from({
                     color: CustomEmbed.colors.YELLOW,
@@ -154,6 +199,8 @@ async function manageProductsChatInputCommandHandler(
         return;
     }
 
+    /* check if the product code is valid */
+    const db_roblox_products = await DbProductsCache.fetch(true);
     const db_roblox_product = db_roblox_products.find(db_roblox_product => db_roblox_product.code === product_code);
     if (!db_roblox_product) {
         interaction.followUp({
@@ -169,8 +216,9 @@ async function manageProductsChatInputCommandHandler(
         return;
     }
 
+    /* modify the user's products */
     try {
-        await go_mongo_db.update(process.env.MONGO_DATABASE_NAME as string, process.env.MONGO_USERS_COLLECTION_NAME as string, {
+        await go_mongo_db.update(db_database_name, db_users_collection_name, {
             'identity.discord_user_id': db_user_data.identity.discord_user_id,
             'identity.roblox_user_id': db_user_data.identity.roblox_user_id,
         }, {
@@ -181,7 +229,7 @@ async function manageProductsChatInputCommandHandler(
     } catch (error) {
         console.trace(error);
 
-        interaction.editReply({
+        await interaction.editReply({
             embeds: [
                 CustomEmbed.from({
                     color: CustomEmbed.colors.RED,
@@ -194,23 +242,45 @@ async function manageProductsChatInputCommandHandler(
         return;
     }
 
-    const logging_channel = (await interaction.guild!.channels.fetch(process.env.BOT_LOGGING_PRODUCTS_MANAGER_CHANNEL_ID as string)) as Discord.TextBasedChannel;
-    logging_channel.send({
-        embeds: [
-            CustomEmbed.from({
-                color: action_to_perform === 'add' ? CustomEmbed.colors.GREEN : CustomEmbed.colors.RED,
-                title: 'Inertia Lighting | Products Manager',
-                description: `${interaction.user} ${action_to_perform === 'add' ? 'added' : 'removed'} \`${db_roblox_product.code}\` ${action_to_perform === 'add' ? 'to' : 'from'} ${user_to_modify}.`,
-                fields: [
-                    {
-                        name: 'Reason',
-                        value: `${reason}`,
-                    },
-                ],
-            }),
-        ],
-    }).catch(console.warn);
+    /* log to the products manager logging channel */
+    try {
+        const logging_channel = await interaction.guild.channels.fetch(bot_logging_products_manager_channel_id);
 
+        if (!logging_channel) throw new Error('Unable to find the products manager logging channel!');
+        if (!logging_channel.isTextBased()) throw new Error('The products manager logging channel is not text-based!');
+
+        await logging_channel.send({
+            embeds: [
+                CustomEmbed.from({
+                    color: action_to_perform === 'add' ? CustomEmbed.colors.GREEN : CustomEmbed.colors.RED,
+                    title: 'Inertia Lighting | Products Manager',
+                    description: `${interaction.user} ${action_to_perform === 'add' ? 'added' : 'removed'} \`${db_roblox_product.code}\` ${action_to_perform === 'add' ? 'to' : 'from'} ${user_to_modify}.`,
+                    fields: [
+                        {
+                            name: 'Reason',
+                            value: `${reason}`,
+                        },
+                    ],
+                }),
+            ],
+        });
+    } catch (error) {
+        console.trace(error);
+
+        await interaction.editReply({
+            embeds: [
+                CustomEmbed.from({
+                    color: CustomEmbed.colors.RED,
+                    title: 'Inertia Lighting | Products Manager',
+                    description: 'An error occurred while logging to the products manager logging channel!',
+                }),
+            ],
+        }).catch(console.warn);
+
+        return;
+    }
+
+    /* inform the user */
     await interaction.editReply({
         embeds: [
             CustomEmbed.from({

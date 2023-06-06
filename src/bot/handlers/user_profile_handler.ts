@@ -94,7 +94,7 @@ export async function userProfileHandler(
     const user_product_codes = Object.entries(
         db_user_data.products
     ).filter(
-        ([product_code, user_owns_product]) => user_owns_product
+        ([_product_code, user_owns_product]) => user_owns_product
     ).map(
         ([product_code]) => product_code
     );
@@ -157,7 +157,7 @@ export async function userProfileHandler(
                         name: 'Karma',
                         value: `${db_user_data.karma ?? 0}`,
                     }, {
-                        name: 'Products',
+                        name: 'Product Licenses',
                         value: `${user_products.length === 0 ? 'n/a' : user_products.map(product => `- ${product.name}`).join('\n')}`,
                     },
                 ],
