@@ -8,7 +8,7 @@ import { CustomEmbed } from '@root/bot/common/message';
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/bot/common/managers/custom_interactions_manager';
 
-import { createSupportTicketChannel } from '@root/bot/handlers/support_system_handler';
+import { SupportTicketId, createSupportTicketChannel, support_categories } from '@root/bot/handlers/support_system_handler';
 
 //------------------------------------------------------------//
 
@@ -35,11 +35,13 @@ export default new CustomInteraction({
         const answer_for_time = interaction.fields.getTextInputValue('time');
         const answer_for_issue = interaction.fields.getTextInputValue('issue');
 
-        const support_channel = await createSupportTicketChannel(interaction.guild, interaction.member, 'TRANSFERS');
+        const support_ticket_category = support_categories.find(({ id }) => id === SupportTicketId.Transactions)!;
+
+        const support_channel = await createSupportTicketChannel(interaction.guild, interaction.member, support_ticket_category);
 
         await interaction.editReply({
             content: [
-                'You selected Product Purchases Support!',
+                `You selected ${support_ticket_category.name}.`,
                 `Go to ${support_channel} to continue.`,
             ].join('\n'),
         });
