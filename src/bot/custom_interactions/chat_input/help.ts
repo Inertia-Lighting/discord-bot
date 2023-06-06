@@ -42,7 +42,7 @@ export default new CustomInteraction({
                     title: 'Commands List',
                     description: [
                         '\`\`\`',
-                        chat_input_custom_interactions.map(
+                        ...chat_input_custom_interactions.map(
                             (custom_interaction) => `/${custom_interaction.data.name}`
                         ),
                         '\`\`\`',

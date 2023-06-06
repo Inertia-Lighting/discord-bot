@@ -15,7 +15,7 @@ export default new CustomInteraction({
     type: Discord.InteractionType.ApplicationCommand,
     data: {
         type: Discord.ApplicationCommandType.ChatInput,
-        description: 'why does this even exist',
+        description: 'Download your purchased products here!',
         options: [],
     },
     metadata: {

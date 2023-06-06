@@ -25,8 +25,8 @@ if (db_products_collection_name.length < 1) throw new Error('Environment variabl
 const db_users_collection_name = `${process.env.MONGO_USERS_COLLECTION_NAME ?? ''}`;
 if (db_users_collection_name.length < 1) throw new Error('Environment variable: MONGO_USERS_COLLECTION_NAME; is not set correctly.');
 
-const db_support_staff_role_id = `${process.env.BOT_SUPPORT_STAFF_DATABASE_ROLE_ID ?? ''}`;
-if (db_support_staff_role_id.length < 1) throw new Error('Environment variable: BOT_SUPPORT_STAFF_DATABASE_ROLE_ID; is not set correctly.');
+const db_database_support_staff_role_id = `${process.env.BOT_SUPPORT_STAFF_DATABASE_ROLE_ID ?? ''}`;
+if (db_database_support_staff_role_id.length < 1) throw new Error('Environment variable: BOT_SUPPORT_STAFF_DATABASE_ROLE_ID; is not set correctly.');
 
 const bot_logging_products_manager_channel_id = `${process.env.BOT_LOGGING_PRODUCTS_MANAGER_CHANNEL_ID ?? ''}`;
 if (bot_logging_products_manager_channel_id.length < 1) throw new Error('Environment variable: BOT_LOGGING_PRODUCTS_MANAGER_CHANNEL_ID; is not set correctly.');
@@ -155,7 +155,7 @@ async function manageProductsChatInputCommandHandler(
     const interaction_guild_member = await interaction.guild.members.fetch(interaction.user.id);
 
     /* check if the user is allowed to use this command */
-    const staff_member_is_permitted = interaction_guild_member.roles.cache.has(db_support_staff_role_id);
+    const staff_member_is_permitted = interaction_guild_member.roles.cache.has(db_database_support_staff_role_id);
     if (!staff_member_is_permitted) {
         interaction.editReply({
             embeds: [
@@ -332,12 +332,17 @@ export default new CustomInteraction({
                 description: 'The product code to manage.',
                 autocomplete: true,
                 required: true,
+            }, {
+                name: 'reason',
+                type: Discord.ApplicationCommandOptionType.String,
+                description: 'The reason for adding/removing a product',
+                required: true,
             },
         ],
     },
     metadata: {
         required_run_context: CustomInteractionRunContext.Guild,
-        required_access_level: CustomInteractionAccessLevel.TeamLeaders,
+        required_access_level: CustomInteractionAccessLevel.CustomerService,
     },
     handler: async (discord_client, interaction) => {
         if (!interaction.inCachedGuild()) return;

@@ -26,7 +26,7 @@ export default new CustomInteraction({
         if (!interaction.channel) return;
 
         await interaction.reply({
-            content: `Pong: ${discord_client.ws.ping}`,
+            content: `Pong: ${discord_client.ws.ping}ms`,
         });
     },
 });

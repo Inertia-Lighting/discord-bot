@@ -59,7 +59,7 @@ export default new CustomInteraction({
     },
     metadata: {
         required_run_context: CustomInteractionRunContext.Guild,
-        required_access_level: CustomInteractionAccessLevel.Public,
+        required_access_level: CustomInteractionAccessLevel.Staff,
     },
     handler: async (discord_client, interaction) => {
         if (!interaction.isChatInputCommand()) return;

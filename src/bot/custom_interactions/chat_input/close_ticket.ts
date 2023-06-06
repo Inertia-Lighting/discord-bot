@@ -40,7 +40,7 @@ export default new CustomInteraction({
         const channel_exists_in_support_tickets_category = interaction.channel?.parentId === support_tickets_category_id;
         const channel_is_not_transcripts_channel = interaction.channel?.id !== support_tickets_transcripts_channel_id;
         if (!(channel_exists_in_support_tickets_category && channel_is_not_transcripts_channel)) {
-            interaction.reply({
+            interaction.editReply({
                 content: 'This channel is not an active support ticket.',
             }).catch(console.warn);
             return;
@@ -52,9 +52,9 @@ export default new CustomInteraction({
         const support_ticket_topic_name = support_channel.name.match(/([a-zA-Z\-\_])+(?![\-\_])\D/i)?.[0];
         if (!support_ticket_topic_name) throw new Error('Expected support_ticket_topic_name to be a string');
 
-        closeSupportTicketChannel(interaction.channel as Discord.TextChannel, true, interaction.member, true);
+        await closeSupportTicketChannel(interaction.channel as Discord.TextChannel, true, interaction.member, true);
 
-        interaction.reply({
+        interaction.editReply({
             content: `${interaction.member} closing support ticket in 10 seconds...`,
         });
     },

@@ -4,7 +4,7 @@
 
 import * as Discord from 'discord.js';
 
-import { DbBlacklistedUserIdentity, DbBlacklistedUserRecord, DbUserData, DbUserIdentity } from '@root/types/types';
+import { DbBlacklistedUserRecord, DbUserData } from '@root/types/types';
 
 import { getMarkdownFriendlyTimestamp } from '@root/utilities';
 
@@ -33,19 +33,15 @@ if (db_blacklisted_users_collection_name.length < 1) throw new Error('Environmen
 async function findUserInUsersDatabase(
     user_lookup_type: 'discord' | 'roblox',
     user_lookup_query: string,
-): Promise<Omit<DbUserData, '_id'>> {
+): Promise<Omit<DbUserData, '_id'> | undefined> {
     if (typeof user_lookup_query !== 'string') throw new TypeError('\`user_lookup_query\` must be a string');
 
-    const find_query: {
-        identity: Partial<DbUserIdentity>,
-    } = {
-        identity: {
-            ...(user_lookup_type === 'discord' ? {
-                'discord_user_id': user_lookup_query,
-            } : {
-                'roblox_user_id': user_lookup_query,
-            }),
-        },
+    const find_query = {
+        ...(user_lookup_type === 'discord' ? {
+            'identity.discord_user_id': user_lookup_query,
+        } : {
+            'identity.roblox_user_id': user_lookup_query,
+        }),
     };
 
     const [ db_user_data ] = await go_mongo_db.find(db_database_name, db_users_collection_name, find_query, {
@@ -63,19 +59,15 @@ async function findUserInUsersDatabase(
 async function findUserInBlacklistedUsersDatabase(
     user_lookup_type: 'discord' | 'roblox',
     user_lookup_query: string,
-): Promise<Omit<DbBlacklistedUserRecord, '_id'>> {
+): Promise<Omit<DbBlacklistedUserRecord, '_id'> | undefined> {
     if (typeof user_lookup_query !== 'string') throw new TypeError('\`user_lookup_query\` must be a string');
 
-    const find_query: {
-        identity: Partial<DbBlacklistedUserIdentity>,
-    } = {
-        identity: {
-            ...(user_lookup_type === 'discord' ? {
-                'discord_user_id': user_lookup_query,
-            } : {
-                'roblox_user_id': user_lookup_query,
-            }),
-        },
+    const find_query = {
+        ...(user_lookup_type === 'discord' ? {
+            'identity.discord_user_id': user_lookup_query,
+        } : {
+            'identity.roblox_user_id': user_lookup_query,
+        }),
     };
 
     const [ db_blacklisted_user_data ] = await go_mongo_db.find(db_database_name, db_blacklisted_users_collection_name, find_query, {
@@ -444,10 +436,10 @@ export default new CustomInteraction({
             case 'add': {
                 /* `/blacklist add` */
 
-                const user_id_to_add = interaction.options.getUser('user', true).id;
+                const user_to_add = interaction.options.getUser('user', true);
                 const reason = interaction.options.getString('reason', true);
 
-                await blacklistAddSubcommand(interaction, user_id_to_add, reason);
+                await blacklistAddSubcommand(interaction, user_to_add.id, reason);
 
                 break;
             }

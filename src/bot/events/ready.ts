@@ -76,7 +76,7 @@ const updateBotNickname = async () => {
     const bot_guild = await client.guilds.fetch(bot_guild_id);
 
     const bot_member = await bot_guild.members.fetchMe();
-    bot_member.setNickname(`${process.env.BOT_COMMAND_PREFIX} | ${client.user!.username}`, 'fixing my nickname').catch(console.trace);
+    bot_member.setNickname(`/ | ${client.user!.username}`, 'fixing my nickname').catch(console.trace);
 
     return; // complete async
 };
@@ -108,7 +108,7 @@ export default {
         CustomInteractionsManager.registerClientInteractions();
 
         /* register interactions to discord */
-        setTimeout(() => CustomInteractionsManager.syncInteractionsToDiscord(client), 2 * 60_000);
+        setTimeout(() => CustomInteractionsManager.syncInteractionsToDiscord(client), 1 * 30_000);
 
         /* set the product prices in the database after 1 minute */
         setTimeout(() => setProductPricesInDB(), 1 * 60_000);

@@ -21,10 +21,12 @@ if (db_users_collection_name.length < 1) throw new Error('Environment variable: 
 export default new CustomInteraction({
     identifier: 'User Profile',
     type: Discord.InteractionType.ApplicationCommand,
-    data: undefined,
+    data: {
+        type: Discord.ApplicationCommandType.User,
+    },
     metadata: {
         required_run_context: CustomInteractionRunContext.Guild,
-        required_access_level: CustomInteractionAccessLevel.TeamLeaders,
+        required_access_level: CustomInteractionAccessLevel.Public,
     },
     handler: async (discord_client, interaction) => {
         if (!interaction.inCachedGuild()) return;

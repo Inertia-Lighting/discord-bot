@@ -119,7 +119,7 @@ export default new CustomInteraction({
         }
 
         /* message the member in the server */
-        await interaction.channel.send(moderation_message_options).catch(console.warn);
+        await interaction.reply(moderation_message_options).catch(console.warn);
 
          /* log to the database */
          const successfully_logged_to_database = await addModerationActionToDatabase({

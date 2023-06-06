@@ -37,7 +37,7 @@ const client = new Discord.Client({
         activities: [
             {
                 type: Discord.ActivityType.Listening,
-                name: `${process.env.BOT_COMMAND_PREFIX}help`,
+                name: '/help',
             },
         ],
     },

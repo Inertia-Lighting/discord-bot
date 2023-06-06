@@ -34,7 +34,10 @@ export default new CustomInteraction({
         if (!interaction.inCachedGuild()) return;
         if (!interaction.channel) return;
 
-        await interaction.deferReply({ ephemeral: false });
+        const bot_msg = await interaction.reply({
+            ephemeral: false,
+            content: 'Purging messages...',
+        });
 
         const amount_to_purge = interaction.options.getInteger('amount', true);
 
@@ -49,9 +52,14 @@ export default new CustomInteraction({
             return;
         }
 
+        const messages_to_purge = await interaction.channel.messages.fetch({
+            limit: amount_to_purge,
+            before: bot_msg.id,
+        });
+
         let purged_messages;
         try {
-            purged_messages = await interaction.channel.bulkDelete(amount_to_purge);
+            purged_messages = await interaction.channel.bulkDelete(messages_to_purge);
         } catch (error) {
             console.trace(error);
 

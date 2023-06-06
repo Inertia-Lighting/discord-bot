@@ -250,7 +250,7 @@ export default new CustomInteraction({
                 '_id': false,
             },
         });
-        if (!db_user_data) {
+        if (db_user_data) {
             await userAlreadyVerifiedHandler(interaction);
 
             return;

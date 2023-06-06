@@ -8,6 +8,8 @@ import * as Discord from 'discord.js';
 
 import recursiveReadDirectory from 'recursive-read-directory';
 
+import { Timer } from '@root/utilities';
+
 //------------------------------------------------------------//
 
 const bot_guild_id = `${process.env.BOT_GUILD_ID ?? ''}`;
@@ -159,6 +161,34 @@ export class CustomInteractionsManager {
 
         if (!discord_client.application) throw new Error('CustomInteractionsManager.syncInteractionsToDiscord(): Application is missing?');
 
+        /** @todo temporary remove all guild commands */
+        for (const [ guild_id, partial_guild ] of await discord_client.guilds.fetch()) {
+            const guild = await partial_guild.fetch();
+
+            for (const [ application_command_id, application_command ] of await guild.commands.fetch()) {
+                console.info(`Deleting guild command from discord: ${application_command.name};`);
+                await discord_client.application.commands.delete(application_command_id, guild_id);
+
+                await Timer(250); // prevent api abuse
+            }
+
+            await Timer(250); // prevent api abuse
+        }
+
+        /** remove all non-existent interactions */
+        for (const [ application_command_id, application_command ] of await discord_client.application.commands.fetch()) {
+            const command_exists = this.interactions.find(
+                (interaction) => interaction.identifier === application_command.name
+            );
+
+            if (!command_exists) {
+                console.info(`Deleting application command from discord: ${application_command.name};`);
+                await discord_client.application.commands.delete(application_command_id);
+            }
+
+            await Timer(250); // prevent api abuse
+        }
+
         const commands_to_register: Discord.ApplicationCommandDataResolvable[] = [];
         for (const client_interaction of CustomInteractionsManager.interactions.values()) {
             if (client_interaction.type !== Discord.InteractionType.ApplicationCommand) continue;
@@ -287,16 +317,19 @@ export class CustomInteractionsManager {
         }
 
         try {
-            console.log(`CustomInteractionsManager.handleInteractionFromDiscord(): running handler for interaction: ${custom_interaction.identifier}`);
+            if (interaction.isChatInputCommand()) {
+                console.log(`CustomInteractionsManager.handleInteractionFromDiscord(): running handler for chat input command interaction: ${custom_interaction.identifier}`);
+            }
+
             await custom_interaction.handler(discord_client, interaction);
         } catch (error) {
             console.trace(error);
 
             // send an error if possible
-            if (interaction.channel?.isTextBased()) {
-                interaction.channel.send({
+            if (interaction.isRepliable()) {
+                await interaction.followUp({
                     content: 'Sorry but this command doesn\'t work right now!',
-                });
+                }).catch(console.warn);
             }
         }
     }
