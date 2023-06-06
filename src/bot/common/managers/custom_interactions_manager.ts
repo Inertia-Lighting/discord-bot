@@ -161,20 +161,6 @@ export class CustomInteractionsManager {
 
         if (!discord_client.application) throw new Error('CustomInteractionsManager.syncInteractionsToDiscord(): Application is missing?');
 
-        /** @todo temporary remove all guild commands */
-        for (const [ guild_id, partial_guild ] of await discord_client.guilds.fetch()) {
-            const guild = await partial_guild.fetch();
-
-            for (const [ application_command_id, application_command ] of await guild.commands.fetch()) {
-                console.info(`Deleting guild command from discord: ${application_command.name};`);
-                await discord_client.application.commands.delete(application_command_id, guild_id);
-
-                await Timer(250); // prevent api abuse
-            }
-
-            await Timer(250); // prevent api abuse
-        }
-
         /** remove all non-existent interactions */
         for (const [ application_command_id, application_command ] of await discord_client.application.commands.fetch()) {
             const command_exists = this.interactions.find(
