@@ -44,7 +44,7 @@ async function findUserInUsersDatabase(
         }),
     };
 
-    const [ db_user_data ] = await go_mongo_db.find(db_database_name, db_users_collection_name, find_query, {
+    const [db_user_data] = await go_mongo_db.find(db_database_name, db_users_collection_name, find_query, {
         projection: {
             '_id': false,
         },
@@ -70,7 +70,7 @@ async function findUserInBlacklistedUsersDatabase(
         }),
     };
 
-    const [ db_blacklisted_user_data ] = await go_mongo_db.find(db_database_name, db_blacklisted_users_collection_name, find_query, {
+    const [db_blacklisted_user_data] = await go_mongo_db.find(db_database_name, db_blacklisted_users_collection_name, find_query, {
         projection: {
             '_id': false,
         },
@@ -107,7 +107,7 @@ async function addUserToBlacklistedUsersDatabase(
     };
 
     try {
-        await go_mongo_db.add(db_database_name, db_blacklisted_users_collection_name, [ user_blacklist_data ]);
+        await go_mongo_db.add(db_database_name, db_blacklisted_users_collection_name, [user_blacklist_data]);
     } catch (error) {
         console.trace(error);
         return false; // user was not added to blacklist
@@ -181,9 +181,18 @@ async function blacklistAddSubcommand(
 
     const db_user_data = await findUserInUsersDatabase('discord', user_id_to_add);
     if (!db_user_data) {
-        /** @todo make this look nicer */
+
         await interaction.editReply({
-            content: 'That discord user is not in the database, so they cannot be added to the blacklist.',
+            embeds: [
+                CustomEmbed.from({
+                    color: CustomEmbed.colors.RED,
+                    author: {
+                        icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
+                        name: 'Inertia Lighting | User Blacklist System',
+                    },
+                    description: 'That discord user is not in the database, so they cannot be added to the blacklist.',
+                }),
+            ],
         });
 
         return;
@@ -191,9 +200,18 @@ async function blacklistAddSubcommand(
 
     const is_staff_member_allowed_to_blacklist_user = await isStaffMemberAllowedToBlacklistUser(interaction.guild, interaction.user.id, user_id_to_add);
     if (!is_staff_member_allowed_to_blacklist_user) {
-        /** @todo make this look nicer */
+
         await interaction.editReply({
-            content: 'You are not allowed to blacklist that user.',
+            embeds: [
+                CustomEmbed.from({
+                    color: CustomEmbed.colors.RED,
+                    author: {
+                        icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
+                        name: 'Inertia Lighting | User Blacklist System',
+                    },
+                    description: 'You are not allowed to blacklist that user.',
+                }),
+            ],
         });
 
         return;
@@ -201,9 +219,18 @@ async function blacklistAddSubcommand(
 
     const is_user_already_blacklisted = await findUserInBlacklistedUsersDatabase('discord', user_id_to_add);
     if (is_user_already_blacklisted) {
-        /** @todo make this look nicer */
+
         await interaction.editReply({
-            content: 'That user is already blacklisted.',
+            embeds: [
+                CustomEmbed.from({
+                    color: CustomEmbed.colors.RED,
+                    author: {
+                        icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
+                        name: 'Inertia Lighting | User Blacklist System',
+                    },
+                    description: 'That user is already blacklisted.',
+                }),
+            ],
         });
 
         return;
@@ -216,18 +243,30 @@ async function blacklistAddSubcommand(
     });
 
     if (!was_user_added_to_blacklist) {
-        /** @todo make this look nicer */
+
         await interaction.editReply({
-            content: 'An error was encountered while trying to blacklist that user.',
+            embeds: [
+                CustomEmbed.from({
+                    color: CustomEmbed.colors.RED,
+                    author: {
+                        icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
+                        name: 'Inertia Lighting | User Blacklist System',
+                    },
+                    description: 'An error was encountered while trying to blacklist that user.',
+                }),
+            ],
         });
 
         return;
     }
 
-    /** @todo make this look nicer */
     await interaction.editReply({
         embeds: [
             CustomEmbed.from({
+                author: {
+                    icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
+                    name: 'Inertia Lighting | User Blacklist System',
+                },
                 title: 'Added User to Blacklist',
                 description: [
                     `Discord User: \`${db_user_data.identity.discord_user_id}\`; was added to the blacklist by <@${interaction.user.id}>.`,
@@ -246,9 +285,18 @@ async function blacklistRemoveSubcommand(
 
     const db_user_data = await findUserInUsersDatabase('discord', user_id_to_remove);
     if (!db_user_data) {
-        /** @todo make this look nicer */
+
         await interaction.editReply({
-            content: 'That discord user is not in the database, so they cannot be removed from the blacklist.',
+            embeds: [
+                CustomEmbed.from({
+                    color: CustomEmbed.colors.RED,
+                    author: {
+                        icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
+                        name: 'Inertia Lighting | User Blacklist System',
+                    },
+                    description: 'That discord user is not in the database, so they cannot be removed from the blacklist.',
+                }),
+            ],
         });
 
         return;
@@ -256,9 +304,18 @@ async function blacklistRemoveSubcommand(
 
     const is_staff_member_allowed_to_blacklist_user = await isStaffMemberAllowedToBlacklistUser(interaction.guild, interaction.user.id, user_id_to_remove);
     if (!is_staff_member_allowed_to_blacklist_user) {
-        /** @todo make this look nicer */
+
         await interaction.editReply({
-            content: 'You are not allowed to remove that user from the blacklist.',
+            embeds: [
+                CustomEmbed.from({
+                    color: CustomEmbed.colors.RED,
+                    author: {
+                        icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
+                        name: 'Inertia Lighting | User Blacklist System',
+                    },
+                    description: 'You are not allowed to remove that user from the blacklist.',
+                }),
+            ],
         });
 
         return;
@@ -266,9 +323,18 @@ async function blacklistRemoveSubcommand(
 
     const is_user_already_blacklisted = await findUserInBlacklistedUsersDatabase('discord', user_id_to_remove);
     if (!is_user_already_blacklisted) {
-        /** @todo make this look nicer */
+
         await interaction.editReply({
-            content: 'That user is not blacklisted, so they cannot be removed from the blacklist.',
+            embeds: [
+                CustomEmbed.from({
+                    color: CustomEmbed.colors.RED,
+                    author: {
+                        icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
+                        name: 'Inertia Lighting | User Blacklist System',
+                    },
+                    description: 'That user is not blacklisted, so they cannot be removed from the blacklist.',
+                }),
+            ],
         });
 
         return;
@@ -276,9 +342,18 @@ async function blacklistRemoveSubcommand(
 
     const was_user_removed_from_blacklist = await removeUserFromBlacklistedUsersDatabase(db_user_data.identity);
     if (!was_user_removed_from_blacklist) {
-        /** @todo make this look nicer */
+
         await interaction.editReply({
-            content: 'An error was encountered while trying to remove that user from the blacklist.',
+            embeds: [
+                CustomEmbed.from({
+                    color: CustomEmbed.colors.RED,
+                    author: {
+                        icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
+                        name: 'Inertia Lighting | User Blacklist System',
+                    },
+                    description: 'An error was encountered while trying to remove that user from the blacklist.',
+                }),
+            ],
         });
 
         return;
