@@ -2,13 +2,13 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 //------------------------------------------------------------//
 
+import * as DiscordTranscripts from 'discord-html-transcripts';
+
 import { Discord, client } from '../discord_client';
 
 import { CustomEmbed } from '@root/bot/common/message';
 
-import { Timer } from '@root/utilities';
-
-import discordTranscripts from 'discord-html-transcripts';
+import { Timer, getMarkdownFriendlyTimestamp } from '@root/utilities';
 
 //------------------------------------------------------------//
 
@@ -405,16 +405,12 @@ export async function createSupportTicketChannel(
 }
 
 export async function closeSupportTicketChannel(
-    support_channel: Discord.TextChannel,
+    support_channel: Discord.GuildTextBasedChannel,
     save_transcript: boolean,
-    member_that_closed_ticket: Discord.GuildMember | undefined,
+    member_that_closed_ticket: Discord.GuildMember,
     send_feedback_survey: boolean = false
 ): Promise<void> {
-    await support_channel.send({
-        content: `${member_that_closed_ticket ? `${member_that_closed_ticket},` : 'automatically'} closing support ticket in 10 seconds...`,
-    }).catch(console.warn);
-
-    if (save_transcript && member_that_closed_ticket) {
+    if (save_transcript) {
         const support_ticket_category_id = support_channel.name.match(/([a-zA-Z\-\_])+(?![\-\_])\D/i)?.[0];
         if (!support_ticket_category_id) throw new Error('Unable to find the support ticket topic name!');
 
@@ -424,7 +420,11 @@ export async function closeSupportTicketChannel(
         const support_category = support_categories.find(({ id }) => id === support_ticket_category_id?.toUpperCase());
         const support_ticket_owner = await client.users.fetch(support_ticket_owner_id);
 
-        const transcript = await discordTranscripts.createTranscript(support_channel, {
+        const support_ticket_creation_timestamp = support_channel.createdTimestamp ? (
+            `<t:${getMarkdownFriendlyTimestamp(support_channel.createdTimestamp)}:F>`
+        ) : 'unknown';
+
+        const transcript = await DiscordTranscripts.createTranscript(support_channel, {
             limit: -1,
             filename: `transcript_${support_channel.name}.html`,
             saveImages: true,
@@ -434,9 +434,13 @@ export async function closeSupportTicketChannel(
         const channel_participant_ids = new Set(
             (
                 await support_channel.messages.fetch().then(
-                    msgs => msgs.filter((member) => member.author.id)
+                    msgs => msgs.filter(
+                        (member) => member.author.id
+                    )
                 )
-            ).map((member) => member.author.id)
+            ).map(
+                (member) => member.author.id
+            )
         );
 
         const transcript_embed = CustomEmbed.from({
@@ -451,7 +455,7 @@ export async function closeSupportTicketChannel(
                     inline: false,
                 }, {
                     name: 'Creation Timestamp',
-                    value: `<t:${Math.floor(support_channel.createdTimestamp / 1000)}:F>`,
+                    value: `${support_ticket_creation_timestamp}`,
                     inline: false,
                 }, {
                     name: 'Closure Timestamp',

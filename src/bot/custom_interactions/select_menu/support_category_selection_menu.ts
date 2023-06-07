@@ -23,38 +23,23 @@ export default new CustomInteraction({
         if (!interaction.inCachedGuild()) return;
         if (!interaction.channel) return;
 
-        await interaction.deferReply({ ephemeral: true });
-
         /**
-         * @todo Investigate why this is here, it shouldn't be necessary.
+         * Do not call `interaction.deferReply()` here,
+         * as it will cause the modal to not show.
          */
-        // await interaction.message.edit({
-        //     components: [
-        //         {
-        //             type: Discord.ComponentType.ActionRow,
-        //             components: [
-        //                 {
-        //                     type: Discord.ComponentType.StringSelect,
-        //                     customId: 'support_category_selection_menu',
-        //                     placeholder: 'Select a support category!',
-        //                     minValues: 1,
-        //                     maxValues: 1,
-        //                     options: support_categories.map(({ id, name, description }) => ({
-        //                         label: name,
-        //                         description: description.slice(0, 100),
-        //                         value: id,
-        //                     })),
-        //                 },
-        //             ],
-        //         },
-        //     ],
-        // });
 
         const support_category_id = interaction.values.at(0);
 
         const support_category = support_categories.find(({ id }) => id === support_category_id);
-        if (!support_category) return;
+        if (!support_category) {
+            await interaction.reply({
+                content: 'An error occurred while processing your request!',
+            });
 
+            return;
+        }
+
+        /* send the support category's modal */
         await interaction.showModal(support_category.modal);
     },
 });

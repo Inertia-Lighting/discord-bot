@@ -52,10 +52,10 @@ export default new CustomInteraction({
         const support_ticket_topic_name = support_channel.name.match(/([a-zA-Z\-\_])+(?![\-\_])\D/i)?.[0];
         if (!support_ticket_topic_name) throw new Error('Expected support_ticket_topic_name to be a string');
 
-        await closeSupportTicketChannel(interaction.channel as Discord.TextChannel, true, interaction.member, true);
+        await interaction.editReply({
+            content: `${interaction.user}, closing support ticket in 10 seconds...`,
+        }).catch(console.warn);
 
-        interaction.editReply({
-            content: `${interaction.member} closing support ticket in 10 seconds...`,
-        });
+        await closeSupportTicketChannel(interaction.channel, true, interaction.member, true);
     },
 });
