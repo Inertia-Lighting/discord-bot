@@ -112,7 +112,7 @@ async function listModerationActions(
         await bot_message.edit({
             embeds: [
                 CustomEmbed.from({
-                    color: CustomEmbed.colors.YELLOW,
+                    color: CustomEmbed.Color.Yellow,
                     author: {
                         icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | Moderation Actions',
@@ -253,7 +253,7 @@ async function updateModerationAction(
         await interaction.editReply({
             embeds: [
                 CustomEmbed.from({
-                    color: CustomEmbed.colors.YELLOW,
+                    color: CustomEmbed.Color.Yellow,
                     author: {
                         icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | Moderation Actions',
@@ -278,7 +278,7 @@ async function updateModerationAction(
         interaction.editReply({
             embeds: [
                 CustomEmbed.from({
-                    color: CustomEmbed.colors.YELLOW,
+                    color: CustomEmbed.Color.Yellow,
                     author: {
                         icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | Moderation Actions',
@@ -294,7 +294,7 @@ async function updateModerationAction(
     await interaction.editReply({
         embeds: [
             CustomEmbed.from({
-                color: CustomEmbed.colors.GREEN,
+                color: CustomEmbed.Color.Green,
                 author: {
                     icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
                     name: 'Inertia Lighting | Moderation Actions',
@@ -326,7 +326,7 @@ async function removeModerationAction(
         await interaction.editReply({
             embeds: [
                 CustomEmbed.from({
-                    color: CustomEmbed.colors.RED,
+                    color: CustomEmbed.Color.Red,
                     author: {
                         icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | Moderation Actions',
@@ -344,7 +344,7 @@ async function removeModerationAction(
         await interaction.editReply({
             embeds: [
                 CustomEmbed.from({
-                    color: CustomEmbed.colors.RED,
+                    color: CustomEmbed.Color.Red,
                     author: {
                         icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | Moderation Actions',
@@ -390,7 +390,7 @@ async function purgeModerationActions(
         await interaction.editReply({
             embeds: [
                 CustomEmbed.from({
-                    color: CustomEmbed.colors.RED,
+                    color: CustomEmbed.Color.Red,
                     author: {
                         icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | Moderation Actions',
@@ -408,7 +408,7 @@ async function purgeModerationActions(
         await interaction.editReply({
             embeds: [
                 CustomEmbed.from({
-                    color: CustomEmbed.colors.RED,
+                    color: CustomEmbed.Color.Red,
                     author: {
                         icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | Moderation Actions',

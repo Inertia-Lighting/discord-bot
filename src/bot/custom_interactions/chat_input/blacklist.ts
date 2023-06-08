@@ -185,7 +185,7 @@ async function blacklistAddSubcommand(
         await interaction.editReply({
             embeds: [
                 CustomEmbed.from({
-                    color: CustomEmbed.colors.RED,
+                    color: CustomEmbed.Color.Red,
                     author: {
                         icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | User Blacklist System',
@@ -204,7 +204,7 @@ async function blacklistAddSubcommand(
         await interaction.editReply({
             embeds: [
                 CustomEmbed.from({
-                    color: CustomEmbed.colors.RED,
+                    color: CustomEmbed.Color.Red,
                     author: {
                         icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | User Blacklist System',
@@ -223,7 +223,7 @@ async function blacklistAddSubcommand(
         await interaction.editReply({
             embeds: [
                 CustomEmbed.from({
-                    color: CustomEmbed.colors.RED,
+                    color: CustomEmbed.Color.Red,
                     author: {
                         icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | User Blacklist System',
@@ -247,7 +247,7 @@ async function blacklistAddSubcommand(
         await interaction.editReply({
             embeds: [
                 CustomEmbed.from({
-                    color: CustomEmbed.colors.RED,
+                    color: CustomEmbed.Color.Red,
                     author: {
                         icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | User Blacklist System',
@@ -289,7 +289,7 @@ async function blacklistRemoveSubcommand(
         await interaction.editReply({
             embeds: [
                 CustomEmbed.from({
-                    color: CustomEmbed.colors.RED,
+                    color: CustomEmbed.Color.Red,
                     author: {
                         icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | User Blacklist System',
@@ -308,7 +308,7 @@ async function blacklistRemoveSubcommand(
         await interaction.editReply({
             embeds: [
                 CustomEmbed.from({
-                    color: CustomEmbed.colors.RED,
+                    color: CustomEmbed.Color.Red,
                     author: {
                         icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | User Blacklist System',
@@ -327,7 +327,7 @@ async function blacklistRemoveSubcommand(
         await interaction.editReply({
             embeds: [
                 CustomEmbed.from({
-                    color: CustomEmbed.colors.RED,
+                    color: CustomEmbed.Color.Red,
                     author: {
                         icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | User Blacklist System',
@@ -346,7 +346,7 @@ async function blacklistRemoveSubcommand(
         await interaction.editReply({
             embeds: [
                 CustomEmbed.from({
-                    color: CustomEmbed.colors.RED,
+                    color: CustomEmbed.Color.Red,
                     author: {
                         icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | User Blacklist System',

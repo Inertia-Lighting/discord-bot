@@ -132,7 +132,7 @@ export default new CustomInteraction({
             embeds: [
                 ...(db_blacklisted_user_data ? [
                     CustomEmbed.from({
-                        color: CustomEmbed.colors.RED,
+                        color: CustomEmbed.Color.Red,
                         author: {
                             icon_url: `${discord_client.user.displayAvatarURL({ forceStatic: false })}`,
                             name: 'Inertia Lighting | User Blacklist System',

@@ -160,7 +160,7 @@ async function manageProductsChatInputCommandHandler(
         interaction.editReply({
             embeds: [
                 CustomEmbed.from({
-                    color: CustomEmbed.colors.VIOLET,
+                    color: CustomEmbed.Color.Violet,
                     title: 'Inertia Lighting | Products Manager',
                     description: 'You aren\'t allowed to use this command!',
                 }),
@@ -189,7 +189,7 @@ async function manageProductsChatInputCommandHandler(
         await interaction.editReply({
             embeds: [
                 CustomEmbed.from({
-                    color: CustomEmbed.colors.YELLOW,
+                    color: CustomEmbed.Color.Yellow,
                     title: 'Inertia Lighting | Products Manager',
                     description: `${user_to_modify} does not exist in the database!`,
                 }),
@@ -206,7 +206,7 @@ async function manageProductsChatInputCommandHandler(
         interaction.followUp({
             embeds: [
                 CustomEmbed.from({
-                    color: CustomEmbed.colors.YELLOW,
+                    color: CustomEmbed.Color.Yellow,
                     title: 'Inertia Lighting | Products Manager',
                     description: `\`${product_code}\` is not a valid product code!`,
                 }),
@@ -232,7 +232,7 @@ async function manageProductsChatInputCommandHandler(
         await interaction.editReply({
             embeds: [
                 CustomEmbed.from({
-                    color: CustomEmbed.colors.RED,
+                    color: CustomEmbed.Color.Red,
                     title: 'Inertia Lighting | Products Manager',
                     description: 'An error occurred while modifying the user\'s products!',
                 }),
@@ -252,7 +252,7 @@ async function manageProductsChatInputCommandHandler(
         await logging_channel.send({
             embeds: [
                 CustomEmbed.from({
-                    color: action_to_perform === 'add' ? CustomEmbed.colors.GREEN : CustomEmbed.colors.RED,
+                    color: action_to_perform === 'add' ? CustomEmbed.Color.Green : CustomEmbed.Color.Red,
                     title: 'Inertia Lighting | Products Manager',
                     description: `${interaction.user} ${action_to_perform === 'add' ? 'added' : 'removed'} \`${db_roblox_product.code}\` ${action_to_perform === 'add' ? 'to' : 'from'} ${user_to_modify}.`,
                     fields: [
@@ -270,7 +270,7 @@ async function manageProductsChatInputCommandHandler(
         await interaction.editReply({
             embeds: [
                 CustomEmbed.from({
-                    color: CustomEmbed.colors.RED,
+                    color: CustomEmbed.Color.Red,
                     title: 'Inertia Lighting | Products Manager',
                     description: 'An error occurred while logging to the products manager logging channel!',
                 }),
@@ -284,7 +284,7 @@ async function manageProductsChatInputCommandHandler(
     await interaction.editReply({
         embeds: [
             CustomEmbed.from({
-                color: action_to_perform === 'add' ? CustomEmbed.colors.GREEN : CustomEmbed.colors.RED,
+                color: action_to_perform === 'add' ? CustomEmbed.Color.Green : CustomEmbed.Color.Red,
                 title: 'Inertia Lighting | Products Manager',
                 description: `${action_to_perform === 'add' ? 'Added' : 'Removed'} \`${db_roblox_product.code}\` ${action_to_perform === 'add' ? 'to' : 'from'} ${user_to_modify}.`,
                 fields: [

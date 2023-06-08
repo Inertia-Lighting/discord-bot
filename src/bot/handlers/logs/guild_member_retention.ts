@@ -30,7 +30,7 @@ async function guildMemberAddLogger(member: Discord.GuildMember) {
     await member_retention_logging_channel.send({
         embeds: [
             CustomEmbed.from({
-                color: CustomEmbed.colors.GREEN,
+                color: CustomEmbed.Color.Green,
                 title: 'A member has joined the server!',
                 fields: [
                     {
@@ -64,7 +64,7 @@ async function guildMemberRemoveLogger(member: Discord.GuildMember) {
     await member_retention_logging_channel.send({
         embeds: [
             CustomEmbed.from({
-                color: CustomEmbed.colors.YELLOW,
+                color: CustomEmbed.Color.Yellow,
                 title: 'A member has left the server!',
                 fields: [
                     {

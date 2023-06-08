@@ -31,7 +31,7 @@ async function guildMemberRolesAddedLogger(
     await logging_channel.send({
         embeds: [
             CustomEmbed.from({
-                color: CustomEmbed.colors.GREEN,
+                color: CustomEmbed.Color.Green,
                 description: `**Roles were added to ${new_member}.**`,
                 fields: [
                     {
@@ -65,7 +65,7 @@ async function guildMemberRolesRemovedLogger(
     await logging_channel.send({
         embeds: [
             CustomEmbed.from({
-                color: CustomEmbed.colors.YELLOW,
+                color: CustomEmbed.Color.Yellow,
                 description: `**Roles were removed from ${old_member}.**`,
                 fields: [
                     {
