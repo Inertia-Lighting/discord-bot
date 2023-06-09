@@ -6,17 +6,20 @@
 
 import { Discord } from '../discord_client';
 
-import { interactionHandler } from '../handlers/interaction_handler';
+import { CustomInteractionsManager } from '../common/managers/custom_interactions_manager';
 
 //---------------------------------------------------------------------------------------------------------------//
 
 export default {
     name: Discord.Events.InteractionCreate,
-    async handler(interaction: Discord.Interaction) {
+    async handler(
+        interaction: Discord.Interaction,
+    ) {
+        if (!interaction.client.isReady()) return; // don't allow interactions to be handled until the client is ready
         if (interaction.user.system) return; // don't allow system accounts to interact
         if (interaction.user.bot) return; // don't allow bots to interact
 
         /* handle interactions */
-        interactionHandler(interaction);
+        CustomInteractionsManager.handleInteractionFromDiscord(interaction.client, interaction);
     },
 };

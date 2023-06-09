@@ -2,17 +2,22 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 //------------------------------------------------------------//
 
-//---------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------------------//
 
 import * as Discord from 'discord.js';
 
-//---------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------------------//
+
+const bot_token = `${process.env.BOT_TOKEN ?? ''}`;
+if (bot_token.length < 1) throw new Error('Environment variable: BOT_TOKEN; is not set correctly.');
+
+//------------------------------------------------------------//
 
 const client = new Discord.Client({
     allowedMentions: {
         parse: [
-            'users',
-            'roles',
+            Discord.AllowedMentionsTypes.User,
+            Discord.AllowedMentionsTypes.Role,
         ],
         repliedUser: true,
     },
@@ -20,7 +25,7 @@ const client = new Discord.Client({
         Discord.GatewayIntentBits.MessageContent,
         Discord.GatewayIntentBits.Guilds,
         Discord.GatewayIntentBits.GuildMembers,
-        Discord.GatewayIntentBits.GuildBans,
+        Discord.GatewayIntentBits.GuildModeration,
         Discord.GatewayIntentBits.GuildEmojisAndStickers,
         Discord.GatewayIntentBits.GuildIntegrations,
         Discord.GatewayIntentBits.GuildWebhooks,
@@ -37,26 +42,18 @@ const client = new Discord.Client({
         activities: [
             {
                 type: Discord.ActivityType.Listening,
-                name: `${process.env.BOT_COMMAND_PREFIX}help`,
+                name: '/help',
             },
         ],
     },
-}) as Discord.Client & {
-    $: {
-        [key: string]: unknown;
-    },
-};
+});
 
-client.$ = {
-    commands: new Discord.Collection(),
-};
-
-//---------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------------------//
 
 /* login the discord bot */
-client.login(process.env.BOT_TOKEN);
+client.login(bot_token);
 
-//---------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------------------//
 
 export {
     Discord,

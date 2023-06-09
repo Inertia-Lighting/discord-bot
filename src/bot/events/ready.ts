@@ -6,8 +6,6 @@
 
 import { DbProductData } from '@root/types/types';
 
-import path from 'node:path';
-
 import axios from 'axios';
 
 import moment from 'moment-timezone';
@@ -18,11 +16,9 @@ import { go_mongo_db } from '../../mongo/mongo';
 
 import { Discord, client } from '../discord_client';
 
-import { interactions } from '../common/interaction';
+import { CustomInteractionsManager } from '../common/managers/custom_interactions_manager';
 
 import { illegalNicknameHandler } from '../handlers/illegal_nickname_handler';
-
-const recursiveReadDirectory = require('recursive-read-directory');
 
 //---------------------------------------------------------------------------------------------------------------//
 
@@ -80,7 +76,7 @@ const updateBotNickname = async () => {
     const bot_guild = await client.guilds.fetch(bot_guild_id);
 
     const bot_member = await bot_guild.members.fetchMe();
-    bot_member.setNickname(`${process.env.BOT_COMMAND_PREFIX} | ${client.user!.username}`, 'fixing my nickname').catch(console.trace);
+    bot_member.setNickname(`/ | ${client.user!.username}`, 'fixing my nickname').catch(console.trace);
 
     return; // complete async
 };
@@ -108,36 +104,11 @@ export default {
         console.log(`Discord Bot Logged in as ${client.user!.tag} on ${ready_timestamp}`);
         console.log('----------------------------------------------------------------------------------------------------------------');
 
-        /* register commands */
-        const command_files_path = path.join(process.cwd(), 'dist', 'bot', 'commands');
-        const command_files = recursiveReadDirectory(command_files_path);
-        for (const command_file of command_files) {
-            if (!command_file.endsWith('.js')) continue;
+        /* register interactions to CustomInteractionsManager */
+        CustomInteractionsManager.registerClientInteractions();
 
-            const command_file_path = path.join(command_files_path, command_file);
-
-            const { default: bot_command } = await import(command_file_path);
-
-            (client.$.commands as Discord.Collection<string, unknown>).set(bot_command.name, bot_command);
-        }
-        /* register interactions */
-        const interaction_files_path = path.join(process.cwd(), 'dist', 'bot', 'interactions');
-        const interaction_file_names = recursiveReadDirectory(interaction_files_path);
-        for (const interaction_file_name of interaction_file_names) {
-            if (!interaction_file_name.endsWith('.js')) continue;
-
-            const interaction_file_path = path.join(interaction_files_path, interaction_file_name);
-
-            const { default: interaction } = await import(interaction_file_path);
-
-            const interaction_exists = interactions.has(interaction.identifier);
-            if (interaction_exists) {
-                console.warn(`Interaction: ${interaction.name}; already exists; skipping \'${interaction_file_path}\'.`);
-                continue;
-            }
-
-            interactions.set(interaction.identifier, interaction);
-        }
+        /* register interactions to discord */
+        setTimeout(() => CustomInteractionsManager.syncInteractionsToDiscord(client), 1 * 30_000);
 
         /* set the product prices in the database after 1 minute */
         setTimeout(() => setProductPricesInDB(), 1 * 60_000);

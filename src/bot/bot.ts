@@ -8,7 +8,7 @@ import path from 'node:path';
 
 import { client } from './discord_client';
 
-const recursiveReadDirectory = require('recursive-read-directory');
+import recursiveReadDirectory from 'recursive-read-directory';
 
 //---------------------------------------------------------------------------------------------------------------//
 

@@ -17,7 +17,10 @@ if (typeof bot_guild_id !== 'string') throw new TypeError('bot_guild_id is not a
 
 export default {
     name: Discord.Events.MessageUpdate,
-    async handler(old_message: Discord.Message, new_message: Discord.Message) {
+    async handler(
+        old_message: Discord.Message,
+        new_message: Discord.Message,
+    ) {
         if (old_message.author.system) return; // don't operate on system accounts
         if (old_message.author.bot) return; // don't operate on bots to prevent feedback-loops
         if (old_message.guild?.id !== bot_guild_id) return; // don't operate on other guilds
