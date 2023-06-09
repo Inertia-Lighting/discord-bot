@@ -95,7 +95,7 @@ export default new CustomInteraction({
             interaction.editReply({
                 embeds: [
                     CustomEmbed.from({
-                        color: CustomEmbed.colors.YELLOW,
+                        color: CustomEmbed.Color.Yellow,
                         description: `${user_to_modify} does not exist in the database!`,
                     }),
                 ],
@@ -127,7 +127,7 @@ export default new CustomInteraction({
                 interaction.editReply({
                     embeds: [
                         CustomEmbed.from({
-                            color: CustomEmbed.colors.RED,
+                            color: CustomEmbed.Color.Red,
                             description: `Invalid action: \`${action_to_perform}\``,
                         }),
                     ],
@@ -144,7 +144,7 @@ export default new CustomInteraction({
             interaction.editReply({
                 embeds: [
                     CustomEmbed.from({
-                        color: CustomEmbed.colors.YELLOW,
+                        color: CustomEmbed.Color.Yellow,
                         description: 'New karma amount is too small!',
                     }),
                 ],
@@ -158,7 +158,7 @@ export default new CustomInteraction({
             interaction.editReply({
                 embeds: [
                     CustomEmbed.from({
-                        color: CustomEmbed.colors.YELLOW,
+                        color: CustomEmbed.Color.Yellow,
                         description: 'New karma amount is too large!',
                     }),
                 ],
@@ -172,7 +172,7 @@ export default new CustomInteraction({
             interaction.editReply({
                 embeds: [
                     CustomEmbed.from({
-                        color: CustomEmbed.colors.YELLOW,
+                        color: CustomEmbed.Color.Yellow,
                         description: 'New karma amount is not a valid number!',
                     }),
                 ],
@@ -196,7 +196,7 @@ export default new CustomInteraction({
             interaction.editReply({
                 embeds: [
                     CustomEmbed.from({
-                        color: CustomEmbed.colors.RED,
+                        color: CustomEmbed.Color.Red,
                         author: {
                             icon_url: `${discord_client.user.displayAvatarURL({ forceStatic: false })}`,
                             name: 'Inertia Lighting | Karma System',
@@ -213,11 +213,11 @@ export default new CustomInteraction({
             embeds: [
                 CustomEmbed.from({
                     color: action_to_perform === 'add' ? (
-                        CustomEmbed.colors.GREEN
+                        CustomEmbed.Color.Green
                     ) : action_to_perform === 'remove' ? (
-                        CustomEmbed.colors.RED
+                        CustomEmbed.Color.Red
                     ) : (
-                        CustomEmbed.colors.BRAND
+                        CustomEmbed.Color.Brand
                     ),
                     author: {
                         icon_url: `${discord_client.user.displayAvatarURL({ forceStatic: false })}`,

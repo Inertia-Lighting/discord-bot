@@ -60,7 +60,7 @@ export async function userProfileHandler(
         replyToMessageOrEditReplyToInteraction(deferred_interaction_or_message, {
             embeds: [
                 CustomEmbed.from({
-                    color: CustomEmbed.colors.YELLOW,
+                    color: CustomEmbed.Color.Yellow,
                     author: {
                         icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | User Profile System',
@@ -126,7 +126,7 @@ export async function userProfileHandler(
         embeds: [
             ...(db_blacklisted_user_data ? [
                 CustomEmbed.from({
-                    color: CustomEmbed.colors.RED,
+                    color: CustomEmbed.Color.Red,
                     author: {
                         icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | Blacklist System',

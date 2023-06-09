@@ -31,7 +31,7 @@ async function userAlreadyVerifiedHandler(
     await interaction.editReply({
         embeds: [
             CustomEmbed.from({
-                color: CustomEmbed.colors.YELLOW,
+                color: CustomEmbed.Color.Yellow,
                 author: {
                     icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
                     name: `${interaction.client.user.username} | Verification System`,
@@ -106,7 +106,7 @@ async function verifyHandler(
         await interaction.editReply({
             embeds: [
                 CustomEmbed.from({
-                    color: CustomEmbed.colors.YELLOW,
+                    color: CustomEmbed.Color.Yellow,
                     author: {
                         icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
                         name: `${interaction.client.user.username} | Verification System`,
@@ -171,7 +171,7 @@ async function verifyHandler(
         await interaction.editReply({
             embeds: [
                 CustomEmbed.from({
-                    color: CustomEmbed.colors.RED,
+                    color: CustomEmbed.Color.Red,
                     author: {
                         icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
                         name: `${interaction.client.user.username} | Verification System`,
@@ -196,7 +196,7 @@ async function verifyHandler(
     await interaction.editReply({
         embeds: [
             CustomEmbed.from({
-                color: CustomEmbed.colors.GREEN,
+                color: CustomEmbed.Color.Green,
                 author: {
                     icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
                     name: `${interaction.client.user.username} | Verification System`,
