@@ -28,7 +28,6 @@ export interface DbProductData {
     /** @deprecated use `price_in_lumens` instead */
     price_in_karma: number;
     price_in_lumens: number;
-    /** @deprecated no substitution available */
     roblox_assets: {
         product_preview_image?: string;
     };
