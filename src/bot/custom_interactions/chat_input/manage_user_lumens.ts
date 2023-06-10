@@ -20,17 +20,25 @@ if (db_users_collection_name.length < 1) throw new Error('Environment variable: 
 
 //------------------------------------------------------------//
 
+enum ManageLumensAction {
+    Add = 'add',
+    Remove = 'remove',
+    Set = 'set',
+}
+
+//------------------------------------------------------------//
+
 export default new CustomInteraction({
-    identifier: 'manage_karma',
+    identifier: 'manage_user_lumens',
     type: Discord.InteractionType.ApplicationCommand,
     data: {
         type: Discord.ApplicationCommandType.ChatInput,
-        description: 'Manages a user\'s karma.',
+        description: 'Used by staff to manage a user\'s lumens.',
         options: [
             {
                 name: 'for',
                 type: Discord.ApplicationCommandOptionType.User,
-                description: 'The member who you want to manage karma for.',
+                description: 'The member who you want to manage lumens for.',
                 required: true,
             }, {
                 name: 'action',
@@ -39,27 +47,27 @@ export default new CustomInteraction({
                 choices: [
                     {
                         name: 'Add',
-                        value: 'add',
+                        value: ManageLumensAction.Add,
                     }, {
                         name: 'Remove',
-                        value: 'remove',
+                        value: ManageLumensAction.Remove,
                     }, {
                         name: 'Set',
-                        value: 'set',
+                        value: ManageLumensAction.Set,
                     },
                 ],
                 required: true,
             }, {
                 name: 'amount',
                 type: Discord.ApplicationCommandOptionType.Integer,
-                description: 'The amount of karma to add, remove, or set.',
+                description: 'The amount of lumens to add, remove, or set.',
                 minValue: 0,
                 maxValue: 1_000_000,
                 required: true,
             }, {
                 name: 'reason',
                 type: Discord.ApplicationCommandOptionType.String,
-                description: 'The reason why you want to manage karma.',
+                description: 'The reason why you want to manage lumens.',
                 minLength: 1,
                 maxLength: 256,
                 required: true,
@@ -68,7 +76,7 @@ export default new CustomInteraction({
     },
     metadata: {
         required_run_context: CustomInteractionRunContext.Guild,
-        required_access_level: CustomInteractionAccessLevel.Admins,
+        required_access_level: CustomInteractionAccessLevel.TeamLeaders, /** @todo make this available to admins once ready */
     },
     handler: async (discord_client, interaction) => {
         if (!interaction.isChatInputCommand()) return;
@@ -77,9 +85,23 @@ export default new CustomInteraction({
         await interaction.deferReply();
 
         const user_to_modify = interaction.options.getUser('for', true);
-        const action_to_perform = interaction.options.getString('action', true);
+        const action_to_perform = interaction.options.getString('action', true) as ManageLumensAction;
         const amount_to_modify_by = interaction.options.getInteger('amount', true);
         const reason = interaction.options.getString('reason', true);
+
+        /* ensure the action to perform is valid */
+        if (!Object.values(ManageLumensAction).includes(action_to_perform)) {
+            await interaction.editReply({
+                embeds: [
+                    CustomEmbed.from({
+                        color: CustomEmbed.Color.Yellow,
+                        description: `Invalid action: \`${action_to_perform}\``,
+                    }),
+                ],
+            }).catch(console.warn);
+
+            return;
+        }
 
         /* find the user in the database */
         const [ db_user_data ] = await go_mongo_db.find(db_database_name, db_users_collection_name, {
@@ -92,7 +114,7 @@ export default new CustomInteraction({
 
         /* check if the user exists */
         if (!db_user_data) {
-            interaction.editReply({
+            await interaction.editReply({
                 embeds: [
                     CustomEmbed.from({
                         color: CustomEmbed.Color.Yellow,
@@ -104,27 +126,27 @@ export default new CustomInteraction({
             return;
         }
 
-        const initial_karma_amount: number = db_user_data.karma ?? 0;
+        const initial_amount: number = db_user_data.lumens ?? 0;
 
-        let updated_karma_amount;
+        let updated_amount: number;
         switch (action_to_perform) {
             case 'add': {
-                updated_karma_amount = initial_karma_amount + amount_to_modify_by;
+                updated_amount = initial_amount + amount_to_modify_by;
                 break;
             }
 
             case 'remove': {
-                updated_karma_amount = initial_karma_amount - amount_to_modify_by;
+                updated_amount = initial_amount - amount_to_modify_by;
                 break;
             }
 
             case 'set': {
-                updated_karma_amount = amount_to_modify_by;
+                updated_amount = amount_to_modify_by;
                 break;
             }
 
             default: {
-                interaction.editReply({
+                await interaction.editReply({
                     embeds: [
                         CustomEmbed.from({
                             color: CustomEmbed.Color.Red,
@@ -132,20 +154,21 @@ export default new CustomInteraction({
                         }),
                     ],
                 }).catch(console.warn);
+
                 return;
             }
         }
 
         /* prevent decimals */
-        updated_karma_amount = Math.floor(updated_karma_amount);
+        updated_amount = Math.floor(updated_amount);
 
-        const karma_too_small = updated_karma_amount <= Number.MIN_SAFE_INTEGER;
-        if (karma_too_small) {
-            interaction.editReply({
+        const amount_too_small = updated_amount <= Number.MIN_SAFE_INTEGER;
+        if (amount_too_small) {
+            await interaction.editReply({
                 embeds: [
                     CustomEmbed.from({
                         color: CustomEmbed.Color.Yellow,
-                        description: 'New karma amount is too small!',
+                        description: 'New amount is too small!',
                     }),
                 ],
             }).catch(console.warn);
@@ -153,13 +176,13 @@ export default new CustomInteraction({
             return;
         }
 
-        const karma_too_large = updated_karma_amount >= Number.MAX_SAFE_INTEGER;
-        if (karma_too_large) {
-            interaction.editReply({
+        const amount_too_large = updated_amount >= Number.MAX_SAFE_INTEGER;
+        if (amount_too_large) {
+            await interaction.editReply({
                 embeds: [
                     CustomEmbed.from({
                         color: CustomEmbed.Color.Yellow,
-                        description: 'New karma amount is too large!',
+                        description: 'New amount is too large!',
                     }),
                 ],
             }).catch(console.warn);
@@ -167,13 +190,13 @@ export default new CustomInteraction({
             return;
         }
 
-        const karma_is_not_a_number = Number.isNaN(updated_karma_amount);
-        if (karma_is_not_a_number) {
-            interaction.editReply({
+        const amount_is_not_a_number = Number.isNaN(updated_amount);
+        if (amount_is_not_a_number) {
+            await interaction.editReply({
                 embeds: [
                     CustomEmbed.from({
                         color: CustomEmbed.Color.Yellow,
-                        description: 'New karma amount is not a valid number!',
+                        description: 'New amount is not a valid number!',
                     }),
                 ],
             }).catch(console.warn);
@@ -181,27 +204,24 @@ export default new CustomInteraction({
             return;
         }
 
+        /* update the user */
         try {
             await go_mongo_db.update(db_database_name, db_users_collection_name, {
                 'identity.discord_user_id': db_user_data.identity.discord_user_id,
                 'identity.roblox_user_id': db_user_data.identity.roblox_user_id,
             }, {
                 $set: {
-                    'karma': updated_karma_amount,
+                    'lumens': updated_amount,
                 },
             });
         } catch (error) {
             console.trace(error);
 
-            interaction.editReply({
+            await interaction.editReply({
                 embeds: [
                     CustomEmbed.from({
                         color: CustomEmbed.Color.Red,
-                        author: {
-                            icon_url: `${discord_client.user.displayAvatarURL({ forceStatic: false })}`,
-                            name: 'Inertia Lighting | Karma System',
-                        },
-                        description: 'An error occurred while modifying the user\'s karma!',
+                        description: 'An error occurred while attempting to update the user!',
                     }),
                 ],
             }).catch(console.warn);
@@ -212,31 +232,32 @@ export default new CustomInteraction({
         await interaction.editReply({
             embeds: [
                 CustomEmbed.from({
-                    color: action_to_perform === 'add' ? (
+                    color: action_to_perform === ManageLumensAction.Add ? (
                         CustomEmbed.Color.Green
-                    ) : action_to_perform === 'remove' ? (
+                    ) : action_to_perform === ManageLumensAction.Remove ? (
                         CustomEmbed.Color.Red
                     ) : (
                         CustomEmbed.Color.Brand
                     ),
                     author: {
                         icon_url: `${discord_client.user.displayAvatarURL({ forceStatic: false })}`,
-                        name: 'Inertia Lighting | Karma System',
+                        name: 'Inertia Lighting | Lumens System',
                     },
                     description: [
-                        action_to_perform === 'add' ? (
-                            `Added \`${amount_to_modify_by}\` karma to ${user_to_modify}.`
-                        ) : action_to_perform === 'remove' ? (
-                            `Removed \`${amount_to_modify_by}\` karma from ${user_to_modify}.`
+                        action_to_perform === ManageLumensAction.Add ? (
+                            `Added \`${amount_to_modify_by}\` lumens to ${user_to_modify}.`
+                        ) : action_to_perform === ManageLumensAction.Remove ? (
+                            `Removed \`${amount_to_modify_by}\` lumens from ${user_to_modify}.`
                         ) : (
-                            `Set ${user_to_modify}'s karma to a new amount.`
+                            `Set ${user_to_modify}'s lumens to a new amount.`
                         ),
-                        `New karma amount: \`${updated_karma_amount}\``,
+                        `New amount of lumens: \`${updated_amount}\``,
                     ].join('\n'),
                     fields: [
                         {
                             name: 'Reason',
                             value: `${reason}`,
+                            inline: false,
                         },
                     ],
                 }),

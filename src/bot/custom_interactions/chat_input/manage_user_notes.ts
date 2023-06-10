@@ -436,7 +436,7 @@ async function manageNotesPurgeSubCommandHandler(
 //------------------------------------------------------------//
 
 export default new CustomInteraction({
-    identifier: 'manage_notes',
+    identifier: 'manage_user_notes',
     type: Discord.InteractionType.ApplicationCommand,
     data: {
         type: Discord.ApplicationCommandType.ChatInput,

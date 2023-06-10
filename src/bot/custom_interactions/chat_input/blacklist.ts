@@ -4,7 +4,7 @@
 
 import * as Discord from 'discord.js';
 
-import { DbBlacklistedUserRecord, DbUserData } from '@root/types/types';
+import { DbBlacklistedUserRecord, DbUserData } from '@root/types';
 
 import { getMarkdownFriendlyTimestamp } from '@root/utilities';
 

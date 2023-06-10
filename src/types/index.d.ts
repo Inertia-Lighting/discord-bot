@@ -5,6 +5,12 @@
 import type MongoDB from 'mongodb';
 
 //------------------------------------------------------------//
+//                        Helper Types                        //
+//------------------------------------------------------------//
+
+export type DistributiveOmit<T, K extends keyof T> = T extends unknown ? Omit<T, K> : never;
+
+//------------------------------------------------------------//
 //                      Database Schemas                      //
 //------------------------------------------------------------//
 
@@ -12,13 +18,17 @@ export interface DbProductData {
     _id: MongoDB.ObjectId;
     roblox_product_id: string;
     public: boolean;
-    /** @deprecated */
+    /** @deprecated use `code` instead */
     old_code: string;
     code: string;
     name: string;
     description: string;
     price_in_usd: string;
     price_in_robux: number;
+    /** @deprecated use `price_in_lumens` instead */
+    price_in_karma: number;
+    price_in_lumens: number;
+    /** @deprecated no substitution available */
     roblox_assets: {
         product_preview_image?: string;
     };
@@ -41,7 +51,9 @@ export interface DbUserProducts {
 export interface DbUserData {
     _id: MongoDB.ObjectId;
     identity: DbUserIdentity;
+    /** @deprecated use `lumens` instead */
     karma: number;
+    lumens: number;
     products: DbUserProducts;
 }
 
@@ -63,16 +75,16 @@ export interface DbBlacklistedUserRecord {
 export interface DbPendingVerificationData {
     _id: MongoDB.ObjectId;
     identity: Partial<DbUserIdentity>;
-    code: string;
     creation_epoch: number;
+    code: string;
 }
 
 //------------------------------------------------------------//
 
 export interface DbRobloxPurchaseRecord {
     _id: MongoDB.ObjectId;
-    roblox_user_id: string;
     roblox_purchase_id: string;
+    roblox_user_id: string;
     product_codes: string[];
 }
 

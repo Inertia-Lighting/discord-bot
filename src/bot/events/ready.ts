@@ -4,7 +4,7 @@
 
 //---------------------------------------------------------------------------------------------------------------//
 
-import { DbProductData } from '@root/types/types';
+import { DbProductData } from '@root/types';
 
 import axios from 'axios';
 

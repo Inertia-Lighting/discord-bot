@@ -8,6 +8,8 @@ import * as Discord from 'discord.js';
 
 import recursiveReadDirectory from 'recursive-read-directory';
 
+import { DistributiveOmit } from '@root/types';
+
 import { Timer } from '@root/utilities';
 
 //------------------------------------------------------------//
@@ -32,10 +34,6 @@ if (guild_team_leaders_role_id.length < 1) throw new Error('Environment variable
 
 const guild_company_management_role_id = `${process.env.BOT_COMPANY_MANAGEMENT_ROLE_ID ?? ''}`;
 if (guild_company_management_role_id.length < 1) throw new Error('Environment variable: BOT_COMPANY_MANAGEMENT_ROLE_ID; was not set correctly!');
-
-//------------------------------------------------------------//
-
-type DistributiveOmit<T, K extends keyof T> = T extends unknown ? Omit<T, K> : never;
 
 //------------------------------------------------------------//
 

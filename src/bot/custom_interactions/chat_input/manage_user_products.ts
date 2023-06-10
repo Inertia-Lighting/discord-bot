@@ -6,7 +6,7 @@ import * as Discord from 'discord.js';
 
 import { compareTwoStrings } from 'string-similarity';
 
-import { DbProductData, DbUserData } from '@root/types/types';
+import { DbProductData, DbUserData } from '@root/types';
 
 import { go_mongo_db } from '@root/mongo/mongo';
 
@@ -30,6 +30,13 @@ if (db_database_support_staff_role_id.length < 1) throw new Error('Environment v
 
 const bot_logging_products_manager_channel_id = `${process.env.BOT_LOGGING_PRODUCTS_MANAGER_CHANNEL_ID ?? ''}`;
 if (bot_logging_products_manager_channel_id.length < 1) throw new Error('Environment variable: BOT_LOGGING_PRODUCTS_MANAGER_CHANNEL_ID; is not set correctly.');
+
+//------------------------------------------------------------//
+
+enum ManageProductsAction {
+    Add = 'add',
+    Remove = 'remove',
+}
 
 //------------------------------------------------------------//
 
@@ -70,10 +77,31 @@ async function manageProductsAutoCompleteHandler(
     const db_roblox_products = await DbProductsCache.fetch(false);
 
     const user_id_to_modify = interaction.options.get('for')?.value; // required to be like this because of a weird discord.js bug
-    const action_to_perform = interaction.options.getString('action');
+    const action_to_perform = interaction.options.getString('action') as ManageProductsAction;
+    const focused_option = interaction.options.getFocused(true);
 
-    const focused_option = interaction.options.getFocused();
-    const search_query = focused_option.toUpperCase();
+    /* ensure the user to modify is valid */
+    if (typeof user_id_to_modify !== 'string') {
+        await interaction.respond([]);
+
+        return;
+    }
+
+    /* ensure the action to perform is valid */
+    if (!Object.values(ManageProductsAction).includes(action_to_perform)) {
+        await interaction.respond([]);
+
+        return;
+    }
+
+    /* ensure the focused option is valid */
+    if (focused_option.name !== 'product_code') {
+        await interaction.respond([]);
+
+        return;
+    }
+
+    const product_code_search_query = focused_option.value.toUpperCase();
 
     /* find the user in the database */
     const [ db_user_data ] = await go_mongo_db.find(db_database_name, db_users_collection_name, {
@@ -94,8 +122,8 @@ async function manageProductsAutoCompleteHandler(
         const user_owns_product = Boolean(db_user_data.products[db_roblox_product.code]);
 
         return (
-            (action_to_perform === 'add' && !user_owns_product) ||
-            (action_to_perform === 'remove' && user_owns_product)
+            (action_to_perform === ManageProductsAction.Add && !user_owns_product) ||
+            (action_to_perform === ManageProductsAction.Remove && user_owns_product)
         );
     });
 
@@ -109,7 +137,7 @@ async function manageProductsAutoCompleteHandler(
     for (const db_roblox_product of filtered_db_roblox_products) {
         mapped_db_roblox_products.push({
             ...db_roblox_product,
-            similarity_score: compareTwoStrings(search_query, db_roblox_product.code),
+            similarity_score: compareTwoStrings(product_code_search_query, db_roblox_product.code),
         });
     }
 
@@ -117,7 +145,7 @@ async function manageProductsAutoCompleteHandler(
         (a, b) => b.similarity_score - a.similarity_score
     ).sort(
         (a, b) => {
-            const first_char_of_query: string = search_query.at(0)!;
+            const first_char_of_query: string = product_code_search_query.at(0)!;
 
             if (a.code.startsWith(first_char_of_query) === b.code.startsWith(first_char_of_query)) return a.code.localeCompare(b.code);
             if (a.code.startsWith(first_char_of_query)) return -1;
@@ -126,7 +154,7 @@ async function manageProductsAutoCompleteHandler(
             return 0;
         }
     ).filter(
-        ({ similarity_score, code }, index) => search_query.length > 0 ? (
+        ({ similarity_score, code }, index) => product_code_search_query.length > 0 ? (
             similarity_score >= 0.25 || (similarity_score < 0.25 && index < 10)
         ) : true
     );
@@ -171,9 +199,24 @@ async function manageProductsChatInputCommandHandler(
     }
 
     const user_to_modify = interaction.options.getUser('for', true);
-    const action_to_perform = interaction.options.getString('action', true);
+    const action_to_perform = interaction.options.getString('action', true) as ManageProductsAction;
     const product_code = interaction.options.getString('product_code', true);
     const reason = interaction.options.getString('reason', true);
+
+    /* ensure the action to perform is valid */
+    if (!Object.values(ManageProductsAction).includes(action_to_perform)) {
+        await interaction.editReply({
+            embeds: [
+                CustomEmbed.from({
+                    color: CustomEmbed.Color.Yellow,
+                    title: 'Inertia Lighting | Products Manager',
+                    description: 'Invalid action to perform!',
+                }),
+            ],
+        }).catch(console.warn);
+
+        return;
+    }
 
     /* find the user in the database */
     const [ db_user_data ] = await go_mongo_db.find(db_database_name, db_users_collection_name, {
@@ -223,7 +266,7 @@ async function manageProductsChatInputCommandHandler(
             'identity.roblox_user_id': db_user_data.identity.roblox_user_id,
         }, {
             $set: {
-                [`products.${db_roblox_product.code}`]: (action_to_perform === 'add' ? true : false),
+                [`products.${db_roblox_product.code}`]: (action_to_perform === ManageProductsAction.Add ? true : false),
             },
         });
     } catch (error) {
@@ -252,9 +295,9 @@ async function manageProductsChatInputCommandHandler(
         await logging_channel.send({
             embeds: [
                 CustomEmbed.from({
-                    color: action_to_perform === 'add' ? CustomEmbed.Color.Green : CustomEmbed.Color.Red,
+                    color: action_to_perform === ManageProductsAction.Add ? CustomEmbed.Color.Green : CustomEmbed.Color.Red,
                     title: 'Inertia Lighting | Products Manager',
-                    description: `${interaction.user} ${action_to_perform === 'add' ? 'added' : 'removed'} \`${db_roblox_product.code}\` ${action_to_perform === 'add' ? 'to' : 'from'} ${user_to_modify}.`,
+                    description: `${interaction.user} ${action_to_perform === ManageProductsAction.Add ? 'added' : 'removed'} \`${db_roblox_product.code}\` ${action_to_perform === ManageProductsAction.Add ? 'to' : 'from'} ${user_to_modify}.`,
                     fields: [
                         {
                             name: 'Reason',
@@ -284,9 +327,9 @@ async function manageProductsChatInputCommandHandler(
     await interaction.editReply({
         embeds: [
             CustomEmbed.from({
-                color: action_to_perform === 'add' ? CustomEmbed.Color.Green : CustomEmbed.Color.Red,
+                color: action_to_perform === ManageProductsAction.Add ? CustomEmbed.Color.Green : CustomEmbed.Color.Red,
                 title: 'Inertia Lighting | Products Manager',
-                description: `${action_to_perform === 'add' ? 'Added' : 'Removed'} \`${db_roblox_product.code}\` ${action_to_perform === 'add' ? 'to' : 'from'} ${user_to_modify}.`,
+                description: `${action_to_perform === ManageProductsAction.Add ? 'Added' : 'Removed'} \`${db_roblox_product.code}\` ${action_to_perform === ManageProductsAction.Add ? 'to' : 'from'} ${user_to_modify}.`,
                 fields: [
                     {
                         name: 'Reason',
@@ -301,11 +344,11 @@ async function manageProductsChatInputCommandHandler(
 //------------------------------------------------------------//
 
 export default new CustomInteraction({
-    identifier: 'manage_products',
+    identifier: 'manage_user_products',
     type: Discord.InteractionType.ApplicationCommand,
     data: {
         type: Discord.ApplicationCommandType.ChatInput,
-        description: 'Used by staff to manage products.',
+        description: 'Used by staff to manage a user\'s products.',
         options: [
             {
                 name: 'for',
@@ -319,10 +362,10 @@ export default new CustomInteraction({
                 choices: [
                     {
                         name: 'Add',
-                        value: 'add',
+                        value: ManageProductsAction.Add,
                     }, {
                         name: 'Remove',
-                        value: 'remove',
+                        value: ManageProductsAction.Remove,
                     },
                 ],
                 required: true,
