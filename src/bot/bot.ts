@@ -2,15 +2,13 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 //------------------------------------------------------------//
 
-//---------------------------------------------------------------------------------------------------------------//
-
 import path from 'node:path';
 
 import { client } from './discord_client';
 
 import recursiveReadDirectory from 'recursive-read-directory';
 
-//---------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------------------//
 
 async function main() {
     /* register events */

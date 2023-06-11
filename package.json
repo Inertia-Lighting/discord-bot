@@ -25,7 +25,7 @@
     "title": "run-script-os",
     "title:windows": "title Inertia Lighting Discord Bot",
     "title:default": "",
-    "start": "npm run prepare && npm run title && node --trace-warnings --enable-source-maps --require dotenv/config ."
+    "start": "npm run prepare && npm run title && node --trace-warnings --enable-source-maps --require module-alias/register --require dotenv/config ."
   },
   "devDependencies": {
     "@types/string-similarity": "4.0.0",
