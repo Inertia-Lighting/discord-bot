@@ -44,6 +44,29 @@ function replyToMessageOrEditReplyToInteraction(
 
 //------------------------------------------------------------//
 
+async function fetchUserProductCodes(
+    discord_user_id: string,
+): Promise<string[]> {
+    const user_product_codes = await axios({
+        method: 'post',
+        url: 'https://api.inertia.lighting/v2/user/products/fetch',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        data: {
+            'discord_user_id': discord_user_id,
+        },
+        validateStatus: (status) => status === 200 || status === 404,
+        timeout: 10_000, // 10 seconds
+    }).then(
+        (response) => response.data as string[],
+    ); // don't catch to propagate error to caller
+
+    return user_product_codes;
+}
+
+//------------------------------------------------------------//
+
 export async function userProfileHandler(
     deferred_interaction_or_message: Discord.Interaction | Discord.Message,
     discord_user_id: string,
@@ -91,13 +114,7 @@ export async function userProfileHandler(
         'public': true,
     });
 
-    const user_product_codes = Object.entries(
-        db_user_data.products
-    ).filter(
-        ([_product_code, user_owns_product]) => user_owns_product
-    ).map(
-        ([product_code]) => product_code
-    );
+    const user_product_codes = await fetchUserProductCodes(db_user_data.identity.discord_user_id) ?? [];
     const user_products = db_public_roblox_products.filter(product => user_product_codes.includes(product.code));
 
     const roblox_user_data: {
