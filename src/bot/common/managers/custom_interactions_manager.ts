@@ -135,11 +135,23 @@ export class CustomInteractionsManager {
 
             const client_interaction_file_path = path.join(path_to_interaction_files, client_interaction_file_name);
 
-            console.info(`Registering client interaction... ${client_interaction_file_path}`);
+            // required b/c esm imports are quirky
+            const relative_path = path.relative(path.join(process.cwd(), 'dist', 'bot', 'common', 'managers'), client_interaction_file_path);
+            const esm_compatible_path = `./${relative_path.replace(/\\/g, '/')}`;
 
-            delete require.cache[require.resolve(client_interaction_file_path)]; // this is necessary to ensure that the file is reloaded every time
+            console.info(`Registering client interaction... ${esm_compatible_path}`);
 
-            const { default: client_interaction } = await import(client_interaction_file_path) as { default: CustomInteraction | unknown };
+            // required to ensure that the file is reloaded each time
+            delete require.cache[require.resolve(client_interaction_file_path)];
+
+            const { default: client_interaction } = await import(esm_compatible_path).then((imported_module) => {
+                // handle esm and commonjs module exports
+                const imported_module_exports = imported_module.default ?? imported_module;
+
+                return imported_module_exports;
+            }) as {
+                default: CustomInteraction | unknown,
+            };
 
             if (!(client_interaction instanceof CustomInteraction)) {
                 console.trace(`Failed to load client interaction: ${client_interaction_file_path};`);
@@ -148,6 +160,8 @@ export class CustomInteractionsManager {
 
             CustomInteractionsManager.interactions.set(client_interaction.identifier, client_interaction);
         }
+
+        console.info('Registered client interactions.');
     }
 
     public static async syncInteractionsToDiscord(

@@ -5,6 +5,7 @@
   "keywords": [],
   "author": "Inertia Lighting",
   "license": "UNLICENSED",
+  "type": "commonjs",
   "main": "./dist/index.js",
   "_moduleAliases": {
     "@root": "./dist"
