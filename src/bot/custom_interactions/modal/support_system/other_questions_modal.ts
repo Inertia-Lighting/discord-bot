@@ -48,7 +48,7 @@ export default new CustomInteraction({
             content: [
                 `${interaction.member}, welcome to your support ticket,`,
                 '',
-                `Our <@&${bot_other_support_staff_role_id}> support staff are unscheduled volunteers, so please be patient.`,
+                `Our ${Discord.roleMention(bot_other_support_staff_role_id)} support staff are unscheduled volunteers, so please be patient.`,
                 '',
                 'If you have an urgent issue, like someone making death threats;',
                 'please @mention one of our high-ranked staff members!',

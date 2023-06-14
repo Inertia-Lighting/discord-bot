@@ -40,7 +40,7 @@ async function guildMemberRolesAddedLogger(
                         inline: false,
                     }, {
                         name: 'Roles added',
-                        value: roles_added.map(role => `<@&${role.id}>`).join('\n'),
+                        value: roles_added.map(role => Discord.roleMention(role.id)).join('\n'),
                         inline: false,
                     },
                 ],
@@ -74,7 +74,7 @@ async function guildMemberRolesRemovedLogger(
                         inline: false,
                     }, {
                         name: 'Roles removed',
-                        value: roles_removed.map(role => `<@&${role.id}>`).join('\n'),
+                        value: roles_removed.map(role => Discord.roleMention(role.id)).join('\n'),
                         inline: false,
                     },
                 ],

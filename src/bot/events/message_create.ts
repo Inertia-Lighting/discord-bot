@@ -45,12 +45,17 @@ export default {
         }
 
         /* respond to mentions of this bot */
-        if (message.content.startsWith(`<@!${message.client.user.id}>`)) {
-            message.reply({
+        if (
+            message.content.startsWith(
+                Discord.userMention(message.client.user.id)
+            )
+        ) {
+            await message.reply({
                 content: [
                     'To see a list of commands do \`/help\`!',
                 ].join('\n'),
             }).catch(console.warn);
+
             return;
         }
 

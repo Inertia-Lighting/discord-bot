@@ -117,3 +117,14 @@ export function getMarkdownFriendlyTimestamp(unix_epoch_ms: number): string {
 
     return Math.floor(unix_epoch_ms / 1000).toString(10);
 }
+
+/**
+ * Converts milliseconds into rounded seconds
+ */
+export function millisecondsToRoundedSeconds(
+    milliseconds: number,
+): number {
+    if (typeof milliseconds !== 'number') throw new TypeError('millisecondsToSecondsRounded(): milliseconds is not a number');
+
+    return Math.round(milliseconds / 1000);
+}

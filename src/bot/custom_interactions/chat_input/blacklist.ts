@@ -269,7 +269,7 @@ async function blacklistAddSubcommand(
                 },
                 title: 'Added User to Blacklist',
                 description: [
-                    `Discord User: <@${db_user_data.identity.discord_user_id}; was added to the blacklist by <@${interaction.user.id}>.`,
+                    `Discord User: ${Discord.userMention(db_user_data.identity.discord_user_id)}; was added to the blacklist by ${Discord.userMention(interaction.user.id)}.`,
                 ].join('\n'),
             }),
         ],
@@ -364,7 +364,7 @@ async function blacklistRemoveSubcommand(
             CustomEmbed.from({
                 title: 'Removed User From Blacklist',
                 description: [
-                    `Discord User: <@${db_user_data.identity.discord_user_id}>; was removed from the blacklist by <@${interaction.user.id}>.`,
+                    `Discord User: ${Discord.userMention(db_user_data.identity.discord_user_id)}; was removed from the blacklist by ${Discord.userMention(interaction.user.id)}.`,
                 ].join('\n'),
             }),
         ],

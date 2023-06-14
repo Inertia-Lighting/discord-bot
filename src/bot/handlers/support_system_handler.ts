@@ -470,15 +470,15 @@ export async function closeSupportTicketChannel(
                     inline: false,
                 }, {
                     name: 'Opened By',
-                    value: `<@!${support_ticket_owner.id}>`,
+                    value: Discord.userMention(support_ticket_owner.id),
                     inline: true,
                 }, {
                     name: 'Closed By',
-                    value: `<@!${member_that_closed_ticket.id}>`,
+                    value: Discord.userMention(member_that_closed_ticket.id),
                     inline: true,
                 }, {
                     name: 'Participants',
-                    value: `${Array.from(channel_participant_ids).map(user_id => `<@!${user_id}>`).join(' - ')}`,
+                    value: `${Array.from(channel_participant_ids).map(user_id => Discord.userMention(user_id)).join(' - ')}`,
                     inline: false,
                 },
             ],

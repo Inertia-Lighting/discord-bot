@@ -173,8 +173,8 @@ async function listModerationActions(
                     description: moderation_actions_chunk.map(moderation_action =>
                         [
                             `**Id** \`${moderation_action.record.id}\``,
-                            `**Staff** <@${moderation_action.record.staff_member_id}>`,
-                            `**Member** <@${moderation_action.identity.discord_user_id}>`,
+                            `**Staff** ${Discord.userMention(moderation_action.record.staff_member_id)}`,
+                            `**Member** ${Discord.userMention(moderation_action.identity.discord_user_id)}`,
                             `**Date** \`${moment(moderation_action.record.epoch).tz('America/New_York').format('YYYY[-]MM[-]DD | hh:mm A | [GMT]ZZ')}\``,
                             `**Type** \`${moderation_action.record.type}\``,
                             '**Reason**',

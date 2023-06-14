@@ -40,7 +40,7 @@ export async function guildMemberMessageUpdateLogger(
         embeds: [
             CustomEmbed.from({
                 color: CustomEmbed.Color.Yellow,
-                description: `**A message sent by <@${new_message.author.id}> in <#${new_message.channelId}> was modified.**`,
+                description: `**A message sent by ${Discord.userMention(new_message.author.id)} in ${Discord.channelMention(new_message.channelId)} was modified.**`,
                 fields: [
                     {
                         name: 'Message',
@@ -96,7 +96,7 @@ export async function guildMemberMessageDeleteLogger(
         embeds: [
             CustomEmbed.from({
                 color: CustomEmbed.Color.Orange,
-                description: `**A message sent by <@${message.author.id}> in <#${message.channelId}> was deleted.**`,
+                description: `**A message sent by ${Discord.userMention(message.author.id)} in ${Discord.channelMention(message.channelId)} was deleted.**`,
                 fields: [
                     {
                         name: 'Message',

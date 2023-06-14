@@ -52,8 +52,8 @@ async function manageNotesLookupSubCommandHandler(
                 },
                 description: [
                     `**Id** \`${user_note.record.id}\``,
-                    `**Staff** <@${user_note.record.staff_member_id}>`,
-                    `**Member** <@${user_note.identity.discord_user_id}>`,
+                    `**Staff** ${Discord.userMention(user_note.record.staff_member_id)}`,
+                    `**Member** ${Discord.userMention(user_note.identity.discord_user_id)}`,
                     `**Date** <t:${getMarkdownFriendlyTimestamp(user_note.record.epoch)}:f>`,
                     '**Content**',
                     '\`\`\`',
@@ -151,8 +151,8 @@ async function manageNotesForSubCommandHandler(
                     description: user_notes_chunk.map(user_note =>
                         [
                             `**Id** \`${user_note.record.id}\``,
-                            `**Staff** <@${user_note.record.staff_member_id}>`,
-                            `**Member** <@${user_note.identity.discord_user_id}>`,
+                            `**Staff** ${Discord.userMention(user_note.record.staff_member_id)}`,
+                            `**Member** ${Discord.userMention(user_note.identity.discord_user_id)}`,
                             `**Date** <t:${`${user_note.record.epoch}`.slice(0, -3)}:f>`,
                             '**Content**',
                             '\`\`\`',
@@ -411,7 +411,7 @@ async function manageNotesPurgeSubCommandHandler(
                         icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | User Notes',
                     },
-                    description: `An error occurred while removing all notes from <@${user.id}>.`,
+                    description: `An error occurred while removing all notes from ${Discord.userMention(user.id)}.`,
                 }),
             ],
         }).catch(console.warn);
@@ -427,7 +427,7 @@ async function manageNotesPurgeSubCommandHandler(
                     icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
                     name: 'Inertia Lighting | User Notes',
                 },
-                description: `Successfully removed all notes from <@${user.id}>.`,
+                description: `Successfully removed all notes from ${Discord.userMention(user.id)}.`,
             }),
         ],
     }).catch(console.warn);
