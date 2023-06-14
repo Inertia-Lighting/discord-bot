@@ -35,7 +35,7 @@ async function guildMemberAddLogger(member: Discord.GuildMember) {
                 fields: [
                     {
                         name: 'Member',
-                        value: `@${member.user.tag} (${member.user.id})`,
+                        value: `@${member.user.username} (${member.user.id})`,
                         inline: false,
                     }, {
                         name: 'Account creation date',
@@ -69,7 +69,7 @@ async function guildMemberRemoveLogger(member: Discord.GuildMember) {
                 fields: [
                     {
                         name: 'Member',
-                        value: `@${member.user.tag} (${member.user.id})`,
+                        value: `@${member.user.username} (${member.user.id})`,
                         inline: false,
                     }, {
                         name: 'Account creation date',

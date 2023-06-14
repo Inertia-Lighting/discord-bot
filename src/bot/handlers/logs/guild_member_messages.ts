@@ -39,7 +39,7 @@ async function guildMemberMessageUpdateLogger(old_message: Discord.Message, new_
                         inline: false,
                     }, {
                         name: 'Author',
-                        value: `@${new_message.author.tag} (${new_message.author.id})`,
+                        value: `@${new_message.author.username} (${new_message.author.id})`,
                         inline: false,
                     }, {
                         name: 'Modified',
@@ -81,7 +81,7 @@ async function guildMemberMessageDeleteLogger(message: Discord.Message) {
                         inline: false,
                     }, {
                         name: 'Author',
-                        value: `@${message.author.tag} (${message.author.id})`,
+                        value: `@${message.author.username} (${message.author.id})`,
                         inline: false,
                     }, {
                         name: 'Deleted',

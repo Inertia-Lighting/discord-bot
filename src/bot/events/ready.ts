@@ -101,7 +101,7 @@ export default {
     async handler() {
         const ready_timestamp = `${moment()}`;
         console.log('----------------------------------------------------------------------------------------------------------------');
-        console.log(`Discord Bot Logged in as ${client.user!.tag} on ${ready_timestamp}`);
+        console.log(`Discord Bot Logged in as @${client.user!.username} on ${ready_timestamp}`);
         console.log('----------------------------------------------------------------------------------------------------------------');
 
         /* register interactions to CustomInteractionsManager */

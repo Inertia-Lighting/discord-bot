@@ -271,7 +271,7 @@ async function updateModerationAction(
             'record.id': db_moderation_action.record.id,
         }, {
             $set: {
-                'record.reason': `${new_moderation_action_reason} <edited by ${interaction.user.tag} (${interaction.user.id}) on ${moment().tz('America/New_York').format('YYYY[-]MM[-]DD | hh:mm A | [GMT]ZZ')}>`,
+                'record.reason': `${new_moderation_action_reason} <edited by @${interaction.user.username} (${interaction.user.id}) on ${moment().tz('America/New_York').format('YYYY[-]MM[-]DD | hh:mm A | [GMT]ZZ')}>`,
             },
         });
     } catch {

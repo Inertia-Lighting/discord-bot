@@ -31,7 +31,7 @@ async function suggestionsCategoryHandler(message: Discord.Message) {
             CustomEmbed.from({
                 author: {
                     icon_url: `${message.author.displayAvatarURL({ forceStatic: false })}`,
-                    name: `@${message.member.user.tag} (${message.member.id})`,
+                    name: `@${message.member.user.username} (${message.member.id})`,
                 },
                 description: `${suggestion_text}`,
             }),

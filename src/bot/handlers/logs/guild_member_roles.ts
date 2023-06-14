@@ -36,7 +36,7 @@ async function guildMemberRolesAddedLogger(
                 fields: [
                     {
                         name: 'Member',
-                        value: `@${new_member.user.tag} (${new_member.user.id})`,
+                        value: `@${new_member.user.username} (${new_member.user.id})`,
                         inline: false,
                     }, {
                         name: 'Roles added',
@@ -70,7 +70,7 @@ async function guildMemberRolesRemovedLogger(
                 fields: [
                     {
                         name: 'Member',
-                        value: `@${new_member.user.tag} (${new_member.user.id})`,
+                        value: `@${new_member.user.username} (${new_member.user.id})`,
                         inline: false,
                     }, {
                         name: 'Roles removed',
