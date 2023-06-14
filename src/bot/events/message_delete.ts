@@ -2,18 +2,16 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 //------------------------------------------------------------//
 
-//---------------------------------------------------------------------------------------------------------------//
-
-import { Discord } from '../discord_client';
+import * as Discord from 'discord.js';
 
 import { guildMemberMessageDeleteLogger } from '../handlers/logs/guild_member_messages';
 
-//---------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------------------//
 
-const bot_guild_id = process.env.BOT_GUILD_ID as string;
-if (typeof bot_guild_id !== 'string') throw new TypeError('bot_guild_id is not a string');
+const bot_guild_id = `${process.env.BOT_GUILD_ID ?? ''}`;
+if (bot_guild_id.length < 1) throw new Error('environment variable: BOT_GUILD_ID; was not properly set or is empty');
 
-//---------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------------------//
 
 export default {
     name: Discord.Events.MessageDelete,
@@ -22,9 +20,12 @@ export default {
     ) {
         if (message.author.system) return; // don't operate on system accounts
         if (message.author.bot) return; // don't operate on bots to prevent feedback-loops
-        if (message.guild?.id !== bot_guild_id) return; // don't operate on other guilds
+
+        if (!message.inGuild()) return; // only operate on messages sent in guilds
+
+        if (message.guild.id !== bot_guild_id) return; // only operate on messages sent in the bot guild
 
         /* log message deletions */
-        await guildMemberMessageDeleteLogger(message).catch(console.trace);
+        guildMemberMessageDeleteLogger(message).catch(console.trace);
     },
 };

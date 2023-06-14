@@ -2,13 +2,11 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 //------------------------------------------------------------//
 
-//---------------------------------------------------------------------------------------------------------------//
-
-import { Discord } from '../discord_client';
+import * as Discord from 'discord.js';
 
 import { CustomInteractionsManager } from '../common/managers/custom_interactions_manager';
 
-//---------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------------------//
 
 export default {
     name: Discord.Events.InteractionCreate,

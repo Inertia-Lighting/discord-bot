@@ -2,7 +2,7 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 //------------------------------------------------------------//
 
-import { Discord, client } from '../discord_client';
+import * as Discord from 'discord.js';
 
 import { automatedQuickSupportHandler } from '../handlers/automated_quick_support_handler';
 
@@ -10,7 +10,11 @@ import { suggestionsCategoryHandler } from '../handlers/suggestions_category_han
 
 //------------------------------------------------------------//
 
-const suggestions_category_id = process.env.BOT_SUGGESTIONS_CATEGORY_ID as string;
+const bot_guild_id = `${process.env.BOT_GUILD_ID ?? ''}`;
+if (bot_guild_id.length < 1) throw new Error('environment variable: BOT_GUILD_ID; was not properly set or is empty');
+
+const suggestions_category_id = `${process.env.BOT_SUGGESTIONS_CATEGORY_ID ?? ''}`;
+if (suggestions_category_id.length < 1) throw new Error('environment variable: BOT_SUGGESTIONS_CATEGORY_ID; was not properly set or is empty');
 
 //------------------------------------------------------------//
 
@@ -28,6 +32,9 @@ export default {
         /* only allow messages from inside of a guild */
         if (!message.inGuild()) return;
 
+        /* only allow messages from inside of the bot guild */
+        if (message.guild.id !== bot_guild_id) return;
+
         /* only allow text channels */
         if (!message.channel.isTextBased()) return;
 
@@ -38,7 +45,7 @@ export default {
         }
 
         /* respond to mentions of this bot */
-        if (message.content.startsWith(`<@!${client.user!.id}>`)) {
+        if (message.content.startsWith(`<@!${message.client.user.id}>`)) {
             message.reply({
                 content: [
                     'To see a list of commands do \`/help\`!',

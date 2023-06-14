@@ -2,20 +2,18 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 //------------------------------------------------------------//
 
-//---------------------------------------------------------------------------------------------------------------//
-
-import { Discord } from '../discord_client';
+import * as Discord from 'discord.js';
 
 import { guildMemberAddLogger } from '../handlers/logs/guild_member_retention';
 
 import { illegalNicknameHandler } from '../handlers/illegal_nickname_handler';
 
-//---------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------------------//
 
-const bot_guild_id = process.env.BOT_GUILD_ID as string;
-if (typeof bot_guild_id !== 'string') throw new TypeError('bot_guild_id is not a string');
+const bot_guild_id = `${process.env.BOT_GUILD_ID ?? ''}`;
+if (bot_guild_id.length < 1) throw new Error('environment variable: BOT_GUILD_ID; was not properly set or is empty');
 
-//---------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------------------//
 
 export default {
     name: Discord.Events.GuildMemberAdd,
@@ -28,9 +26,8 @@ export default {
 
         try {
             await member.fetch(true);
-        } catch (error) {
-            console.trace('Failed to fetch member:', error);
-            return;
+        } catch {
+            return; // don't operate on members that can't be fetched
         }
 
         /* log members joining */

@@ -2,15 +2,18 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 //------------------------------------------------------------//
 
-//---------------------------------------------------------------------------------------------------------------//
-
 import { GoMongoDB } from 'go-mongo-db';
 
-//---------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------------------//
 
-const go_mongo_db = new GoMongoDB(process.env.MONGO_CONNECTION_URL as string);
+const mongo_connection_url = `${process.env.MONGO_CONNECTION_URL ?? ''}`;
+if (mongo_connection_url.length < 1) throw new Error('environment variable: MONGO_CONNECTION_URL; was not properly set or is empty');
 
-//---------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------------------//
+
+const go_mongo_db = new GoMongoDB(mongo_connection_url);
+
+//------------------------------------------------------------//
 
 export {
     go_mongo_db,
