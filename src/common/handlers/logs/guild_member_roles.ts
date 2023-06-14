@@ -85,7 +85,7 @@ async function guildMemberRolesRemovedLogger(
     }).catch(console.trace);
 }
 
-//---------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------------------//
 
 export {
     guildMemberRolesAddedLogger,
