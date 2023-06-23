@@ -29,9 +29,20 @@ export default new CustomInteraction({
          */
 
         const support_category_id = interaction.values.at(0);
+        if (!support_category_id) {
+            console.trace('Missing support category id from support category selection menu!');
+
+            await interaction.reply({
+                content: 'An error occurred while processing your request!',
+            });
+
+            return;
+        }
 
         const support_category = support_categories.find(({ id }) => id === support_category_id);
         if (!support_category) {
+            console.trace(`Invalid support category id from support category selection menu: ${support_category_id}`);
+
             await interaction.reply({
                 content: 'An error occurred while processing your request!',
             });
@@ -40,6 +51,6 @@ export default new CustomInteraction({
         }
 
         /* send the support category's modal */
-        await interaction.showModal(support_category.modal);
+        await interaction.showModal(support_category.modal_data);
     },
 });

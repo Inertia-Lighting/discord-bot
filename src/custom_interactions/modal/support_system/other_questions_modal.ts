@@ -4,16 +4,9 @@
 
 import * as Discord from 'discord.js';
 
-import { CustomEmbed } from '@root/common/message';
-
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
 
-import { SupportTicketId, createSupportTicketChannel, support_categories } from '@root/common/handlers';
-
-//------------------------------------------------------------//
-
-const bot_other_support_staff_role_id = `${process.env.BOT_SUPPORT_STAFF_OTHER_ROLE_ID ?? ''}`;
-if (bot_other_support_staff_role_id.length < 1) throw new Error('Environment variable: BOT_SUPPORT_STAFF_OTHER_ROLE_ID; is not set correctly.');
+import { SupportCategoryId, handleSupportTicketCategoryModalSubmit } from '@root/common/handlers';
 
 //------------------------------------------------------------//
 
@@ -31,40 +24,6 @@ export default new CustomInteraction({
 
         await interaction.deferReply({ ephemeral: true });
 
-        const question = interaction.fields.getTextInputValue('question');
-
-        const support_ticket_category = support_categories.find(({ id }) => id === SupportTicketId.Other)!;
-
-        const support_channel = await createSupportTicketChannel(interaction.guild, interaction.member, support_ticket_category);
-
-        await interaction.editReply({
-            content: [
-                `You selected ${support_ticket_category.name}.`,
-                `Go to ${support_channel} to continue.`,
-            ].join('\n'),
-        });
-
-        await support_channel.send({
-            content: [
-                `${interaction.member}, welcome to your support ticket,`,
-                '',
-                `Our ${Discord.roleMention(bot_other_support_staff_role_id)} support staff are unscheduled volunteers, so please be patient.`,
-                '',
-                'If you have an urgent issue, like someone making death threats;',
-                'please @mention one of our high-ranked staff members!',
-            ].join('\n'),
-            embeds: [
-                CustomEmbed.from({
-                    author: {
-                        icon_url: `${discord_client.user.displayAvatarURL({ forceStatic: false })}`,
-                        name: 'Inertia Lighting | Support System',
-                    },
-                    description: [
-                        '**What can we help you with?**',
-                        `${question}`,
-                    ].join('\n'),
-                }),
-            ],
-        });
+        await handleSupportTicketCategoryModalSubmit(interaction, SupportCategoryId.Other);
     },
 });
