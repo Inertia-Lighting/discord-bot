@@ -105,7 +105,7 @@ export default new CustomInteraction({
                 `${member_to_warn}`,
                 `You were warned in the Inertia Lighting discord by ${staff_member.user} for:`,
                 '\`\`\`',
-                `${warn_reason}`,
+                Discord.escapeMarkdown(warn_reason),
                 '\`\`\`',
             ].join('\n'),
         };

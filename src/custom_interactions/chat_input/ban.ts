@@ -104,7 +104,7 @@ export default new CustomInteraction({
                 `${member_to_ban}`,
                 `You were banned from the Inertia Lighting discord by ${staff_member.user} for:`,
                 '\`\`\`',
-                `${ban_reason}`,
+                Discord.escapeMarkdown(ban_reason),
                 '\`\`\`',
             ].join('\n'),
         };

@@ -256,7 +256,7 @@ export default new CustomInteraction({
                     fields: [
                         {
                             name: 'Reason',
-                            value: `${reason}`,
+                            value: Discord.escapeMarkdown(reason),
                             inline: false,
                         },
                     ],

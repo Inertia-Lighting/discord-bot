@@ -105,7 +105,7 @@ export default new CustomInteraction({
                 `${member_to_kick}`,
                 `You were kicked from the Inertia Lighting discord by ${staff_member.user} for:`,
                 '\`\`\`',
-                `${kick_reason}`,
+                Discord.escapeMarkdown(kick_reason),
                 '\`\`\`',
             ].join('\n'),
         };

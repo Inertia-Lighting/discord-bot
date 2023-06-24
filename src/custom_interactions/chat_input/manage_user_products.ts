@@ -301,7 +301,7 @@ async function manageProductsChatInputCommandHandler(
                     fields: [
                         {
                             name: 'Reason',
-                            value: `${reason}`,
+                            value: Discord.escapeMarkdown(reason),
                         },
                     ],
                 }),
@@ -333,7 +333,7 @@ async function manageProductsChatInputCommandHandler(
                 fields: [
                     {
                         name: 'Reason',
-                        value: `${reason}`,
+                        value: Discord.escapeMarkdown(reason),
                     },
                 ],
             }),
