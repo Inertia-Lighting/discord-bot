@@ -24,6 +24,6 @@ export default new CustomInteraction({
 
         await interaction.deferReply({ ephemeral: true });
 
-        await handleSupportTicketCategoryModalSubmit(interaction, SupportCategoryId.Transfers);
+        await handleSupportTicketCategoryModalSubmit(interaction, SupportCategoryId.Issues);
     },
 });
