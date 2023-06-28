@@ -8,6 +8,8 @@ import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunCo
 
 import { support_categories } from '@root/common/handlers';
 
+import { delay } from '@root/utilities';
+
 //------------------------------------------------------------//
 
 export default new CustomInteraction({
@@ -52,5 +54,15 @@ export default new CustomInteraction({
 
         /* send the support category's modal */
         await interaction.showModal(support_category.modal_data);
+
+        /* wait a little bit to prevent glitchy behavior */
+        await delay(15_000);
+
+        /* delete the support category selection menu */
+        try {
+            await interaction.message?.delete();
+        } catch {
+            // ignore any errors
+        }
     },
 });
