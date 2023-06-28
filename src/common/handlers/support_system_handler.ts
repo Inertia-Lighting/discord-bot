@@ -987,8 +987,6 @@ export async function handleSupportTicketCategoryModalSubmit(
 
     setTimeout(async () => {
         try {
-            await interaction.deleteReply();
-            await interaction.message?.delete();
             await modal_reply_message.delete();
         } catch {
             // ignore any errors
