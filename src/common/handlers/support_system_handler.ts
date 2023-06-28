@@ -969,7 +969,10 @@ export async function handleSupportTicketCategoryModalSubmit(
     interaction: Discord.ModalSubmitInteraction<'cached'>,
     support_category_id: SupportCategoryId,
 ): Promise<void> {
-    await interaction.deferReply({ ephemeral: true });
+    await interaction.deferReply({
+        ephemeral: true,
+        fetchReply: true,
+    });
 
     const support_ticket_owner = interaction.member;
 
@@ -987,7 +990,7 @@ export async function handleSupportTicketCategoryModalSubmit(
 
     setTimeout(async () => {
         try {
-            await modal_reply_message.delete();
+            await interaction.deleteReply(modal_reply_message);
         } catch {
             // ignore any errors
         }
