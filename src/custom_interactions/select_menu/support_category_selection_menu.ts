@@ -53,11 +53,6 @@ export default new CustomInteraction({
         /* send the support category's modal */
         await interaction.showModal(support_category.modal_data);
 
-        /* wait for the modal to be submitted */
-        await interaction.awaitModalSubmit({
-            time: 15 * 60_000, // give up after this amount of time
-        });
-
         /* delete the support category selection menu */
         try {
             await interaction.deleteReply();
