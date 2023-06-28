@@ -32,6 +32,9 @@ if (bot_product_issues_support_staff_role_id.length < 1) throw new Error('Enviro
 const bot_product_purchases_support_staff_role_id = `${process.env.BOT_SUPPORT_STAFF_PRODUCT_PURCHASES_ROLE_ID ?? ''}`;
 if (bot_product_purchases_support_staff_role_id.length < 1) throw new Error('Environment variable: BOT_SUPPORT_STAFF_PRODUCT_PURCHASES_ROLE_ID; is not set correctly.');
 
+const bot_partnership_requests_support_staff_role_id = `${process.env.BOT_SUPPORT_STAFF_PARTNERSHIP_REQUESTS_ROLE_ID ?? ''}`;
+if (bot_partnership_requests_support_staff_role_id.length < 1) throw new Error('Environment variable: BOT_SUPPORT_STAFF_PARTNERSHIP_REQUESTS_ROLE_ID; is not set correctly.');
+
 //------------------------------------------------------------//
 
 const support_ticket_cleanup_timeout_in_ms = 10_000; // 10 seconds
@@ -78,6 +81,7 @@ export enum SupportCategoryId {
     Recovery = 'RECOVERY',
     Transfers = 'TRANSFERS',
     Transactions = 'TRANSACTIONS',
+    PartnershipRequests = 'PARTNERS',
     Other = 'OTHER',
 }
 
@@ -233,7 +237,7 @@ export const support_categories: SupportCategory[] = [
                             type: Discord.ComponentType.TextInput,
                             customId: 'old_roblox',
                             style: Discord.TextInputStyle.Short,
-                            label: 'What is your old Roblox account ID?',
+                            label: 'What is your old Roblox account id?',
                             placeholder: '998796',
                             minLength: 5,
                             maxLength: 20,
@@ -247,7 +251,7 @@ export const support_categories: SupportCategory[] = [
                             type: Discord.ComponentType.TextInput,
                             customId: 'new_roblox',
                             style: Discord.TextInputStyle.Short,
-                            label: 'What is your new Roblox account ID?',
+                            label: 'What is your new Roblox account id?',
                             placeholder: '998796',
                             minLength: 5,
                             maxLength: 20,
@@ -261,7 +265,7 @@ export const support_categories: SupportCategory[] = [
                             type: Discord.ComponentType.TextInput,
                             customId: 'old_discord',
                             style: Discord.TextInputStyle.Short,
-                            label: 'What is your old Discord user ID?',
+                            label: 'What is your old Discord user id?',
                             placeholder: '735556164749885450',
                             minLength: 10,
                             maxLength: 75,
@@ -275,7 +279,7 @@ export const support_categories: SupportCategory[] = [
                             type: Discord.ComponentType.TextInput,
                             customId: 'new_discord',
                             style: Discord.TextInputStyle.Short,
-                            label: 'What is your new Discord user ID?',
+                            label: 'What is your new Discord user id?',
                             placeholder: '735556164749885450',
                             minLength: 10,
                             maxLength: 75,
@@ -318,16 +322,16 @@ export const support_categories: SupportCategory[] = [
                             name: 'Inertia Lighting | Support System',
                         },
                         description: [
-                            '**What is your old Roblox account ID?**',
+                            '**What is your old Roblox account id?**',
                             `${old_roblox_account_id}`,
                             '',
-                            '**What is your new Roblox account ID?**',
+                            '**What is your new Roblox account id?**',
                             `${new_roblox_account_id}`,
                             '',
-                            '**What is your old Discord user ID?**',
+                            '**What is your old Discord user id?**',
                             `${old_discord_user_id}`,
                             '',
-                            '**What is your new Discord user ID?**',
+                            '**What is your new Discord user id?**',
                             `${new_discord_user_id}`,
                             '',
                             '**Why do you need to recover your account?**',
@@ -368,7 +372,7 @@ export const support_categories: SupportCategory[] = [
                             type: Discord.ComponentType.TextInput,
                             customId: 'discord_transfer_to',
                             style: Discord.TextInputStyle.Short,
-                            label: 'Discord user ID that you\'re transferring to?',
+                            label: 'Discord user id that you\'re transferring to?',
                             placeholder: '735556164749885450',
                             minLength: 10,
                             maxLength: 75,
@@ -427,7 +431,7 @@ export const support_categories: SupportCategory[] = [
                             '**What product(s) do you want to transfer?**',
                             `${products}`,
                             '',
-                            '**Discord user ID that you\'re transferring to?**',
+                            '**Discord user id that you\'re transferring to?**',
                             `${discord_transfer_to}`,
                             '',
                             '**Roblox account that you\'re transferring to?**',
@@ -526,6 +530,104 @@ export const support_categories: SupportCategory[] = [
             });
         },
     }, {
+        id: SupportCategoryId.PartnershipRequests,
+        name: 'Partnership Requests',
+        description: 'Interested in partnering with us?',
+        staff_role_ids: [
+            bot_partnership_requests_support_staff_role_id,
+        ],
+        modal_data: {
+            title: 'Partnership Request Questions',
+            customId: 'support_system_partnership_request_modal',
+            components: [
+                {
+                    type: Discord.ComponentType.ActionRow,
+                    components: [
+                        {
+                            type: Discord.ComponentType.TextInput,
+                            customId: 'group_name',
+                            style: Discord.TextInputStyle.Short,
+                            label: 'What is the name of your group?',
+                            minLength: 1,
+                            maxLength: 64,
+                            required: true,
+                        }, {
+                            type: Discord.ComponentType.TextInput,
+                            customId: 'group_owner_age',
+                            style: Discord.TextInputStyle.Short,
+                            label: 'How old are you?',
+                            minLength: 1,
+                            maxLength: 4,
+                            required: true,
+                        }, {
+                            type: Discord.ComponentType.TextInput,
+                            customId: 'group_description',
+                            style: Discord.TextInputStyle.Paragraph,
+                            label: 'Describe your group, please go into as much detail as possible.',
+                            minLength: 128,
+                            maxLength: 1024,
+                            required: true,
+                        }, {
+                            type: Discord.ComponentType.TextInput,
+                            customId: 'group_reason',
+                            style: Discord.TextInputStyle.Paragraph,
+                            label: 'Why do you want to partner with us?',
+                            minLength: 128,
+                            maxLength: 1024,
+                            required: true,
+                        }, {
+                            type: Discord.ComponentType.TextInput,
+                            customId: 'group_social_links',
+                            style: Discord.TextInputStyle.Paragraph,
+                            label: 'What are your group\'s social links? (Discord, Roblox, etc)',
+                            minLength: 32,
+                            maxLength: 1024,
+                            required: true,
+                        },
+                    ],
+                },
+            ],
+        },
+        modal_handler: async (
+            interaction,
+            support_category,
+            support_ticket_channel,
+            support_ticket_owner,
+        ) => {
+            const group_name = interaction.fields.getTextInputValue('group_name');
+            const group_owner_age = interaction.fields.getTextInputValue('group_owner_age');
+            const group_description = interaction.fields.getTextInputValue('group_description');
+            const group_reason = interaction.fields.getTextInputValue('group_reason');
+            const group_social_links = interaction.fields.getTextInputValue('group_social_links');
+
+            await support_ticket_channel.send({
+                embeds: [
+                    CustomEmbed.from({
+                        author: {
+                            icon_url: interaction.client.user.displayAvatarURL({ forceStatic: false }),
+                            name: 'Inertia Lighting | Support System',
+                        },
+                        description: [
+                            '**What is the name of your group?**',
+                            `${group_name}`,
+                            '',
+                            '**How old are you?**',
+                            `${group_owner_age}`,
+                            '',
+                            '**Describe your group.**',
+                            `${group_description}`,
+                            '',
+                            '**Why do you want to partner with us?**',
+                            `${group_reason}`,
+                            '',
+                            '**What are your group\'s social links?**',
+                            `${group_social_links}`,
+                        ].join('\n'),
+                    }),
+                ],
+            });
+        },
+    }, {
         id: SupportCategoryId.Other,
         name: 'Other & Quick Questions',
         description: 'For all other forms of support.',
@@ -544,7 +646,7 @@ export const support_categories: SupportCategory[] = [
                             customId: 'question',
                             style: Discord.TextInputStyle.Paragraph,
                             label: 'What can we help you with?',
-                            minLength: 1,
+                            minLength: 16,
                             maxLength: 1024,
                             required: true,
                         },
