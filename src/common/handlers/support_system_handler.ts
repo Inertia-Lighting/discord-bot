@@ -949,6 +949,8 @@ export async function handleSupportTicketCategoryModalSubmit(
     interaction: Discord.ModalSubmitInteraction<'cached'>,
     support_category_id: SupportCategoryId,
 ): Promise<void> {
+    await interaction.deferReply({ ephemeral: true });
+
     const support_ticket_owner = interaction.member;
 
     const support_category = support_categories.find(({ id }) => id === support_category_id);

@@ -22,8 +22,6 @@ export default new CustomInteraction({
         if (!interaction.inCachedGuild()) return;
         if (!interaction.isModalSubmit()) return;
 
-        await interaction.deferReply({ ephemeral: true });
-
         await handleSupportTicketCategoryModalSubmit(interaction, SupportCategoryId.Other);
     },
 });
