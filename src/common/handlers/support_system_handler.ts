@@ -991,4 +991,12 @@ export async function handleSupportTicketCategoryModalSubmit(
         support_ticket_channel,
         support_ticket_owner,
     );
+
+    await delay(30_000); // wait a bit before deleting the reply
+
+    try {
+        await interaction.deleteReply();
+    } catch {
+        // ignore any errors
+    }
 }
