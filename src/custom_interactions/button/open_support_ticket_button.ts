@@ -36,7 +36,7 @@ export default new CustomInteraction({
                             custom_id: 'support_category_selection_menu',
                             placeholder: 'Select a support category...',
                             options: support_categories.map((support_category) => ({
-                                value: support_category.modal_data.customId,
+                                value: support_category.id,
                                 label: support_category.name,
                                 description: support_category.description,
                             })),
