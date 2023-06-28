@@ -978,12 +978,22 @@ export async function handleSupportTicketCategoryModalSubmit(
 
     const support_ticket_channel = await createSupportTicketChannel(interaction.guild, interaction.member, support_category);
 
-    await interaction.editReply({
+    const modal_reply_message = await interaction.editReply({
         content: [
             `You selected ${support_category.name}.`,
-            `Go to ${support_ticket_channel} to continue.`,
+            `Go to ${Discord.channelMention(support_ticket_channel.id)} to continue.`,
         ].join('\n'),
     });
+
+    setTimeout(async () => {
+        try {
+            await interaction.deleteReply();
+            await interaction.message?.delete();
+            await modal_reply_message.delete();
+        } catch {
+            // ignore any errors
+        }
+    }, 30_000); // wait a bit to delete the replies
 
     await support_category.modal_handler(
         interaction,
@@ -991,12 +1001,4 @@ export async function handleSupportTicketCategoryModalSubmit(
         support_ticket_channel,
         support_ticket_owner,
     );
-
-    await delay(30_000); // wait a bit before deleting the reply
-
-    try {
-        await interaction.deleteReply();
-    } catch {
-        // ignore any errors
-    }
 }
