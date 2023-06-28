@@ -551,7 +551,12 @@ export const support_categories: SupportCategory[] = [
                             minLength: 1,
                             maxLength: 64,
                             required: true,
-                        }, {
+                        },
+                    ],
+                }, {
+                    type: Discord.ComponentType.ActionRow,
+                    components: [
+                        {
                             type: Discord.ComponentType.TextInput,
                             customId: 'group_owner_age',
                             style: Discord.TextInputStyle.Short,
@@ -559,7 +564,12 @@ export const support_categories: SupportCategory[] = [
                             minLength: 1,
                             maxLength: 4,
                             required: true,
-                        }, {
+                        },
+                    ],
+                }, {
+                    type: Discord.ComponentType.ActionRow,
+                    components: [
+                        {
                             type: Discord.ComponentType.TextInput,
                             customId: 'group_description',
                             style: Discord.TextInputStyle.Paragraph,
@@ -567,7 +577,12 @@ export const support_categories: SupportCategory[] = [
                             minLength: 128,
                             maxLength: 1024,
                             required: true,
-                        }, {
+                        },
+                    ],
+                }, {
+                    type: Discord.ComponentType.ActionRow,
+                    components: [
+                        {
                             type: Discord.ComponentType.TextInput,
                             customId: 'group_reason',
                             style: Discord.TextInputStyle.Paragraph,
@@ -575,7 +590,12 @@ export const support_categories: SupportCategory[] = [
                             minLength: 128,
                             maxLength: 1024,
                             required: true,
-                        }, {
+                        },
+                    ],
+                }, {
+                    type: Discord.ComponentType.ActionRow,
+                    components: [
+                        {
                             type: Discord.ComponentType.TextInput,
                             customId: 'group_social_links',
                             style: Discord.TextInputStyle.Paragraph,
