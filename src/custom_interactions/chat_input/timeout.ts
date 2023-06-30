@@ -155,7 +155,7 @@ export default new CustomInteraction({
                 `${member_to_timeout}`,
                 `You were put in timeout by ${staff_member} for ${duration / 60_000} minutes for:`,
                 '\`\`\`',
-                `${reason}`,
+                Discord.escapeMarkdown(reason),
                 '\`\`\`',
             ].join('\n'),
         };

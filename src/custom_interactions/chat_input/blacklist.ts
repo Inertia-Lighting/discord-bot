@@ -400,7 +400,7 @@ async function blacklistLookupSubcommand(
                     `**Epoch:** <t:${discord_friendly_timestamp}:R>`,
                     '**Reason:**',
                     '\`\`\`',
-                    db_user_blacklist_data.reason,
+                    Discord.escapeMarkdown(db_user_blacklist_data.reason),
                     '\`\`\`',
                 ].join('\n'),
             }),
