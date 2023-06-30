@@ -26,22 +26,6 @@ if (db_blacklisted_users_collection_name.length < 1) throw new Error('Environmen
 
 //------------------------------------------------------------//
 
-function editReplyToInteraction(
-    deferred_interaction: Discord.Interaction,
-    message_payload: Discord.BaseMessageOptions,
-) {
-    if (
-        deferred_interaction instanceof Discord.CommandInteraction ||
-        deferred_interaction instanceof Discord.MessageComponentInteraction
-    ) {
-        deferred_interaction.editReply(message_payload).catch(console.warn);
-    } else {
-        throw new Error('editReplyToInteraction(): deferred_interaction must be a valid Discord.Interaction to edit a reply for.');
-    }
-}
-
-//------------------------------------------------------------//
-
 async function fetchUserProductCodes(
     discord_user_id: string,
 ): Promise<string[]> {
@@ -66,7 +50,7 @@ async function fetchUserProductCodes(
 //------------------------------------------------------------//
 
 export async function userProfileHandler(
-    deferred_interaction: Discord.Interaction,
+    deferred_interaction: Discord.CommandInteraction | Discord.MessageComponentInteraction,
     discord_user_id: string,
 ) {
     const client = deferred_interaction.client;
@@ -80,7 +64,7 @@ export async function userProfileHandler(
     });
 
     if (!db_user_data) {
-        editReplyToInteraction(deferred_interaction, {
+        await deferred_interaction.editReply({
             embeds: [
                 CustomEmbed.from({
                     color: CustomEmbed.Color.Yellow,
@@ -94,7 +78,7 @@ export async function userProfileHandler(
                     ].join('\n'),
                 }),
             ],
-        });
+        }).catch(console.warn);
 
         return;
     }
@@ -139,7 +123,7 @@ export async function userProfileHandler(
         };
     });
 
-    editReplyToInteraction(deferred_interaction, {
+    await deferred_interaction.editReply({
         embeds: [
             ...(db_blacklisted_user_data ? [
                 CustomEmbed.from({

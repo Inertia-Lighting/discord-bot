@@ -22,6 +22,11 @@ export default new CustomInteraction({
                 type: Discord.ApplicationCommandOptionType.User,
                 description: 'The user to fetch the profile of, defaults to yourself.',
                 required: false,
+            }, {
+                name: 'ephemeral',
+                type: Discord.ApplicationCommandOptionType.Boolean,
+                description: 'Whether or not to send the profile as an ephemeral message.',
+                required: false,
             },
         ],
     },
@@ -34,7 +39,9 @@ export default new CustomInteraction({
         if (!interaction.inCachedGuild()) return;
         if (!interaction.channel) return;
 
-        await interaction.deferReply({ ephemeral: false });
+        const respond_as_ephemeral = interaction.options.getBoolean('ephemeral', false) ?? false; // default to false
+
+        await interaction.deferReply({ ephemeral: respond_as_ephemeral });
 
         const user = interaction.options.getUser('user', false) ?? interaction.user;
 

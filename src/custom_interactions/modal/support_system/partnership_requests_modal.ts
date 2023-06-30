@@ -11,7 +11,7 @@ import { SupportCategoryId, handleSupportTicketCategoryModalSubmit } from '@root
 //------------------------------------------------------------//
 
 export default new CustomInteraction({
-    identifier: 'support_issues_modal',
+    identifier: 'support_system_partnership_request_modal',
     type: Discord.InteractionType.ModalSubmit,
     data: undefined,
     metadata: {
@@ -22,6 +22,6 @@ export default new CustomInteraction({
         if (!interaction.inCachedGuild()) return;
         if (!interaction.isModalSubmit()) return;
 
-        await handleSupportTicketCategoryModalSubmit(interaction, SupportCategoryId.Issues);
+        await handleSupportTicketCategoryModalSubmit(interaction, SupportCategoryId.PartnershipRequests);
     },
 });
