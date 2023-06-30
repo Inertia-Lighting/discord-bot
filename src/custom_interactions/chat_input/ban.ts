@@ -15,12 +15,12 @@ export default new CustomInteraction({
     type: Discord.InteractionType.ApplicationCommand,
     data: {
         type: Discord.ApplicationCommandType.ChatInput,
-        description: 'Bans a member from the guild.',
+        description: 'Bans a user from the guild.',
         options: [
             {
-                name: 'member',
+                name: 'user',
                 type: Discord.ApplicationCommandOptionType.User,
-                description: 'The member who you want to ban.',
+                description: 'The user who you want to ban.',
                 required: true,
             }, {
                 name: 'reason',
@@ -42,7 +42,7 @@ export default new CustomInteraction({
         await interaction.deferReply({ ephemeral: false });
 
         const staff_member = interaction.member;
-        const member_to_ban = interaction.options.getMember('member');
+        const user_to_ban = interaction.options.getUser('user', true);
         const ban_reason = interaction.options.getString('reason', true);
 
         /* handle when a reason is not specified */
@@ -55,16 +55,16 @@ export default new CustomInteraction({
         }
 
         /* handle when a member is not specified */
-        if (!member_to_ban) {
+        if (!user_to_ban) {
             await interaction.editReply({
-                content: 'You must specify a member to ban!',
+                content: 'You must specify a user to ban!',
             }).catch(console.trace);
 
             return;
         }
 
         /* handle when a staff member specifies themself */
-        if (staff_member.id === member_to_ban.id) {
+        if (staff_member.id === user_to_ban.id) {
             await interaction.editReply({
                 content: 'You aren\'t allowed to ban yourself!',
             }).catch(console.trace);
@@ -73,7 +73,7 @@ export default new CustomInteraction({
         }
 
         /* handle when a staff member specifies this bot */
-        if (member_to_ban.id === discord_client.user.id) {
+        if (user_to_ban.id === discord_client.user.id) {
             await interaction.editReply({
                 content: 'You aren\'t allowed to ban me!',
             }).catch(console.trace);
@@ -82,7 +82,7 @@ export default new CustomInteraction({
         }
 
         /* handle when a staff member specifies the guild owner */
-        if (member_to_ban.id === interaction.guild.ownerId) {
+        if (user_to_ban.id === interaction.guild.ownerId) {
             await interaction.editReply({
                 content: 'You aren\'t allowed to ban the owner of this server!',
             }).catch(console.trace);
@@ -90,18 +90,21 @@ export default new CustomInteraction({
             return;
         }
 
-        /* handle when a staff member tries to moderate someone with an equal/higher role */
-        if (staff_member.roles.highest.comparePositionTo(member_to_ban.roles.highest) <= 0) {
-            await interaction.editReply({
-                content: 'You aren\'t allowed to ban someone with an equal/higher role!',
-            }).catch(console.trace);
+        const member_to_ban = await interaction.guild.members.fetch(user_to_ban).catch(() => undefined);
+        if (member_to_ban) {
+            /* handle when a staff member tries to moderate someone with an equal/higher role */
+            if (staff_member.roles.highest.comparePositionTo(member_to_ban.roles.highest) <= 0) {
+                await interaction.editReply({
+                    content: 'You aren\'t allowed to ban someone with an equal/higher role!',
+                }).catch(console.trace);
 
-            return;
+                return;
+            }
         }
 
         const moderation_message_options = {
             content: [
-                `${member_to_ban}`,
+                `${user_to_ban}`,
                 `You were banned from the Inertia Lighting discord by ${staff_member.user} for:`,
                 '\`\`\`',
                 Discord.escapeMarkdown(ban_reason),
@@ -111,7 +114,7 @@ export default new CustomInteraction({
 
         /* dm the member */
         try {
-            const dm_channel = await member_to_ban.createDM();
+            const dm_channel = await user_to_ban.createDM();
             await dm_channel.send(moderation_message_options);
         } catch {
             // ignore any errors since the member may have their dms disabled or blocked
@@ -123,12 +126,15 @@ export default new CustomInteraction({
 
         /* perform the moderation action on the member */
         try {
-            await member_to_ban.ban({ reason: ban_reason });
+            await interaction.guild.members.ban(user_to_ban, {
+                deleteMessageSeconds: 0,
+                reason: ban_reason,
+            });
         } catch (error) {
             console.trace(error);
 
             await interaction.editReply({
-                content: 'Failed to ban the specified member!',
+                content: 'Failed to ban the specified user!',
             }).catch(console.warn);
 
             return;
@@ -136,7 +142,7 @@ export default new CustomInteraction({
 
         /* add the moderation action to the database */
         const successfully_logged_to_database = await addModerationActionToDatabase({
-            discord_user_id: member_to_ban.id,
+            discord_user_id: user_to_ban.id,
         }, {
             type: ModerationActionType.Ban,
             epoch: Date.now(),
