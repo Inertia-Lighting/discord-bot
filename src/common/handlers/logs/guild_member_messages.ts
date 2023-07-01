@@ -62,11 +62,11 @@ export async function guildMemberMessageUpdateLogger(
                         inline: false,
                     }, {
                         name: 'Content Before',
-                        value: old_message.content.length > 0 ? ellipseString(Discord.escapeMarkdown(old_message.content), 2048) : '\`n/a\`',
+                        value: old_message.content.length > 0 ? ellipseString(Discord.escapeMarkdown(old_message.content), 1024) : '\`n/a\`',
                         inline: false,
                     }, {
                         name: 'Content After',
-                        value: new_message.content.length > 0 ? ellipseString(Discord.escapeMarkdown(new_message.content), 2048) : '\`n/a\`',
+                        value: new_message.content.length > 0 ? ellipseString(Discord.escapeMarkdown(new_message.content), 1024) : '\`n/a\`',
                         inline: false,
                     }, {
                         name: 'Attachments Before',
@@ -119,7 +119,7 @@ export async function guildMemberMessageDeleteLogger(
                         value: `<t:${message_delete_timestamp}:F> (<t:${message_delete_timestamp}:R>)`,
                     }, {
                         name: 'Content',
-                        value: message.content.length > 0 ? ellipseString(Discord.escapeMarkdown(message.content), 2048) : '\`n/a\`',
+                        value: message.content.length > 0 ? ellipseString(Discord.escapeMarkdown(message.content), 1024) : '\`n/a\`',
                         inline: false,
                     }, {
                         name: 'Attachments',

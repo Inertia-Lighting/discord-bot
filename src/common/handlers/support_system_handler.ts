@@ -652,7 +652,7 @@ export const support_categories: SupportCategory[] = [
         name: 'Other & Quick Questions',
         description: 'For all other forms of support.',
         staff_role_ids: [
-            bot_database_support_staff_role_id,
+            bot_other_support_staff_role_id,
         ],
         modal_data: {
             title: 'Other Questions',
@@ -665,8 +665,8 @@ export const support_categories: SupportCategory[] = [
                             type: Discord.ComponentType.TextInput,
                             customId: 'question',
                             style: Discord.TextInputStyle.Paragraph,
-                            label: 'What can we help you with?',
-                            minLength: 16,
+                            label: 'How can we help? (be detailed)',
+                            minLength: 32,
                             maxLength: 1024,
                             required: true,
                         },
