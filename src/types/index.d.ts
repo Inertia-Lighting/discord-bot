@@ -25,8 +25,6 @@ export interface DbProductData {
     description: string;
     price_in_usd: string;
     price_in_robux: number;
-    /** @deprecated use `price_in_lumens` instead */
-    price_in_karma: number;
     price_in_lumens: number;
     roblox_assets: {
         product_preview_image?: string;
@@ -50,8 +48,6 @@ export interface DbUserProducts {
 export interface DbUserData {
     _id: MongoDB.ObjectId;
     identity: DbUserIdentity;
-    /** @deprecated use `lumens` instead */
-    karma: number;
     lumens: number;
     products: DbUserProducts;
 }
