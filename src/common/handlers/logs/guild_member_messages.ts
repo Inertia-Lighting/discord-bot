@@ -34,6 +34,34 @@ export async function guildMemberMessageUpdateLogger(
 
     const message_update_timestamp = getMarkdownFriendlyTimestamp(new_message.editedTimestamp ?? Date.now());
 
+    const old_message_user_replied_to = old_message.mentions.repliedUser;
+    const old_user_mentions: string[] = [
+        ...(old_message_user_replied_to ? [
+            Discord.userMention(old_message_user_replied_to.id),
+        ] : []),
+        ...old_message.mentions.users.map(
+            (user) => Discord.userMention(user.id)
+        ),
+    ].slice(0, 10); // Limit to 10 mentions
+
+    const new_message_user_replied_to = new_message.mentions.repliedUser;
+    const new_user_mentions: string[] = [
+        ...(new_message_user_replied_to ? [
+            Discord.userMention(new_message_user_replied_to.id),
+        ] : []),
+        ...new_message.mentions.users.map(
+            (user) => Discord.userMention(user.id)
+        ),
+    ].slice(0, 10); // Limit to 10 mentions
+
+    const old_message_stickers_list = old_message.stickers.map(
+        (sticker) => `\`${sticker.name}\` - [link](${sticker.url})`
+    );
+
+    const new_message_stickers_list = new_message.stickers.map(
+        (sticker) => `\`${sticker.name}\` - [link](${sticker.url})`
+    );
+
     const old_message_attachments_list = old_message.attachments.map(
         (attachment) => `\`${attachment.name}\` - [link](${attachment.url})`
     );
@@ -69,6 +97,22 @@ export async function guildMemberMessageUpdateLogger(
                         value: new_message.content.length > 0 ? ellipseString(Discord.escapeMarkdown(new_message.content), 1024) : '\`n/a\`',
                         inline: false,
                     }, {
+                        name: 'Mentions Before',
+                        value: old_user_mentions.length > 0 ? old_user_mentions.join(' - ') : '\`n/a\`',
+                        inline: false,
+                    }, {
+                        name: 'Mentions After',
+                        value: new_user_mentions.length > 0 ? new_user_mentions.join(' - ') : '\`n/a\`',
+                        inline: false,
+                    }, {
+                        name: 'Stickers Before',
+                        value: old_message_stickers_list.length > 0 ? old_message_stickers_list.join('\n') : '\`n/a\`',
+                        inline: false,
+                    }, {
+                        name: 'Stickers After',
+                        value: new_message_stickers_list.length > 0 ? new_message_stickers_list.join('\n') : '\`n/a\`',
+                        inline: false,
+                    }, {
                         name: 'Attachments Before',
                         value: old_message_attachments_list.length > 0 ? old_message_attachments_list.join('\n') : '\`n/a\`',
                         inline: false,
@@ -96,6 +140,18 @@ export async function guildMemberMessageDeleteLogger(
 
     const message_delete_timestamp = getMarkdownFriendlyTimestamp(Date.now());
 
+    const message_user_replied_to = message.mentions.repliedUser;
+    const message_user_mentions: string[] = [
+        ...(message_user_replied_to ? [
+            Discord.userMention(message_user_replied_to.id),
+        ] : []),
+        ...message.mentions.users.map((user) => Discord.userMention(user.id)),
+    ].slice(0, 10); // Limit to 10 mentions
+
+    const message_stickers_list = message.stickers.map(
+        (sticker) => `\`${sticker.name}\` - [link](${sticker.url})`
+    );
+
     const message_attachments_list = message.attachments.map(
         (attachment) => `\`${attachment.name}\` - [link](${attachment.url})`
     );
@@ -117,9 +173,18 @@ export async function guildMemberMessageDeleteLogger(
                     }, {
                         name: 'Deleted',
                         value: `<t:${message_delete_timestamp}:F> (<t:${message_delete_timestamp}:R>)`,
+                        inline: false,
                     }, {
                         name: 'Content',
                         value: message.content.length > 0 ? ellipseString(Discord.escapeMarkdown(message.content), 1024) : '\`n/a\`',
+                        inline: false,
+                    }, {
+                        name: 'Mentions',
+                        value: message_user_mentions.length > 0 ? message_user_mentions.join(' - ') : '\`n/a\`',
+                        inline: false,
+                    }, {
+                        name: 'Stickers',
+                        value: message_stickers_list.length > 0 ? message_stickers_list.join('\n') : '\`n/a\`',
                         inline: false,
                     }, {
                         name: 'Attachments',
