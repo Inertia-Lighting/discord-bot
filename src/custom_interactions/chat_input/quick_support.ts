@@ -151,7 +151,6 @@ async function quickSupportChatInputHandler(
     await interaction.editReply({
         embeds: [
             CustomEmbed.from({
-                color: 0x60A0FF,
                 author: {
                     icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
                     name: 'Inertia Lighting | Quick Support System',

@@ -8,6 +8,8 @@ import { compareTwoStrings } from 'string-similarity';
 
 import { go_mongo_db } from '@root/common/mongo/mongo';
 
+import { CustomEmbed } from '@root/common/message';
+
 import { clampNumber } from '@root/utilities';
 
 //------------------------------------------------------------//
@@ -37,7 +39,7 @@ async function updateQuickSupportTopics() {
     }
 }
 setImmediate(() => updateQuickSupportTopics());
-setInterval(() => updateQuickSupportTopics(), 15 * 60_000); // every 15 minutes
+setInterval(() => updateQuickSupportTopics(), 5 * 60_000); // every 5 minutes
 
 //------------------------------------------------------------//
 
@@ -100,17 +102,18 @@ export async function automatedQuickSupportHandler(
         content: [
             `I found ${matching_qs_topics.length} quick support topic(s) that might be related to your message!`,
         ].join('\n'),
-        embeds: matching_qs_topics.map(quick_support_topic => ({
-            color: 0x60A0FF,
-            author: {
-                iconURL: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
-                name: 'Inertia Lighting | Automatic Quick Support',
-            },
-            title: quick_support_topic.title,
-            description: quick_support_topic.support_contents,
-            footer: {
-                text: `Automated Confidence: ${clampNumber(quick_support_topic.similarity_score * 100, 0, 100).toFixed(2)}%`,
-            },
-        })),
+        embeds: matching_qs_topics.map(
+            (quick_support_topic) => CustomEmbed.from({
+                author: {
+                    icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
+                    name: 'Inertia Lighting | Automatic Quick Support',
+                },
+                title: quick_support_topic.title,
+                description: quick_support_topic.support_contents,
+                footer: {
+                    text: `Automated Confidence: ${clampNumber(quick_support_topic.similarity_score * 100, 0, 100).toFixed(2)}%`,
+                },
+            })
+        ),
     }).catch(console.warn);
 }
