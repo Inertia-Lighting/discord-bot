@@ -220,7 +220,7 @@ export const support_categories: SupportCategory[] = [
             });
             await support_ticket_channel.send({
                 content: [
-                    `${Discord.userMention(support_ticket_owner.id)}, As an initial troubleshooting step, please follow the instructions below while you wait for a response from our support staff.`,
+                    `${Discord.userMention(support_ticket_owner.id)}, as an initial troubleshooting step, please follow the instructions below while you wait for a response from our support staff.`,
                     '',
                     '`StreamingEnabled` is not compatible with most of our products.',
                     '',
