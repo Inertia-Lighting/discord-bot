@@ -87,6 +87,9 @@ export default new CustomInteraction({
         required_access_level: CustomInteractionAccessLevel.CustomerService, /** @todo make this available to admins once ready */
     },
     handler: async (discord_client, interaction) => {
+        const logChannel = discord_client.channels.cache.get('1135380929532133426');
+        if (!logChannel) return;
+        if (!logChannel.isTextBased()) return;
         if (!interaction.isChatInputCommand()) return;
         if (!interaction.inCachedGuild()) return;
 
@@ -229,6 +232,7 @@ export default new CustomInteraction({
 
             return;
         }
+
         //Get the discord user from the DB
         const recipient = discord_client.users.cache.get(db_user_data.identity.discord_user_id);
         if (recipient && !force) {
@@ -282,6 +286,7 @@ export default new CustomInteraction({
                             });
 
                             await interaction.editReply({ embeds: [resEmbed] });
+                            return;
                         } catch (e) {
                             const resEmbed = CustomEmbed.from({
                                 color: CustomEmbed.Color.Violet,
@@ -320,19 +325,36 @@ export default new CustomInteraction({
                 await interaction.editReply({ embeds: [resEmbed2] });
                 return;
             }
+
+        //If the force argument is used as well
         } else if (recipient && force) {
             try {
+                //Make sure both exist
                 if (update_filter && updatedDocument) {
                     go_mongo_db.update(db_database_name,
                         db_users_collection_name,
                         update_filter,
                         updatedDocument);
+                } else {
+                    const resEmbed2 = CustomEmbed.from({
+                        color: CustomEmbed.Color.Violet,
+                        title: 'Inertia Lighting | Identity Manager',
+                        description: 'There was an error setting the user\'s identity',
+                    });
+                    await interaction.editReply({ embeds: [resEmbed2] });
+                    return;
                 }
                 const resEmbed = CustomEmbed.from({
                     color: CustomEmbed.Color.Green,
                     title: 'Inertia Lighting | Identity Manager',
                     description: `Updated ${recipient.username}\'s ${new_id_type} id to ${new_id}`,
                 });
+                const logEmbed = CustomEmbed.from({
+                    color: CustomEmbed.Color.Yellow,
+                    title: 'Inertia Lighting | Identity Manage',
+                    description: `${interaction.user.username} update ${recipient.username}'s ${new_id_type} id to \`\`${new_id}\`\``,
+                });
+                logChannel.send({ embeds: [logEmbed] });
                 await interaction.editReply({ embeds: [resEmbed] });
                 return;
             } catch (e) {
@@ -344,6 +366,16 @@ export default new CustomInteraction({
                 await interaction.editReply({ embeds: [resEmbed] });
                 return;
             }
+
+        //If the user cannot be found.
+        } else {
+                const resEmbed = CustomEmbed.from({
+                    color: CustomEmbed.Color.Violet,
+                    title: 'Inertia Lighting | Identity Manager',
+                    description: 'Could not find the user on Discord. ',
+                });
+                interaction.editReply({ embeds: [resEmbed] });
+                return;
         }
     },
 });
