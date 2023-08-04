@@ -4,6 +4,8 @@
 
 import * as Discord from 'discord.js';
 
+import { DbUserData } from '@root/types';
+
 import { go_mongo_db } from '@root/common/mongo/mongo';
 
 import { CustomEmbed } from '@root/common/message';
@@ -18,11 +20,22 @@ if (db_database_name.length < 1) throw new Error('Environment variable: MONGO_DA
 const db_users_collection_name = `${process.env.MONGO_USERS_COLLECTION_NAME ?? ''}`;
 if (db_users_collection_name.length < 1) throw new Error('Environment variable: MONGO_USERS_COLLECTION_NAME; is not set correctly.');
 
+const bot_support_staff_database_role_id = `${process.env.BOT_SUPPORT_STAFF_DATABASE_ROLE_ID ?? ''}`;
+if (bot_support_staff_database_role_id.length < 1) throw new Error('Environment variable: BOT_SUPPORT_STAFF_DATABASE_ROLE_ID; is not set correctly.');
 
-enum IdType {
+const bot_logging_identity_manager_channel_id = `${process.env.BOT_LOGGING_IDENTITY_MANAGER_CHANNEL_ID ?? ''}`;
+if (bot_logging_identity_manager_channel_id.length < 1) throw new Error('Environment variable: BOT_LOGGING_IDENTITY_MANAGER_CHANNEL_ID; is not set correctly.');
+
+//------------------------------------------------------------//
+
+enum IdentityType {
     Roblox = 'roblox',
-    Discord = 'discord'
+    Discord = 'discord',
 }
+
+//------------------------------------------------------------//
+
+const regex_user_id_filter = /^\d+$/;
 
 //------------------------------------------------------------//
 
@@ -36,80 +49,61 @@ export default new CustomInteraction({
             {
                 name: 'current_id_type',
                 type: Discord.ApplicationCommandOptionType.String,
-                description: 'Type of id that will be used currently identify the user',
+                description: 'The identity type to find and modify.',
                 choices: [
                     {
                         name: 'Discord',
-                        value: 'discord',
+                        value: IdentityType.Discord,
                     },
                     {
                         name: 'Roblox',
-                        value: 'roblox',
+                        value: IdentityType.Roblox,
                     },
                 ],
                 required: true,
             }, {
                 name: 'current_id',
                 type: Discord.ApplicationCommandOptionType.String,
-                description: 'The current Id of the user you wish to modify',
+                description: 'The identity id to find and modify.',
                 required: true,
             }, {
                 name: 'new_id_type',
                 type: Discord.ApplicationCommandOptionType.String,
-                description: 'The type of the new identity you are going to assign to the user',
+                description: 'The identity type to modify.',
                 choices: [
                     {
                         name: 'Discord',
-                        value: 'discord',
+                        value: IdentityType.Discord,
                     },
                     {
                         name: 'Roblox',
-                        value: 'roblox',
+                        value: IdentityType.Roblox,
                     },
                 ],
                 required: true,
             }, {
                 name: 'new_id',
                 type: Discord.ApplicationCommandOptionType.String,
-                description: 'The new identity of the user.',
+                description: 'The identity id to set.',
                 required: true,
-            },
-            {
-                name: 'force',
-                type: Discord.ApplicationCommandOptionType.Boolean,
-                description: 'Would you like to force this change upon the user? (Administrators)',
-                required: false,
             },
         ],
     },
     metadata: {
         required_run_context: CustomInteractionRunContext.Guild,
-        required_access_level: CustomInteractionAccessLevel.CustomerService, /** @todo make this available to admins once ready */
+        required_access_level: CustomInteractionAccessLevel.CustomerService,
     },
     handler: async (discord_client, interaction) => {
-        const logChannel = discord_client.channels.cache.get('1135380929532133426');
-        if (!logChannel) return;
-        if (!logChannel.isTextBased()) return;
         if (!interaction.isChatInputCommand()) return;
         if (!interaction.inCachedGuild()) return;
 
         await interaction.deferReply();
 
-        const current_id_type = interaction.options.getString('current_id_type', true) as IdType;
-        const current_id = interaction.options.getString('current_id', true);
-        const new_id_type = interaction.options.getString('new_id_type', true) as IdType;
-        const new_id = interaction.options.getString('new_id', true);
-        const force = interaction.options.getBoolean('force', false); //Skips the user confirmation
-
-        let update_filter; //The filter used when updating the user's identity
-        let updatedDocument; //The document used when updating document
-        let db_user_data; //Data of the target user
-
-        //If the force argument is used and it is true, check if the initiator is an administrator
-        if (!process.env.BOT_SUPPORT_STAFF_DATABASE_ROLE_ID) return;
-        const staff_member_is_permitted = interaction.member.roles.cache.has(process.env.BOT_SUPPORT_STAFF_DATABASE_ROLE_ID);
+        // ensure the user running this command is authorized to do so
+        const staff_member = interaction.member;
+        const staff_member_is_permitted = staff_member.roles.cache.has(bot_support_staff_database_role_id);
         if (!staff_member_is_permitted) {
-            interaction.editReply({
+            await interaction.editReply({
                 embeds: [
                     CustomEmbed.from({
                         color: CustomEmbed.Color.Violet,
@@ -117,265 +111,280 @@ export default new CustomInteraction({
                         description: 'You aren\'t allowed to use this command!',
                     }),
                 ],
-            }).catch(console.warn);
+            });
 
             return;
         }
-        //Check if current_id_type and new_id_type are the same to try to stop errors;
-        if (current_id_type === new_id_type) {
+
+        // ensure the logging channel exists and is text-based
+        const logging_channel = await interaction.guild.channels.fetch(bot_logging_identity_manager_channel_id);
+        if (!logging_channel) throw new Error('Unable to find the identity manager logging channel!');
+        if (!logging_channel.isTextBased()) throw new Error('The identity manager logging channel is not text-based!');
+
+        // get the specified command options
+        const current_id_type = interaction.options.getString('current_id_type', true) as IdentityType;
+        const current_id = interaction.options.getString('current_id', true);
+        const new_id_type = interaction.options.getString('new_id_type', true) as IdentityType;
+        const new_id = interaction.options.getString('new_id', true);
+
+        // check if user-specified `current_id_type` is a valid `IdentityType`
+        if (!Object.values(IdentityType).includes(current_id_type)) {
             await interaction.editReply({
                 embeds: [
                     CustomEmbed.from({
                         color: CustomEmbed.Color.Yellow,
                         title: 'Inertia Lighting | Identity Manager',
-                        description: '\`\`new_id_type\`\` and \`\`current_id_type\`\` cannot be the same.',
+                        description: `Invalid Current Id Type: \`${current_id_type}\``,
                     }),
                 ],
-            }).catch(console.warn);
+            });
 
             return;
         }
 
-        //Check if type is valid
-        if (!Object.values(IdType).includes(current_id_type)) {
+        // check if the user-specified `current_id` is valid
+        const current_id_is_valid = regex_user_id_filter.test(current_id);
+        if (current_id_is_valid) {
             await interaction.editReply({
                 embeds: [
                     CustomEmbed.from({
                         color: CustomEmbed.Color.Yellow,
                         title: 'Inertia Lighting | Identity Manager',
-                        description: `Invalid type: \`${current_id_type}\``,
+                        description: `Invalid Current Id: \`${current_id}\``,
                     }),
                 ],
-            }).catch(console.warn);
+            });
 
             return;
         }
 
-        //Change update_filter based on current_id_type
+        // check if user-specified `new_id_type` is a valid `IdentityType`
+        if (!Object.values(IdentityType).includes(new_id_type)) {
+            await interaction.editReply({
+                embeds: [
+                    CustomEmbed.from({
+                        color: CustomEmbed.Color.Yellow,
+                        title: 'Inertia Lighting | Identity Manager',
+                        description: `Invalid New Id Type: \`${new_id_type}\``,
+                    }),
+                ],
+            });
+
+            return;
+        }
+
+        // check if user-specified `new_id` is valid
+        const new_id_is_valid = regex_user_id_filter.test(new_id);
+        if (new_id_is_valid) {
+            await interaction.editReply({
+                embeds: [
+                    CustomEmbed.from({
+                        color: CustomEmbed.Color.Yellow,
+                        title: 'Inertia Lighting | Identity Manager',
+                        description: `Invalid New Id: \`${new_id}\``,
+                    }),
+                ],
+            });
+
+            return;
+        }
+
+        // create the update filter based on the provided information
+        let user_update_filter: {
+            'identity.discord_user_id': string;
+        } | {
+            'identity.roblox_user_id': string;
+        };
         switch (current_id_type) {
-            case IdType.Discord: {
-                db_user_data = await go_mongo_db.find(db_database_name, db_users_collection_name, {
+            case IdentityType.Discord: {
+                user_update_filter = {
                     'identity.discord_user_id': current_id,
-                }, {
-                    projection: {
-                        '_id': false,
-                    },
-                }).then(
-                    (db_user_data_documents) => db_user_data_documents.at(0), // grab the first one
-                ).catch(
-                    (error) => {
-                        console.trace(error);
+                };
 
-                        return null;
-                    }
-                );
-                update_filter = { 'identity.discord_user_id': current_id };
                 break;
             }
-            case IdType.Roblox: {
-                db_user_data = await go_mongo_db.find(db_database_name, db_users_collection_name, {
+
+            case IdentityType.Roblox: {
+                user_update_filter = {
                     'identity.roblox_user_id': current_id,
-                }, {
-                    projection: {
-                        '_id': false,
-                    },
-                }).then(
-                    (db_user_data_documents) => db_user_data_documents.at(0), // grab the first one
-                ).catch(
-                    (error) => {
-                        console.trace(error);
+                };
 
-                        return null;
-                    }
-                );
-                update_filter = { 'identity.roblox_user_id': current_id };
                 break;
             }
+
             default: {
-                break;
+                throw new Error(`Mange User Identity: Invalid current_id_type: ${current_id_type}`);
             }
         }
 
-        //Change Updated Document based on new_id_type
+        // fetch the user document to modify from the database
+        const [ db_user_data_before_update ] = await go_mongo_db.find(db_database_name, db_users_collection_name, user_update_filter, {
+            projection: {
+                '_id': false,
+            },
+        }) as Exclude<DbUserData, '_id'>[];
+        if (!db_user_data_before_update) {
+            await interaction.editReply({
+                embeds: [
+                    CustomEmbed.from({
+                        color: CustomEmbed.Color.Yellow,
+                        title: 'Inertia Lighting | Identity Manager',
+                        description: `Unable to find user in database matching identity: \`${current_id_type}\` \`${current_id}\``,
+                    }),
+                ],
+            });
+
+            return;
+        }
+
+        // create the update filter and update document based on the provided information
+        let db_user_data_update_filter: {
+            'identity.discord_user_id': string;
+        } | {
+            'identity.roblox_user_id': string;
+        };
+        let db_user_data_update_document: {
+            '$set': {
+                'identity.discord_user_id': string;
+            };
+        } | {
+            '$set': {
+                'identity.roblox_user_id': string;
+            };
+        };
         switch (new_id_type) {
-            case IdType.Discord: {
-                updatedDocument = {
+            case IdentityType.Discord: {
+                db_user_data_update_filter = {
+                    'identity.discord_user_id': new_id,
+                };
+
+                db_user_data_update_document = {
                     '$set': {
                         'identity.discord_user_id': new_id,
                     },
                 };
+
                 break;
             }
-            case IdType.Roblox: {
-                updatedDocument = {
+
+            case IdentityType.Roblox: {
+                db_user_data_update_filter = {
+                    'identity.roblox_user_id': new_id,
+                };
+
+                db_user_data_update_document = {
                     '$set': {
                         'identity.roblox_user_id': new_id,
                     },
                 };
+
                 break;
             }
+
             default: {
-                break;
+                throw new Error(`Mange User Identity: Invalid new_id_type: ${new_id_type}`);
             }
         }
-        //Check if db_user_data exists
-        if (!db_user_data) {
+
+        // ensure that the new identity is not already in the database
+        const [ db_user_data_with_new_identity ] = await go_mongo_db.find(db_database_name, db_users_collection_name, db_user_data_update_filter, {
+            projection: {
+                '_id': false,
+            },
+        }) as Exclude<DbUserData, '_id'>[];
+        if (db_user_data_with_new_identity) {
             await interaction.editReply({
                 embeds: [
                     CustomEmbed.from({
-                        color: CustomEmbed.Color.Violet,
+                        color: CustomEmbed.Color.Red,
                         title: 'Inertia Lighting | Identity Manager',
-                        description: `Did not find a user matching \`${current_id}\` in the database.`,
+                        description: [
+                            'Specified new identity is already in the database.',
+                            '',
+                            '**Identity:**',
+                            '```json',
+                            JSON.stringify(db_user_data_with_new_identity.identity, null, 4),
+                            '```',
+                        ].join('\n'),
                     }),
                 ],
-            }).catch(console.warn);
+            });
 
             return;
         }
 
-        //Get the discord user from the DB
-        const recipient = discord_client.users.cache.get(db_user_data.identity.discord_user_id);
-        if (recipient && !force) {
-            const DMChannel = await recipient.createDM();
-            const confirm = new Discord.ButtonBuilder({
-                custom_id: 'confirm',
-                label: 'Confirm identity change',
-                style: Discord.ButtonStyle.Success,
-            });
-            const reject = new Discord.ButtonBuilder({
-                custom_id: 'reject',
-                label: 'Reject identity change',
-                style: Discord.ButtonStyle.Danger,
-            });
-            const buttons = new Discord.ActionRowBuilder<Discord.ButtonBuilder>({
-                components: [confirm, reject],
-            });
-            const expireDate = Date.now() + 120000;
-            const reqEmbed = CustomEmbed.from({
-                color: CustomEmbed.Color.Blue,
-                title: 'Inertia Lighting | Identity Manager',
-                description: `${interaction.user.username} would like to update your ${new_id_type} id to \`${new_id}\` \n Expires in <t:${expireDate}:R>`,
-            });
-            const sent = await DMChannel.send({ embeds: [reqEmbed], components: [buttons] }).catch(() => {
-                const resEmbed = CustomEmbed.from({
-                    color: CustomEmbed.Color.Violet,
-                    title: 'Inertia Lighting | Identity Manager',
-                    description: `Could not DM ${recipient.username} confirmation. (Ensure that the user can receive DMs.),`,
-                });
-                return interaction.editReply({ embeds: [resEmbed] });
-            });
-            try {
-                const response = await sent.awaitMessageComponent({
-                    time: 120000,
-                });
+        // attempt to update the user's identity
+        try {
+            await go_mongo_db.update(db_database_name, db_users_collection_name, user_update_filter, db_user_data_update_document);
+        } catch (error: unknown) {
+            console.trace('Failed to update the user\'s identity:', error);
 
-                switch (response.customId) {
-                    case 'confirm': {
-                        try {
-                            // eslint-disable-next-line max-depth
-                            if (update_filter && updatedDocument) {
-                                go_mongo_db.update(db_database_name,
-                                    db_users_collection_name,
-                                    update_filter,
-                                    updatedDocument);
-                            }
-                            const resEmbed = CustomEmbed.from({
-                                title: 'Success',
-                                color: CustomEmbed.Color.Green,
-                                description: `Updated ${recipient.username}\'s ${new_id_type} id to ${new_id}`,
-                            });
-
-                            await interaction.editReply({ embeds: [resEmbed] });
-                            return;
-                        } catch (e) {
-                            const resEmbed = CustomEmbed.from({
-                                color: CustomEmbed.Color.Violet,
-                                title: 'Inertia Lighting | Identity Manager',
-                                description: `Error setting identity: \`\`\`${e}\`\`\``,
-                            });
-                            await interaction.editReply({ embeds: [resEmbed] });
-                        }
-                        break;
-                    }
-                    case 'reject': {
-                        const resEmbed = CustomEmbed.from({
-                            color: CustomEmbed.Color.Violet,
-                            title: 'Inertia Lighting | Identity Manager',
-                            description: 'User rejected request.',
-                        });
-                        await interaction.editReply({ embeds: [resEmbed] });
-                        break;
-                    }
-                    default: {
-                        break;
-                    }
-                }
-            } catch (e) {
-                const resEmbed1 = CustomEmbed.from({
-                    color: CustomEmbed.Color.Violet,
-                    title: 'Inertia Lighting | Identity Manager',
-                    description: 'Request expired.',
-                });
-                const resEmbed2 = CustomEmbed.from({
-                    color: CustomEmbed.Color.Violet,
-                    title: 'Inertia Lighting | Identity Manager',
-                    description: 'User did not respond in time.',
-                });
-                await sent.edit({ embeds: [resEmbed1] });
-                await interaction.editReply({ embeds: [resEmbed2] });
-                return;
-            }
-
-        //If the force argument is used as well
-        } else if (recipient && force) {
-            try {
-                //Make sure both exist
-                if (update_filter && updatedDocument) {
-                    go_mongo_db.update(db_database_name,
-                        db_users_collection_name,
-                        update_filter,
-                        updatedDocument);
-                } else {
-                    const resEmbed2 = CustomEmbed.from({
-                        color: CustomEmbed.Color.Violet,
+            await interaction.editReply({
+                embeds: [
+                    CustomEmbed.from({
+                        color: CustomEmbed.Color.Red,
                         title: 'Inertia Lighting | Identity Manager',
-                        description: 'There was an error setting the user\'s identity',
-                    });
-                    await interaction.editReply({ embeds: [resEmbed2] });
-                    return;
-                }
-                const resEmbed = CustomEmbed.from({
+                        description: [
+                            'Failed to update the user\'s identity.',
+                            '',
+                            '```',
+                            `${error}`.slice(0, 512), // limit the error message to 512 characters
+                            '```',
+                            '',
+                            'Common reasons for this error:',
+                            '- The new identity is already in the database.',
+                        ].join('\n'),
+                    }),
+                ],
+            });
+
+            return;
+        }
+
+        // send a success message
+        await interaction.editReply({
+            embeds: [
+                CustomEmbed.from({
                     color: CustomEmbed.Color.Green,
                     title: 'Inertia Lighting | Identity Manager',
-                    description: `Updated ${recipient.username}\'s ${new_id_type} id to ${new_id}`,
-                });
-                const logEmbed = CustomEmbed.from({
-                    color: CustomEmbed.Color.Yellow,
-                    title: 'Inertia Lighting | Identity Manage',
-                    description: `${interaction.user.username} update ${recipient.username}'s ${new_id_type} id to \`\`${new_id}\`\``,
-                });
-                logChannel.send({ embeds: [logEmbed] });
-                await interaction.editReply({ embeds: [resEmbed] });
-                return;
-            } catch (e) {
-                const resEmbed = CustomEmbed.from({
-                    color: CustomEmbed.Color.Violet,
-                    title: 'Inertia Lighting | Identity Manager',
-                    description: `Error setting identity: \`\`\`${e}\`\`\``,
-                });
-                await interaction.editReply({ embeds: [resEmbed] });
-                return;
-            }
+                    description: [
+                        'Successfully updated the user\'s identity.',
+                        '',
+                        '**Identity Before:**',
+                        '```json',
+                        JSON.stringify(db_user_data_before_update.identity, null, 4),
+                        '```',
+                        '',
+                        '**Changes Made:**',
+                        '```json',
+                        JSON.stringify(db_user_data_update_document, null, 4),
+                        '```',
+                    ].join('\n'),
+                }),
+            ],
+        });
 
-        //If the user cannot be found.
-        } else {
-                const resEmbed = CustomEmbed.from({
-                    color: CustomEmbed.Color.Violet,
+        // log the identity change
+        await logging_channel.send({
+            embeds: [
+                CustomEmbed.from({
+                    color: CustomEmbed.Color.Brand,
                     title: 'Inertia Lighting | Identity Manager',
-                    description: 'Could not find the user on Discord. ',
-                });
-                interaction.editReply({ embeds: [resEmbed] });
-                return;
-        }
+                    description: [
+                        `${Discord.userMention(staff_member.id)} updated a user's identity.`,
+                        '',
+                        '**Identity Before:**',
+                        '```json',
+                        JSON.stringify(db_user_data_before_update.identity, null, 4),
+                        '```',
+                        '',
+                        '**Changes Made:**',
+                        '```json',
+                        JSON.stringify(db_user_data_update_document, null, 4),
+                        '```',
+                    ].join('\n'),
+                }),
+            ],
+        });
     },
 });
