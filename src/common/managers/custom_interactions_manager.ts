@@ -277,31 +277,31 @@ export class CustomInteractionsManager {
 
             const access_levels_for_user = [ CustomInteractionAccessLevel.Public ]; // default access level
 
-            const member = await interaction.guild.members.fetch(interaction.member);
+            const bot_guild = await discord_client.guilds.fetch(bot_guild_id);
+            const bot_guild_member = await bot_guild.members.fetch(discord_client.user);
+            const bot_guild_member_roles_cache = bot_guild_member.roles.cache;
 
-            const member_roles_cache = member.roles.cache;
-
-            if (member_roles_cache.has(guild_staff_role_id)) {
+            if (bot_guild_member_roles_cache.has(guild_staff_role_id)) {
                 access_levels_for_user.push(CustomInteractionAccessLevel.Staff);
             }
 
-            if (member_roles_cache.has(guild_customer_service_role_id)) {
+            if (bot_guild_member_roles_cache.has(guild_customer_service_role_id)) {
                 access_levels_for_user.push(CustomInteractionAccessLevel.CustomerService);
             }
 
-            if (member_roles_cache.has(guild_moderators_role_id)) {
+            if (bot_guild_member_roles_cache.has(guild_moderators_role_id)) {
                 access_levels_for_user.push(CustomInteractionAccessLevel.Moderators);
             }
 
-            if (member_roles_cache.has(guild_admins_role_id)) {
+            if (bot_guild_member_roles_cache.has(guild_admins_role_id)) {
                 access_levels_for_user.push(CustomInteractionAccessLevel.Admins);
             }
 
-            if (member_roles_cache.has(guild_team_leaders_role_id)) {
+            if (bot_guild_member_roles_cache.has(guild_team_leaders_role_id)) {
                 access_levels_for_user.push(CustomInteractionAccessLevel.TeamLeaders);
             }
 
-            if (member_roles_cache.has(guild_company_management_role_id)) {
+            if (bot_guild_member_roles_cache.has(guild_company_management_role_id)) {
                 access_levels_for_user.push(CustomInteractionAccessLevel.CompanyManagement);
             }
 
