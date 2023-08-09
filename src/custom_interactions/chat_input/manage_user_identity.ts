@@ -117,7 +117,7 @@ export default new CustomInteraction({
         }
 
         // ensure the logging channel exists and is text-based
-        const logging_channel = await interaction.guild.channels.fetch(bot_logging_identity_manager_channel_id);
+        const logging_channel = await interaction.client.channels.fetch(bot_logging_identity_manager_channel_id);
         if (!logging_channel) throw new Error('Unable to find the identity manager logging channel!');
         if (!logging_channel.isTextBased()) throw new Error('The identity manager logging channel is not text-based!');
 

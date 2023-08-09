@@ -17,6 +17,9 @@ import { delay } from '@root/utilities';
 const bot_guild_id = `${process.env.BOT_GUILD_ID ?? ''}`;
 if (bot_guild_id.length < 1) throw new Error('Environment variable: BOT_GUILD_ID; was not set correctly!');
 
+const bot_staff_guild_id = `${process.env.BOT_STAFF_GUILD_ID ?? ''}`;
+if (bot_staff_guild_id.length < 1) throw new Error('Environment variable: BOT_STAFF_GUILD_ID; was not set correctly!');
+
 const guild_staff_role_id = `${process.env.BOT_STAFF_ROLE_ID ?? ''}`;
 if (guild_staff_role_id.length < 1) throw new Error('Environment variable: BOT_STAFF_ROLE_ID; was not set correctly!');
 
@@ -250,10 +253,10 @@ export class CustomInteractionsManager {
         /* ensure the client interaction exists before handling it */
         if (!custom_interaction) return;
 
-        /* if the interaction is from a guild, ensure it is from the bot's guild */
+        /* if the interaction is from a guild, ensure it is from an allowed guild */
         if (
             interaction.inGuild() &&
-            interaction.guildId !== bot_guild_id
+            ![ bot_guild_id, bot_staff_guild_id ].includes(interaction.guildId)
         ) return; // ignore the interaction
 
         /* ensure the interaction is from a guild if the interaction requires it */
