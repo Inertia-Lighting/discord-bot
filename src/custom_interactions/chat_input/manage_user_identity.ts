@@ -144,7 +144,7 @@ export default new CustomInteraction({
 
         // check if the user-specified `current_id` is valid
         const current_id_is_valid = regex_user_id_filter.test(current_id);
-        if (current_id_is_valid) {
+        if (!current_id_is_valid) {
             await interaction.editReply({
                 embeds: [
                     CustomEmbed.from({
@@ -175,7 +175,7 @@ export default new CustomInteraction({
 
         // check if user-specified `new_id` is valid
         const new_id_is_valid = regex_user_id_filter.test(new_id);
-        if (new_id_is_valid) {
+        if (!new_id_is_valid) {
             await interaction.editReply({
                 embeds: [
                     CustomEmbed.from({
