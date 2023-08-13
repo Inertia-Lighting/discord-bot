@@ -35,7 +35,6 @@ export async function fetchHighestAccessLevelForUser(
     discord_client: Discord.Client<true>,
     user: Discord.User,
 ): Promise<CustomInteractionAccessLevel> {
-
     const access_levels_for_user = [ CustomInteractionAccessLevel.Public ]; // default access level
 
     const bot_guild = await discord_client.guilds.fetch(bot_guild_id);
