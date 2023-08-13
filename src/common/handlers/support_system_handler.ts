@@ -218,14 +218,20 @@ export const support_categories: SupportCategory[] = [
                     }),
                 ],
             });
+
             await support_ticket_channel.send({
-                content: [
-                    `${Discord.userMention(support_ticket_owner.id)}, as an initial troubleshooting step, please follow the instructions below while you wait for a response from our support staff.`,
-                    '',
-                    '`StreamingEnabled` is not compatible with most of our products.',
-                    '',
-                    'Please follow the steps in this [guide](https://youtu.be/xApLkcuXwVk) to disable `game.Workspace.StreamingEnabled`.',
-                ].join('\n'),
+                content: `${Discord.userMention(support_ticket_owner.id)}`,
+                embeds: [
+                    CustomEmbed.from({
+                        description: [
+                            'Please follow the instructions below while waiting to hear back from a support staff member.',
+                            '',
+                            '\`game.Workspace.StreamingEnabled == true\` is not compatible with most of our products.',
+                            '',
+                            'Follow the steps in [this guide](https://youtu.be/xApLkcuXwVk) to disable \`game.Workspace.StreamingEnabled\`.',
+                        ].join('\n'),
+                    }),
+                ],
             });
         },
     }, {
