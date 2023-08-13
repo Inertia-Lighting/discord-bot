@@ -8,7 +8,7 @@ import { CustomEmbed } from '@root/common/message';
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext, CustomInteractionsManager } from '@root/common/managers/custom_interactions_manager';
 
-import { fetchHighestAccessLevelForUserFromInteraction } from '../../common/permissions';
+import { fetchHighestAccessLevelForUser } from '@root/common/permissions';
 
 //------------------------------------------------------------//
 
