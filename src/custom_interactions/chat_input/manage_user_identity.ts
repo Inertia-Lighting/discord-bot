@@ -117,7 +117,7 @@ export default new CustomInteraction({
         }
 
         // ensure the logging channel exists and is text-based
-        const logging_channel = await interaction.guild.channels.fetch(bot_logging_identity_manager_channel_id);
+        const logging_channel = await interaction.client.channels.fetch(bot_logging_identity_manager_channel_id);
         if (!logging_channel) throw new Error('Unable to find the identity manager logging channel!');
         if (!logging_channel.isTextBased()) throw new Error('The identity manager logging channel is not text-based!');
 
@@ -144,7 +144,7 @@ export default new CustomInteraction({
 
         // check if the user-specified `current_id` is valid
         const current_id_is_valid = regex_user_id_filter.test(current_id);
-        if (current_id_is_valid) {
+        if (!current_id_is_valid) {
             await interaction.editReply({
                 embeds: [
                     CustomEmbed.from({
@@ -175,7 +175,7 @@ export default new CustomInteraction({
 
         // check if user-specified `new_id` is valid
         const new_id_is_valid = regex_user_id_filter.test(new_id);
-        if (new_id_is_valid) {
+        if (!new_id_is_valid) {
             await interaction.editReply({
                 embeds: [
                     CustomEmbed.from({
