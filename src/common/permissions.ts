@@ -1,5 +1,13 @@
+//------------------------------------------------------------//
+//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
+//------------------------------------------------------------//
+
+import * as Discord from 'discord.js';
+
 import { CustomInteractionAccessLevel } from './managers/custom_interactions_manager';
 import { Interaction } from 'discord.js';
+
+//------------------------------------------------------------//
 
 const bot_guild_id = `${process.env.BOT_GUILD_ID ?? ''}`;
 if (bot_guild_id.length < 1) throw new Error('Environment variable: BOT_GUILD_ID; was not set correctly!');
@@ -22,14 +30,18 @@ if (guild_team_leaders_role_id.length < 1) throw new Error('Environment variable
 const guild_company_management_role_id = `${process.env.BOT_COMPANY_MANAGEMENT_ROLE_ID ?? ''}`;
 if (guild_company_management_role_id.length < 1) throw new Error('Environment variable: BOT_COMPANY_MANAGEMENT_ROLE_ID; was not set correctly!');
 
-export async function fetchHighestAccessLevelForUserFromInteraction(interaction: Interaction): Promise<CustomInteractionAccessLevel> {
-    if (!interaction.inCachedGuild()) throw new Error('required_access_level was supplied, however the interaction was not from a cached guild');
+//------------------------------------------------------------//
 
-    const access_levels_for_user = [CustomInteractionAccessLevel.Public]; // default access level
+export async function fetchHighestAccessLevelForUser(
+    discord_client: Discord.Client<true>,
+    user: Discord.User,
+): Promise<CustomInteractionAccessLevel> {
 
-    const member = interaction.guild.members.fetch(interaction.member);
+    const access_levels_for_user = [ CustomInteractionAccessLevel.Public ]; // default access level
 
-    const member_roles_cache = (await member).roles.cache;
+    const bot_guild = await discord_client.guilds.fetch(bot_guild_id);
+    const bot_guild_member = await bot_guild.members.fetch(interaction.user.id);
+    const bot_guild_member_roles_cache = bot_guild_member.roles.cache;
 
     if (member_roles_cache.has(guild_staff_role_id)) {
         access_levels_for_user.push(CustomInteractionAccessLevel.Staff);
@@ -55,6 +67,5 @@ export async function fetchHighestAccessLevelForUserFromInteraction(interaction:
         access_levels_for_user.push(CustomInteractionAccessLevel.CompanyManagement);
     }
 
-    const highest_access_level_for_user = Math.max(...access_levels_for_user);
-    return highest_access_level_for_user;
+    return Math.max(...access_levels_for_user); // the highest access level for the user
 }
