@@ -5,7 +5,6 @@
 import * as Discord from 'discord.js';
 
 import { CustomInteractionAccessLevel } from './managers/custom_interactions_manager';
-import { Interaction } from 'discord.js';
 
 //------------------------------------------------------------//
 
