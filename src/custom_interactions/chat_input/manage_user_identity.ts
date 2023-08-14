@@ -225,7 +225,7 @@ export default new CustomInteraction({
         }
 
         // fetch the user document to modify from the database
-        const [db_user_data_before_update] = await go_mongo_db.find(db_database_name, db_users_collection_name, user_update_filter, {
+        const [ db_user_data_before_update ] = await go_mongo_db.find(db_database_name, db_users_collection_name, user_update_filter, {
             projection: {
                 '_id': false,
             },
@@ -294,7 +294,7 @@ export default new CustomInteraction({
         }
 
         // ensure that the new identity is not already in the database
-        const [db_user_data_with_new_identity] = await go_mongo_db.find(db_database_name, db_users_collection_name, db_user_data_update_filter, {
+        const [ db_user_data_with_new_identity ] = await go_mongo_db.find(db_database_name, db_users_collection_name, db_user_data_update_filter, {
             projection: {
                 '_id': false,
             },
@@ -390,8 +390,10 @@ export default new CustomInteraction({
                         JSON.stringify(db_user_data_update_document, null, 4),
                         '```',
                         '',
-                        '**REASON:**',
-                        `\`\`${reason}\`\``,
+                        '**Reason:**',
+                        '```',
+                        reason,
+                        '```',
                     ].join('\n'),
                 }),
             ],
