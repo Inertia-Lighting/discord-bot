@@ -7,7 +7,8 @@ import * as Discord from 'discord.js';
 import { CustomEmbed } from '@root/common/message';
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext, CustomInteractionsManager } from '@root/common/managers/custom_interactions_manager';
-import { fetchHighestAccessLevelForUserFromInteraction } from '../../common/permissions';
+
+import { fetchHighestAccessLevelForUser } from '@root/common/permissions';
 
 //------------------------------------------------------------//
 
@@ -30,7 +31,7 @@ export default new CustomInteraction({
 
         await interaction.deferReply({ ephemeral: false });
 
-        const highest_access_level_for_user = await fetchHighestAccessLevelForUserFromInteraction(interaction);
+        const highest_access_level_for_user = await fetchHighestAccessLevelForUser(discord_client, interaction.user);
         const chat_input_custom_interactions = CustomInteractionsManager.interactions.filter(
             (custom_interaction) =>
                 custom_interaction.type === Discord.InteractionType.ApplicationCommand &&

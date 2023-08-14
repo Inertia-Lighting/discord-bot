@@ -287,8 +287,7 @@ async function manageProductsChatInputCommandHandler(
 
     /* log to the products manager logging channel */
     try {
-        const logging_channel = await interaction.guild.channels.fetch(bot_logging_products_manager_channel_id);
-
+        const logging_channel = await interaction.client.channels.fetch(bot_logging_products_manager_channel_id);
         if (!logging_channel) throw new Error('Unable to find the products manager logging channel!');
         if (!logging_channel.isTextBased()) throw new Error('The products manager logging channel is not text-based!');
 
