@@ -87,6 +87,12 @@ export default new CustomInteraction({
                 description: 'The identity id to set.',
                 required: true,
             },
+            {
+                name: 'reason',
+                type: Discord.ApplicationCommandOptionType.String,
+                description: 'Reason for the update.',
+                required: true,
+            },
         ],
     },
     metadata: {
@@ -126,6 +132,7 @@ export default new CustomInteraction({
         const current_id = interaction.options.getString('current_id', true);
         const new_id_type = interaction.options.getString('new_id_type', true) as IdentityType;
         const new_id = interaction.options.getString('new_id', true);
+        const reason = interaction.options.getString('reason', true);
 
         // check if user-specified `current_id_type` is a valid `IdentityType`
         if (!Object.values(IdentityType).includes(current_id_type)) {
@@ -218,7 +225,7 @@ export default new CustomInteraction({
         }
 
         // fetch the user document to modify from the database
-        const [ db_user_data_before_update ] = await go_mongo_db.find(db_database_name, db_users_collection_name, user_update_filter, {
+        const [db_user_data_before_update] = await go_mongo_db.find(db_database_name, db_users_collection_name, user_update_filter, {
             projection: {
                 '_id': false,
             },
@@ -287,7 +294,7 @@ export default new CustomInteraction({
         }
 
         // ensure that the new identity is not already in the database
-        const [ db_user_data_with_new_identity ] = await go_mongo_db.find(db_database_name, db_users_collection_name, db_user_data_update_filter, {
+        const [db_user_data_with_new_identity] = await go_mongo_db.find(db_database_name, db_users_collection_name, db_user_data_update_filter, {
             projection: {
                 '_id': false,
             },
@@ -382,6 +389,9 @@ export default new CustomInteraction({
                         '```json',
                         JSON.stringify(db_user_data_update_document, null, 4),
                         '```',
+                        '',
+                        '**REASON:**',
+                        `\`\`${reason}\`\``,
                     ].join('\n'),
                 }),
             ],
