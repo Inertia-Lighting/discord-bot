@@ -87,6 +87,12 @@ export default new CustomInteraction({
                 description: 'The identity id to set.',
                 required: true,
             },
+            {
+                name: 'reason',
+                type: Discord.ApplicationCommandOptionType.String,
+                description: 'Reason for the update.',
+                required: true,
+            },
         ],
     },
     metadata: {
@@ -126,6 +132,7 @@ export default new CustomInteraction({
         const current_id = interaction.options.getString('current_id', true);
         const new_id_type = interaction.options.getString('new_id_type', true) as IdentityType;
         const new_id = interaction.options.getString('new_id', true);
+        const reason = interaction.options.getString('reason', true);
 
         // check if user-specified `current_id_type` is a valid `IdentityType`
         if (!Object.values(IdentityType).includes(current_id_type)) {
@@ -381,6 +388,11 @@ export default new CustomInteraction({
                         '**Changes Made:**',
                         '```json',
                         JSON.stringify(db_user_data_update_document, null, 4),
+                        '```',
+                        '',
+                        '**Reason:**',
+                        '```',
+                        reason,
                         '```',
                     ].join('\n'),
                 }),
