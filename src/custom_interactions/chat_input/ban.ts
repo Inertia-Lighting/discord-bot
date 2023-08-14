@@ -15,7 +15,7 @@ export default new CustomInteraction({
     type: Discord.InteractionType.ApplicationCommand,
     data: {
         type: Discord.ApplicationCommandType.ChatInput,
-        description: 'Bans a user from the guild.',
+        description: 'Used by staff to ban a member from the server.',
         options: [
             {
                 name: 'user',

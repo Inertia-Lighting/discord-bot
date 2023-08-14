@@ -13,7 +13,7 @@ export default new CustomInteraction({
     type: Discord.InteractionType.ApplicationCommand,
     data: {
         type: Discord.ApplicationCommandType.ChatInput,
-        description: 'Purges a specified amount of messages from the channel.',
+        description: 'Used by staff to purge messages from a channel.',
         options: [
             {
                 name: 'amount',

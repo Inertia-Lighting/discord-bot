@@ -347,17 +347,17 @@ export default new CustomInteraction({
     type: Discord.InteractionType.ApplicationCommand,
     data: {
         type: Discord.ApplicationCommandType.ChatInput,
-        description: 'Used by staff to manage a user\'s products.',
+        description: 'Used by staff to manage user products.',
         options: [
             {
                 name: 'for',
                 type: Discord.ApplicationCommandOptionType.User,
-                description: 'The member who you want to manage products for.',
+                description: 'The user to manage products for.',
                 required: true,
             }, {
                 name: 'action',
                 type: Discord.ApplicationCommandOptionType.String,
-                description: 'The action you want to perform.',
+                description: 'The action to perform on a product.',
                 choices: [
                     {
                         name: 'Add',
@@ -377,7 +377,7 @@ export default new CustomInteraction({
             }, {
                 name: 'reason',
                 type: Discord.ApplicationCommandOptionType.String,
-                description: 'The reason for adding/removing a product',
+                description: 'The reason for managing user products.',
                 required: true,
             },
         ],

@@ -44,7 +44,7 @@ export default new CustomInteraction({
     type: Discord.InteractionType.ApplicationCommand,
     data: {
         type: Discord.ApplicationCommandType.ChatInput,
-        description: 'Used by staff to manage a user\'s identity.',
+        description: 'Used by staff to manage user identity.',
         options: [
             {
                 name: 'current_id_type',

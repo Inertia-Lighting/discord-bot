@@ -23,7 +23,7 @@ export default new CustomInteraction({
     type: Discord.InteractionType.ApplicationCommand,
     data: {
         type: Discord.ApplicationCommandType.ChatInput,
-        description: 'Used by staff to close support tickets.',
+        description: 'Used by staff to close a support ticket.',
         options: [],
     },
     metadata: {

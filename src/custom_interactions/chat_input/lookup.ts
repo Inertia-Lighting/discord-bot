@@ -38,7 +38,7 @@ export default new CustomInteraction({
                     {
                         name: 'user',
                         type: Discord.ApplicationCommandOptionType.User,
-                        description: 'The user to lookup.',
+                        description: 'The discord user to lookup.',
                         required: true,
                     },
                 ],
@@ -50,7 +50,7 @@ export default new CustomInteraction({
                     {
                         name: 'user',
                         type: Discord.ApplicationCommandOptionType.String,
-                        description: 'The user id to lookup.',
+                        description: 'The roblox user id to lookup.',
                         required: true,
                     },
                 ],

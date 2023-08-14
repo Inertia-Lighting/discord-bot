@@ -33,7 +33,7 @@ export default new CustomInteraction({
     type: Discord.InteractionType.ApplicationCommand,
     data: {
         type: Discord.ApplicationCommandType.ChatInput,
-        description: 'Used by staff to manage a user\'s lumens.',
+        description: 'Used by staff to manage user lumens.',
         options: [
             {
                 name: 'for',

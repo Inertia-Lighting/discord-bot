@@ -12,6 +12,10 @@ import { DistributiveOmit } from '@root/types';
 
 import { delay } from '@root/utilities';
 
+import { CustomEmbed } from '@root/common/message';
+
+import { fetchHighestAccessLevelForUser } from '@root/common/permissions';
+
 //------------------------------------------------------------//
 
 const bot_guild_id = `${process.env.BOT_GUILD_ID ?? ''}`;
@@ -275,41 +279,17 @@ export class CustomInteractionsManager {
         if (typeof required_access_level === 'number') {
             if (!interaction.inCachedGuild()) throw new Error('required_access_level was supplied, however the interaction was not from a cached guild');
 
-            const access_levels_for_user = [ CustomInteractionAccessLevel.Public ]; // default access level
-
-            const bot_guild = await discord_client.guilds.fetch(bot_guild_id);
-            const bot_guild_member = await bot_guild.members.fetch(interaction.user.id);
-            const bot_guild_member_roles_cache = bot_guild_member.roles.cache;
-
-            if (bot_guild_member_roles_cache.has(guild_staff_role_id)) {
-                access_levels_for_user.push(CustomInteractionAccessLevel.Staff);
-            }
-
-            if (bot_guild_member_roles_cache.has(guild_customer_service_role_id)) {
-                access_levels_for_user.push(CustomInteractionAccessLevel.CustomerService);
-            }
-
-            if (bot_guild_member_roles_cache.has(guild_moderators_role_id)) {
-                access_levels_for_user.push(CustomInteractionAccessLevel.Moderators);
-            }
-
-            if (bot_guild_member_roles_cache.has(guild_admins_role_id)) {
-                access_levels_for_user.push(CustomInteractionAccessLevel.Admins);
-            }
-
-            if (bot_guild_member_roles_cache.has(guild_team_leaders_role_id)) {
-                access_levels_for_user.push(CustomInteractionAccessLevel.TeamLeaders);
-            }
-
-            if (bot_guild_member_roles_cache.has(guild_company_management_role_id)) {
-                access_levels_for_user.push(CustomInteractionAccessLevel.CompanyManagement);
-            }
-
-            const highest_access_level_for_user = Math.max(...access_levels_for_user);
+            const highest_access_level_for_user = await fetchHighestAccessLevelForUser(discord_client, interaction.user);
             if (highest_access_level_for_user < required_access_level) {
                 if (interaction.isRepliable()) {
                     await interaction.reply({
-                        content: 'You are not allowed to use this command!',
+                        embeds: [
+                            CustomEmbed.from({
+                                color: CustomEmbed.Color.Violet,
+                                title: 'Access Denied',
+                                description: `${Discord.userMention(interaction.user.id)}, you are not allowed to use this command!`,
+                            }),
+                        ],
                     });
                 }
 

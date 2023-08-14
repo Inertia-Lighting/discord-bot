@@ -321,6 +321,7 @@ async function removeModerationAction(
         const db_deletion_result = await go_mongo_db.remove(db_database_name, db_moderation_action_records_collection_name, {
             'record.id': moderation_action_id,
         });
+
         db_delete_operation_count = db_deletion_result.deletedCount ?? 0;
     } catch {
         await interaction.editReply({
@@ -436,21 +437,21 @@ async function purgeModerationActions(
 }
 
 export default new CustomInteraction({
-    identifier: 'moderation_actions',
+    identifier: 'manage_moderation_actions',
     type: Discord.InteractionType.ApplicationCommand,
     data: {
         type: Discord.ApplicationCommandType.ChatInput,
-        description: 'Used by our staff to manage moderation actions.',
+        description: 'Used by staff to manage moderation actions.',
         options: [
             {
                 name: 'list',
                 type: Discord.ApplicationCommandOptionType.Subcommand,
-                description: 'Lists all the moderation actions.',
+                description: 'Used by staff to list all moderation actions.',
                 options: [],
             }, {
                 name: 'lookup',
                 type: Discord.ApplicationCommandOptionType.Subcommand,
-                description: 'Lookup a moderation action by a moderation action id.',
+                description: 'Lookup a moderation action id.',
                 options: [
                     {
                         name: 'moderation_action_id',
@@ -464,7 +465,7 @@ export default new CustomInteraction({
             }, {
                 name: 'for',
                 type: Discord.ApplicationCommandOptionType.Subcommand,
-                description: 'Lookup all the moderation actions for a user.',
+                description: 'Find all moderation actions for a user.',
                 options: [
                     {
                         name: 'user',
@@ -476,7 +477,7 @@ export default new CustomInteraction({
             }, {
                 name: 'from',
                 type: Discord.ApplicationCommandOptionType.Subcommand,
-                description: 'Lookup all the moderation actions by a staff member.',
+                description: 'Show all moderation actions performed by a staff member.',
                 options: [
                     {
                         name: 'staff_member',
@@ -488,12 +489,12 @@ export default new CustomInteraction({
             }, {
                 name: 'update',
                 type: Discord.ApplicationCommandOptionType.Subcommand,
-                description: 'Update a moderation action by a moderation action id.',
+                description: 'Update the reason for a moderation action.',
                 options: [
                     {
                         name: 'moderation_action_id',
                         type: Discord.ApplicationCommandOptionType.String,
-                        description: 'The moderation action id you want to update.',
+                        description: 'The moderation action id to update.',
                         minLength: 1,
                         maxLength: 64,
                         required: true,

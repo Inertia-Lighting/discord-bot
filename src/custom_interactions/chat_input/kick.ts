@@ -15,7 +15,7 @@ export default new CustomInteraction({
     type: Discord.InteractionType.ApplicationCommand,
     data: {
         type: Discord.ApplicationCommandType.ChatInput,
-        description: 'kicks a user from the server',
+        description: 'Used by staff to kick a member from the server.',
         options: [
             {
                 name: 'member',

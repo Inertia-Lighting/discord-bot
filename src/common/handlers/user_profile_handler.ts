@@ -130,7 +130,7 @@ export async function userProfileHandler(
                     color: CustomEmbed.Color.Red,
                     author: {
                         icon_url: `${client.user.displayAvatarURL({ forceStatic: false })}`,
-                        name: 'Inertia Lighting | Blacklist System',
+                        name: 'Inertia Lighting | User Blacklist System',
                     },
                     description: [
                         '\`\`\`',

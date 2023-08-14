@@ -15,7 +15,7 @@ export default new CustomInteraction({
     type: Discord.InteractionType.ApplicationCommand,
     data: {
         type: Discord.ApplicationCommandType.ChatInput,
-        description: 'Warns a user in the server.',
+        description: 'Used by staff to warn a member in the server.',
         options: [
             {
                 name: 'member',

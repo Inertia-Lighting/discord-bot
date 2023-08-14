@@ -445,7 +445,7 @@ export default new CustomInteraction({
             {
                 type: Discord.ApplicationCommandOptionType.Subcommand,
                 name: 'lookup',
-                description: 'Looks up a note by id.',
+                description: 'Lookup a note by id.',
                 options: [
                     {
                         type: Discord.ApplicationCommandOptionType.String,
@@ -459,7 +459,7 @@ export default new CustomInteraction({
             }, {
                 type: Discord.ApplicationCommandOptionType.Subcommand,
                 name: 'for',
-                description: 'Looks up all notes for a user.',
+                description: 'Find all notes for a user.',
                 options: [
                     {
                         type: Discord.ApplicationCommandOptionType.User,
@@ -471,7 +471,7 @@ export default new CustomInteraction({
             }, {
                 type: Discord.ApplicationCommandOptionType.Subcommand,
                 name: 'add',
-                description: 'Adds a note to a user.',
+                description: 'Add a note to a user.',
                 options: [
                     {
                         type: Discord.ApplicationCommandOptionType.User,
@@ -490,7 +490,7 @@ export default new CustomInteraction({
             }, {
                 type: Discord.ApplicationCommandOptionType.Subcommand,
                 name: 'edit',
-                description: 'Edits a note for a user.',
+                description: 'Edit a note for a user.',
                 options: [
                     {
                         type: Discord.ApplicationCommandOptionType.String,
@@ -509,7 +509,7 @@ export default new CustomInteraction({
             }, {
                 type: Discord.ApplicationCommandOptionType.Subcommand,
                 name: 'remove',
-                description: 'Removes a note from a user.',
+                description: 'Remove a note from a user.',
                 options: [
                     {
                         type: Discord.ApplicationCommandOptionType.String,
@@ -521,12 +521,12 @@ export default new CustomInteraction({
             }, {
                 type: Discord.ApplicationCommandOptionType.Subcommand,
                 name: 'purge',
-                description: 'Purges all notes from a user.',
+                description: 'Purge all notes for a user.',
                 options: [
                     {
                         type: Discord.ApplicationCommandOptionType.User,
                         name: 'user',
-                        description: 'The user to purge notes from.',
+                        description: 'The user to purge notes for.',
                         required: true,
                     },
                 ],

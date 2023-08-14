@@ -17,7 +17,7 @@ export default new CustomInteraction({
     type: Discord.InteractionType.ApplicationCommand,
     data: {
         type: Discord.ApplicationCommandType.ChatInput,
-        description: 'Lists all available commands for you to use!',
+        description: 'Shows a list of available commands.',
         options: [],
     },
     metadata: {
