@@ -5,6 +5,7 @@
 import * as Discord from 'discord.js';
 
 import { automatedQuickSupportHandler, suggestionsCategoryHandler } from '@root/common/handlers';
+import { fetchHighestAccessLevelForUser } from '../common/permissions';
 
 //------------------------------------------------------------//
 
@@ -61,8 +62,13 @@ export default {
         /* attempt automated quick support */
         automatedQuickSupportHandler(message).catch(console.trace);
 
-if(message.content.toLowerCase()==='can i ask a question') {
-message.member.ban("https://nohello.net")
-}
+        if (message.content.toLowerCase().includes('can i ask a question')) {
+            const guild_staff_role_id = `${process.env.BOT_STAFF_ROLE_ID ?? ''}`;
+            if (guild_staff_role_id.length < 1) throw new Error('Environment variable: BOT_STAFF_ROLE_ID; was not set correctly!');
+            if (message.member && !message.member.roles.cache.has(guild_staff_role_id)) {
+                message.reply({ content: 'Hey, instead of asking if you can ask a question, ask the question. This ensures that you get quick support on whatever you need. This also helps our support staff and those that try to support you by letting them know what your question is. \n [Learn More](https://nohello.net)' });
+            }
+        }
+
     },
 };
