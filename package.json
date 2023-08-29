@@ -46,7 +46,7 @@
     "discord-html-transcripts": "3.1.5",
     "discord.js": "14.13.0",
     "dotenv": "16.3.1",
-    "go-mongo-db": "github:Inertia-Lighting/go-mongo-db#v1.4.0-stable",
+    "go-mongo-db": "github:Inertia-Lighting/go-mongo-db#v2.0.2",
     "module-alias": "2.2.3",
     "moment-timezone": "0.5.43",
     "node-gyp": "9.4.0",
