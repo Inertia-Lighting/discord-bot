@@ -60,9 +60,5 @@ export default {
 
         /* attempt automated quick support */
         automatedQuickSupportHandler(message).catch(console.trace);
-
-if(message.content.toLowerCase()==='can i ask a question') {
-message.member.ban("https://nohello.net")
-}
     },
 };
