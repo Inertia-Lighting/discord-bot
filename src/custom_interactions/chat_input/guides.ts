@@ -33,8 +33,21 @@ export default new CustomInteraction({
             embeds: [
                 CustomEmbed.from({
                     title: 'Guides',
-                    description: 'https://inertia.lighting/guides',
+                    description: 'Check out our guides for our products.',
                 }),
+            ],
+           components: [
+                {
+                    type: Discord.ComponentType.ActionRow,
+                    components: [
+                        {
+                            type: Discord.ComponentType.Button,
+                            style: Discord.ButtonStyle.Link,
+                            label: 'Guides for products',
+                            url: 'https://inertia.lighting/guides',
+                        },
+                    ],
+                },
             ],
         });
     },
