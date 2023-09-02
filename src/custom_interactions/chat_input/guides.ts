@@ -6,16 +6,16 @@ import * as Discord from 'discord.js';
 
 import { CustomEmbed } from '@root/common/message';
 
-import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext, CustomInteractionsManager } from '@root/common/managers/custom_interactions_manager';
+import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
 
 //------------------------------------------------------------//
 
 export default new CustomInteraction({
-    identifier: 'help',
+    identifier: 'guides',
     type: Discord.InteractionType.ApplicationCommand,
     data: {
         type: Discord.ApplicationCommandType.ChatInput,
-        description: 'Lists all available commands for you to use!',
+        description: 'Take a look at our official guides!',
         options: [],
     },
     metadata: {
@@ -33,17 +33,17 @@ export default new CustomInteraction({
             embeds: [
                 CustomEmbed.from({
                     title: 'Guides',
-                    description: 'Check out our guides for our products.',
+                    description: 'Check out our official guides!',
                 }),
             ],
-           components: [
+            components: [
                 {
                     type: Discord.ComponentType.ActionRow,
                     components: [
                         {
                             type: Discord.ComponentType.Button,
                             style: Discord.ButtonStyle.Link,
-                            label: 'Guides for products',
+                            label: 'Guides',
                             url: 'https://inertia.lighting/guides',
                         },
                     ],
