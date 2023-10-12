@@ -224,9 +224,10 @@ export const support_categories: SupportCategory[] = [
                 embeds: [
                     CustomEmbed.from({
                         description: [
-                            'Please follow the instructions below while waiting to hear back from a support staff member.',
+                            'Please follow the instructions below.',
+                            'This is a common issue that affects most of our users.',
                             '',
-                            '\`game.Workspace.StreamingEnabled == true\` is not compatible with most of our products.',
+                            '\`game.Workspace.StreamingEnabled\` being enabled is not compatible with most of our products.',
                             '',
                             'Follow the steps in [this guide](https://youtu.be/xApLkcuXwVk) to disable \`game.Workspace.StreamingEnabled\`.',
                         ].join('\n'),
@@ -252,7 +253,7 @@ export const support_categories: SupportCategory[] = [
                             type: Discord.ComponentType.TextInput,
                             customId: 'old_roblox',
                             style: Discord.TextInputStyle.Short,
-                            label: 'What is your old Roblox account id?',
+                            label: 'What is your old Roblox user id?',
                             placeholder: '998796',
                             minLength: 5,
                             maxLength: 20,
@@ -266,7 +267,7 @@ export const support_categories: SupportCategory[] = [
                             type: Discord.ComponentType.TextInput,
                             customId: 'new_roblox',
                             style: Discord.TextInputStyle.Short,
-                            label: 'What is your new Roblox account id?',
+                            label: 'What is your new Roblox user id?',
                             placeholder: '998796',
                             minLength: 5,
                             maxLength: 20,
@@ -337,10 +338,10 @@ export const support_categories: SupportCategory[] = [
                             name: 'Inertia Lighting | Support System',
                         },
                         description: [
-                            '**What is your old Roblox account id?**',
+                            '**What is your old Roblox user id?**',
                             `${old_roblox_account_id}`,
                             '',
-                            '**What is your new Roblox account id?**',
+                            '**What is your new Roblox user id?**',
                             `${new_roblox_account_id}`,
                             '',
                             '**What is your old Discord user id?**',
@@ -401,7 +402,7 @@ export const support_categories: SupportCategory[] = [
                             type: Discord.ComponentType.TextInput,
                             customId: 'roblox_transfer_to',
                             style: Discord.TextInputStyle.Short,
-                            label: 'Roblox account that you\'re transferring to?',
+                            label: 'Roblox user id that you\'re transferring to?',
                             placeholder: '998796',
                             minLength: 5,
                             maxLength: 20,
@@ -449,7 +450,7 @@ export const support_categories: SupportCategory[] = [
                             '**Discord user id that you\'re transferring to?**',
                             `${discord_transfer_to}`,
                             '',
-                            '**Roblox account that you\'re transferring to?**',
+                            '**Roblox user id that you\'re transferring to?**',
                             `${roblox_transfer_to}`,
                             '',
                             '**Why are you transferring your product(s)?**',
@@ -728,12 +729,16 @@ async function sendInitialInformationToSupportTicketChannel(
 
     const initial_message = await support_ticket_channel.send({
         content: [
-            `${support_ticket_owner}, welcome to your ${support_ticket_category.name} support ticket,`,
+            `${support_ticket_owner}, welcome to your **${support_ticket_category.name}** support ticket.`,
             '',
-            `Our ${support_ticket_staff_role_mentions} support staff are volunteers, so please be patient.`,
+            `Our ${support_ticket_staff_role_mentions} support staff are volunteers.`,
+            'Being a volunteer means they have lives outside of Inertia Lighting.',
             '',
-            'If you have an urgent issue, like someone making death threats;',
-            'please @mention one of our high-ranking staff members!',
+            'Please do not \\@mention, harass, or otherwise annoy our support staff.',
+            'They generously donate their time to answer support tickets.',
+            '',
+            'In the meantime, please provide us with as much information as possible.',
+            'We are only as useful as the information you provide to us.',
         ].join('\n'),
     });
 
