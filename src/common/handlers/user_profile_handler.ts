@@ -154,10 +154,12 @@ export async function userProfileHandler(
                     }, {
                         name: 'Roblox',
                         value: `[${`@${roblox_user_data.name}` ?? 'n/a'}](https://roblox.com/users/${db_user_data.identity.roblox_user_id}/profile) (${roblox_user_data.displayName ?? 'n/a'})`,
-                    }, {
-                        name: 'Lumens',
-                        value: `${db_user_data.lumens ?? 0}`,
-                    }, {
+                    },
+                    // {
+                    //     name: 'Lumens',
+                    //     value: `${db_user_data.lumens ?? 0}`,
+                    // },
+                    {
                         name: 'Product Licenses',
                         value: `${user_products.length === 0 ? 'n/a' : user_products.map(product => `- ${product.name}`).join('\n')}`,
                     },
