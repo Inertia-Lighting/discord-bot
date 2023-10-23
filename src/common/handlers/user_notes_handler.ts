@@ -158,9 +158,11 @@ async function lookupNotesForUser(
 ): Promise<UserNote[]> {
     if (typeof discord_user_id !== 'string') throw new TypeError('\`discord_user_id\` must be a string!');
 
-    const user_notes = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME as string, process.env.MONGO_USER_NOTES_COLLECTION_NAME as string, {
+    const user_notes_find_cursor = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME as string, process.env.MONGO_USER_NOTES_COLLECTION_NAME as string, {
         'identity.discord_user_id': discord_user_id,
-    }) as unknown as UserNote[];
+    });
+
+    const user_notes = await user_notes_find_cursor.toArray() as unknown as UserNote[];
 
     return user_notes;
 }
@@ -172,12 +174,14 @@ async function lookupNoteForUser(
     { id }: {
         id: string,
     }
-): Promise<UserNote | undefined> {
+): Promise<UserNote | null> {
     if (typeof id !== 'string') throw new TypeError('\`id\` must be a string!');
 
-    const [ user_note ] = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME as string, process.env.MONGO_USER_NOTES_COLLECTION_NAME as string, {
+    const user_notes_find_cursor = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME as string, process.env.MONGO_USER_NOTES_COLLECTION_NAME as string, {
         'record.id': id,
-    }) as unknown as UserNote[];
+    });
+
+    const user_note = await user_notes_find_cursor.next() as unknown as UserNote | null;
 
     return user_note;
 }

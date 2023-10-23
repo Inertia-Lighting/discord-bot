@@ -2,7 +2,7 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 //------------------------------------------------------------//
 
-import { GoMongoDB } from 'go-mongo-db';
+import { GoMongoDb } from 'go-mongo-db';
 
 //------------------------------------------------------------//
 
@@ -11,7 +11,7 @@ if (mongo_connection_url.length < 1) throw new Error('environment variable: MONG
 
 //------------------------------------------------------------//
 
-const go_mongo_db = new GoMongoDB(mongo_connection_url);
+const go_mongo_db = new GoMongoDb(mongo_connection_url);
 
 //------------------------------------------------------------//
 

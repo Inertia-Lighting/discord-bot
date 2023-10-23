@@ -56,7 +56,9 @@ class DbProductsCache {
             bypass_cache ||
             this.cache_expiration_epoch_ms < now_epoch_ms
         ) {
-            const db_roblox_products = await go_mongo_db.find(db_database_name, db_products_collection_name, {}) as unknown[] as DbProductData[];
+            const db_roblox_products_find_cursor = await go_mongo_db.find(db_database_name, db_products_collection_name, {});
+
+            const db_roblox_products = await db_roblox_products_find_cursor.toArray() as unknown as DbProductData[];
 
             this.cache_expiration_epoch_ms = now_epoch_ms + this.cache_lifetime_ms;
             this.cache = db_roblox_products;
@@ -104,13 +106,15 @@ async function manageProductsAutoCompleteHandler(
     const product_code_search_query = focused_option.value.toUpperCase();
 
     /* find the user in the database */
-    const [ db_user_data ] = await go_mongo_db.find(db_database_name, db_users_collection_name, {
+    const db_user_data_find_cursor = await go_mongo_db.find(db_database_name, db_users_collection_name, {
         'identity.discord_user_id': user_id_to_modify,
     }, {
         projection: {
             '_id': false,
         },
-    }) as unknown[] as DbUserData[];
+    });
+
+    const db_user_data = db_user_data_find_cursor.next() as unknown as DbUserData | null;
 
     if (!db_user_data) {
         await interaction.respond([]);
@@ -219,13 +223,15 @@ async function manageProductsChatInputCommandHandler(
     }
 
     /* find the user in the database */
-    const [ db_user_data ] = await go_mongo_db.find(db_database_name, db_users_collection_name, {
+    const db_user_data_find_cursor = await go_mongo_db.find(db_database_name, db_users_collection_name, {
         'identity.discord_user_id': user_to_modify.id,
     }, {
         projection: {
             '_id': false,
         },
     });
+
+    const db_user_data = await db_user_data_find_cursor.next() as unknown as DbUserData | null;
 
     /* check if the user exists */
     if (!db_user_data) {

@@ -36,15 +36,29 @@ type QuickSupportTopics = QuickSupportTopic[];
 //------------------------------------------------------------//
 
 async function fetchQuickSupportTopics(): Promise<QuickSupportTopics> {
-    return await go_mongo_db.find(db_database_name, db_quick_support_topics_collection_name, {}) as unknown as QuickSupportTopics;
+    const qs_topics_find_cursor = await go_mongo_db.find(db_database_name, db_quick_support_topics_collection_name, {}, {
+        projection: {
+            _id: false,
+        },
+    });
+
+    const qs_topics = await qs_topics_find_cursor.toArray() as unknown as QuickSupportTopics;
+
+    return qs_topics;
 }
 
 async function fetchQuickSupportTopicById(
     qs_topic_id: string,
 ): Promise<QuickSupportTopic> {
-    const [ qs_topic ] = await go_mongo_db.find(db_database_name, db_quick_support_topics_collection_name, {
+    const qs_topic_find_cursor = await go_mongo_db.find(db_database_name, db_quick_support_topics_collection_name, {
         id: qs_topic_id,
-    }) as unknown as QuickSupportTopics;
+    }, {
+        projection: {
+            _id: false,
+        },
+    });
+
+    const qs_topic = await qs_topic_find_cursor.next() as unknown as QuickSupportTopic;
 
     return qs_topic;
 }

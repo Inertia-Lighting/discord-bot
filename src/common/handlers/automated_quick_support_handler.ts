@@ -32,7 +32,9 @@ const confidence_threshold = 0.75; // on a scale from <0, 1> (inclusive), how si
 async function updateQuickSupportTopics() {
     quick_support_topics.length = 0; // empty the array
 
-    const db_quick_support_topics = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME as string, process.env.MONGO_QUICK_SUPPORT_TOPICS_COLLECTION_NAME as string, {}) as unknown as QuickSupportTopic[];
+    const db_quick_support_topics_find_cursor = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME as string, process.env.MONGO_QUICK_SUPPORT_TOPICS_COLLECTION_NAME as string, {});
+
+    const db_quick_support_topics = await db_quick_support_topics_find_cursor.toArray() as unknown as QuickSupportTopic[];
 
     for (const db_quick_support_topic of db_quick_support_topics) {
         quick_support_topics.push(db_quick_support_topic);

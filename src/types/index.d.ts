@@ -89,3 +89,22 @@ export interface DbPayPalPurchaseRecord {
     discord_user_id: string;
     product_codes: string[];
 }
+
+//------------------------------------------------------------//
+
+export interface DbModerationActionUserIdentity extends Pick<DbUserIdentity, 'discord_user_id'> {}
+
+export type DbModerationActionType = 'WARN' | 'TIMEOUT' | 'MUTE' | 'KICK' | 'BAN';
+
+export interface DbModerationActionRecord {
+    id: string, // a UUIDv4 string
+    type: DbModerationActionType;
+    epoch: number;
+    reason: string;
+    staff_member_id: string;
+}
+
+export interface DbModerationAction {
+    identity: DbModerationActionUserIdentity;
+    record: DbModerationActionRecord;
+}
