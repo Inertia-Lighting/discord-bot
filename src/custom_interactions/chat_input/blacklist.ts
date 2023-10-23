@@ -33,7 +33,7 @@ if (db_blacklisted_users_collection_name.length < 1) throw new Error('Environmen
 async function findUserInUsersDatabase(
     user_lookup_type: 'discord' | 'roblox',
     user_lookup_query: string,
-): Promise<Omit<DbUserData, '_id'> | undefined> {
+): Promise<Omit<DbUserData, '_id'> | null> {
     if (typeof user_lookup_query !== 'string') throw new TypeError('\`user_lookup_query\` must be a string');
 
     const find_query = {
@@ -44,11 +44,13 @@ async function findUserInUsersDatabase(
         }),
     };
 
-    const [db_user_data] = await go_mongo_db.find(db_database_name, db_users_collection_name, find_query, {
+    const db_user_data_find_cursor = await go_mongo_db.find(db_database_name, db_users_collection_name, find_query, {
         projection: {
             '_id': false,
         },
-    }) as unknown as Omit<DbUserData, '_id'>[];
+    });
+
+    const db_user_data = await db_user_data_find_cursor.next() as unknown as Omit<DbUserData, '_id'> | null;
 
     return db_user_data;
 }
@@ -59,7 +61,7 @@ async function findUserInUsersDatabase(
 async function findUserInBlacklistedUsersDatabase(
     user_lookup_type: 'discord' | 'roblox',
     user_lookup_query: string,
-): Promise<Omit<DbBlacklistedUserRecord, '_id'> | undefined> {
+): Promise<Omit<DbBlacklistedUserRecord, '_id'> | null> {
     if (typeof user_lookup_query !== 'string') throw new TypeError('\`user_lookup_query\` must be a string');
 
     const find_query = {
@@ -70,11 +72,13 @@ async function findUserInBlacklistedUsersDatabase(
         }),
     };
 
-    const [db_blacklisted_user_data] = await go_mongo_db.find(db_database_name, db_blacklisted_users_collection_name, find_query, {
+    const db_blacklisted_user_data_find_cursor = await go_mongo_db.find(db_database_name, db_blacklisted_users_collection_name, find_query, {
         projection: {
             '_id': false,
         },
-    }) as unknown as Omit<DbBlacklistedUserRecord, '_id'>[];
+    });
+
+    const db_blacklisted_user_data = await db_blacklisted_user_data_find_cursor.next() as unknown as Omit<DbBlacklistedUserRecord, '_id'> | null;
 
     return db_blacklisted_user_data;
 }

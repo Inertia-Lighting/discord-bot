@@ -4,6 +4,8 @@
 
 import { v4 as uuid_v4 } from 'uuid';
 
+import { DbModerationAction } from '@root/types';
+
 import { go_mongo_db } from '@root/common/mongo/mongo';
 
 //------------------------------------------------------------//
@@ -16,44 +18,14 @@ if (db_moderation_action_records_collection_name.length < 1) throw new Error('En
 
 //------------------------------------------------------------//
 
-export enum ModerationActionType {
-    Warn = 'WARN',
-    Timeout = 'TIMEOUT',
-    Mute = 'MUTE',
-    Kick = 'KICK',
-    Ban = 'BAN',
-}
-
-export type ModerationActionData = {
-    identity: {
-        discord_user_id: string,
-    },
-    record: {
-        id: string, // a UUIDv4 string
-        type: ModerationActionType,
-        epoch: number,
-        reason: string,
-        staff_member_id: string,
-    },
-};
-
-//------------------------------------------------------------//
-
 /**
  * Adds a moderation action to the database
  */
 export async function addModerationActionToDatabase(
-    identity: {
-        discord_user_id: string,
-    },
-    record: {
-        type: ModerationActionType,
-        epoch: number,
-        reason: string,
-        staff_member_id: string,
-    }
+    identity: DbModerationAction['identity'],
+    record: Omit<DbModerationAction['record'], 'id'>,
 ): Promise<boolean> {
-    const moderation_action_data: ModerationActionData = {
+    const moderation_action_data: DbModerationAction = {
         'identity': {
             'discord_user_id': identity.discord_user_id,
         },

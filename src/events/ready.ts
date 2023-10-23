@@ -29,7 +29,9 @@ if (bot_guild_id.length < 1) throw new Error('environment variable: BOT_GUILD_ID
 //     client: Discord.Client,
 // ) {
 //     /* fetch all products from the database */
-//     const db_roblox_products = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME as string, process.env.MONGO_PRODUCTS_COLLECTION_NAME as string, {}) as unknown as DbProductData[];
+//     const db_roblox_products_find_cursor = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME as string, process.env.MONGO_PRODUCTS_COLLECTION_NAME as string, {});
+
+//     const db_roblox_products = await db_roblox_products_find_cursor.toArray() as unknown as DbProductData[];
 
 //     /* fetch the product prices from roblox and apply it to the database */
 //     for (const db_roblox_product of db_roblox_products) {

@@ -6,6 +6,8 @@ import axios from 'axios';
 
 import * as Discord from 'discord.js';
 
+import { DbUserData } from '@root/types';
+
 import { go_mongo_db } from '@root/common/mongo/mongo';
 
 import { CustomEmbed } from '@root/common/message';
@@ -243,13 +245,16 @@ export default new CustomInteraction({
 
         await interaction.deferReply({ ephemeral: false });
 
-        const [ db_user_data ] = await go_mongo_db.find(db_database_name, db_users_collection_name, {
+        const db_user_data_find_cursor = await go_mongo_db.find(db_database_name, db_users_collection_name, {
             'identity.discord_user_id': interaction.user.id,
         }, {
             projection: {
                 '_id': false,
             },
         });
+
+        const db_user_data = await db_user_data_find_cursor.next() as DbUserData | null;
+
         if (db_user_data) {
             await userAlreadyVerifiedHandler(interaction);
 
