@@ -103,7 +103,7 @@ export default new CustomInteraction({
         if (!interaction.isChatInputCommand()) return;
         if (!interaction.inCachedGuild()) return;
 
-        await interaction.deferReply();
+        await interaction.deferReply({ ephemeral: false });
 
         // ensure the user running this command is authorized to do so
         const staff_member = interaction.member;

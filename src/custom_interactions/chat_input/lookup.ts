@@ -42,6 +42,11 @@ export default new CustomInteraction({
                         type: Discord.ApplicationCommandOptionType.User,
                         description: 'The discord user to lookup.',
                         required: true,
+                    }, {
+                        name: 'ephemeral',
+                        type: Discord.ApplicationCommandOptionType.Boolean,
+                        description: 'Whether or not to respond with an ephemeral message.',
+                        required: false,
                     },
                 ],
             }, {
@@ -54,6 +59,11 @@ export default new CustomInteraction({
                         type: Discord.ApplicationCommandOptionType.String,
                         description: 'The roblox user id to lookup.',
                         required: true,
+                    }, {
+                        name: 'ephemeral',
+                        type: Discord.ApplicationCommandOptionType.Boolean,
+                        description: 'Whether or not to respond with an ephemeral message.',
+                        required: false,
                     },
                 ],
             },
@@ -68,9 +78,11 @@ export default new CustomInteraction({
         if (!interaction.inCachedGuild()) return;
         if (!interaction.channel) return;
 
-        await interaction.deferReply({ ephemeral: false });
-
         const subcommand_name = interaction.options.getSubcommand(true);
+
+        const respond_as_ephemeral: boolean = interaction.options.getBoolean('ephemeral', false) ?? false; // default to false
+
+        await interaction.deferReply({ ephemeral: respond_as_ephemeral });
 
         let user_id_type: 'discord' | 'roblox';
         let user_id: string;

@@ -84,7 +84,7 @@ export default new CustomInteraction({
         if (!interaction.isChatInputCommand()) return;
         if (!interaction.inCachedGuild()) return;
 
-        await interaction.deferReply();
+        await interaction.deferReply({ ephemeral: false });
 
         const user_to_modify = interaction.options.getUser('for', true);
         const action_to_perform = interaction.options.getString('action', true) as ManageLumensAction;
