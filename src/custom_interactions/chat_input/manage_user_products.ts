@@ -114,7 +114,7 @@ async function manageProductsAutoCompleteHandler(
         },
     });
 
-    const db_user_data = db_user_data_find_cursor.next() as unknown as DbUserData | null;
+    const db_user_data = await db_user_data_find_cursor.next() as unknown as DbUserData | null;
 
     if (!db_user_data) {
         await interaction.respond([]);
