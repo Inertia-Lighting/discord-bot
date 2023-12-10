@@ -102,6 +102,10 @@ export default {
     async handler(
         client: Discord.Client,
     ) {
+        if (!client.isReady()) {
+            throw new Error('This shouldn\'t happen, but if it does, the client was not ready in the ready event!');
+        }
+
         const ready_timestamp = `${moment()}`;
         console.log('----------------------------------------------------------------------------------------------------------------');
         console.log(`Discord Bot Logged in as @${client.user!.username} on ${ready_timestamp}`);
