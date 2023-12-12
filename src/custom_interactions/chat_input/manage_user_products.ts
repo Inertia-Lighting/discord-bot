@@ -222,7 +222,7 @@ function dbRobloxProductsOwnershipPredicate(
     return (
         // action add: only add the product if the user doesn't already own it
         (action_to_perform === ManageProductsAction.Add && !user_owns_product) ||
-        // action remove: only add the product if the user already owns it
+        // action remove: only remove the product if the user currently owns it
         (action_to_perform === ManageProductsAction.Remove && user_owns_product)
     );
 }
