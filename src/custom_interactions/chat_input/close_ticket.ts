@@ -26,24 +26,17 @@ export default new CustomInteraction({
         description: 'Used by staff to close a support ticket.',
         options: [
             {
-                type: Discord.ApplicationCommandOptionType.Subcommand,
-                name: 'close_ticket',
-                description: 'Used by staff to close a support ticket.',
-                options: [
-                    {
-                        name: 'reason',
-                        type: Discord.ApplicationCommandOptionType.String,
-                        description: 'Why is this ticket being closed?',
-                        minLength: 1,
-                        maxLength: 512,
-                        required: true,
-                    }, {
-                        name: 'request_feedback',
-                        type: Discord.ApplicationCommandOptionType.Boolean,
-                        description: 'Should the user be asked for feedback?',
-                        required: false,
-                    },
-                ],
+                name: 'reason',
+                type: Discord.ApplicationCommandOptionType.String,
+                description: 'Why is this ticket being closed?',
+                minLength: 1,
+                maxLength: 512,
+                required: true,
+            }, {
+                name: 'request_feedback',
+                type: Discord.ApplicationCommandOptionType.Boolean,
+                description: 'Should the user be asked for feedback?',
+                required: false,
             },
         ],
     },
