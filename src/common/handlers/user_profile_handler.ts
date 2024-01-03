@@ -6,6 +6,8 @@ import axios from 'axios';
 
 import * as Discord from 'discord.js';
 
+import { DbBlacklistedUserRecord, DbProductData, DbUserData } from '@root/types';
+
 import { go_mongo_db } from '@root/common/mongo/mongo';
 
 import { CustomEmbed } from '@root/common/message';
@@ -55,13 +57,15 @@ export async function userProfileHandler(
 ) {
     const client = deferred_interaction.client;
 
-    const [ db_user_data ] = await go_mongo_db.find(db_database_name, db_users_collection_name, {
+    const db_user_data_find_cursor = await go_mongo_db.find(db_database_name, db_users_collection_name, {
         'identity.discord_user_id': discord_user_id,
     }, {
         projection: {
             '_id': false,
         },
     });
+
+    const db_user_data = await db_user_data_find_cursor.next() as unknown as DbUserData | null;
 
     if (!db_user_data) {
         await deferred_interaction.editReply({
@@ -83,7 +87,7 @@ export async function userProfileHandler(
         return;
     }
 
-    const [ db_blacklisted_user_data ] = await go_mongo_db.find(db_database_name, db_blacklisted_users_collection_name, {
+    const db_blacklisted_user_data_find_cursor = await go_mongo_db.find(db_database_name, db_blacklisted_users_collection_name, {
         $or: [
             { 'identity.discord_user_id': db_user_data.identity.discord_user_id },
             { 'identity.roblox_user_id': db_user_data.identity.roblox_user_id },
@@ -94,12 +98,16 @@ export async function userProfileHandler(
         },
     });
 
-    const db_public_roblox_products = await go_mongo_db.find(db_database_name, db_products_collection_name, {
-        'public': true,
+    const db_blacklisted_user_data = await db_blacklisted_user_data_find_cursor.next() as unknown as DbBlacklistedUserRecord | null;
+
+    const db_viewable_roblox_products_find_cursor = await go_mongo_db.find(db_database_name, db_products_collection_name, {
+        'viewable': true,
     });
 
+    const db_viewable_roblox_products = await db_viewable_roblox_products_find_cursor.toArray() as unknown as DbProductData[];
+
     const user_product_codes = await fetchUserProductCodes(db_user_data.identity.discord_user_id) ?? [];
-    const user_products = db_public_roblox_products.filter(product => user_product_codes.includes(product.code));
+    const user_products = db_viewable_roblox_products.filter(product => user_product_codes.includes(product.code));
 
     const roblox_user_data: {
         name: string,
@@ -130,7 +138,7 @@ export async function userProfileHandler(
                     color: CustomEmbed.Color.Red,
                     author: {
                         icon_url: `${client.user.displayAvatarURL({ forceStatic: false })}`,
-                        name: 'Inertia Lighting | Blacklist System',
+                        name: 'Inertia Lighting | User Blacklist System',
                     },
                     description: [
                         '\`\`\`',
@@ -154,10 +162,12 @@ export async function userProfileHandler(
                     }, {
                         name: 'Roblox',
                         value: `[${`@${roblox_user_data.name}` ?? 'n/a'}](https://roblox.com/users/${db_user_data.identity.roblox_user_id}/profile) (${roblox_user_data.displayName ?? 'n/a'})`,
-                    }, {
-                        name: 'Lumens',
-                        value: `${db_user_data.lumens ?? 0}`,
-                    }, {
+                    },
+                    // {
+                    //     name: 'Lumens',
+                    //     value: `${db_user_data.lumens ?? 0}`,
+                    // },
+                    {
                         name: 'Product Licenses',
                         value: `${user_products.length === 0 ? 'n/a' : user_products.map(product => `- ${product.name}`).join('\n')}`,
                     },

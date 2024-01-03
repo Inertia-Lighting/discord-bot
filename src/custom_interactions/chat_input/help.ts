@@ -17,7 +17,7 @@ export default new CustomInteraction({
     type: Discord.InteractionType.ApplicationCommand,
     data: {
         type: Discord.ApplicationCommandType.ChatInput,
-        description: 'Lists all available commands for you to use!',
+        description: 'Shows a list of available commands.',
         options: [],
     },
     metadata: {
@@ -37,7 +37,7 @@ export default new CustomInteraction({
                 custom_interaction.type === Discord.InteractionType.ApplicationCommand &&
                 'type' in custom_interaction.data &&
                 custom_interaction.data.type === Discord.ApplicationCommandType.ChatInput &&
-                custom_interaction.metadata.required_access_level >= highest_access_level_for_user
+                custom_interaction.metadata.required_access_level <= highest_access_level_for_user
         );
 
         await interaction.editReply({

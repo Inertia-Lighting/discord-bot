@@ -6,6 +6,8 @@ import moment from 'moment-timezone';
 
 import * as Discord from 'discord.js';
 
+import { DbModerationAction } from '@root/types';
+
 import { chunkArray, delay, ellipseString } from '@root/utilities';
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
@@ -70,34 +72,34 @@ async function listModerationActions(
     await delay(500);
 
     /* fetch all moderation actions from the database */
-    let db_moderation_actions;
+    let db_moderation_actions_find_filter: Record<string, unknown>;
     switch (lookup_mode) {
         case ModerationActionLookupMode.All: {
-            db_moderation_actions = await go_mongo_db.find(db_database_name, db_moderation_action_records_collection_name, {});
+            db_moderation_actions_find_filter = {}; // empty filter
 
             break;
         }
 
         case ModerationActionLookupMode.DiscordUser: {
-            db_moderation_actions = await go_mongo_db.find(db_database_name, db_moderation_action_records_collection_name, {
+            db_moderation_actions_find_filter = { // filter by discord user id
                 'identity.discord_user_id': lookup_query,
-            });
+            };
 
             break;
         }
 
         case ModerationActionLookupMode.StaffMember: {
-            db_moderation_actions = await go_mongo_db.find(db_database_name, db_moderation_action_records_collection_name, {
+            db_moderation_actions_find_filter = { // filter by staff member id
                 'record.staff_member_id': lookup_query,
-            });
+            };
 
             break;
         }
 
         case ModerationActionLookupMode.Id: {
-            db_moderation_actions = await go_mongo_db.find(db_database_name, db_moderation_action_records_collection_name, {
+            db_moderation_actions_find_filter = { // filter by moderation action id
                 'record.id': lookup_query,
-            });
+            };
 
             break;
         }
@@ -106,6 +108,14 @@ async function listModerationActions(
             throw new Error('Invalid lookup mode.');
         }
     }
+
+    const db_moderation_actions_find_cursor = await go_mongo_db.find(db_database_name, db_moderation_action_records_collection_name, db_moderation_actions_find_filter, {
+        projection: {
+            _id: false,
+        },
+    });
+
+    const db_moderation_actions = await db_moderation_actions_find_cursor.toArray() as unknown as DbModerationAction[];
 
     /* check if the member has any records */
     if (db_moderation_actions.length === 0) {
@@ -245,9 +255,11 @@ async function updateModerationAction(
     const moderation_action_id = interaction.options.getString('moderation_action_id', true);
     const new_moderation_action_reason = interaction.options.getString('reason', true);
 
-    const [ db_moderation_action ] = await go_mongo_db.find(db_database_name, db_moderation_action_records_collection_name, {
+    const db_moderation_action_find_cursor = await go_mongo_db.find(db_database_name, db_moderation_action_records_collection_name, {
         'record.id': moderation_action_id,
     });
+
+    const db_moderation_action = await db_moderation_action_find_cursor.next() as unknown as DbModerationAction | null;
 
     if (!db_moderation_action) {
         await interaction.editReply({
@@ -321,6 +333,7 @@ async function removeModerationAction(
         const db_deletion_result = await go_mongo_db.remove(db_database_name, db_moderation_action_records_collection_name, {
             'record.id': moderation_action_id,
         });
+
         db_delete_operation_count = db_deletion_result.deletedCount ?? 0;
     } catch {
         await interaction.editReply({
@@ -385,6 +398,7 @@ async function purgeModerationActions(
         const db_deletion_result = await go_mongo_db.remove(db_database_name, db_moderation_action_records_collection_name, {
             'identity.discord_user_id': user.id,
         });
+
         db_delete_operation_count = db_deletion_result.deletedCount ?? 0;
     } catch {
         await interaction.editReply({
@@ -436,21 +450,21 @@ async function purgeModerationActions(
 }
 
 export default new CustomInteraction({
-    identifier: 'moderation_actions',
+    identifier: 'manage_moderation_actions',
     type: Discord.InteractionType.ApplicationCommand,
     data: {
         type: Discord.ApplicationCommandType.ChatInput,
-        description: 'Used by our staff to manage moderation actions.',
+        description: 'Used by staff to manage moderation actions.',
         options: [
             {
                 name: 'list',
                 type: Discord.ApplicationCommandOptionType.Subcommand,
-                description: 'Lists all the moderation actions.',
+                description: 'Used by staff to list all moderation actions.',
                 options: [],
             }, {
                 name: 'lookup',
                 type: Discord.ApplicationCommandOptionType.Subcommand,
-                description: 'Lookup a moderation action by a moderation action id.',
+                description: 'Lookup a moderation action id.',
                 options: [
                     {
                         name: 'moderation_action_id',
@@ -464,7 +478,7 @@ export default new CustomInteraction({
             }, {
                 name: 'for',
                 type: Discord.ApplicationCommandOptionType.Subcommand,
-                description: 'Lookup all the moderation actions for a user.',
+                description: 'Find all moderation actions for a user.',
                 options: [
                     {
                         name: 'user',
@@ -476,7 +490,7 @@ export default new CustomInteraction({
             }, {
                 name: 'from',
                 type: Discord.ApplicationCommandOptionType.Subcommand,
-                description: 'Lookup all the moderation actions by a staff member.',
+                description: 'Show all moderation actions performed by a staff member.',
                 options: [
                     {
                         name: 'staff_member',
@@ -488,12 +502,12 @@ export default new CustomInteraction({
             }, {
                 name: 'update',
                 type: Discord.ApplicationCommandOptionType.Subcommand,
-                description: 'Update a moderation action by a moderation action id.',
+                description: 'Update the reason for a moderation action.',
                 options: [
                     {
                         name: 'moderation_action_id',
                         type: Discord.ApplicationCommandOptionType.String,
-                        description: 'The moderation action id you want to update.',
+                        description: 'The moderation action id to update.',
                         minLength: 1,
                         maxLength: 64,
                         required: true,

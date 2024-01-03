@@ -224,9 +224,10 @@ export const support_categories: SupportCategory[] = [
                 embeds: [
                     CustomEmbed.from({
                         description: [
-                            'Please follow the instructions below while waiting to hear back from a support staff member.',
+                            'Please follow the instructions below.',
+                            'This is a common issue that affects most of our users.',
                             '',
-                            '\`game.Workspace.StreamingEnabled == true\` is not compatible with most of our products.',
+                            '\`game.Workspace.StreamingEnabled\` being enabled is not compatible with most of our products.',
                             '',
                             'Follow the steps in [this guide](https://youtu.be/xApLkcuXwVk) to disable \`game.Workspace.StreamingEnabled\`.',
                         ].join('\n'),
@@ -252,7 +253,7 @@ export const support_categories: SupportCategory[] = [
                             type: Discord.ComponentType.TextInput,
                             customId: 'old_roblox',
                             style: Discord.TextInputStyle.Short,
-                            label: 'What is your old Roblox account id?',
+                            label: 'What is your old Roblox user id?',
                             placeholder: '998796',
                             minLength: 5,
                             maxLength: 20,
@@ -266,7 +267,7 @@ export const support_categories: SupportCategory[] = [
                             type: Discord.ComponentType.TextInput,
                             customId: 'new_roblox',
                             style: Discord.TextInputStyle.Short,
-                            label: 'What is your new Roblox account id?',
+                            label: 'What is your new Roblox user id?',
                             placeholder: '998796',
                             minLength: 5,
                             maxLength: 20,
@@ -337,10 +338,10 @@ export const support_categories: SupportCategory[] = [
                             name: 'Inertia Lighting | Support System',
                         },
                         description: [
-                            '**What is your old Roblox account id?**',
+                            '**What is your old Roblox user id?**',
                             `${old_roblox_account_id}`,
                             '',
-                            '**What is your new Roblox account id?**',
+                            '**What is your new Roblox user id?**',
                             `${new_roblox_account_id}`,
                             '',
                             '**What is your old Discord user id?**',
@@ -401,7 +402,7 @@ export const support_categories: SupportCategory[] = [
                             type: Discord.ComponentType.TextInput,
                             customId: 'roblox_transfer_to',
                             style: Discord.TextInputStyle.Short,
-                            label: 'Roblox account that you\'re transferring to?',
+                            label: 'Roblox user id that you\'re transferring to?',
                             placeholder: '998796',
                             minLength: 5,
                             maxLength: 20,
@@ -449,7 +450,7 @@ export const support_categories: SupportCategory[] = [
                             '**Discord user id that you\'re transferring to?**',
                             `${discord_transfer_to}`,
                             '',
-                            '**Roblox account that you\'re transferring to?**',
+                            '**Roblox user id that you\'re transferring to?**',
                             `${roblox_transfer_to}`,
                             '',
                             '**Why are you transferring your product(s)?**',
@@ -544,125 +545,127 @@ export const support_categories: SupportCategory[] = [
                 ],
             });
         },
-    }, {
-        id: SupportCategoryId.PartnershipRequests,
-        name: 'Partnership Requests',
-        description: 'Interested in partnering with us?',
-        staff_role_ids: [
-            bot_partnership_requests_support_staff_role_id,
-        ],
-        modal_data: {
-            title: 'Partnership Request Questions',
-            customId: 'support_system_partnership_request_modal',
-            components: [
-                {
-                    type: Discord.ComponentType.ActionRow,
-                    components: [
-                        {
-                            type: Discord.ComponentType.TextInput,
-                            customId: 'group_name',
-                            style: Discord.TextInputStyle.Short,
-                            label: 'What is the name of your group?',
-                            minLength: 1,
-                            maxLength: 64,
-                            required: true,
-                        },
-                    ],
-                }, {
-                    type: Discord.ComponentType.ActionRow,
-                    components: [
-                        {
-                            type: Discord.ComponentType.TextInput,
-                            customId: 'group_owner_age',
-                            style: Discord.TextInputStyle.Short,
-                            label: 'How old are you?',
-                            minLength: 1,
-                            maxLength: 4,
-                            required: true,
-                        },
-                    ],
-                }, {
-                    type: Discord.ComponentType.ActionRow,
-                    components: [
-                        {
-                            type: Discord.ComponentType.TextInput,
-                            customId: 'group_description',
-                            style: Discord.TextInputStyle.Paragraph,
-                            label: 'Describe your group, be detailed.',
-                            minLength: 128,
-                            maxLength: 1024,
-                            required: true,
-                        },
-                    ],
-                }, {
-                    type: Discord.ComponentType.ActionRow,
-                    components: [
-                        {
-                            type: Discord.ComponentType.TextInput,
-                            customId: 'group_reason',
-                            style: Discord.TextInputStyle.Paragraph,
-                            label: 'Why do you want to partner with us?',
-                            minLength: 128,
-                            maxLength: 1024,
-                            required: true,
-                        },
-                    ],
-                }, {
-                    type: Discord.ComponentType.ActionRow,
-                    components: [
-                        {
-                            type: Discord.ComponentType.TextInput,
-                            customId: 'group_social_links',
-                            style: Discord.TextInputStyle.Paragraph,
-                            label: 'Link your socials: Discord, Roblox, etc.',
-                            minLength: 32,
-                            maxLength: 1024,
-                            required: true,
-                        },
-                    ],
-                },
-            ],
-        },
-        modal_handler: async (
-            interaction,
-            support_category,
-            support_ticket_channel,
-            support_ticket_owner,
-        ) => {
-            const group_name = interaction.fields.getTextInputValue('group_name');
-            const group_owner_age = interaction.fields.getTextInputValue('group_owner_age');
-            const group_description = interaction.fields.getTextInputValue('group_description');
-            const group_reason = interaction.fields.getTextInputValue('group_reason');
-            const group_social_links = interaction.fields.getTextInputValue('group_social_links');
+    },
+    // {
+    //     id: SupportCategoryId.PartnershipRequests,
+    //     name: 'Partnership Requests',
+    //     description: 'Interested in partnering with us?',
+    //     staff_role_ids: [
+    //         bot_partnership_requests_support_staff_role_id,
+    //     ],
+    //     modal_data: {
+    //         title: 'Partnership Request Questions',
+    //         customId: 'support_system_partnership_request_modal',
+    //         components: [
+    //             {
+    //                 type: Discord.ComponentType.ActionRow,
+    //                 components: [
+    //                     {
+    //                         type: Discord.ComponentType.TextInput,
+    //                         customId: 'group_name',
+    //                         style: Discord.TextInputStyle.Short,
+    //                         label: 'What is the name of your group?',
+    //                         minLength: 1,
+    //                         maxLength: 64,
+    //                         required: true,
+    //                     },
+    //                 ],
+    //             }, {
+    //                 type: Discord.ComponentType.ActionRow,
+    //                 components: [
+    //                     {
+    //                         type: Discord.ComponentType.TextInput,
+    //                         customId: 'group_owner_age',
+    //                         style: Discord.TextInputStyle.Short,
+    //                         label: 'How old are you?',
+    //                         minLength: 1,
+    //                         maxLength: 4,
+    //                         required: true,
+    //                     },
+    //                 ],
+    //             }, {
+    //                 type: Discord.ComponentType.ActionRow,
+    //                 components: [
+    //                     {
+    //                         type: Discord.ComponentType.TextInput,
+    //                         customId: 'group_description',
+    //                         style: Discord.TextInputStyle.Paragraph,
+    //                         label: 'Describe your group, be detailed.',
+    //                         minLength: 128,
+    //                         maxLength: 1024,
+    //                         required: true,
+    //                     },
+    //                 ],
+    //             }, {
+    //                 type: Discord.ComponentType.ActionRow,
+    //                 components: [
+    //                     {
+    //                         type: Discord.ComponentType.TextInput,
+    //                         customId: 'group_reason',
+    //                         style: Discord.TextInputStyle.Paragraph,
+    //                         label: 'Why do you want to partner with us?',
+    //                         minLength: 128,
+    //                         maxLength: 1024,
+    //                         required: true,
+    //                     },
+    //                 ],
+    //             }, {
+    //                 type: Discord.ComponentType.ActionRow,
+    //                 components: [
+    //                     {
+    //                         type: Discord.ComponentType.TextInput,
+    //                         customId: 'group_social_links',
+    //                         style: Discord.TextInputStyle.Paragraph,
+    //                         label: 'Link your socials: Discord, Roblox, etc.',
+    //                         minLength: 32,
+    //                         maxLength: 1024,
+    //                         required: true,
+    //                     },
+    //                 ],
+    //             },
+    //         ],
+    //     },
+    //     modal_handler: async (
+    //         interaction,
+    //         support_category,
+    //         support_ticket_channel,
+    //         support_ticket_owner,
+    //     ) => {
+    //         const group_name = interaction.fields.getTextInputValue('group_name');
+    //         const group_owner_age = interaction.fields.getTextInputValue('group_owner_age');
+    //         const group_description = interaction.fields.getTextInputValue('group_description');
+    //         const group_reason = interaction.fields.getTextInputValue('group_reason');
+    //         const group_social_links = interaction.fields.getTextInputValue('group_social_links');
 
-            await support_ticket_channel.send({
-                embeds: [
-                    CustomEmbed.from({
-                        author: {
-                            icon_url: interaction.client.user.displayAvatarURL({ forceStatic: false }),
-                            name: 'Inertia Lighting | Support System',
-                        },
-                        description: [
-                            '**What is the name of your group?**',
-                            `${group_name}`,
-                            '',
-                            '**How old are you?**',
-                            `${group_owner_age}`,
-                            '',
-                            '**Describe your group.**',
-                            `${group_description}`,
-                            '',
-                            '**Why do you want to partner with us?**',
-                            `${group_reason}`,
-                            '',
-                            '**What are your group\'s social links?**',
-                            `${group_social_links}`,
-                        ].join('\n'),
-                    }),
-                ],
-            });
-        },
-    }, {
+    //         await support_ticket_channel.send({
+    //             embeds: [
+    //                 CustomEmbed.from({
+    //                     author: {
+    //                         icon_url: interaction.client.user.displayAvatarURL({ forceStatic: false }),
+    //                         name: 'Inertia Lighting | Support System',
+    //                     },
+    //                     description: [
+    //                         '**What is the name of your group?**',
+    //                         `${group_name}`,
+    //                         '',
+    //                         '**How old are you?**',
+    //                         `${group_owner_age}`,
+    //                         '',
+    //                         '**Describe your group.**',
+    //                         `${group_description}`,
+    //                         '',
+    //                         '**Why do you want to partner with us?**',
+    //                         `${group_reason}`,
+    //                         '',
+    //                         '**What are your group\'s social links?**',
+    //                         `${group_social_links}`,
+    //                     ].join('\n'),
+    //                 }),
+    //             ],
+    //         });
+    //     },
+    // },
+    {
         id: SupportCategoryId.Other,
         name: 'Other & Quick Questions',
         description: 'For all other forms of support.',
@@ -728,12 +731,16 @@ async function sendInitialInformationToSupportTicketChannel(
 
     const initial_message = await support_ticket_channel.send({
         content: [
-            `${support_ticket_owner}, welcome to your ${support_ticket_category.name} support ticket,`,
+            `${support_ticket_owner}, welcome to your **${support_ticket_category.name}** support ticket.`,
             '',
-            `Our ${support_ticket_staff_role_mentions} support staff are volunteers, so please be patient.`,
+            `Our ${support_ticket_staff_role_mentions} support staff are volunteers.`,
+            'Being a volunteer means they have lives outside of Inertia Lighting.',
             '',
-            'If you have an urgent issue, like someone making death threats;',
-            'please @mention one of our high-ranking staff members!',
+            'Please do not \\@mention, harass, or otherwise annoy our support staff.',
+            'They generously donate their time to answer support tickets.',
+            '',
+            'In the meantime, please provide us with as much information as possible.',
+            'We are only as useful as the information you provide to us.',
         ].join('\n'),
     });
 

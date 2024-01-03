@@ -6,7 +6,7 @@ import * as Discord from 'discord.js';
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
 
-import { ModerationActionType, addModerationActionToDatabase } from '@root/common/handlers';
+import { addModerationActionToDatabase } from '@root/common/handlers';
 
 //------------------------------------------------------------//
 
@@ -15,7 +15,7 @@ export default new CustomInteraction({
     type: Discord.InteractionType.ApplicationCommand,
     data: {
         type: Discord.ApplicationCommandType.ChatInput,
-        description: 'Bans a user from the guild.',
+        description: 'Used by staff to ban a member from the server.',
         options: [
             {
                 name: 'user',
@@ -144,7 +144,7 @@ export default new CustomInteraction({
         const successfully_logged_to_database = await addModerationActionToDatabase({
             discord_user_id: user_to_ban.id,
         }, {
-            type: ModerationActionType.Ban,
+            type: 'BAN',
             epoch: Date.now(),
             reason: ban_reason,
             staff_member_id: staff_member.id,

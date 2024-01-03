@@ -4,6 +4,8 @@
 
 import * as Discord from 'discord.js';
 
+import { DbUserData } from '@root/types';
+
 import { go_mongo_db } from '@root/common/mongo/mongo';
 
 import { CustomEmbed } from '@root/common/message';
@@ -33,7 +35,7 @@ export default new CustomInteraction({
     type: Discord.InteractionType.ApplicationCommand,
     data: {
         type: Discord.ApplicationCommandType.ChatInput,
-        description: 'Used by staff to manage a user\'s lumens.',
+        description: 'Used by staff to manage user lumens.',
         options: [
             {
                 name: 'for',
@@ -82,7 +84,7 @@ export default new CustomInteraction({
         if (!interaction.isChatInputCommand()) return;
         if (!interaction.inCachedGuild()) return;
 
-        await interaction.deferReply();
+        await interaction.deferReply({ ephemeral: false });
 
         const user_to_modify = interaction.options.getUser('for', true);
         const action_to_perform = interaction.options.getString('action', true) as ManageLumensAction;
@@ -104,13 +106,15 @@ export default new CustomInteraction({
         }
 
         /* find the user in the database */
-        const [ db_user_data ] = await go_mongo_db.find(db_database_name, db_users_collection_name, {
+        const db_user_data_find_cursor = await go_mongo_db.find(db_database_name, db_users_collection_name, {
             'identity.discord_user_id': user_to_modify.id,
         }, {
             projection: {
                 '_id': false,
             },
         });
+
+        const db_user_data = await db_user_data_find_cursor.next() as unknown as DbUserData | null;
 
         /* check if the user exists */
         if (!db_user_data) {

@@ -25,7 +25,7 @@ export default new CustomInteraction({
             }, {
                 name: 'ephemeral',
                 type: Discord.ApplicationCommandOptionType.Boolean,
-                description: 'Whether or not to send the profile as an ephemeral message.',
+                description: 'Whether or not to respond with an ephemeral message.',
                 required: false,
             },
         ],
@@ -39,7 +39,7 @@ export default new CustomInteraction({
         if (!interaction.inCachedGuild()) return;
         if (!interaction.channel) return;
 
-        const respond_as_ephemeral = interaction.options.getBoolean('ephemeral', false) ?? false; // default to false
+        const respond_as_ephemeral: boolean = interaction.options.getBoolean('ephemeral', false) ?? false; // default to false
 
         await interaction.deferReply({ ephemeral: respond_as_ephemeral });
 

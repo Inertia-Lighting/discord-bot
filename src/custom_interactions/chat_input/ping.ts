@@ -13,7 +13,7 @@ export default new CustomInteraction({
     type: Discord.InteractionType.ApplicationCommand,
     data: {
         type: Discord.ApplicationCommandType.ChatInput,
-        description: 'Display the ping of the bot',
+        description: 'Displays the websocket ping for the bot.',
         options: [],
     },
     metadata: {

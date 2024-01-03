@@ -6,7 +6,7 @@ import * as Discord from 'discord.js';
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
 
-import { ModerationActionType, addModerationActionToDatabase } from '@root/common/handlers';
+import { addModerationActionToDatabase } from '@root/common/handlers';
 
 //------------------------------------------------------------//
 
@@ -15,7 +15,7 @@ export default new CustomInteraction({
     type: Discord.InteractionType.ApplicationCommand,
     data: {
         type: Discord.ApplicationCommandType.ChatInput,
-        description: 'Purges a specified amount of messages from the channel.',
+        description: 'Used by staff to timeout a member in the server.',
         options: [
             {
                 name: 'member',
@@ -175,7 +175,7 @@ export default new CustomInteraction({
         await addModerationActionToDatabase({
             discord_user_id: member_to_timeout.id,
         }, {
-            type: ModerationActionType.Timeout,
+            type: 'TIMEOUT',
             epoch: Date.now(),
             reason: `${reason} (duration: ${duration / 60_000} minutes)`,
             staff_member_id: staff_member.id,

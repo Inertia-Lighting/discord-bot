@@ -31,6 +31,11 @@ if (guild_company_management_role_id.length < 1) throw new Error('Environment va
 
 //------------------------------------------------------------//
 
+/**
+ * Used by custom interactions to determine the highest access level a user has.
+ *
+ * Also used by the `help` command to determine which commands to show.
+ */
 export async function fetchHighestAccessLevelForUser(
     discord_client: Discord.Client<true>,
     user: Discord.User,

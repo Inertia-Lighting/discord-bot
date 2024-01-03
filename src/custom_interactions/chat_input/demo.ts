@@ -11,11 +11,11 @@ import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunCo
 //------------------------------------------------------------//
 
 export default new CustomInteraction({
-    identifier: 'demo',
+    identifier: 'demo_game',
     type: Discord.InteractionType.ApplicationCommand,
     data: {
         type: Discord.ApplicationCommandType.ChatInput,
-        description: 'Get a link to our testing game!',
+        description: 'Get a link to our demo game!',
         options: [],
     },
     metadata: {
@@ -32,7 +32,7 @@ export default new CustomInteraction({
         await interaction.editReply({
             embeds: [
                 CustomEmbed.from({
-                    description: 'You can try out our products from the testing game!',
+                    description: 'You can try out our products from the demo game!',
                 }),
             ],
             components: [
@@ -42,7 +42,7 @@ export default new CustomInteraction({
                         {
                             type: Discord.ComponentType.Button,
                             style: Discord.ButtonStyle.Link,
-                            label: 'Testing Game',
+                            label: 'Demo Game',
                             url: 'https://demo.inertia.lighting/',
                         },
                     ],

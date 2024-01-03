@@ -44,7 +44,7 @@ export default new CustomInteraction({
     type: Discord.InteractionType.ApplicationCommand,
     data: {
         type: Discord.ApplicationCommandType.ChatInput,
-        description: 'Used by staff to manage a user\'s identity.',
+        description: 'Used by staff to manage user identity.',
         options: [
             {
                 name: 'current_id_type',
@@ -103,7 +103,7 @@ export default new CustomInteraction({
         if (!interaction.isChatInputCommand()) return;
         if (!interaction.inCachedGuild()) return;
 
-        await interaction.deferReply();
+        await interaction.deferReply({ ephemeral: false });
 
         // ensure the user running this command is authorized to do so
         const staff_member = interaction.member;
@@ -225,11 +225,14 @@ export default new CustomInteraction({
         }
 
         // fetch the user document to modify from the database
-        const [ db_user_data_before_update ] = await go_mongo_db.find(db_database_name, db_users_collection_name, user_update_filter, {
+        const db_user_data_before_update_find_cursor = await go_mongo_db.find(db_database_name, db_users_collection_name, user_update_filter, {
             projection: {
                 '_id': false,
             },
-        }) as Exclude<DbUserData, '_id'>[];
+        });
+
+        const db_user_data_before_update = await db_user_data_before_update_find_cursor.next() as unknown as Exclude<DbUserData, '_id'> | null;
+
         if (!db_user_data_before_update) {
             await interaction.editReply({
                 embeds: [
@@ -294,11 +297,14 @@ export default new CustomInteraction({
         }
 
         // ensure that the new identity is not already in the database
-        const [ db_user_data_with_new_identity ] = await go_mongo_db.find(db_database_name, db_users_collection_name, db_user_data_update_filter, {
+        const db_user_data_with_new_identity_find_cursor = await go_mongo_db.find(db_database_name, db_users_collection_name, db_user_data_update_filter, {
             projection: {
                 '_id': false,
             },
-        }) as Exclude<DbUserData, '_id'>[];
+        });
+
+        const db_user_data_with_new_identity = await db_user_data_with_new_identity_find_cursor.next() as unknown as Exclude<DbUserData, '_id'> | null;
+
         if (db_user_data_with_new_identity) {
             await interaction.editReply({
                 embeds: [

@@ -4,6 +4,8 @@
 
 import * as Discord from 'discord.js';
 
+import { DbBlacklistedUserRecord, DbUserData } from '@root/types';
+
 import { go_mongo_db } from '@root/common/mongo/mongo';
 
 import { CustomEmbed } from '@root/common/message';
@@ -38,8 +40,13 @@ export default new CustomInteraction({
                     {
                         name: 'user',
                         type: Discord.ApplicationCommandOptionType.User,
-                        description: 'The user to lookup.',
+                        description: 'The discord user to lookup.',
                         required: true,
+                    }, {
+                        name: 'ephemeral',
+                        type: Discord.ApplicationCommandOptionType.Boolean,
+                        description: 'Whether or not to respond with an ephemeral message.',
+                        required: false,
                     },
                 ],
             }, {
@@ -50,8 +57,13 @@ export default new CustomInteraction({
                     {
                         name: 'user',
                         type: Discord.ApplicationCommandOptionType.String,
-                        description: 'The user id to lookup.',
+                        description: 'The roblox user id to lookup.',
                         required: true,
+                    }, {
+                        name: 'ephemeral',
+                        type: Discord.ApplicationCommandOptionType.Boolean,
+                        description: 'Whether or not to respond with an ephemeral message.',
+                        required: false,
                     },
                 ],
             },
@@ -66,9 +78,11 @@ export default new CustomInteraction({
         if (!interaction.inCachedGuild()) return;
         if (!interaction.channel) return;
 
-        await interaction.deferReply({ ephemeral: false });
-
         const subcommand_name = interaction.options.getSubcommand(true);
+
+        const respond_as_ephemeral: boolean = interaction.options.getBoolean('ephemeral', false) ?? false; // default to false
+
+        await interaction.deferReply({ ephemeral: respond_as_ephemeral });
 
         let user_id_type: 'discord' | 'roblox';
         let user_id: string;
@@ -102,7 +116,7 @@ export default new CustomInteraction({
         }
 
         /* fetch blacklisted user data */
-        const [ db_blacklisted_user_data ] = await go_mongo_db.find(db_database_name, db_blacklisted_users_collection_name, {
+        const db_blacklisted_user_data_find_cursor = await go_mongo_db.find(db_database_name, db_blacklisted_users_collection_name, {
             ...(user_id_type === 'discord' ? {
                 'identity.discord_user_id': user_id,
             } : {
@@ -114,8 +128,10 @@ export default new CustomInteraction({
             },
         });
 
+        const db_blacklisted_user_data = await db_blacklisted_user_data_find_cursor.next() as unknown as DbBlacklistedUserRecord | null;
+
         /* fetch the user document */
-        const [ db_user_data ] = await go_mongo_db.find(db_database_name, db_users_collection_name, {
+        const db_user_data_find_cursor = await go_mongo_db.find(db_database_name, db_users_collection_name, {
             ...(user_id_type === 'discord' ? {
                 'identity.discord_user_id': user_id,
             } : {
@@ -126,6 +142,8 @@ export default new CustomInteraction({
                 '_id': false,
             },
         });
+
+        const db_user_data = await db_user_data_find_cursor.next() as unknown as DbUserData | null;
 
         /* send the user document */
         await interaction.editReply({

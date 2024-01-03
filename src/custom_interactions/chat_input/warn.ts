@@ -6,7 +6,7 @@ import * as Discord from 'discord.js';
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
 
-import { ModerationActionType, addModerationActionToDatabase } from '@root/common/handlers';
+import { addModerationActionToDatabase } from '@root/common/handlers';
 
 //------------------------------------------------------------//
 
@@ -15,7 +15,7 @@ export default new CustomInteraction({
     type: Discord.InteractionType.ApplicationCommand,
     data: {
         type: Discord.ApplicationCommandType.ChatInput,
-        description: 'Warns a user in the server.',
+        description: 'Used by staff to warn a member in the server.',
         options: [
             {
                 name: 'member',
@@ -125,7 +125,7 @@ export default new CustomInteraction({
          const successfully_logged_to_database = await addModerationActionToDatabase({
             discord_user_id: member_to_warn.id,
         }, {
-            type: ModerationActionType.Warn,
+            type: 'WARN',
             epoch: Date.now(),
             reason: warn_reason,
             staff_member_id: staff_member.id,

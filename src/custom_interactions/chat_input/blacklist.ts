@@ -33,7 +33,7 @@ if (db_blacklisted_users_collection_name.length < 1) throw new Error('Environmen
 async function findUserInUsersDatabase(
     user_lookup_type: 'discord' | 'roblox',
     user_lookup_query: string,
-): Promise<Omit<DbUserData, '_id'> | undefined> {
+): Promise<Omit<DbUserData, '_id'> | null> {
     if (typeof user_lookup_query !== 'string') throw new TypeError('\`user_lookup_query\` must be a string');
 
     const find_query = {
@@ -44,11 +44,13 @@ async function findUserInUsersDatabase(
         }),
     };
 
-    const [db_user_data] = await go_mongo_db.find(db_database_name, db_users_collection_name, find_query, {
+    const db_user_data_find_cursor = await go_mongo_db.find(db_database_name, db_users_collection_name, find_query, {
         projection: {
             '_id': false,
         },
-    }) as unknown as Omit<DbUserData, '_id'>[];
+    });
+
+    const db_user_data = await db_user_data_find_cursor.next() as unknown as Omit<DbUserData, '_id'> | null;
 
     return db_user_data;
 }
@@ -59,7 +61,7 @@ async function findUserInUsersDatabase(
 async function findUserInBlacklistedUsersDatabase(
     user_lookup_type: 'discord' | 'roblox',
     user_lookup_query: string,
-): Promise<Omit<DbBlacklistedUserRecord, '_id'> | undefined> {
+): Promise<Omit<DbBlacklistedUserRecord, '_id'> | null> {
     if (typeof user_lookup_query !== 'string') throw new TypeError('\`user_lookup_query\` must be a string');
 
     const find_query = {
@@ -70,11 +72,13 @@ async function findUserInBlacklistedUsersDatabase(
         }),
     };
 
-    const [db_blacklisted_user_data] = await go_mongo_db.find(db_database_name, db_blacklisted_users_collection_name, find_query, {
+    const db_blacklisted_user_data_find_cursor = await go_mongo_db.find(db_database_name, db_blacklisted_users_collection_name, find_query, {
         projection: {
             '_id': false,
         },
-    }) as unknown as Omit<DbBlacklistedUserRecord, '_id'>[];
+    });
+
+    const db_blacklisted_user_data = await db_blacklisted_user_data_find_cursor.next() as unknown as Omit<DbBlacklistedUserRecord, '_id'> | null;
 
     return db_blacklisted_user_data;
 }
@@ -181,7 +185,6 @@ async function blacklistAddSubcommand(
 
     const db_user_data = await findUserInUsersDatabase('discord', user_id_to_add);
     if (!db_user_data) {
-
         await interaction.editReply({
             embeds: [
                 CustomEmbed.from({
@@ -200,7 +203,6 @@ async function blacklistAddSubcommand(
 
     const is_staff_member_allowed_to_blacklist_user = await isStaffMemberAllowedToBlacklistUser(interaction.guild, interaction.user.id, user_id_to_add);
     if (!is_staff_member_allowed_to_blacklist_user) {
-
         await interaction.editReply({
             embeds: [
                 CustomEmbed.from({
@@ -219,7 +221,6 @@ async function blacklistAddSubcommand(
 
     const is_user_already_blacklisted = await findUserInBlacklistedUsersDatabase('discord', user_id_to_add);
     if (is_user_already_blacklisted) {
-
         await interaction.editReply({
             embeds: [
                 CustomEmbed.from({
@@ -243,7 +244,6 @@ async function blacklistAddSubcommand(
     });
 
     if (!was_user_added_to_blacklist) {
-
         await interaction.editReply({
             embeds: [
                 CustomEmbed.from({
@@ -285,7 +285,6 @@ async function blacklistRemoveSubcommand(
 
     const db_user_data = await findUserInUsersDatabase('discord', user_id_to_remove);
     if (!db_user_data) {
-
         await interaction.editReply({
             embeds: [
                 CustomEmbed.from({
@@ -304,7 +303,6 @@ async function blacklistRemoveSubcommand(
 
     const is_staff_member_allowed_to_blacklist_user = await isStaffMemberAllowedToBlacklistUser(interaction.guild, interaction.user.id, user_id_to_remove);
     if (!is_staff_member_allowed_to_blacklist_user) {
-
         await interaction.editReply({
             embeds: [
                 CustomEmbed.from({
@@ -323,7 +321,6 @@ async function blacklistRemoveSubcommand(
 
     const is_user_already_blacklisted = await findUserInBlacklistedUsersDatabase('discord', user_id_to_remove);
     if (!is_user_already_blacklisted) {
-
         await interaction.editReply({
             embeds: [
                 CustomEmbed.from({
@@ -342,7 +339,6 @@ async function blacklistRemoveSubcommand(
 
     const was_user_removed_from_blacklist = await removeUserFromBlacklistedUsersDatabase(db_user_data.identity);
     if (!was_user_removed_from_blacklist) {
-
         await interaction.editReply({
             embeds: [
                 CustomEmbed.from({
@@ -415,7 +411,7 @@ export default new CustomInteraction({
     type: Discord.InteractionType.ApplicationCommand,
     data: {
         type: Discord.ApplicationCommandType.ChatInput,
-        description: 'Blacklists a user from being able to use products.',
+        description: 'Used by staff to blacklist a user from using products.',
         options: [
             {
                 name: 'add',

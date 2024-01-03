@@ -6,7 +6,7 @@ import * as Discord from 'discord.js';
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
 
-import { ModerationActionType, addModerationActionToDatabase } from '@root/common/handlers';
+import { addModerationActionToDatabase } from '@root/common/handlers';
 
 //------------------------------------------------------------//
 
@@ -15,7 +15,7 @@ export default new CustomInteraction({
     type: Discord.InteractionType.ApplicationCommand,
     data: {
         type: Discord.ApplicationCommandType.ChatInput,
-        description: 'kicks a user from the server',
+        description: 'Used by staff to kick a member from the server.',
         options: [
             {
                 name: 'member',
@@ -139,7 +139,7 @@ export default new CustomInteraction({
          const successfully_logged_to_database = await addModerationActionToDatabase({
             discord_user_id: member_to_kick.id,
         }, {
-            type: ModerationActionType.Kick,
+            type: 'KICK',
             epoch: Date.now(),
             reason: kick_reason,
             staff_member_id: staff_member.id,
