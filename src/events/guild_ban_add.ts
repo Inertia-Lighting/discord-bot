@@ -17,13 +17,17 @@ export default {
     name: Discord.Events.GuildBanAdd,
     async handler(
         client: Discord.Client,
-        member: Discord.GuildMember,
+        ban: Discord.GuildBan,
     ) {
-        if (member.user.system) return; // don't operate on system accounts
-        if (member.user.bot) return; // don't operate on bots to prevent feedback-loops
-        if (member.guild.id !== bot_guild_id) return; // don't operate on other guilds
+        if (ban.guild.id !== bot_guild_id) return; // don't operate on other guilds
 
-        /* log members leaving */
-        await guildMemberBannedLogger(member).catch(console.trace);
+        try {
+            await ban.fetch(true);
+        } catch {
+            return; // don't operate on bans that can't be fetched
+        }
+
+        /* log bans */
+        await guildMemberBannedLogger(ban).catch(console.trace);
     },
 };

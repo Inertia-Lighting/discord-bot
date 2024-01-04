@@ -115,22 +115,19 @@ async function guildMemberRemoveLogger(
 }
 
 async function guildMemberBannedLogger(
-    member: Discord.GuildMember,
+    guild_ban: Discord.GuildBan,
 ) {
-    if (!(member instanceof Discord.GuildMember)) throw new TypeError('guildMemberBannedLogger(): member is not a GuildMember');
+    if (!(guild_ban instanceof Discord.GuildBan)) throw new TypeError('guildMemberBannedLogger(): ban is not a GuildBan');
 
-    const client = member.guild.client;
+    const client = guild_ban.guild.client;
 
     const member_retention_logging_channel = await client.channels.fetch(member_retention_logging_channel_id);
     if (!member_retention_logging_channel) throw new Error('Failed to fetch logging channel');
     if (!member_retention_logging_channel.isTextBased()) throw new TypeError('member_retention_logging_channel is not a text channel');
 
-    const user_creation_timestamp = getMarkdownFriendlyTimestamp(member.user.createdTimestamp);
-    const member_joined_timestamp = getMarkdownFriendlyTimestamp(member.joinedTimestamp ?? Date.now());
-    const member_left_timestamp = getMarkdownFriendlyTimestamp(Date.now());
+    const member_banned_timestamp = getMarkdownFriendlyTimestamp(Date.now());
 
-    const ban = await member.guild.bans.fetch(member.user.id).catch(() => null);
-    const ban_reason = ban?.reason ?? 'Unknown';
+    const ban_reason = guild_ban.reason ?? 'Unknown';
 
     await member_retention_logging_channel.send({
         embeds: [
@@ -139,23 +136,14 @@ async function guildMemberBannedLogger(
                 title: 'A member has been banned from the server!',
                 fields: [
                     {
-                        name: 'Member',
-                        value: `@${member.user.username} (${member.user.id})`,
+                        name: 'User',
+                        value: `@${guild_ban.user.username} (${guild_ban.user.id})`,
                         inline: false,
                     }, {
-                        name: 'Account creation date',
-                        value: `<t:${user_creation_timestamp}:F> (<t:${user_creation_timestamp}:R>)`,
+                        name: 'Banned date',
+                        value: `<t:${member_banned_timestamp}:F> (<t:${member_banned_timestamp}:R>)`,
                     }, {
-                        name: 'Account join date',
-                        value: `<t:${member_joined_timestamp}:F> (<t:${member_joined_timestamp}:R>)`,
-                    }, {
-                        name: 'Account banned date',
-                        value: `<t:${member_left_timestamp}:F> (<t:${member_left_timestamp}:R>)`,
-                    }, {
-                        name: 'Account stayed for',
-                        value: `${discordTimestampsDifferenceInDays(member_left_timestamp, member_joined_timestamp)} days`,
-                    }, {
-                        name: 'Member banned for',
+                        name: 'Banned for',
                         value: ban_reason,
                     },
                 ],
