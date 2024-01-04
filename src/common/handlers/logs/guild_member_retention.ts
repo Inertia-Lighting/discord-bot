@@ -15,6 +15,24 @@ if (typeof member_retention_logging_channel_id !== 'string') throw new TypeError
 
 //------------------------------------------------------------//
 
+function discordTimestampsDifferenceInDays(
+    newest_timestamp: number | string, // in seconds
+    oldest_timestamp: number | string, // in seconds
+) {
+    // Math.floor() to round down to the nearest whole number of days
+    // Math.abs() to not care about the order of the timestamps
+    // 60 * 60 * 24 = 86400 seconds in a day
+
+    const parsed_newest_timestamp = Number.parseInt(`${newest_timestamp}`, 10);
+    const parsed_oldest_timestamp = Number.parseInt(`${oldest_timestamp}`, 10);
+
+    return Math.floor(
+        (parsed_newest_timestamp - parsed_oldest_timestamp) / (60 * 60 * 24)
+    );
+}
+
+//------------------------------------------------------------//
+
 async function guildMemberAddLogger(
     member: Discord.GuildMember,
 ) {
@@ -88,7 +106,7 @@ async function guildMemberRemoveLogger(
                         value: `<t:${member_left_timestamp}:F> (<t:${member_left_timestamp}:R>)`,
                     }, {
                         name: 'Account stayed for',
-                        value: `${Math.floor((Number.parseInt(member_left_timestamp, 10) - Number.parseInt(member_joined_timestamp, 10)) / (60 * 60 * 24))} days`,
+                        value: `${discordTimestampsDifferenceInDays(member_left_timestamp, member_joined_timestamp)} days`,
                     },
                 ],
             }),
@@ -111,6 +129,9 @@ async function guildMemberBannedLogger(
     const member_joined_timestamp = getMarkdownFriendlyTimestamp(member.joinedTimestamp ?? Date.now());
     const member_left_timestamp = getMarkdownFriendlyTimestamp(Date.now());
 
+    const ban = await member.guild.bans.fetch(member.user.id).catch(() => null);
+    const ban_reason = ban?.reason ?? 'Unknown';
+
     await member_retention_logging_channel.send({
         embeds: [
             CustomEmbed.from({
@@ -132,70 +153,16 @@ async function guildMemberBannedLogger(
                         value: `<t:${member_left_timestamp}:F> (<t:${member_left_timestamp}:R>)`,
                     }, {
                         name: 'Account stayed for',
-                        value: `${Math.floor((Number.parseInt(member_left_timestamp, 10) - Number.parseInt(member_joined_timestamp, 10)) / (60 * 60 * 24))} days`,
-                    },
-                    {
-                        name: 'Account Banned for',
-                        value: `${(await member.guild.bans.fetch(`${member.user.id}`)).reason ?? 'No reason was added'}`,
-                    },
-                ],
-            }),
-        ],
-    }).catch(console.trace);
-}
-
-async function guildMemberKickedLogger(
-    member: Discord.GuildMember,
-) {
-    if (!(member instanceof Discord.GuildMember)) throw new TypeError('guildMemberKickedLogger(): member is not a GuildMember');
-
-    const client = member.guild.client;
-
-    const member_retention_logging_channel = await client.channels.fetch(member_retention_logging_channel_id);
-    if (!member_retention_logging_channel) throw new Error('Failed to fetch logging channel');
-    if (!member_retention_logging_channel.isTextBased()) throw new TypeError('member_retention_logging_channel is not a text channel');
-
-    const user_creation_timestamp = getMarkdownFriendlyTimestamp(member.user.createdTimestamp);
-    const member_joined_timestamp = getMarkdownFriendlyTimestamp(member.joinedTimestamp ?? Date.now());
-    const member_left_timestamp = getMarkdownFriendlyTimestamp(Date.now());
-
-    const audit_log = await member.guild.fetchAuditLogs({
-        limit: 1,
-        type: Discord.AuditLogEvent.MemberKick,
-    });
-    await member_retention_logging_channel.send({
-        embeds: [
-            CustomEmbed.from({
-                color: CustomEmbed.Color.Orange,
-                title: 'A member has been kicked from the server!',
-                fields: [
-                    {
-                        name: 'Member',
-                        value: `@${member.user.username} (${member.user.id})`,
-                        inline: false,
+                        value: `${discordTimestampsDifferenceInDays(member_left_timestamp, member_joined_timestamp)} days`,
                     }, {
-                        name: 'Account creation date',
-                        value: `<t:${user_creation_timestamp}:F> (<t:${user_creation_timestamp}:R>)`,
-                    }, {
-                        name: 'Account join date',
-                        value: `<t:${member_joined_timestamp}:F> (<t:${member_joined_timestamp}:R>)`,
-                    }, {
-                        name: 'Account banned date',
-                        value: `<t:${member_left_timestamp}:F> (<t:${member_left_timestamp}:R>)`,
-                    }, {
-                        name: 'Account stayed for',
-                        value: `${Math.floor((Number.parseInt(member_left_timestamp, 10) - Number.parseInt(member_joined_timestamp, 10)) / (60 * 60 * 24))} days`,
-                    },
-                    {
-                        name: 'Account Kicked for',
-                        value: `${audit_log.entries.first()?.reason ?? 'No reason was added'}`,
+                        name: 'Member banned for',
+                        value: ban_reason,
                     },
                 ],
             }),
         ],
     }).catch(console.trace);
 }
-
 
 //------------------------------------------------------------//
 
@@ -203,5 +170,4 @@ export {
     guildMemberAddLogger,
     guildMemberRemoveLogger,
     guildMemberBannedLogger,
-    guildMemberKickedLogger,
 };
