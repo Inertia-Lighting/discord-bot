@@ -155,6 +155,19 @@ export const support_categories: SupportCategory[] = [
                     components: [
                         {
                             type: Discord.ComponentType.TextInput,
+                            customId: 'streaming_enabled',
+                            style: Discord.TextInputStyle.Short,
+                            label: 'Did you disable StreamingEnabled? (yes, no, idk)',
+                            minLength: 2,
+                            maxLength: 3,
+                            required: true,
+                        },
+                    ],
+                }, {
+                    type: Discord.ComponentType.ActionRow,
+                    components: [
+                        {
+                            type: Discord.ComponentType.TextInput,
                             customId: 'output',
                             style: Discord.TextInputStyle.Short,
                             label: 'Please provide us with a link to your output.',
@@ -188,6 +201,7 @@ export const support_categories: SupportCategory[] = [
         ) => {
             const answer_for_product = interaction.fields.getTextInputValue('product');
             const answer_for_read_me = interaction.fields.getTextInputValue('read_me');
+            const answer_for_streaming_enabled = interaction.fields.getTextInputValue('streaming_enabled');
             const answer_for_http = interaction.fields.getTextInputValue('http');
             const answer_for_output = interaction.fields.getTextInputValue('output');
             const answer_for_issue = interaction.fields.getTextInputValue('issue');
@@ -205,6 +219,9 @@ export const support_categories: SupportCategory[] = [
                             '',
                             '**Did you read the README? (yes, no)**',
                             `${answer_for_read_me}`,
+                            '',
+                            '**Did you read disable StreamingEnabled? (yes, no)**',
+                            `${answer_for_streaming_enabled}`,
                             '',
                             '**Did you enable HTTP Request (yes, no, idk)**',
                             `${answer_for_http}`,
@@ -774,10 +791,10 @@ export async function createSupportTicketChannel(
             ...support_tickets_category.permissionOverwrites.cache.values(), // clone the parent channel permissions
             {
                 id: process.env.BOT_STAFF_ROLE_ID as string,
-                allow: [ Discord.PermissionFlagsBits.ViewChannel, Discord.PermissionFlagsBits.SendMessages ],
+                allow: [Discord.PermissionFlagsBits.ViewChannel, Discord.PermissionFlagsBits.SendMessages],
             }, {
                 id: support_ticket_owner.id,
-                allow: [ Discord.PermissionFlagsBits.ViewChannel, Discord.PermissionFlagsBits.SendMessages ],
+                allow: [Discord.PermissionFlagsBits.ViewChannel, Discord.PermissionFlagsBits.SendMessages],
             },
         ],
     });
@@ -909,7 +926,7 @@ export async function closeSupportTicketChannel(
                                     placeholder: 'Please select a rating to give our support staff!',
                                     minValues: 1,
                                     maxValues: 1,
-                                    options: Object.entries(satisfaction_levels).map(([ key, value ]) => ({
+                                    options: Object.entries(satisfaction_levels).map(([key, value]) => ({
                                         label: value.label,
                                         description: value.description,
                                         value: key,
