@@ -17,9 +17,9 @@ export type DistributiveOmit<T, K extends keyof T> = T extends unknown ? Omit<T,
 export interface DbProductData {
     _id: MongoDB.ObjectId;
     roblox_product_id: string;
-    public: boolean;
-    /** @deprecated use `code` instead */
-    old_code: string;
+    viewable: boolean;
+    purchasable: boolean;
+    downloadable: boolean;
     code: string;
     name: string;
     description: string;
