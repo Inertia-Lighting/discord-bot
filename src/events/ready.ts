@@ -100,7 +100,7 @@ async function removeIllegalNicknames(
 export default {
     name: Discord.Events.ClientReady,
     async handler(
-        client: Discord.Client,
+        client: Discord.Client<true>,
     ) {
         const ready_timestamp = `${moment()}`;
         console.log('----------------------------------------------------------------------------------------------------------------');

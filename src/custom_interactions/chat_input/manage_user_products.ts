@@ -33,6 +33,13 @@ if (bot_logging_products_manager_channel_id.length < 1) throw new Error('Environ
 
 //------------------------------------------------------------//
 
+// Note for the future:
+//
+// If we ever need to add more actions to this enum,
+// other locations will need to be updated as well.
+//
+// Assumptions were made that the enum would only have two values.
+// As such ternary operators were used in some places.
 enum ManageProductsAction {
     Add = 'add',
     Remove = 'remove',
@@ -78,7 +85,7 @@ class DbProductsCache {
 
 //------------------------------------------------------------//
 
-async function manageProductsAutoCompleteHandler(
+async function manageProductsAutocompleteHandler(
     interaction: Discord.AutocompleteInteraction,
 ): Promise<void> {
     const db_roblox_products = await DbProductsCache.fetch(false);
@@ -174,7 +181,7 @@ async function manageProductsAutoCompleteHandler(
         return;
     }
 
-    const auto_complete_result = matching_db_roblox_products.slice(0, 5).map(
+    const autocomplete_results = matching_db_roblox_products.slice(0, 5).map(
         (db_roblox_product) => ({
             name: db_roblox_product.code,
             value: db_roblox_product.code,
@@ -182,18 +189,18 @@ async function manageProductsAutoCompleteHandler(
     );
 
     // always add the all products option
-    auto_complete_result.push({
+    autocomplete_results.push({
         name: 'All Products',
         value: ALL_PRODUCTS_CODE,
     });
 
     // always add the all viewable products option
-    auto_complete_result.push({
+    autocomplete_results.push({
         name: 'All Viewable Products',
         value: ALL_VIEWABLE_PRODUCTS_CODE,
     });
 
-    interaction.respond(auto_complete_result);
+    interaction.respond(autocomplete_results);
 }
 
 //------------------------------------------------------------//
@@ -479,7 +486,7 @@ async function manageProductsChatInputCommandHandler(
                 color: action_to_perform === ManageProductsAction.Add ? CustomEmbed.Color.Green : CustomEmbed.Color.Red,
                 title: 'Inertia Lighting | Products Manager',
                 description: [
-                    `${action_to_perform === ManageProductsAction.Add ? 'added' : 'removed'}:`,
+                    `${action_to_perform === ManageProductsAction.Add ? 'Added' : 'Removed'}:`,
                     ...product_codes_to_manage.map(
                         (product_code_to_manage) => `- \`${product_code_to_manage}\``
                     ),
@@ -546,7 +553,7 @@ export default new CustomInteraction({
         if (!interaction.inCachedGuild()) return;
 
         if (interaction.isAutocomplete()) {
-            await manageProductsAutoCompleteHandler(interaction);
+            await manageProductsAutocompleteHandler(interaction);
         } else if (interaction.isChatInputCommand()) {
             await manageProductsChatInputCommandHandler(interaction);
         }
