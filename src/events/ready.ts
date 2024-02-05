@@ -100,7 +100,7 @@ async function removeIllegalNicknames(
 export default {
     name: Discord.Events.ClientReady,
     async handler(
-        client: Discord.Client,
+        client: Discord.Client<true>,
     ) {
         if (!client.isReady()) {
             throw new Error('This shouldn\'t happen, but if it does, the client was not ready in the ready event!');
