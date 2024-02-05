@@ -15,6 +15,24 @@ if (typeof member_retention_logging_channel_id !== 'string') throw new TypeError
 
 //------------------------------------------------------------//
 
+function discordTimestampsDifferenceInDays(
+    newest_timestamp: number | string, // in seconds
+    oldest_timestamp: number | string, // in seconds
+) {
+    // Math.floor() to round down to the nearest whole number of days
+    // Math.abs() to not care about the order of the timestamps
+    // 60 * 60 * 24 = 86400 seconds in a day
+
+    const parsed_newest_timestamp = Number.parseInt(`${newest_timestamp}`, 10);
+    const parsed_oldest_timestamp = Number.parseInt(`${oldest_timestamp}`, 10);
+
+    return Math.floor(
+        (parsed_newest_timestamp - parsed_oldest_timestamp) / (60 * 60 * 24)
+    );
+}
+
+//------------------------------------------------------------//
+
 async function guildMemberAddLogger(
     member: Discord.GuildMember,
 ) {
@@ -88,7 +106,45 @@ async function guildMemberRemoveLogger(
                         value: `<t:${member_left_timestamp}:F> (<t:${member_left_timestamp}:R>)`,
                     }, {
                         name: 'Account stayed for',
-                        value: `${Math.floor((Number.parseInt(member_left_timestamp, 10) - Number.parseInt(member_joined_timestamp, 10)) / (60 * 60 * 24))} days`,
+                        value: `${discordTimestampsDifferenceInDays(member_left_timestamp, member_joined_timestamp)} days`,
+                    },
+                ],
+            }),
+        ],
+    }).catch(console.trace);
+}
+
+async function guildMemberBannedLogger(
+    guild_ban: Discord.GuildBan,
+) {
+    if (!(guild_ban instanceof Discord.GuildBan)) throw new TypeError('guildMemberBannedLogger(): ban is not a GuildBan');
+
+    const client = guild_ban.guild.client;
+
+    const member_retention_logging_channel = await client.channels.fetch(member_retention_logging_channel_id);
+    if (!member_retention_logging_channel) throw new Error('Failed to fetch logging channel');
+    if (!member_retention_logging_channel.isTextBased()) throw new TypeError('member_retention_logging_channel is not a text channel');
+
+    const member_banned_timestamp = getMarkdownFriendlyTimestamp(Date.now());
+
+    const ban_reason = guild_ban.reason ?? 'Unknown';
+
+    await member_retention_logging_channel.send({
+        embeds: [
+            CustomEmbed.from({
+                color: CustomEmbed.Color.Orange,
+                title: 'A member has been banned from the server!',
+                fields: [
+                    {
+                        name: 'User',
+                        value: `@${guild_ban.user.username} (${guild_ban.user.id})`,
+                        inline: false,
+                    }, {
+                        name: 'Banned date',
+                        value: `<t:${member_banned_timestamp}:F> (<t:${member_banned_timestamp}:R>)`,
+                    }, {
+                        name: 'Banned for',
+                        value: `\`\`\`\n${ban_reason}\n\`\`\``,
                     },
                 ],
             }),
@@ -101,4 +157,5 @@ async function guildMemberRemoveLogger(
 export {
     guildMemberAddLogger,
     guildMemberRemoveLogger,
+    guildMemberBannedLogger,
 };
