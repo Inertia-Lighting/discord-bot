@@ -8,6 +8,8 @@ import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunCo
 
 import { closeSupportTicketChannel } from '@root/common/handlers';
 
+import { fetchHighestAccessLevelForUser } from '@root/common/permissions';
+
 //------------------------------------------------------------//
 
 const support_tickets_category_id = `${process.env.BOT_SUPPORT_TICKETS_CATEGORY_ID ?? ''}`;
@@ -24,7 +26,21 @@ export default new CustomInteraction({
     data: {
         type: Discord.ApplicationCommandType.ChatInput,
         description: 'Used by staff to close a support ticket.',
-        options: [],
+        options: [
+            {
+                name: 'reason',
+                type: Discord.ApplicationCommandOptionType.String,
+                description: 'Why is this ticket being closed?',
+                minLength: 1,
+                maxLength: 1024,
+                required: true,
+            }, {
+                name: 'request_feedback',
+                type: Discord.ApplicationCommandOptionType.Boolean,
+                description: 'Request user feedback? (only for team leaders and above)',
+                required: false,
+            },
+        ],
     },
     metadata: {
         required_run_context: CustomInteractionRunContext.Guild,
@@ -36,6 +52,22 @@ export default new CustomInteraction({
         if (!interaction.channel) return;
 
         await interaction.deferReply({ ephemeral: false });
+
+        const reason = interaction.options.getString('reason', true);
+        const request_feedback = interaction.options.getBoolean('request_feedback', false) ?? true; // ask for feedback by default
+
+        // Ensure that only Team Leaders and above can close tickets without asking for feedback.
+        const highest_permission = await fetchHighestAccessLevelForUser(discord_client, interaction.user);
+        if (
+            request_feedback === false &&
+            highest_permission < CustomInteractionAccessLevel.TeamLeaders
+        ) {
+            await interaction.editReply({
+                content: 'You lack permission to close tickets without asking for feedback.',
+            }).catch(console.warn);
+
+            return;
+        }
 
         const channel_exists_in_support_tickets_category = interaction.channel?.parentId === support_tickets_category_id;
         const channel_is_not_transcripts_channel = interaction.channel?.id !== support_tickets_transcripts_channel_id;
@@ -53,9 +85,14 @@ export default new CustomInteraction({
         if (!support_ticket_topic_name) throw new Error('Expected support_ticket_topic_name to be a string');
 
         await interaction.editReply({
-            content: `${interaction.user}, closing support ticket in 10 seconds...`,
+            content: [
+                `${interaction.user}, closed this ticket for:`,
+                '```',
+                Discord.escapeCodeBlock(reason),
+                '```',
+            ].join('\n'),
         }).catch(console.warn);
 
-        await closeSupportTicketChannel(interaction.channel, true, interaction.member, true);
+        await closeSupportTicketChannel(interaction.channel, true, interaction.member, reason, request_feedback);
     },
 });
