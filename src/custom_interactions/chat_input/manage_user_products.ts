@@ -33,10 +33,22 @@ if (bot_logging_products_manager_channel_id.length < 1) throw new Error('Environ
 
 //------------------------------------------------------------//
 
+// Note for the future:
+//
+// If we ever need to add more actions to this enum,
+// other locations will need to be updated as well.
+//
+// Assumptions were made that the enum would only have two values.
+// As such ternary operators were used in some places.
 enum ManageProductsAction {
     Add = 'add',
     Remove = 'remove',
 }
+
+//------------------------------------------------------------//
+
+const ALL_PRODUCTS_CODE = 'ALL';
+const ALL_VIEWABLE_PRODUCTS_CODE = 'ALL_VIEWABLE';
 
 //------------------------------------------------------------//
 
@@ -73,7 +85,7 @@ class DbProductsCache {
 
 //------------------------------------------------------------//
 
-async function manageProductsAutoCompleteHandler(
+async function manageProductsAutocompleteHandler(
     interaction: Discord.AutocompleteInteraction,
 ): Promise<void> {
     const db_roblox_products = await DbProductsCache.fetch(false);
@@ -96,7 +108,7 @@ async function manageProductsAutoCompleteHandler(
         return;
     }
 
-    /* ensure the focused option is valid */
+    /* ensure the focused option is the one that we want */
     if (focused_option.name !== 'product_code') {
         await interaction.respond([]);
 
@@ -169,12 +181,73 @@ async function manageProductsAutoCompleteHandler(
         return;
     }
 
-    interaction.respond(
-        matching_db_roblox_products.slice(0, 5).map(db_roblox_product => ({
+    const autocomplete_results = matching_db_roblox_products.slice(0, 5).map(
+        (db_roblox_product) => ({
             name: db_roblox_product.code,
             value: db_roblox_product.code,
-        }))
+        })
     );
+
+    // always add the all products option
+    autocomplete_results.push({
+        name: 'All Products',
+        value: ALL_PRODUCTS_CODE,
+    });
+
+    // always add the all viewable products option
+    autocomplete_results.push({
+        name: 'All Viewable Products',
+        value: ALL_VIEWABLE_PRODUCTS_CODE,
+    });
+
+    interaction.respond(autocomplete_results);
+}
+
+//------------------------------------------------------------//
+
+// Note:
+//
+// Great care should be taken to ensure that only
+// applicable product codes are allowed.
+//
+// Example:
+//
+// If the user already owns the product
+// and the action is to add the product,
+// don't add the product to this array.
+//
+// Alternatively, if the user doesn't own the product
+// and the action is to remove the product,
+// don't add the product to this array.
+function dbRobloxProductsOwnershipPredicate(
+    db_user_data: DbUserData,
+    action_to_perform: ManageProductsAction,
+    db_roblox_product_code: string,
+): boolean {
+    const user_owns_product: boolean = db_user_data.products[db_roblox_product_code];
+
+    return (
+        // action add: only add the product if the user doesn't already own it
+        (action_to_perform === ManageProductsAction.Add && !user_owns_product) ||
+        // action remove: only remove the product if the user currently owns it
+        (action_to_perform === ManageProductsAction.Remove && user_owns_product)
+    );
+}
+
+async function manageUserProduct(
+    db_user_data: DbUserData,
+    action_to_perform: ManageProductsAction,
+    product_code: string,
+): Promise<void> {
+    /* modify the user's products */
+    await go_mongo_db.update(db_database_name, db_users_collection_name, {
+        'identity.discord_user_id': db_user_data.identity.discord_user_id,
+        'identity.roblox_user_id': db_user_data.identity.roblox_user_id,
+    }, {
+        $set: {
+            [`products.${product_code}`]: (action_to_perform === ManageProductsAction.Add ? true : false),
+        },
+    });
 }
 
 async function manageProductsChatInputCommandHandler(
@@ -222,6 +295,43 @@ async function manageProductsChatInputCommandHandler(
         return;
     }
 
+    /* fetch the products */
+    const db_roblox_products = await DbProductsCache.fetch(true);
+
+    /* check if the product code is valid */
+    switch (product_code) {
+        case ALL_PRODUCTS_CODE:
+        case ALL_VIEWABLE_PRODUCTS_CODE: {
+            // these are valid product codes, so do nothing
+
+            break;
+        }
+
+        default: {
+            // we need to check if the product code is valid now
+
+            const db_roblox_product = db_roblox_products.find(
+                (db_roblox_product) => db_roblox_product.code === product_code
+            );
+
+            if (!db_roblox_product) {
+                interaction.followUp({
+                    embeds: [
+                        CustomEmbed.from({
+                            color: CustomEmbed.Color.Yellow,
+                            title: 'Inertia Lighting | Products Manager',
+                            description: `\`${product_code}\` is not a valid product code!`,
+                        }),
+                    ],
+                }).catch(console.warn);
+
+                return;
+            }
+
+            break;
+        }
+    }
+
     /* find the user in the database */
     const db_user_data_find_cursor = await go_mongo_db.find(db_database_name, db_users_collection_name, {
         'identity.discord_user_id': user_to_modify.id,
@@ -248,16 +358,56 @@ async function manageProductsChatInputCommandHandler(
         return;
     }
 
-    /* check if the product code is valid */
-    const db_roblox_products = await DbProductsCache.fetch(true);
-    const db_roblox_product = db_roblox_products.find(db_roblox_product => db_roblox_product.code === product_code);
-    if (!db_roblox_product) {
-        interaction.followUp({
+    // Gather the product codes to manage.
+    const product_codes_to_manage: string[] = [];
+    switch (product_code) {
+        case ALL_PRODUCTS_CODE: {
+            product_codes_to_manage.push(
+                ...db_roblox_products.filter(
+                    (db_roblox_product) => dbRobloxProductsOwnershipPredicate(db_user_data, action_to_perform, db_roblox_product.code)
+                ).map(
+                    (db_roblox_product) => db_roblox_product.code
+                )
+            );
+
+            break;
+        }
+
+        case ALL_VIEWABLE_PRODUCTS_CODE: {
+            product_codes_to_manage.push(
+                ...db_roblox_products.filter(
+                    (db_roblox_product) => db_roblox_product.viewable
+                ).filter(
+                    (db_roblox_product) => dbRobloxProductsOwnershipPredicate(db_user_data, action_to_perform, db_roblox_product.code)
+                ).map(
+                    (db_roblox_product) => db_roblox_product.code
+                )
+            );
+
+            break;
+        }
+
+        default: {
+            // only add the one specified product code
+            // we can assume this is a valid product code because we checked earlier
+
+            // only add the product code if it passes the ownership predicate
+            if (dbRobloxProductsOwnershipPredicate(db_user_data, action_to_perform, product_code)) {
+                product_codes_to_manage.push(product_code);
+            }
+
+            break;
+        }
+    }
+
+    /* ensure the user has products to manage */
+    if (product_codes_to_manage.length < 1) {
+        await interaction.editReply({
             embeds: [
                 CustomEmbed.from({
                     color: CustomEmbed.Color.Yellow,
                     title: 'Inertia Lighting | Products Manager',
-                    description: `\`${product_code}\` is not a valid product code!`,
+                    description: `${user_to_modify} does not have any available products to ${action_to_perform ? 'add' : 'remove'}!`,
                 }),
             ],
         }).catch(console.warn);
@@ -265,30 +415,25 @@ async function manageProductsChatInputCommandHandler(
         return;
     }
 
-    /* modify the user's products */
-    try {
-        await go_mongo_db.update(db_database_name, db_users_collection_name, {
-            'identity.discord_user_id': db_user_data.identity.discord_user_id,
-            'identity.roblox_user_id': db_user_data.identity.roblox_user_id,
-        }, {
-            $set: {
-                [`products.${db_roblox_product.code}`]: (action_to_perform === ManageProductsAction.Add ? true : false),
-            },
-        });
-    } catch (error) {
-        console.trace(error);
+    /* manage the user's products */
+    for (const product_code_to_manage of product_codes_to_manage) {
+        try {
+            await manageUserProduct(db_user_data, action_to_perform, product_code_to_manage);
+        } catch (error) {
+            console.trace(error);
 
-        await interaction.editReply({
-            embeds: [
-                CustomEmbed.from({
-                    color: CustomEmbed.Color.Red,
-                    title: 'Inertia Lighting | Products Manager',
-                    description: 'An error occurred while modifying the user\'s products!',
-                }),
-            ],
-        }).catch(console.warn);
+            await interaction.editReply({
+                embeds: [
+                    CustomEmbed.from({
+                        color: CustomEmbed.Color.Red,
+                        title: 'Inertia Lighting | Products Manager',
+                        description: `An error occurred while modifying: \`${product_code_to_manage}\` for ${user_to_modify}!`,
+                    }),
+                ],
+            }).catch(console.warn);
 
-        return;
+            continue;
+        }
     }
 
     /* log to the products manager logging channel */
@@ -302,7 +447,13 @@ async function manageProductsChatInputCommandHandler(
                 CustomEmbed.from({
                     color: action_to_perform === ManageProductsAction.Add ? CustomEmbed.Color.Green : CustomEmbed.Color.Red,
                     title: 'Inertia Lighting | Products Manager',
-                    description: `${interaction.user} ${action_to_perform === ManageProductsAction.Add ? 'added' : 'removed'} \`${db_roblox_product.code}\` ${action_to_perform === ManageProductsAction.Add ? 'to' : 'from'} ${user_to_modify}.`,
+                    description: [
+                        `${interaction.user} ${action_to_perform === ManageProductsAction.Add ? 'added' : 'removed'}:`,
+                        ...product_codes_to_manage.map(
+                            (product_code_to_manage) => `- \`${product_code_to_manage}\``
+                        ),
+                        `${action_to_perform === ManageProductsAction.Add ? 'to' : 'from'} ${user_to_modify}.`,
+                    ].join('\n'),
                     fields: [
                         {
                             name: 'Reason',
@@ -334,7 +485,13 @@ async function manageProductsChatInputCommandHandler(
             CustomEmbed.from({
                 color: action_to_perform === ManageProductsAction.Add ? CustomEmbed.Color.Green : CustomEmbed.Color.Red,
                 title: 'Inertia Lighting | Products Manager',
-                description: `${action_to_perform === ManageProductsAction.Add ? 'Added' : 'Removed'} \`${db_roblox_product.code}\` ${action_to_perform === ManageProductsAction.Add ? 'to' : 'from'} ${user_to_modify}.`,
+                description: [
+                    `${action_to_perform === ManageProductsAction.Add ? 'Added' : 'Removed'}:`,
+                    ...product_codes_to_manage.map(
+                        (product_code_to_manage) => `- \`${product_code_to_manage}\``
+                    ),
+                    `${action_to_perform === ManageProductsAction.Add ? 'to' : 'from'} ${user_to_modify}.`,
+                ].join('\n'),
                 fields: [
                     {
                         name: 'Reason',
@@ -396,7 +553,7 @@ export default new CustomInteraction({
         if (!interaction.inCachedGuild()) return;
 
         if (interaction.isAutocomplete()) {
-            await manageProductsAutoCompleteHandler(interaction);
+            await manageProductsAutocompleteHandler(interaction);
         } else if (interaction.isChatInputCommand()) {
             await manageProductsChatInputCommandHandler(interaction);
         }
