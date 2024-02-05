@@ -791,7 +791,8 @@ export async function closeSupportTicketChannel(
     support_channel: Discord.GuildTextBasedChannel,
     save_transcript: boolean,
     member_that_closed_ticket: Discord.GuildMember,
-    send_feedback_survey: boolean = false
+    reason_for_closing_ticket: string,
+    send_feedback_survey: boolean,
 ): Promise<void> {
     const client = support_channel.client;
 
@@ -885,7 +886,12 @@ export async function closeSupportTicketChannel(
                 await support_ticket_owner_dms.send({
                     embeds: [
                         CustomEmbed.from({
-                            description: 'Your support ticket transcript is attached to this message.',
+                            description: [
+                                `Your support ticket was closed by ${Discord.userMention(member_that_closed_ticket.user.id)} for:`,
+                                '```',
+                                Discord.escapeCodeBlock(reason_for_closing_ticket),
+                                '```',
+                            ].join('\n'),
                         }),
                     ],
                     files: [
