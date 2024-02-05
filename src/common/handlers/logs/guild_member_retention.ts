@@ -144,7 +144,7 @@ async function guildMemberBannedLogger(
                         value: `<t:${member_banned_timestamp}:F> (<t:${member_banned_timestamp}:R>)`,
                     }, {
                         name: 'Banned for',
-                        value: ban_reason,
+                        value: `\`\`\`\n${ban_reason}\n\`\`\``,
                     },
                 ],
             }),
