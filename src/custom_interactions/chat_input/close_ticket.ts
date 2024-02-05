@@ -8,6 +8,8 @@ import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunCo
 
 import { closeSupportTicketChannel } from '@root/common/handlers';
 
+import { fetchHighestAccessLevelForUser } from '@root/common/permissions';
+
 //------------------------------------------------------------//
 
 const support_tickets_category_id = `${process.env.BOT_SUPPORT_TICKETS_CATEGORY_ID ?? ''}`;
@@ -30,12 +32,12 @@ export default new CustomInteraction({
                 type: Discord.ApplicationCommandOptionType.String,
                 description: 'Why is this ticket being closed?',
                 minLength: 1,
-                maxLength: 512,
+                maxLength: 1024,
                 required: true,
             }, {
                 name: 'request_feedback',
                 type: Discord.ApplicationCommandOptionType.Boolean,
-                description: 'Should the user be asked for feedback?',
+                description: 'Request user feedback? (only for team leaders and above)',
                 required: false,
             },
         ],
@@ -53,6 +55,19 @@ export default new CustomInteraction({
 
         const reason = interaction.options.getString('reason', true);
         const request_feedback = interaction.options.getBoolean('request_feedback', false) ?? true; // ask for feedback by default
+
+        // Ensure that only Team Leaders and above can close tickets without asking for feedback.
+        const highest_permission = await fetchHighestAccessLevelForUser(discord_client, interaction.user);
+        if (
+            request_feedback === false &&
+            highest_permission < CustomInteractionAccessLevel.TeamLeaders
+        ) {
+            await interaction.editReply({
+                content: 'You lack permission to close tickets without asking for feedback.',
+            }).catch(console.warn);
+
+            return;
+        }
 
         const channel_exists_in_support_tickets_category = interaction.channel?.parentId === support_tickets_category_id;
         const channel_is_not_transcripts_channel = interaction.channel?.id !== support_tickets_transcripts_channel_id;
