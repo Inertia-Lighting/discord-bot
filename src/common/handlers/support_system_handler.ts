@@ -774,10 +774,10 @@ export async function createSupportTicketChannel(
             ...support_tickets_category.permissionOverwrites.cache.values(), // clone the parent channel permissions
             {
                 id: process.env.BOT_STAFF_ROLE_ID as string,
-                allow: [ Discord.PermissionFlagsBits.ViewChannel, Discord.PermissionFlagsBits.SendMessages ],
+                allow: [Discord.PermissionFlagsBits.ViewChannel, Discord.PermissionFlagsBits.SendMessages],
             }, {
                 id: support_ticket_owner.id,
-                allow: [ Discord.PermissionFlagsBits.ViewChannel, Discord.PermissionFlagsBits.SendMessages ],
+                allow: [Discord.PermissionFlagsBits.ViewChannel, Discord.PermissionFlagsBits.SendMessages],
             },
         ],
     });
@@ -856,6 +856,10 @@ export async function closeSupportTicketChannel(
                     value: Discord.userMention(member_that_closed_ticket.id),
                     inline: true,
                 }, {
+                    name: 'Reason for',
+                    value: reason_for_closing_ticket,
+                    inline: true,
+                }, {
                     name: 'Participants',
                     value: `${Array.from(channel_participant_ids).map(user_id => Discord.userMention(user_id)).join(' - ')}`,
                     inline: false,
@@ -915,7 +919,7 @@ export async function closeSupportTicketChannel(
                                     placeholder: 'Please select a rating to give our support staff!',
                                     minValues: 1,
                                     maxValues: 1,
-                                    options: Object.entries(satisfaction_levels).map(([ key, value ]) => ({
+                                    options: Object.entries(satisfaction_levels).map(([key, value]) => ({
                                         label: value.label,
                                         description: value.description,
                                         value: key,
