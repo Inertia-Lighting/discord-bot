@@ -45,7 +45,7 @@
     "bufferutil": "4.0.8",
     "discord-html-transcripts": "3.2.0",
     "discord.js": "14.14.1",
-    "dotenv": "16.4.1",
+    "dotenv": "16.4.4",
     "go-mongo-db": "github:midspike/go-mongo-db#v2.1.0",
     "module-alias": "2.2.3",
     "moment-timezone": "0.5.45",
