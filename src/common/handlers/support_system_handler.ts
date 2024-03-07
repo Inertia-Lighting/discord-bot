@@ -856,6 +856,10 @@ export async function closeSupportTicketChannel(
                     value: Discord.userMention(member_that_closed_ticket.id),
                     inline: true,
                 }, {
+                    name: 'Reason for Closure',
+                    value: `${'```'}\n${reason_for_closing_ticket}\n${'```'}`,
+                    inline: false,
+                }, {
                     name: 'Participants',
                     value: `${Array.from(channel_participant_ids).map(user_id => Discord.userMention(user_id)).join(' - ')}`,
                     inline: false,
