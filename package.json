@@ -49,7 +49,7 @@
     "go-mongo-db": "github:midspike/go-mongo-db#v2.1.0",
     "module-alias": "2.2.3",
     "moment-timezone": "0.5.45",
-    "node-gyp": "10.0.1",
+    "node-gyp": "10.1.0",
     "recursive-read-directory": "github:MidSpike/recursive-read-directory#v0.4.0-beta",
     "string-similarity": "4.0.4",
     "utf-8-validate": "6.0.3",
