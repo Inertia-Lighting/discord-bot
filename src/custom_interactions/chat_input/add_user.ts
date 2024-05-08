@@ -38,7 +38,7 @@ export default new CustomInteraction({
     type: Discord.InteractionType.ApplicationCommand,
     data: {
         type: Discord.ApplicationCommandType.ChatInput,
-        description: 'Used by staff to manage user identity.',
+        description: 'Used by staff to force add a user identity.',
         options: [
             {
                 name: 'new_roblox_id',
