@@ -20,8 +20,8 @@ if (db_database_name.length < 1) throw new Error('Environment variable: MONGO_DA
 const db_users_collection_name = `${process.env.MONGO_USERS_COLLECTION_NAME ?? ''}`;
 if (db_users_collection_name.length < 1) throw new Error('Environment variable: MONGO_USERS_COLLECTION_NAME; is not set correctly.');
 
-const bot_support_staff_database_role_id = `${process.env.BOT_SUPPORT_STAFF_DATABASE_ROLE_ID ?? ''}`;
-if (bot_support_staff_database_role_id.length < 1) throw new Error('Environment variable: BOT_SUPPORT_STAFF_DATABASE_ROLE_ID; is not set correctly.');
+const bot_admin_role_id = `${process.env.BOT_ADMIN_ROLE_ID ?? ''}`;
+if (bot_admin_role_id.length < 1) throw new Error('Environment variable: BOT_ADMIN_ROLE_ID; is not set correctly.');
 
 const bot_logging_identity_manager_channel_id = `${process.env.BOT_LOGGING_IDENTITY_MANAGER_CHANNEL_ID ?? ''}`;
 if (bot_logging_identity_manager_channel_id.length < 1) throw new Error('Environment variable: BOT_LOGGING_IDENTITY_MANAGER_CHANNEL_ID; is not set correctly.');
@@ -72,7 +72,7 @@ export default new CustomInteraction({
 
         // ensure the user running this command is authorized to do so
         const staff_member = interaction.member;
-        const staff_member_is_permitted = staff_member.roles.cache.has(bot_support_staff_database_role_id);
+        const staff_member_is_permitted = staff_member.roles.cache.has(bot_admin_role_id);
         if (!staff_member_is_permitted) {
             await interaction.editReply({
                 embeds: [
