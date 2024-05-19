@@ -20,6 +20,14 @@ if (support_tickets_transcripts_channel_id.length < 1) throw new Error('Environm
 
 //------------------------------------------------------------//
 
+const bot_staff_role_id = `${process.env.BOT_STAFF_ROLE_ID ?? ''}`;
+if (bot_staff_role_id.length < 1) throw new Error('Environment variable: BOT_STAFF_ROLE_ID; is not set correctly.');
+
+const bot_customer_service_role_id = `${process.env.BOT_CUSTOMER_SERVICE_ROLE_ID ?? ''}`;
+if (bot_customer_service_role_id.length < 1) throw new Error('Environment variable: BOT_CUSTOMER_SERVICE_ROLE_ID; is not set correctly.');
+
+//------------------------------------------------------------//
+
 const bot_database_support_staff_role_id = `${process.env.BOT_SUPPORT_STAFF_DATABASE_ROLE_ID ?? ''}`;
 if (bot_database_support_staff_role_id.length < 1) throw new Error('Environment variable: BOT_SUPPORT_STAFF_DATABASE_ROLE_ID; is not set correctly.');
 
@@ -773,8 +781,12 @@ export async function createSupportTicketChannel(
         permissionOverwrites: [
             ...support_tickets_category.permissionOverwrites.cache.values(), // clone the parent channel permissions
             {
-                id: process.env.BOT_STAFF_ROLE_ID as string,
-                allow: [Discord.PermissionFlagsBits.ViewChannel, Discord.PermissionFlagsBits.SendMessages],
+                id: bot_customer_service_role_id,
+                allow: [ Discord.PermissionFlagsBits.ViewChannel, Discord.PermissionFlagsBits.SendMessages ],
+            }, {
+                id: bot_staff_role_id,
+                allow: [ Discord.PermissionFlagsBits.ViewChannel ],
+                deny: [ Discord.PermissionFlagsBits.SendMessages ],
             }, {
                 id: support_ticket_owner.id,
                 allow: [Discord.PermissionFlagsBits.ViewChannel, Discord.PermissionFlagsBits.SendMessages],
@@ -856,9 +868,9 @@ export async function closeSupportTicketChannel(
                     value: Discord.userMention(member_that_closed_ticket.id),
                     inline: true,
                 }, {
-                    name: 'Close Reason',
-                    value: reason_for_closing_ticket,
-                    inline: true,
+                    name: 'Reason for Closure',
+                    value: `${'```'}\n${reason_for_closing_ticket}\n${'```'}`,
+                    inline: false,
                 }, {
                     name: 'Participants',
                     value: `${Array.from(channel_participant_ids).map(user_id => Discord.userMention(user_id)).join(' - ')}`,
