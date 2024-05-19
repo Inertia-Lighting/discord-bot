@@ -781,13 +781,8 @@ export async function createSupportTicketChannel(
         permissionOverwrites: [
             ...support_tickets_category.permissionOverwrites.cache.values(), // clone the parent channel permissions
             {
-<<<<<<< HEAD
-                id: process.env.BOT_STAFF_ROLE_ID as string,
-                allow: [Discord.PermissionFlagsBits.ViewChannel, Discord.PermissionFlagsBits.SendMessages],
-=======
                 id: bot_customer_service_role_id,
                 allow: [ Discord.PermissionFlagsBits.ViewChannel, Discord.PermissionFlagsBits.SendMessages ],
->>>>>>> c45927b16b5969290ad57487e3edb8889d36c725
             }, {
                 id: bot_staff_role_id,
                 allow: [ Discord.PermissionFlagsBits.ViewChannel ],
@@ -873,15 +868,9 @@ export async function closeSupportTicketChannel(
                     value: Discord.userMention(member_that_closed_ticket.id),
                     inline: true,
                 }, {
-<<<<<<< HEAD
-                    name: 'Close Reason',
-                    value: reason_for_closing_ticket,
-                    inline: true,
-=======
                     name: 'Reason for Closure',
                     value: `${'```'}\n${reason_for_closing_ticket}\n${'```'}`,
                     inline: false,
->>>>>>> c45927b16b5969290ad57487e3edb8889d36c725
                 }, {
                     name: 'Participants',
                     value: `${Array.from(channel_participant_ids).map(user_id => Discord.userMention(user_id)).join(' - ')}`,
