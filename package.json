@@ -46,11 +46,11 @@
     "discord-html-transcripts": "3.2.0",
     "discord.js": "14.14.1",
     "dotenv": "16.4.5",
-    "go-mongo-db": "github:midspike/go-mongo-db#v2.1.0",
+    "go-mongo-db": "github:MidSpike/go-mongo-db",
     "module-alias": "2.2.3",
     "moment-timezone": "0.5.45",
     "node-gyp": "10.1.0",
-    "recursive-read-directory": "github:MidSpike/recursive-read-directory#v0.4.0-beta",
+    "recursive-read-directory": "github:MidSpike/recursive-read-directory",
     "string-similarity": "4.0.4",
     "utf-8-validate": "6.0.3",
     "uuid": "9.0.1"
