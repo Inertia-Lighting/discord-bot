@@ -144,7 +144,7 @@ export async function generateVerificationCode(user_id: string | number, interac
 
 
         event.on('Update', (data: RobloxUsersApiUser) => {
-            const regexFilter = `\\b${push_data.code}\\b`;
+            const regexFilter = `\\b${push_data.code.trim()}\\b`;
             console.log(regexFilter);
             const contains_code = new RegExp(regexFilter, 'i').test(data.description);
             console.log(contains_code);
