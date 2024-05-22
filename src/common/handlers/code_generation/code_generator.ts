@@ -95,7 +95,7 @@ export async function generateVerificationCode(user_id: string | number, interac
     const db_user_data = await db_user_data_find_cursor.next() as unknown as DbUserData | null;
 
     if (!db_user_data) {
-        interaction.channel?.send({
+        interaction.editReply({
             embeds: [
                 CustomEmbed.from({
                     color: CustomEmbed.Color.Red,
@@ -121,7 +121,7 @@ export async function generateVerificationCode(user_id: string | number, interac
     const discord_friendly_timestamp = getMarkdownFriendlyTimestamp(push_data.expiration);
 
     //send message to channel detailing how to verify.
-    interaction.channel?.send({
+    interaction.editReply({
         embeds: [
             CustomEmbed.from({
                 title: 'Awaiting verification',
@@ -149,7 +149,7 @@ export async function generateVerificationCode(user_id: string | number, interac
             const contains_code = new RegExp(regexFilter, 'i').test(data.description);
             console.log(contains_code);
             if (contains_code) {
-                interaction.channel?.send({
+                interaction.editReply({
                     embeds: [
                         CustomEmbed.from({
                             color: CustomEmbed.Color.Green,
@@ -177,7 +177,7 @@ export async function generateVerificationCode(user_id: string | number, interac
 setInterval(() => {
 
     codes.filter((element) => element.expiration <= Date.now()).forEach((data, index) => {
-        data.interaction?.channel?.send({
+        data.interaction?.editReply({
             embeds: [
                 CustomEmbed.from({
                     color: CustomEmbed.Color.Red,
