@@ -4,7 +4,7 @@
 
 import * as events from 'events';
 
-import { CommandInteraction } from 'discord.js';
+import { ButtonStyle, CommandInteraction, ComponentType } from 'discord.js';
 
 import { CustomEmbed } from '../../message.js';
 
@@ -137,6 +137,19 @@ export async function generateVerificationCode(user_id: string | number, interac
                     },
                 ],
             }),
+        ],
+        components: [
+            {
+                type: ComponentType.ActionRow,
+                components: [
+                    {
+                        type: ComponentType.Button,
+                        url: `https://roblox.com/users/${db_user_data.identity.roblox_user_id}/profile`,
+                        style: ButtonStyle.Link,
+                        label: 'Your profile',
+                    },
+                ],
+            },
         ],
     });
 
