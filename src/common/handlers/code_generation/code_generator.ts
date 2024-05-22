@@ -6,13 +6,17 @@ import * as events from 'events';
 
 import { CommandInteraction } from 'discord.js';
 
-import { getMarkdownFriendlyTimestamp } from '@root/utilities';
-
-import { RobloxUsersApiUser, event_map, getUserUpdates } from '../custom_noblox.js';
 import { CustomEmbed } from '../../message.js';
 
-//------------------------------------------------------------//
+import { DbUserData } from '@root/types';
 
+import { getMarkdownFriendlyTimestamp } from '@root/utilities';
+
+import { go_mongo_db } from '@root/common/mongo/mongo';
+
+import { RobloxUsersApiUser, event_map, getUserUpdates } from '../custom_noblox.js/index.js';
+
+//------------------------------------------------------------//
 interface verification_code_data {
     interaction: CommandInteraction,
     roblox_id: string,
@@ -21,7 +25,19 @@ interface verification_code_data {
     event: events.EventEmitter;
 }
 
-export const codes: Array<verification_code_data> = [];
+//------------------------------------------------------------//
+
+const codes: Array<verification_code_data> = [];
+
+const db_database_name = `${process.env.MONGO_DATABASE_NAME ?? ''}`;
+if (db_database_name.length < 1) throw new Error('Environment variable: MONGO_DATABASE_NAME; is not set correctly.');
+
+const db_products_collection_name = `${process.env.MONGO_PRODUCTS_COLLECTION_NAME ?? ''}`;
+if (db_products_collection_name.length < 1) throw new Error('Environment variable: MONGO_PRODUCTS_COLLECTION_NAME; is not set correctly.');
+
+const db_users_collection_name = `${process.env.MONGO_USERS_COLLECTION_NAME ?? ''}`;
+if (db_users_collection_name.length < 1) throw new Error('Environment variable: MONGO_USERS_COLLECTION_NAME; is not set correctly.');
+
 const word_array = ['white', 'black', 'source', 'copy', 'possible', 'new', 'native', 'rocks', 'apple', 'pear', 'tree', 'quackers', 'aiden', 'cole', 'cheese', 'pizza', 'man', 'transfer', 'ticket', 'products', 'alpha', 'bravo', 'charlie', 'delta', 'echo', 'foxtrot', 'golf', 'hotel', 'india', 'lima', 'mike', 'november', 'oscar', 'papa', 'romeo', 'tango', 'uniform', 'victor', 'zulu'];
 
 const special_word_array = ['inertia', 'recovery', 'lighting'];
@@ -68,13 +84,15 @@ export async function generateVerificationCode(user_id: string | number, interac
         }
         code.trim();
     }
-    const db_user_data = {
-        _id: '1231231231231',
-        identity: {
-            discord_user_id: '269953912058937345',
-            roblox_user_id: '491275854',
+    const db_user_data_find_cursor = await go_mongo_db.find(db_database_name, db_users_collection_name, {
+        'identity.discord_user_id': user_id.toString(),
+    }, {
+        projection: {
+            '_id': false,
         },
-    };
+    });
+
+    const db_user_data = await db_user_data_find_cursor.next() as unknown as DbUserData | null;
 
     if (!db_user_data) {
         interaction.channel?.send({
