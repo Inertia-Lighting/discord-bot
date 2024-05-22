@@ -125,14 +125,14 @@ export async function generateVerificationCode(user_id: string | number, interac
         embeds: [
             CustomEmbed.from({
                 title: 'Awaiting verification',
-                description: `<@${user_id}> has <t:${discord_friendly_timestamp}:R> to verify their account. Failing to do so may result in your ticket being closed by staff.`,
+                description: `<@${user_id}> must verify their account <t:${discord_friendly_timestamp}:R>. Failing to do so may result in your ticket being closed by staff for inactivity.`,
                 fields: [
                     {
                         name: 'Code',
                         value: `\`\`\`${push_data.code}\`\`\``,
                     },
                     {
-                        name: 'How to verify',
+                        name: 'Help',
                         value: 'https://chesse.needs.rest/chrome_W4BT0T84nm.gif',
                     },
                 ],
