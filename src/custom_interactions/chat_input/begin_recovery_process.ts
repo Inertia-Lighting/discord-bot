@@ -23,16 +23,16 @@ if (bot_customer_service_role_id.length < 1) throw new Error('Environment variab
 //------------------------------------------------------------//
 
 export default new CustomInteraction({
-    identifier: 'generate_verification_code',
+    identifier: 'begin_recovery_process',
     type: Discord.InteractionType.ApplicationCommand,
     data: {
         type: Discord.ApplicationCommandType.ChatInput,
-        description: 'Generate a code to verify someone!',
+        description: 'Begin the process for account recovery.',
         options: [
             {
-                name: 'member',
-                type: Discord.ApplicationCommandOptionType.User,
-                description: 'The member who you want to generate a code for.',
+                name: 'user_id',
+                type: Discord.ApplicationCommandOptionType.Number,
+                description: 'The Roblox Id of the member you would like to recover.',
                 required: true,
             },
         ],
@@ -62,6 +62,7 @@ export default new CustomInteraction({
 
             return;
         }
-        generateVerificationCode(interaction.user.id, interaction);
+        const user_id = interaction.options.getNumber('user_id', true);
+        generateVerificationCode(user_id.toString(), interaction);
     },
 });
