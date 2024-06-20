@@ -4,30 +4,28 @@
 
 import * as events from 'events';
 
-import { ButtonStyle, CommandInteraction, ComponentType } from 'discord.js';
+import { ButtonStyle, CommandInteraction, ComponentType, Message } from 'discord.js';
 
 import { CustomEmbed } from '../../message.js';
 
-import { DbUserData } from '@root/types';
-
 import { getMarkdownFriendlyTimestamp } from '@root/utilities';
 
-import { go_mongo_db } from '@root/common/mongo/mongo';
-
-import { RobloxUsersApiUser, event_map, getUserUpdates } from '../custom_noblox.js/index.js';
+import { RobloxUsersApiUser, event_map, getUserData, getUserUpdates } from './user_update.js';
 
 //------------------------------------------------------------//
+
 interface verification_code_data {
     interaction: CommandInteraction,
     roblox_id: string,
     code: string,
     expiration: number
-    event: events.EventEmitter;
+    event: events.EventEmitter
+    message_object: Message;
 }
 
 //------------------------------------------------------------//
 
-const codes: Array<verification_code_data> = [];
+export const codes: Array<verification_code_data> = [];
 
 const db_database_name = `${process.env.MONGO_DATABASE_NAME ?? ''}`;
 if (db_database_name.length < 1) throw new Error('Environment variable: MONGO_DATABASE_NAME; is not set correctly.');
@@ -55,7 +53,38 @@ const code_length = 10;
  * @example generateVerificationCode(269953912058937345, interaction)
  *
  */
-export async function generateVerificationCode(user_id: string | number, interaction: CommandInteraction): Promise<undefined> {
+
+async function checkUser(user_id: string, interaction: CommandInteraction) {
+    const user_data = await getUserData(user_id);
+    codes.filter((data: verification_code_data) => data.roblox_id === user_id).forEach((data) => {
+        interaction.editReply({
+            embeds: [
+                CustomEmbed.from({
+                    title: 'CODE ALREADY PENDING',
+                    description: `**${user_data.name}** already has a pending code...`,
+                }),
+            ],
+            components: [
+                {
+                    type: ComponentType.ActionRow,
+                    components: [
+                        {
+                            type: ComponentType.Button,
+                            url: `${data.message_object.url}`,
+                            style: ButtonStyle.Link,
+                            label: 'Code',
+                        },
+                    ],
+                },
+            ],
+        });
+        return false;
+    });
+    return true;
+}
+
+export async function generateVerificationCode(user_id: string, interaction: CommandInteraction): Promise<undefined> {
+    if (await checkUser(user_id, interaction) === false) return;
     let code: string = '';
     const random_places: Array<[number, string]> = [];
     special_word_array.forEach((word) => {
@@ -84,37 +113,17 @@ export async function generateVerificationCode(user_id: string | number, interac
         }
         code.trim();
     }
-    const db_user_data_find_cursor = await go_mongo_db.find(db_database_name, db_users_collection_name, {
-        'identity.discord_user_id': user_id.toString(),
-    }, {
-        projection: {
-            '_id': false,
-        },
-    });
-
-    const db_user_data = await db_user_data_find_cursor.next() as unknown as DbUserData | null;
-
-    if (!db_user_data) {
-        interaction.editReply({
-            embeds: [
-                CustomEmbed.from({
-                    color: CustomEmbed.Color.Red,
-                    title: 'ERROR',
-                    description: 'Could not find user in the database.',
-                }),
-            ],
-        });
-        return;
-    }
     //Generic typing because noblox.js doesn't have typings for "onBlurbChange"
-    const event = await getUserUpdates(db_user_data.identity.roblox_user_id);
-
+    const user_data = await getUserData(user_id);
+    const event = await getUserUpdates(user_id);
+    const message_object = (await interaction.fetchReply());
     const push_data = {
         interaction: interaction,
-        roblox_id: db_user_data.identity.roblox_user_id,
+        roblox_id: user_id,
         code: code,
         expiration: Date.now() + 43200000,
         event: event,
+        message_object: message_object,
     };
     codes.push(push_data);
 
@@ -125,7 +134,7 @@ export async function generateVerificationCode(user_id: string | number, interac
         embeds: [
             CustomEmbed.from({
                 title: 'Awaiting verification',
-                description: `<@${user_id}> must verify their account <t:${discord_friendly_timestamp}:R>. Failing to do so may result in your ticket being closed by staff for inactivity.`,
+                description: `**${user_data.name}** must verify their account <t:${discord_friendly_timestamp}:R>. Failing to do so may result in this ticket being closed by staff for inactivity.`,
                 fields: [
                     {
                         name: 'Code',
@@ -144,7 +153,7 @@ export async function generateVerificationCode(user_id: string | number, interac
                 components: [
                     {
                         type: ComponentType.Button,
-                        url: `https://roblox.com/users/${db_user_data.identity.roblox_user_id}/profile`,
+                        url: `https://roblox.com/users/${user_id}/profile`,
                         style: ButtonStyle.Link,
                         label: 'Your profile',
                     },
@@ -172,7 +181,7 @@ export async function generateVerificationCode(user_id: string | number, interac
                     ],
                 });
                 event_map.delete(push_data.roblox_id);
-                codes.filter((data) => data.roblox_id === db_user_data.identity.roblox_user_id).forEach((_Object, index) => codes.splice(index));
+                codes.filter((data) => data.roblox_id === user_id).forEach((_Object, index) => codes.splice(index));
                 console.log('The recovery code is part of the user\'s blurb.');
                 return;
             } else {
@@ -186,6 +195,8 @@ export async function generateVerificationCode(user_id: string | number, interac
         return;
     }
 }
+
+/* -------------------------------------------------------------------------- */
 
 setInterval(() => {
 
