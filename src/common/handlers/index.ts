@@ -21,3 +21,5 @@ export * from './support_system_handler';
 export * from './user_notes_handler';
 
 export * from './user_profile_handler';
+
+export * from './code_generation';
