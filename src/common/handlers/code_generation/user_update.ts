@@ -75,4 +75,4 @@ setInterval(async () => {
         const request_data = request.data;
         v.emit('Update', request_data);
     });
-}, 10000);
+}, 30000);
