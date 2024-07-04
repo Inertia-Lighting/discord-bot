@@ -13,11 +13,11 @@ RUN npm install
 # Warn outdated dependecies
 RUN npm outdated
 
+# Get all the code needed to run the app
+COPY src /usr/src/app/
+
 # Build the bot
 RUN npm build
-
-# Get all the code needed to run the app
-COPY . /usr/src/app/
 
 # Create tmp directory
 RUN if not exist ".\usr\src\app\temporary" mkdir ".\usr\src\app\temporary"
