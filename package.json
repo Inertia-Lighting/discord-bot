@@ -15,8 +15,8 @@
     "npm": ">=8.0.0"
   },
   "scripts": {
-    "hook": "is-ci || husky",
-    "lint": "npx eslint .",
+    "hook": "is-ci || husky install || true",
+    "lint": "npx eslint src",
     "clean": "run-script-os",
     "clean:windows": "if exist \".\\dist\" rmdir /s /q \".\\dist\"",
     "clean:linux": "rm -rf ./dist",

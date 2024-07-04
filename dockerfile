@@ -4,23 +4,19 @@ FROM node:lts-alpine
 WORKDIR /usr/src/app
 
 # Copy dependency definitions
-COPY package.json /usr/src/app
-COPY package-lock.json /usr/src/app
+COPY package.json package-lock.json /usr/src/app/
 
-# Install dependecies # --immutable
-RUN npm install 
+# Install dependencies
+RUN npm install
 
-# Warn outdated dependecies
-RUN npm outdated
-
-# Get all the code needed to run the app
-COPY src /usr/src/app/
+# Copy source code
+COPY src /usr/src/app/src
 
 # Build the bot
-RUN npm build
+RUN npm run build
 
 # Create tmp directory
-RUN if not exist ".\usr\src\app\temporary" mkdir ".\usr\src\app\temporary"
+RUN mkdir -p /usr/src/app/temporary
 
 # Start the bot
 CMD ["npm", "start"]
