@@ -1,6 +1,7 @@
 # Inertia Lighting Discord Bot
 
 [![CodeQL](https://github.com/Inertia-Lighting/discord-bot/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/Inertia-Lighting/discord-bot/actions/workflows/codeql-analysis.yml)
+[![Docker](https://github.com/DaRealFrost/inertia-discord-bot/actions/workflows/docker-ci.yml/badge.svg)](https://github.com/DaRealFrost/inertia-discord-bot/actions/workflows/docker-ci.yml)
 
 ## About
 
