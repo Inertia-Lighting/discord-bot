@@ -1,6 +1,0 @@
-# name: "Docker Deployment"
-
-# on:
-#     push:
-#       branches: [ master ]
-      
