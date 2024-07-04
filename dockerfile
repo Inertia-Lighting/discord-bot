@@ -1,23 +1,26 @@
 FROM node:lts-alpine
 
-ENV NODE_ENV=production
+# Create app directory
+WORKDIR /usr/src/app
 
-WORKDIR /app
+# Copy dependency definitions
+COPY package.json /usr/src/app
+COPY package-lock.json /usr/src/app
 
-COPY ["package.json", "package-lock.json*", "./"]
+# Install dependecies
+RUN npm ci
 
-RUN echo Installing Dependencies
-RUN npm install
-
-RUN echo Listing Outdated Dependencies
+# Warn outdated dependecies
 RUN npm outdated
 
-RUN echo Building Project
+# Build the bot
 RUN npm build
 
-RUN echo Creating Directories
-RUN if not exist ".\temporary" mkdir ".\temporary" 
+# Get all the code needed to run the app
+COPY . /usr/src/app/
 
-COPY . .
+# Create tmp directory
+RUN if not exist ".\usr\src\app\temporary" mkdir ".\usr\src\app\temporary"
 
-CMD ["npm start"]
+# Start the bot
+CMD ["npm", "start"]
