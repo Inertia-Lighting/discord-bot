@@ -20,4 +20,4 @@ RUN if not exist ".\temporary" mkdir ".\temporary"
 
 COPY . .
 
-CMD ["start.bat", "start"]
+CMD ["npm start"]
