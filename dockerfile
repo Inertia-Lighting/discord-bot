@@ -8,7 +8,7 @@ COPY package.json /usr/src/app
 COPY package-lock.json /usr/src/app
 
 # Install dependecies
-RUN npm ci
+RUN npm install --immutable
 
 # Warn outdated dependecies
 RUN npm outdated
