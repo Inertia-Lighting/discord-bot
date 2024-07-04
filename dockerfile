@@ -7,8 +7,8 @@ WORKDIR /usr/src/app
 COPY package.json /usr/src/app
 COPY package-lock.json /usr/src/app
 
-# Install dependecies
-RUN npm install --immutable
+# Install dependecies # --immutable
+RUN npm install 
 
 # Warn outdated dependecies
 RUN npm outdated
