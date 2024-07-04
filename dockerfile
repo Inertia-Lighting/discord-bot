@@ -6,11 +6,11 @@ WORKDIR /usr/src/app
 # Copy dependency definitions
 COPY package.json package-lock.json /usr/src/app/
 
-# Install dependencies
-RUN npm install
-
 # Copy source code
 COPY src /usr/src/app/src
+
+# Install dependencies
+RUN npm install
 
 # Build the bot
 RUN npm run build
