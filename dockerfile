@@ -7,7 +7,7 @@ WORKDIR /usr/src/app
 COPY . /usr/src/app/
 
 # Install dependencies
-RUN npm ci
+RUN npm ci --immutable
 
 # Build the bot
 RUN npm run build
