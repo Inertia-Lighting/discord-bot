@@ -45,11 +45,21 @@ export interface DbUserProducts {
     [product_code: string]: boolean;
 }
 
+export type DbUserProductsArray = string[];
+
+
 export interface DbUserData {
     _id: MongoDB.ObjectId;
     identity: DbUserIdentity;
     lumens: number;
     products: DbUserProducts;
+}
+
+export interface DbUserDataArray {
+    _id: MongoDB.ObjectId;
+    identity: DbUserIdentity;
+    lumens: number;
+    products: DbUserProductsArray;
 }
 
 //------------------------------------------------------------//
