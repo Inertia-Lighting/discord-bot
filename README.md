@@ -2,7 +2,8 @@
 
 [![CodeQL](https://github.com/Inertia-Lighting/discord-bot/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/Inertia-Lighting/discord-bot/actions/workflows/codeql-analysis.yml)
 [![ESLint](https://github.com/Inertia-Lighting/discord-bot/actions/workflows/eslint.yml/badge.svg)](https://github.com/Inertia-Lighting/discord-bot/actions/workflows/eslint.yml)
-[![Docker](https://github.com/Inertia-Lighting/inertia-discord-bot/actions/workflows/docker-ci.yml/badge.svg)](https://github.com/Inertia-Lighting/inertia-discord-bot/actions/workflows/docker-ci.yml)
+[![docker-ci](https://github.com/Inertia-Lighting/discord-bot/actions/workflows/docker-ci.yml/badge.svg)](https://github.com/Inertia-Lighting/discord-bot/actions/workflows/docker-ci.yml)
+[![docker-cd](https://github.com/Inertia-Lighting/discord-bot/actions/workflows/docker-cd.yml/badge.svg)](https://github.com/Inertia-Lighting/discord-bot/actions/workflows/docker-cd.yml)
 
 ## About
 
