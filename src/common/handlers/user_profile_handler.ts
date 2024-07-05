@@ -6,11 +6,12 @@ import axios from 'axios';
 
 import * as Discord from 'discord.js';
 
-import { DbBlacklistedUserRecord, DbProductData, DbUserData } from '@root/types';
+import { DbBlacklistedUserRecord, DbProductData, DbUserData, DbUserDataArray } from '@root/types';
 
 import { go_mongo_db } from '@root/common/mongo/mongo';
 
 import { CustomEmbed } from '@root/common/message';
+import { dbUserArray } from './user_data/user_data_handler';
 
 //------------------------------------------------------------//
 
@@ -28,25 +29,11 @@ if (db_blacklisted_users_collection_name.length < 1) throw new Error('Environmen
 
 //------------------------------------------------------------//
 
-async function fetchUserProductCodes(
-    discord_user_id: string,
+async function newFetchUserProductCodes(
+    db_user_data: DbUserDataArray
 ): Promise<string[]> {
-    const user_product_codes = await axios({
-        method: 'post',
-        url: 'https://api.inertia.lighting/v2/user/products/fetch',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        data: {
-            'discord_user_id': discord_user_id,
-        },
-        validateStatus: (status) => status === 200 || status === 404,
-        timeout: 10_000, // 10 seconds
-    }).then(
-        (response) => response.data as string[],
-    ); // don't catch to propagate error to caller
+    return db_user_data.products;
 
-    return user_product_codes;
 }
 
 //------------------------------------------------------------//
@@ -65,9 +52,8 @@ export async function userProfileHandler(
         },
     });
 
-    const db_user_data = await db_user_data_find_cursor.next() as unknown as DbUserData | null;
-
-    if (!db_user_data) {
+    const original_db_user_data = await db_user_data_find_cursor.next() as unknown as DbUserData | null;
+    if (!original_db_user_data) {
         await deferred_interaction.editReply({
             embeds: [
                 CustomEmbed.from({
@@ -86,7 +72,7 @@ export async function userProfileHandler(
 
         return;
     }
-
+    const db_user_data = await dbUserArray(original_db_user_data);
     const db_blacklisted_user_data_find_cursor = await go_mongo_db.find(db_database_name, db_blacklisted_users_collection_name, {
         $or: [
             { 'identity.discord_user_id': db_user_data.identity.discord_user_id },
@@ -106,7 +92,7 @@ export async function userProfileHandler(
 
     const db_viewable_roblox_products = await db_viewable_roblox_products_find_cursor.toArray() as unknown as DbProductData[];
 
-    const user_product_codes = await fetchUserProductCodes(db_user_data.identity.discord_user_id) ?? [];
+    const user_product_codes = await newFetchUserProductCodes(db_user_data) ?? [];
     const user_products = db_viewable_roblox_products.filter(product => user_product_codes.includes(product.code));
 
     const roblox_user_data: {

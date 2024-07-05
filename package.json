@@ -14,20 +14,19 @@
     "node": ">=16.0.0",
     "npm": ">=8.0.0"
   },
-  "scripts": {
-    "hook": "is-ci || husky",
-    "lint": "npx eslint .",
-    "clean": "run-script-os",
-    "clean:windows": "if exist \".\\dist\" rmdir /s /q \".\\dist\"",
-    "clean:linux": "rm -rf ./dist",
-    "build": "npm run clean && tsc --build",
-    "prepare": "npm run hook && npm run lint && npm run build",
-    "test": "npm run prepare",
-    "title": "run-script-os",
-    "title:windows": "title Inertia Lighting Discord Bot",
-    "title:default": "",
-    "start": "npm run prepare && npm run title && node --trace-warnings --enable-source-maps --require module-alias/register --require dotenv/config ."
-  },
+"scripts": {
+  "hook": "is-ci || husky install || true",
+  "lint": "npx eslint src",
+  "clean": "run-script-os",
+  "clean:windows": "if exist \".\\dist\" rmdir /s /q \".\\dist\"",
+  "clean:linux": "rm -rf ./dist",
+  "clean:default": "rm -rf ./dist",
+  "build": "npm run clean && tsc --build",
+  "title": "run-script-os",
+  "title:windows": "title Inertia Lighting Discord Bot",
+  "title:default": "",
+  "start": "npm run title && node --trace-warnings --enable-source-maps --require module-alias/register --require dotenv/config ."
+},
   "devDependencies": {
     "@types/string-similarity": "4.0.2",
     "@types/uuid": "9.0.8",

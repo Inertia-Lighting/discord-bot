@@ -1,0 +1,6 @@
+
+services:
+  discord-bot:
+    image: 'intertia-discord-bot'
+    env_file:
+     - ./.env
