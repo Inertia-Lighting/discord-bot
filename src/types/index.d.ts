@@ -45,21 +45,25 @@ export interface DbUserProducts {
     [product_code: string]: boolean;
 }
 
-export type DbUserProductsArray = string[];
-
+export interface DbUserTicketBlacklist {
+    blacklisted: boolean;
+    reason: string;
+}
 
 export interface DbUserData {
     _id: MongoDB.ObjectId;
     identity: DbUserIdentity;
     lumens: number;
     products: DbUserProducts;
+    ticket_blacklist?: DbUserTicketBlacklist
 }
 
 export interface DbUserDataArray {
     _id: MongoDB.ObjectId;
     identity: DbUserIdentity;
     lumens: number;
-    products: DbUserProductsArray;
+    products: string[];
+    ticket_blacklist?: DbUserTicketBlacklist
 }
 
 //------------------------------------------------------------//
