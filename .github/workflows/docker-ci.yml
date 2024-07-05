@@ -2,6 +2,7 @@ name: "docker-ci"
 
 on:
   push: {}
+  pull_request: {}
 
 jobs:
   build:
