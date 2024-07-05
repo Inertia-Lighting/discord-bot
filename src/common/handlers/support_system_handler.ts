@@ -789,7 +789,7 @@ export async function createSupportTicketChannel(
                 deny: [ Discord.PermissionFlagsBits.SendMessages ],
             }, {
                 id: support_ticket_owner.id,
-                allow: [ Discord.PermissionFlagsBits.ViewChannel, Discord.PermissionFlagsBits.SendMessages ],
+                allow: [Discord.PermissionFlagsBits.ViewChannel, Discord.PermissionFlagsBits.SendMessages],
             },
         ],
     });
@@ -931,7 +931,7 @@ export async function closeSupportTicketChannel(
                                     placeholder: 'Please select a rating to give our support staff!',
                                     minValues: 1,
                                     maxValues: 1,
-                                    options: Object.entries(satisfaction_levels).map(([ key, value ]) => ({
+                                    options: Object.entries(satisfaction_levels).map(([key, value]) => ({
                                         label: value.label,
                                         description: value.description,
                                         value: key,
