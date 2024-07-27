@@ -27,6 +27,15 @@ if (db_users_collection_name.length < 1) throw new Error('Environment variable: 
 const db_blacklisted_users_collection_name = `${process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME ?? ''}`;
 if (db_blacklisted_users_collection_name.length < 1) throw new Error('Environment variable: MONGO_BLACKLISTED_USERS_COLLECTION_NAME; is not set correctly.');
 
+const bot_partners_role_id = `${process.env.BOT_PARTNERS_ROLE_ID ?? ''}`;
+if (bot_partners_role_id.length < 1) throw new Error('\'process.env.BOT_PARTNERS_ROLE_ID\' is not defined or is empty');
+
+const bot_staff_products_role_id = `${process.env.BOT_STAFF_PRODUCTS_ROLE_ID ?? ''}`;
+if (bot_staff_products_role_id.length < 1) throw new Error('\'process.env.BOT_STAFF_PRODUCTS_ROLE_ID\' is not defined or is empty');
+
+const bot_subscriptions_tier_1_role_id = `${process.env.BOT_SUBSCRIPTIONS_TIER_1_ROLE_ID ?? ''}`;
+if (bot_subscriptions_tier_1_role_id.length < 1) throw new Error('\'process.env.BOT_SUBSCRIPTIONS_TIER_1_ROLE_ID\' is not defined or is empty');
+
 //------------------------------------------------------------//
 
 async function newFetchUserProductCodes(
@@ -72,7 +81,15 @@ export async function userProfileHandler(
 
         return;
     }
+    const db_find_cursor_products = await go_mongo_db.find(db_database_name, db_products_collection_name, {
+        viewable: true, // only fetch viewable products
+    }, {
+        projection: {
+            '_id': false,
+        },
+    });
     const db_user_data = await dbUserArray(original_db_user_data);
+
     const db_blacklisted_user_data_find_cursor = await go_mongo_db.find(db_database_name, db_blacklisted_users_collection_name, {
         $or: [
             { 'identity.discord_user_id': db_user_data.identity.discord_user_id },
@@ -83,6 +100,8 @@ export async function userProfileHandler(
             '_id': false,
         },
     });
+
+    const db_products = await db_find_cursor_products.toArray() as Exclude<DbProductData, '_id'>[];
 
     const db_blacklisted_user_data = await db_blacklisted_user_data_find_cursor.next() as unknown as DbBlacklistedUserRecord | null;
 
@@ -95,6 +114,43 @@ export async function userProfileHandler(
     const user_product_codes = await newFetchUserProductCodes(db_user_data) ?? [];
     const user_products = db_viewable_roblox_products.filter(product => user_product_codes.includes(product.code));
 
+    const discord_member = await deferred_interaction.guild?.members.fetch(discord_user_id);
+
+    if (discord_member) {
+        const user_is_boosting_guild = typeof discord_member.premiumSince === 'string';
+        if (user_is_boosting_guild) {
+            const supporter_perk_products = db_products.filter((product) => product.supporter_perk);
+
+            for (const product of supporter_perk_products) {
+                user_product_codes.push(product.code);
+            }
+        }
+
+        /* if the user is a tier 1 subscriber, grant access to all products */
+        const user_role_ids = discord_member.roles;
+        const user_is_tier_1_subscriber = user_role_ids.cache.has(bot_subscriptions_tier_1_role_id);
+        if (user_is_tier_1_subscriber) {
+            for (const product of db_products) {
+                user_product_codes.push(product.code);
+            }
+        }
+
+        /* if the user is a partner, grant access to all products */
+        const user_is_partner = user_role_ids.cache.has(bot_partners_role_id);
+        if (user_is_partner) {
+            for (const product of db_products) {
+                user_product_codes.push(product.code);
+            }
+        }
+
+        /* if the user is a staff member with the staff products role, grant access to all products */
+        const user_is_staff_member = user_role_ids.cache.has(bot_staff_products_role_id);
+        if (user_is_staff_member) {
+            for (const product of db_products) {
+                user_product_codes.push(product.code);
+            }
+        }
+    }
     const roblox_user_data: {
         name: string,
         displayName: string,
