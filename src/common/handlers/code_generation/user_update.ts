@@ -5,10 +5,11 @@
 import EventEmitter from 'node:events';
 
 import axios from 'axios';
+import create_db_handler from './create_db_handler';
 
 //------------------------------------------------------------//
 
-class UserUpdateEmitter extends EventEmitter {}
+export class UserUpdateEmitter extends EventEmitter {}
 
 export const event_map = new Map<string, UserUpdateEmitter>();
 
@@ -36,10 +37,17 @@ export type RobloxUsersApiUser = {
  * @returns {Promise<events.EventEmitter>}
  */
 export async function getUserUpdates(roblox_id: string | number): Promise<UserUpdateEmitter> {
+        //------------------------------------------------------------//
+
+        const code_db = await create_db_handler();
+
+        //------------------------------------------------------------//
     const returning_event = new UserUpdateEmitter();
-    event_map.set(roblox_id.toString(), returning_event);
+    code_db.data.events.set(roblox_id.toString(), returning_event);
     return returning_event;
 }
+
+/* -------------------------------------------------------------------------- */
 
 /**
  * @async
@@ -49,16 +57,22 @@ export async function getUserUpdates(roblox_id: string | number): Promise<UserUp
  * @returns {Promise<RobloxUsersApiUser>}
  */
 export async function getUserData(roblox_id: string | number): Promise<RobloxUsersApiUser> {
+
     const request = await users_api.get<RobloxUsersApiUser>(`/v1/users/${roblox_id}`);
     const request_data = request.data;
     return request_data;
 }
 /* -------------------------------------------------------------------------- */
 
-setInterval(() => {
-    event_map.forEach(async (v, k) => {
+setInterval(async () => {
+                //------------------------------------------------------------//
+
+                const code_db = await create_db_handler();
+
+                //------------------------------------------------------------//
+    code_db.data.events.forEach(async (v, k) => {
         const request = await users_api.get<RobloxUsersApiUser>(`/v1/users/${k}`);
         const request_data = request.data;
         v.emit('Update', request_data);
     });
-}, 10000);
+}, 30000);
