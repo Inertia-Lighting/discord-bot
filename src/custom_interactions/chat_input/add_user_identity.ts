@@ -34,7 +34,7 @@ const regex_user_id_filter = /^\d+$/;
 //------------------------------------------------------------//
 
 export default new CustomInteraction({
-    identifier: 'add_user',
+    identifier: 'add_user_identity',
     type: Discord.InteractionType.ApplicationCommand,
     data: {
         type: Discord.ApplicationCommandType.ChatInput,
@@ -62,7 +62,7 @@ export default new CustomInteraction({
     },
     metadata: {
         required_run_context: CustomInteractionRunContext.Guild,
-        required_access_level: CustomInteractionAccessLevel.Admins,
+        required_access_level: CustomInteractionAccessLevel.Staff,
     },
     handler: async (discord_client, interaction) => {
         if (!interaction.isChatInputCommand()) return;
@@ -197,7 +197,7 @@ export default new CustomInteraction({
 
         // attempt to add the user's identity
         try {
-            await go_mongo_db.update(db_database_name, db_users_collection_name, user_update_filter, db_user_data_update_document);
+            await go_mongo_db.add(db_database_name, db_users_collection_name, [ db_user_data_update_document ]);
         } catch (error: unknown) {
             console.trace('Failed to add the user\'s identity:', error);
 
