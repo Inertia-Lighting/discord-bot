@@ -62,7 +62,7 @@ export default new CustomInteraction({
     },
     metadata: {
         required_run_context: CustomInteractionRunContext.Guild,
-        required_access_level: CustomInteractionAccessLevel.Staff,
+        required_access_level: CustomInteractionAccessLevel.Admins,
     },
     handler: async (discord_client, interaction) => {
         if (!interaction.isChatInputCommand()) return;
@@ -114,10 +114,6 @@ export default new CustomInteraction({
         }
 
         // create the update filter based on the provided information
-        const user_update_filter = {
-            'identity.discord_user_id': new_discord_id,
-            'identity.roblox_user_id': new_roblox_id,
-        };
         const db_user_discord_identity_update_filter = {
             'identity.discord_user_id': new_discord_id,
         };
