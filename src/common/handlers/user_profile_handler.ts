@@ -84,7 +84,7 @@ export async function userProfileHandler(
     const db_find_cursor_products = await go_mongo_db.find(db_database_name, db_products_collection_name, {
         // Only fetch purchasable/viewable products
         viewable: true,
-        purchasable: true,     
+        purchasable: true,
     }, {
         projection: {
             '_id': false,
