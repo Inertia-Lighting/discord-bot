@@ -2,9 +2,7 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 //------------------------------------------------------------//
 
-import * as events from 'events';
-
-import { ButtonStyle, CommandInteraction, ComponentType, Message } from 'discord.js';
+import { ButtonStyle, CommandInteraction, ComponentType } from 'discord.js';
 
 import { CustomEmbed } from '../../message.js';
 
@@ -12,20 +10,16 @@ import { getMarkdownFriendlyTimestamp } from '@root/utilities';
 
 import { RobloxUsersApiUser, event_map, getUserData, getUserUpdates } from './user_update.js';
 
-//------------------------------------------------------------//
+import create_db_handler from './create_db_handler.js';
 
-interface verification_code_data {
-    interaction: CommandInteraction,
-    roblox_id: string,
-    code: string,
-    expiration: number
-    event: events.EventEmitter
-    message_object: Message;
-}
+import { verification_code_data } from './types.js';
 
 //------------------------------------------------------------//
 
-export const codes: Array<verification_code_data> = [];
+
+//------------------------------------------------------------//
+
+export const codes: verification_code_data[] = [];
 
 const db_database_name = `${process.env.MONGO_DATABASE_NAME ?? ''}`;
 if (db_database_name.length < 1) throw new Error('Environment variable: MONGO_DATABASE_NAME; is not set correctly.');
@@ -56,7 +50,14 @@ const code_length = 10;
 
 async function checkUser(user_id: string, interaction: CommandInteraction) {
     const user_data = await getUserData(user_id);
-    codes.filter((data: verification_code_data) => data.roblox_id === user_id).forEach((data) => {
+
+    //------------------------------------------------------------//
+
+    const code_db = await create_db_handler();
+
+   //------------------------------------------------------------//
+
+    code_db.data.codes.filter((data: verification_code_data) => data.roblox_id === user_id).forEach((data) => {
         interaction.editReply({
             embeds: [
                 CustomEmbed.from({
@@ -85,6 +86,13 @@ async function checkUser(user_id: string, interaction: CommandInteraction) {
 
 export async function generateVerificationCode(user_id: string, interaction: CommandInteraction): Promise<undefined> {
     if (await checkUser(user_id, interaction) === false) return;
+
+    //------------------------------------------------------------//
+
+    const code_db = await create_db_handler();
+
+    //------------------------------------------------------------//
+
     let code: string = '';
     const random_places: Array<[number, string]> = [];
     special_word_array.forEach((word) => {
@@ -117,7 +125,7 @@ export async function generateVerificationCode(user_id: string, interaction: Com
     const user_data = await getUserData(user_id);
     const event = await getUserUpdates(user_id);
     const message_object = (await interaction.fetchReply());
-    const push_data = {
+    const push_data: verification_code_data = {
         interaction: interaction,
         roblox_id: user_id,
         code: code,
@@ -125,7 +133,7 @@ export async function generateVerificationCode(user_id: string, interaction: Com
         event: event,
         message_object: message_object,
     };
-    codes.push(push_data);
+    code_db.data.codes.push(push_data);
 
     const discord_friendly_timestamp = getMarkdownFriendlyTimestamp(push_data.expiration);
 
@@ -181,7 +189,7 @@ export async function generateVerificationCode(user_id: string, interaction: Com
                     ],
                 });
                 event_map.delete(push_data.roblox_id);
-                codes.filter((data) => data.roblox_id === user_id).forEach((_Object, index) => codes.splice(index));
+                code_db.data.codes.filter((data) => data.roblox_id === user_id).forEach((_Object, index) => code_db.data.codes.splice(index));
                 console.log('The recovery code is part of the user\'s blurb.');
                 return;
             } else {
@@ -198,9 +206,14 @@ export async function generateVerificationCode(user_id: string, interaction: Com
 
 /* -------------------------------------------------------------------------- */
 
-setInterval(() => {
+setInterval(async () => {
+    //------------------------------------------------------------//
 
-    codes.filter((element) => element.expiration <= Date.now()).forEach((data, index) => {
+    const code_db = await create_db_handler();
+
+    //------------------------------------------------------------//
+
+    code_db.data.codes.filter((element) => element.expiration <= Date.now()).forEach((data, index) => {
         data.interaction?.editReply({
             embeds: [
                 CustomEmbed.from({
@@ -210,7 +223,7 @@ setInterval(() => {
                 }),
             ],
         });
-        codes.splice(index);
+        code_db.data.codes.splice(index);
 
     });
 }, 60000);
