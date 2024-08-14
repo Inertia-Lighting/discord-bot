@@ -1,4 +1,3 @@
-import { UserUpdateEmitter } from './user_update';
 export interface verification_code_data {
     interaction: CommandInteraction,
     roblox_id: string,
