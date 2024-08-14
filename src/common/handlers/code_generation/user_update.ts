@@ -43,7 +43,7 @@ export async function getUserUpdates(roblox_id: string | number): Promise<UserUp
 
         //------------------------------------------------------------//
     const returning_event = new UserUpdateEmitter();
-    code_db.data.events.set(roblox_id.toString(), returning_event);
+    code_db.event_map.set(roblox_id.toString(), returning_event);
     return returning_event;
 }
 
@@ -70,7 +70,7 @@ setInterval(async () => {
                 const code_db = await create_db_handler();
 
                 //------------------------------------------------------------//
-    code_db.data.events.forEach(async (v, k) => {
+    code_db.event_map.forEach(async (v, k) => {
         const request = await users_api.get<RobloxUsersApiUser>(`/v1/users/${k}`);
         const request_data = request.data;
         v.emit('Update', request_data);
