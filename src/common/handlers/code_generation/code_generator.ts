@@ -53,7 +53,7 @@ async function checkUser(user_id: string, interaction: CommandInteraction) {
 
     //------------------------------------------------------------//
 
-    const { code_db, event_map } = await create_db_handler();
+    const { code_db } = await create_db_handler();
 
    //------------------------------------------------------------//
 
