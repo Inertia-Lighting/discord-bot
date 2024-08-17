@@ -29,6 +29,9 @@ if (guild_team_leaders_role_id.length < 1) throw new Error('Environment variable
 const guild_company_management_role_id = `${process.env.BOT_COMPANY_MANAGEMENT_ROLE_ID ?? ''}`;
 if (guild_company_management_role_id.length < 1) throw new Error('Environment variable: BOT_COMPANY_MANAGEMENT_ROLE_ID; was not set correctly!');
 
+const guild_bot_admin_role_id = `${process.env.BOT_BOT_ADMIN_ROLE_ID ?? ''}`;
+if (guild_company_management_role_id.length < 1) throw new Error('Environment variable: BOT_BOT_ADMIN_ROLE_ID; was not set correctly!');
+
 //------------------------------------------------------------//
 
 /**
@@ -68,6 +71,10 @@ export async function fetchHighestAccessLevelForUser(
 
     if (bot_guild_member_roles_cache.has(guild_company_management_role_id)) {
         access_levels_for_user.push(CustomInteractionAccessLevel.CompanyManagement);
+    }
+
+    if (bot_guild_member_roles_cache.has(guild_bot_admin_role_id)) {
+        access_levels_for_user.push(CustomInteractionAccessLevel.BotAdmin);
     }
 
     return Math.max(...access_levels_for_user); // the highest access level for the user
