@@ -1,4 +1,3 @@
-import { UserUpdateEmitter } from './user_update';
 export interface verification_code_data {
     interaction: CommandInteraction,
     roblox_id: string,
@@ -10,5 +9,4 @@ export interface verification_code_data {
 
 export type user_db_type = {
     codes: verification_code_data[];
-    events: Map<string, UserUpdateEmitter>
 }

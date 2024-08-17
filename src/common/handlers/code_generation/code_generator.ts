@@ -53,7 +53,7 @@ async function checkUser(user_id: string, interaction: CommandInteraction) {
 
     //------------------------------------------------------------//
 
-    const code_db = await create_db_handler();
+    const { code_db } = await create_db_handler();
 
    //------------------------------------------------------------//
 
@@ -89,7 +89,7 @@ export async function generateVerificationCode(user_id: string, interaction: Com
 
     //------------------------------------------------------------//
 
-    const code_db = await create_db_handler();
+    const { code_db } = await create_db_handler();
 
     //------------------------------------------------------------//
 
@@ -209,7 +209,7 @@ export async function generateVerificationCode(user_id: string, interaction: Com
 setInterval(async () => {
     //------------------------------------------------------------//
 
-    const code_db = await create_db_handler();
+    const { code_db } = await create_db_handler();
 
     //------------------------------------------------------------//
 
