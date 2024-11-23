@@ -4,5 +4,8 @@ services:
       context: .
     volumes:
       - .:/app
+    env_file:
+     - /app/.env
+
     entrypoint: >
       sh -c "npm install && exec npm run start"
