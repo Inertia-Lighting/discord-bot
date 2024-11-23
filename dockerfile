@@ -5,7 +5,6 @@ WORKDIR /usr/src/app
 
 # Copy source code
 COPY . /usr/src/app/
-COPY .env.example /usr/src/app/.env
 
 # Install dependencies
 RUN npm ci --immutable
