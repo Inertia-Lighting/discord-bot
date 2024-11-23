@@ -10,7 +10,7 @@ import { CustomEmbed } from '@root/common/message';
 
 //------------------------------------------------------------//
 
-const bot_staff_role_id = `${stack.env.BOT_STAFF_ROLE_ID ?? ''}`;
+const bot_staff_role_id = `${process.env.BOT_STAFF_ROLE_ID ?? ''}`;
 if (bot_staff_role_id.length < 1) throw new Error('Environment variable: BOT_STAFF_ROLE_ID; was not properly set or is empty');
 
 //------------------------------------------------------------//
@@ -23,7 +23,7 @@ export async function suggestionsCategoryHandler(
     if (message.content.length === 0) return;
 
     /* don't allow staff to create suggestions */
-    if (message.member.roles.cache.has(stack.env.BOT_STAFF_ROLE_ID as string)) return;
+    if (message.member.roles.cache.has(process.env.BOT_STAFF_ROLE_ID as string)) return;
 
     const suggestions_channel = message.channel;
 

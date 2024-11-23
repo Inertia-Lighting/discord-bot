@@ -14,16 +14,16 @@ import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunCo
 
 //------------------------------------------------------------//
 
-const db_database_name = `${stack.env.MONGO_DATABASE_NAME ?? ''}`;
+const db_database_name = `${process.env.MONGO_DATABASE_NAME ?? ''}`;
 if (db_database_name.length < 1) throw new Error('Environment variable: MONGO_DATABASE_NAME; is not set correctly.');
 
-const db_users_collection_name = `${stack.env.MONGO_USERS_COLLECTION_NAME ?? ''}`;
+const db_users_collection_name = `${process.env.MONGO_USERS_COLLECTION_NAME ?? ''}`;
 if (db_users_collection_name.length < 1) throw new Error('Environment variable: MONGO_USERS_COLLECTION_NAME; is not set correctly.');
 
-const bot_support_staff_database_role_id = `${stack.env.BOT_SUPPORT_STAFF_DATABASE_ROLE_ID ?? ''}`;
+const bot_support_staff_database_role_id = `${process.env.BOT_SUPPORT_STAFF_DATABASE_ROLE_ID ?? ''}`;
 if (bot_support_staff_database_role_id.length < 1) throw new Error('Environment variable: BOT_SUPPORT_STAFF_DATABASE_ROLE_ID; is not set correctly.');
 
-const bot_logging_identity_manager_channel_id = `${stack.env.BOT_LOGGING_IDENTITY_MANAGER_CHANNEL_ID ?? ''}`;
+const bot_logging_identity_manager_channel_id = `${process.env.BOT_LOGGING_IDENTITY_MANAGER_CHANNEL_ID ?? ''}`;
 if (bot_logging_identity_manager_channel_id.length < 1) throw new Error('Environment variable: BOT_LOGGING_IDENTITY_MANAGER_CHANNEL_ID; is not set correctly.');
 
 

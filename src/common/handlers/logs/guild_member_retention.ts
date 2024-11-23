@@ -10,7 +10,7 @@ import { CustomEmbed } from '@root/common/message';
 
 //------------------------------------------------------------//
 
-const member_retention_logging_channel_id = stack.env.BOT_LOGGING_USER_RETENTION_CHANNEL_ID as string;
+const member_retention_logging_channel_id = process.env.BOT_LOGGING_USER_RETENTION_CHANNEL_ID as string;
 if (typeof member_retention_logging_channel_id !== 'string') throw new TypeError('member_retention_logging_channel_id is not a string');
 
 //------------------------------------------------------------//

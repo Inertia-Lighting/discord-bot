@@ -12,10 +12,10 @@ import { fetchHighestAccessLevelForUser } from '@root/common/permissions';
 
 //------------------------------------------------------------//
 
-const support_tickets_category_id = `${stack.env.BOT_SUPPORT_TICKETS_CATEGORY_ID ?? ''}`;
+const support_tickets_category_id = `${process.env.BOT_SUPPORT_TICKETS_CATEGORY_ID ?? ''}`;
 if (support_tickets_category_id.length < 1) throw new Error('Environment variable: BOT_SUPPORT_TICKETS_CATEGORY_ID; is not set correctly.');
 
-const support_tickets_transcripts_channel_id = `${stack.env.BOT_SUPPORT_TICKETS_TRANSCRIPTS_CHANNEL_ID ?? ''}`;
+const support_tickets_transcripts_channel_id = `${process.env.BOT_SUPPORT_TICKETS_TRANSCRIPTS_CHANNEL_ID ?? ''}`;
 if (support_tickets_transcripts_channel_id.length < 1) throw new Error('Environment variable: BOT_SUPPORT_TICKETS_TRANSCRIPTS_CHANNEL_ID; is not set correctly.');
 
 //------------------------------------------------------------//

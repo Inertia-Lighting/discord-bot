@@ -26,7 +26,7 @@ process.on('uncaughtException', (error) => {
 
 //------------------------------------------------------------//
 
-const bot_token = `${stack.env.BOT_TOKEN ?? ''}`;
+const bot_token = `${process.env.BOT_TOKEN ?? ''}`;
 if (bot_token.length < 1) throw new Error('Environment variable: BOT_TOKEN; is not set correctly.');
 
 //------------------------------------------------------------//

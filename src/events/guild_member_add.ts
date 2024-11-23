@@ -8,7 +8,7 @@ import { guildMemberAddLogger, illegalNicknameHandler } from '@root/common/handl
 
 //------------------------------------------------------------//
 
-const bot_guild_id = `${stack.env.BOT_GUILD_ID ?? ''}`;
+const bot_guild_id = `${process.env.BOT_GUILD_ID ?? ''}`;
 if (bot_guild_id.length < 1) throw new Error('environment variable: BOT_GUILD_ID; was not properly set or is empty');
 
 //------------------------------------------------------------//

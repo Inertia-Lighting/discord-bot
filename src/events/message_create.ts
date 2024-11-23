@@ -8,10 +8,10 @@ import { automatedQuickSupportHandler, suggestionsCategoryHandler } from '@root/
 
 //------------------------------------------------------------//
 
-const bot_guild_id = `${stack.env.BOT_GUILD_ID ?? ''}`;
+const bot_guild_id = `${process.env.BOT_GUILD_ID ?? ''}`;
 if (bot_guild_id.length < 1) throw new Error('environment variable: BOT_GUILD_ID; was not properly set or is empty');
 
-const suggestions_category_id = `${stack.env.BOT_SUGGESTIONS_CATEGORY_ID ?? ''}`;
+const suggestions_category_id = `${process.env.BOT_SUGGESTIONS_CATEGORY_ID ?? ''}`;
 if (suggestions_category_id.length < 1) throw new Error('environment variable: BOT_SUGGESTIONS_CATEGORY_ID; was not properly set or is empty');
 
 //------------------------------------------------------------//

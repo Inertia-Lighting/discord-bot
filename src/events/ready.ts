@@ -20,7 +20,7 @@ import { illegalNicknameHandler } from '@root/common/handlers';
 
 //------------------------------------------------------------//
 
-const bot_guild_id = `${stack.env.BOT_GUILD_ID ?? ''}`;
+const bot_guild_id = `${process.env.BOT_GUILD_ID ?? ''}`;
 if (bot_guild_id.length < 1) throw new Error('environment variable: BOT_GUILD_ID; was not properly set or is empty');
 
 //------------------------------------------------------------//
@@ -29,7 +29,7 @@ if (bot_guild_id.length < 1) throw new Error('environment variable: BOT_GUILD_ID
 //     client: Discord.Client,
 // ) {
 //     /* fetch all products from the database */
-//     const db_roblox_products_find_cursor = await go_mongo_db.find(stack.env.MONGO_DATABASE_NAME as string, stack.env.MONGO_PRODUCTS_COLLECTION_NAME as string, {});
+//     const db_roblox_products_find_cursor = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME as string, process.env.MONGO_PRODUCTS_COLLECTION_NAME as string, {});
 
 //     const db_roblox_products = await db_roblox_products_find_cursor.toArray() as unknown as DbProductData[];
 
@@ -61,7 +61,7 @@ if (bot_guild_id.length < 1) throw new Error('environment variable: BOT_GUILD_ID
 //             continue; // skip this product since the price cannot be parsed
 //         }
 
-//         await go_mongo_db.update(stack.env.MONGO_DATABASE_NAME as string, stack.env.MONGO_PRODUCTS_COLLECTION_NAME as string, {
+//         await go_mongo_db.update(process.env.MONGO_DATABASE_NAME as string, process.env.MONGO_PRODUCTS_COLLECTION_NAME as string, {
 //             roblox_product_id: db_roblox_product.roblox_product_id,
 //         }, {
 //             $set: {
