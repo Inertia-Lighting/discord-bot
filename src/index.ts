@@ -2,7 +2,7 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 //------------------------------------------------------------//
 
-require('dotenv').config({ path: `stack.env}` })
+require('dotenv').config({ path: 'stack.env' });
 
 import path from 'node:path';
 
