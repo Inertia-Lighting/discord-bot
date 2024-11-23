@@ -5,5 +5,4 @@ services:
     volumes:
       - .:/app
     entrypoint: >
-      sh -c "cp /app/.env /app/.env || echo '.env already exists'; exec npm run start"
-    workdir: /app
+      sh -c "npm install && exec npm run start"
