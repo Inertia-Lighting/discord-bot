@@ -5,6 +5,7 @@ WORKDIR /usr/src/app
 
 # Copy source code
 COPY . /usr/src/app/
+COPY .env.example /usr/src/app/.env
 
 # Install dependencies
 RUN npm ci --immutable
@@ -16,4 +17,4 @@ RUN npm run build
 RUN mkdir -p /usr/src/app/temporary
 
 # Start the bot
-CMD ["npm", "start"]
+CMD ["npm", "run", "start"]

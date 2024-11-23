@@ -1,6 +1,8 @@
-
 services:
-  discord-bot:
-    image: 'intertia-discord-bot'
-    env_file:
-     - ./.env
+  app:
+    build:
+      context: .
+    volumes:
+      - .:/app
+    entrypoint: >
+      sh -c "cp /app/.env.example /app/.env || echo '.env already exists'; exec npm run start"
