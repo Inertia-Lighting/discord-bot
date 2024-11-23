@@ -15,26 +15,26 @@ import { dbUserArray } from './user_data/user_data_handler';
 
 //------------------------------------------------------------//
 
-const db_database_name = `${process.env.MONGO_DATABASE_NAME ?? ''}`;
+const db_database_name = `${stack.env.MONGO_DATABASE_NAME ?? ''}`;
 if (db_database_name.length < 1) throw new Error('Environment variable: MONGO_DATABASE_NAME; is not set correctly.');
 
-const db_products_collection_name = `${process.env.MONGO_PRODUCTS_COLLECTION_NAME ?? ''}`;
+const db_products_collection_name = `${stack.env.MONGO_PRODUCTS_COLLECTION_NAME ?? ''}`;
 if (db_products_collection_name.length < 1) throw new Error('Environment variable: MONGO_PRODUCTS_COLLECTION_NAME; is not set correctly.');
 
-const db_users_collection_name = `${process.env.MONGO_USERS_COLLECTION_NAME ?? ''}`;
+const db_users_collection_name = `${stack.env.MONGO_USERS_COLLECTION_NAME ?? ''}`;
 if (db_users_collection_name.length < 1) throw new Error('Environment variable: MONGO_USERS_COLLECTION_NAME; is not set correctly.');
 
-const db_blacklisted_users_collection_name = `${process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME ?? ''}`;
+const db_blacklisted_users_collection_name = `${stack.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME ?? ''}`;
 if (db_blacklisted_users_collection_name.length < 1) throw new Error('Environment variable: MONGO_BLACKLISTED_USERS_COLLECTION_NAME; is not set correctly.');
 
-const bot_partners_role_id = `${process.env.BOT_PARTNERS_ROLE_ID ?? ''}`;
-if (bot_partners_role_id.length < 1) throw new Error('\'process.env.BOT_PARTNERS_ROLE_ID\' is not defined or is empty');
+const bot_partners_role_id = `${stack.env.BOT_PARTNERS_ROLE_ID ?? ''}`;
+if (bot_partners_role_id.length < 1) throw new Error('\'stack.env.BOT_PARTNERS_ROLE_ID\' is not defined or is empty');
 
-const bot_staff_products_role_id = `${process.env.BOT_STAFF_PRODUCTS_ROLE_ID ?? ''}`;
-if (bot_staff_products_role_id.length < 1) throw new Error('\'process.env.BOT_STAFF_PRODUCTS_ROLE_ID\' is not defined or is empty');
+const bot_staff_products_role_id = `${stack.env.BOT_STAFF_PRODUCTS_ROLE_ID ?? ''}`;
+if (bot_staff_products_role_id.length < 1) throw new Error('\'stack.env.BOT_STAFF_PRODUCTS_ROLE_ID\' is not defined or is empty');
 
-const bot_subscriptions_tier_1_role_id = `${process.env.BOT_SUBSCRIPTIONS_TIER_1_ROLE_ID ?? ''}`;
-if (bot_subscriptions_tier_1_role_id.length < 1) throw new Error('\'process.env.BOT_SUBSCRIPTIONS_TIER_1_ROLE_ID\' is not defined or is empty');
+const bot_subscriptions_tier_1_role_id = `${stack.env.BOT_SUBSCRIPTIONS_TIER_1_ROLE_ID ?? ''}`;
+if (bot_subscriptions_tier_1_role_id.length < 1) throw new Error('\'stack.env.BOT_SUBSCRIPTIONS_TIER_1_ROLE_ID\' is not defined or is empty');
 
 //------------------------------------------------------------//
 

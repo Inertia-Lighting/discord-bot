@@ -8,7 +8,7 @@ import { CustomEmbed } from '@root/common/message';
 
 //------------------------------------------------------------//
 
-const logging_channel_id = process.env.BOT_LOGGING_CHANNEL_ID as string;
+const logging_channel_id = stack.env.BOT_LOGGING_CHANNEL_ID as string;
 if (typeof logging_channel_id !== 'string') throw new TypeError('logging_channel_id is not a string');
 
 //------------------------------------------------------------//

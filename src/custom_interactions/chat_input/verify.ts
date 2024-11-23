@@ -16,19 +16,19 @@ import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunCo
 
 //------------------------------------------------------------//
 
-const db_database_name = `${process.env.MONGO_DATABASE_NAME ?? ''}`;
+const db_database_name = `${stack.env.MONGO_DATABASE_NAME ?? ''}`;
 if (db_database_name.length < 1) throw new Error('Environment variable: MONGO_DATABASE_NAME; is not set correctly.');
 
-const db_users_collection_name = `${process.env.MONGO_USERS_COLLECTION_NAME ?? ''}`;
+const db_users_collection_name = `${stack.env.MONGO_USERS_COLLECTION_NAME ?? ''}`;
 if (db_users_collection_name.length < 1) throw new Error('Environment variable: MONGO_USERS_COLLECTION_NAME; is not set correctly.');
 
-const user_verification_endpoints_base64_encoded_token = `${process.env.API_BASE64_ENCODED_TOKEN_FOR_USER_VERIFICATION_ENDPOINTS ?? ''}`;
+const user_verification_endpoints_base64_encoded_token = `${stack.env.API_BASE64_ENCODED_TOKEN_FOR_USER_VERIFICATION_ENDPOINTS ?? ''}`;
 if (user_verification_endpoints_base64_encoded_token.length < 1) throw new Error('Environment variable: API_BASE64_ENCODED_TOKEN_FOR_USER_VERIFICATION_ENDPOINTS; is not set correctly.');
 
-const api_server_ip = `${process.env.API_SERVER_IP ?? ''}`;
+const api_server_ip = `${stack.env.API_SERVER_IP ?? ''}`;
 if (api_server_ip.length < 1) throw new Error('Environment variable: API_SERVER_IP; is not set correctly.');
 
-const api_server_port = `${process.env.API_SERVER_PORT ?? ''}`;
+const api_server_port = `${stack.env.API_SERVER_PORT ?? ''}`;
 if (api_server_port.length < 1) throw new Error('Environment variable: API_SERVER_PORT; is not set correctly.');
 
 //------------------------------------------------------------//
