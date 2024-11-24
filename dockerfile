@@ -16,4 +16,4 @@ RUN npm run build
 RUN mkdir -p /usr/src/app/temporary
 
 # Start the bot
-CMD ["npm", "start"]
+CMD ["npm", "run", "start"]

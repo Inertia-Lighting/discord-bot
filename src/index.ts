@@ -2,6 +2,8 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 //------------------------------------------------------------//
 
+require('dotenv').config({ path: 'stack.env' });
+
 import path from 'node:path';
 
 import * as Discord from 'discord.js';
