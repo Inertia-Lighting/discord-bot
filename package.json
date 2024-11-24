@@ -21,11 +21,11 @@
     "clean:windows": "if exist \".\\dist\" rmdir /s /q \".\\dist\"",
     "clean:linux": "rm -rf ./dist",
     "clean:default": "rm -rf ./dist",
-    "build": "npm run clean && tsc --build",
+    "build": "yarn clean && tsc --build",
     "title": "run-script-os",
     "title:windows": "title Inertia Lighting Discord Bot",
     "title:default": "",
-    "start": "npm run title && node --trace-warnings --enable-source-maps --require module-alias/register ."
+    "start": "yarn title && node --trace-warnings --enable-source-maps --require module-alias/register ."
   },
   "devDependencies": {
     "@types/string-similarity": "4.0.2",
