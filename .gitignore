@@ -36,3 +36,4 @@ __*
 # Whitelisted Files
 !start_bot.bat
 !update.bat
+start_bot.bat
