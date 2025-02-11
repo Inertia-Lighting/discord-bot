@@ -36,7 +36,7 @@
     "husky": "9.0.11",
     "is-ci": "3.0.1",
     "run-script-os": "1.1.6",
-    "typescript": "5.4.2"
+    "typescript": "5.7.3"
   },
   "dependencies": {
     "axios": "1.6.8",
