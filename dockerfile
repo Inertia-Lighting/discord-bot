@@ -7,13 +7,13 @@ WORKDIR /usr/src/app
 COPY . /usr/src/app/
 
 # Install dependencies
-RUN npm ci --immutable
+RUN yarn
 
 # Build the bot
-RUN npm run build
+RUN yarn build
 
 # Create tmp directory
 RUN mkdir -p /usr/src/app/temporary
 
 # Start the bot
-CMD ["npm", "run", "start"]
+CMD ["yarn", "start"]
