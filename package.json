@@ -5,7 +5,6 @@
   "keywords": [],
   "author": "Inertia Lighting",
   "license": "UNLICENSED",
-  "type": "commonjs",
   "main": "./dist/index.js",
   "_moduleAliases": {
     "@root": "./dist"
@@ -21,11 +20,11 @@
     "clean:windows": "if exist \".\\dist\" rmdir /s /q \".\\dist\"",
     "clean:linux": "rm -rf ./dist",
     "clean:default": "rm -rf ./dist",
-    "build": "npm run clean && tsc --build",
+    "build": "yarn clean && tsc --build",
     "title": "run-script-os",
     "title:windows": "title Inertia Lighting Discord Bot",
     "title:default": "",
-    "start": "npm run title && node --trace-warnings --enable-source-maps --require module-alias/register --require dotenv/config ."
+    "start": "title && node --trace-warnings --enable-source-maps --require module-alias/register ."
   },
   "devDependencies": {
     "@types/string-similarity": "4.0.2",
@@ -45,12 +44,12 @@
     "discord-html-transcripts": "3.2.0",
     "discord.js": "14.14.1",
     "dotenv": "16.4.5",
-    "go-mongo-db": "github:MidSpike/go-mongo-db",
+    "go-mongo-db": "https://github.com/MidSpike/go-mongo-db",
     "lowdb": "^7.0.1",
     "module-alias": "2.2.3",
     "moment-timezone": "0.5.45",
     "node-gyp": "10.0.1",
-    "recursive-read-directory": "github:MidSpike/recursive-read-directory#v0.4.0-beta",
+    "recursive-read-directory": "https://github.com/MidSpike/recursive-read-directory",
     "string-similarity": "4.0.4",
     "utf-8-validate": "6.0.3",
     "uuid": "9.0.1"
@@ -59,5 +58,6 @@
     "strip-ansi": "6.0.1",
     "string-width": "4.2.2",
     "wrap-ansi": "7.0.0"
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }
