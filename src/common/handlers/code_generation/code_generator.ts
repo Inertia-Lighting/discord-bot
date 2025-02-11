@@ -8,18 +8,16 @@ import { CustomEmbed } from '../../message.js';
 
 import { getMarkdownFriendlyTimestamp } from '@root/utilities';
 
-import { RobloxUsersApiUser, event_map, getUserData, getUserUpdates } from './user_update.js';
+import { RobloxUsersApiUser, UserDataClient, event_map, getUserUpdates } from './user_update.js';
 
 import create_db_handler from './create_db_handler.js';
 
-import { verification_code_data } from './types.js';
-
 //------------------------------------------------------------//
 
 
 //------------------------------------------------------------//
 
-export const codes: verification_code_data[] = [];
+// export const codes: verification_code_data[] = [];
 
 const db_database_name = `${process.env.MONGO_DATABASE_NAME ?? ''}`;
 if (db_database_name.length < 1) throw new Error('Environment variable: MONGO_DATABASE_NAME; is not set correctly.');
@@ -36,6 +34,8 @@ const special_word_array = ['inertia', 'recovery', 'lighting'];
 
 const code_length = 10;
 
+const { getUserData } = new UserDataClient<true>();
+
 //------------------------------------------------------------//
 
 /**
@@ -44,13 +44,15 @@ const code_length = 10;
  * @param {CommandInteraction} interaction Interaction for reply
  * @returns {Promise<[boolean, string | Error]>}
  *
- * @example generateVerificationCode(269953912058937345, interaction)
+ * @example checkUser(269953912058937345, interaction)
  *
  */
 
-async function checkUser(user_id: string, interaction: CommandInteraction) {
-    const user_data = await getUserData(user_id);
+async function checkUser(user_id: string, interaction: CommandInteraction): Promise<boolean> {
 
+    console.log('Checking user...');
+    const user_data = await getUserData(user_id);
+    console.log(user_data);
     //------------------------------------------------------------//
 
     const { code_db } = await create_db_handler();
@@ -83,6 +85,16 @@ async function checkUser(user_id: string, interaction: CommandInteraction) {
     });
     return true;
 }
+
+/**
+ * @async
+ * @param {string | number} user_id Discord User Id
+ * @param {CommandInteraction} interaction Interaction for reply
+ * @returns {Promise<[boolean, string | Error]>}
+ *
+ * @example generateVerificationCode(269953912058937345, interaction)
+ *
+ */
 
 export async function generateVerificationCode(user_id: string, interaction: CommandInteraction): Promise<undefined> {
     if (await checkUser(user_id, interaction) === false) return;
@@ -174,6 +186,7 @@ export async function generateVerificationCode(user_id: string, interaction: Com
 
 
         event.on('Update', (data: RobloxUsersApiUser) => {
+            console.log('event fired');
             const regexFilter = `\\b${push_data.code.trim()}\\b`;
             console.log(regexFilter);
             const contains_code = new RegExp(regexFilter, 'i').test(data.description);

@@ -90,7 +90,7 @@ async function removeIllegalNicknames(
     const bot_guild_members = await bot_guild.members.fetch();
 
     for (const bot_guild_member of bot_guild_members.values()) {
-        illegalNicknameHandler(bot_guild_member);
+        illegalNicknameHandler(client, bot_guild_member);
         await delay(10_000); // prevent api abuse
     }
 }

@@ -1,4 +1,4 @@
-export interface verification_code_data {
+interface verification_code_data {
     interaction: CommandInteraction,
     roblox_id: string,
     code: string,
@@ -7,6 +7,6 @@ export interface verification_code_data {
     message_object: Message;
 }
 
-export type user_db_type = {
+type user_db_type = {
     codes: verification_code_data[];
 }
