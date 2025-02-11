@@ -52,7 +52,7 @@
     "recursive-read-directory": "https://github.com/MidSpike/recursive-read-directory",
     "string-similarity": "4.0.4",
     "utf-8-validate": "6.0.3",
-    "uuid": "9.0.1"
+    "uuid": "11.0.5"
   },
   "resolutions": {
     "strip-ansi": "6.0.1",
