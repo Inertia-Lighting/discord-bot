@@ -8,4 +8,4 @@ services:
       - stack.env
     restart: unless-stopped
     entrypoint: >
-      sh -c "npm install && exec npm run start"
+      sh -c "yarn && exec yarn start"
