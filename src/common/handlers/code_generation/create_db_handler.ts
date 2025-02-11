@@ -1,12 +1,13 @@
-import { UserUpdateEmitter } from './user_update';
-import { user_db_type } from './types';
-
-
-// eslint-disable-next-line func-names
-export default async function() {
+import { event_map } from './user_update';
+export default async function genHandler() {
     const { JSONFilePreset } = await import('lowdb/node');
-    const db_pre: user_db_type = { codes: [] };
-    const event_map = new Map<string, UserUpdateEmitter>();
-    const code_db = await JSONFilePreset('user_data.json', db_pre);
+    interface userData {
+        codes: verification_code_data[]
+    }
+
+    const defaultData: userData = {
+        codes: [],
+    };
+    const code_db = await JSONFilePreset<userData>('data.json', defaultData);
     return { code_db, event_map };
 }
