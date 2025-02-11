@@ -16,7 +16,7 @@ if (bot_guild_id.length < 1) throw new Error('environment variable: BOT_GUILD_ID
 export default {
     name: Discord.Events.GuildMemberAdd,
     async handler(
-        client: Discord.Client,
+        client: Discord.Client<true>,
         member: Discord.GuildMember,
     ) {
         if (member.user.system) return; // don't operate on system accounts
@@ -33,6 +33,6 @@ export default {
         await guildMemberAddLogger(member).catch(console.trace);
 
         /* handle nicknames for new members */
-        await illegalNicknameHandler(member).catch(console.trace);
+        await illegalNicknameHandler(client, member).catch(console.trace);
     },
 };

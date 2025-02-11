@@ -16,7 +16,7 @@ if (bot_guild_id.length < 1) throw new Error('environment variable: BOT_GUILD_ID
 export default {
     name: Discord.Events.GuildMemberUpdate,
     async handler(
-        client: Discord.Client,
+        client: Discord.Client<true>,
         old_member: Discord.GuildMember,
         new_member: Discord.GuildMember,
     ) {
@@ -28,7 +28,7 @@ export default {
 
         /* user nickname validator */
         if (old_member.displayName !== new_member.displayName) {
-            await illegalNicknameHandler(new_member);
+            await illegalNicknameHandler(client, new_member);
         }
 
         /* roles added logger */
