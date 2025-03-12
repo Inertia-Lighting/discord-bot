@@ -17,6 +17,12 @@ if (guild_staff_role_id.length < 1) throw new Error('Environment variable: BOT_S
 const guild_customer_service_role_id = `${process.env.BOT_CUSTOMER_SERVICE_ROLE_ID ?? ''}`;
 if (guild_customer_service_role_id.length < 1) throw new Error('Environment variable: BOT_CUSTOMER_SERVICE_ROLE_ID; was not set correctly!');
 
+const guild_dev_role_id = `${process.env.BOT_DEV_ROLE_ID ?? ''}`;
+if (guild_dev_role_id.length < 1) throw new Error('Environment variable: BOT_DEV_ROLE_ID; was not set correctly!');
+
+const guild_senior_dev_role_id = `${process.env.BOT_SENIOR_DEV_ROLE_ID ?? ''}`;
+if (guild_senior_dev_role_id.length < 1) throw new Error('Environment variable: BOT_SENIOR_DEV_ROLE_ID; was not set correctly!');
+
 const guild_moderators_role_id = `${process.env.BOT_MODERATOR_ROLE_ID ?? ''}`;
 if (guild_moderators_role_id.length < 1) throw new Error('Environment variable: BOT_MODERATOR_ROLE_ID; was not set correctly!');
 
@@ -55,6 +61,14 @@ export async function fetchHighestAccessLevelForUser(
 
     if (bot_guild_member_roles_cache.has(guild_customer_service_role_id)) {
         access_levels_for_user.push(CustomInteractionAccessLevel.CustomerService);
+    }
+
+    if (bot_guild_member_roles_cache.has(guild_dev_role_id)) {
+        access_levels_for_user.push(CustomInteractionAccessLevel.Dev);
+    }
+
+    if (bot_guild_member_roles_cache.has(guild_senior_dev_role_id)) {
+        access_levels_for_user.push(CustomInteractionAccessLevel.SeniorDev);
     }
 
     if (bot_guild_member_roles_cache.has(guild_moderators_role_id)) {
