@@ -22,7 +22,7 @@ export async function illegalNicknameHandler(client: Discord.Client<true>, membe
     if (member.user.system) return;
     if (!member.manageable) return; // the user has a higher role than the bot, so don't continue
 
-    const highest_access_level_for_user = await fetchHighestAccessLevelForUser(client, member.user)
+    const highest_access_level_for_user = await fetchHighestAccessLevelForUser(client, member.user);
     if (highest_access_level_for_user === CustomInteractionAccessLevel.Moderators || highest_access_level_for_user === CustomInteractionAccessLevel.SeniorDev) return;
 
     const user_display_name = `${member.displayName}`; // force to be a string
