@@ -521,6 +521,16 @@ balanced-match@^1.0.0:
   resolved "https://registry.npmjs.org/balanced-match/-/balanced-match-1.0.2.tgz"
   integrity sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==
 
+bare-hrtime@^2.0.10, bare-hrtime@^2.0.9:
+  version "2.0.10"
+  resolved "https://registry.yarnpkg.com/bare-hrtime/-/bare-hrtime-2.0.10.tgz#da93d1ed517b896c3b6f54165eb93559f3a21277"
+  integrity sha512-minvIHeR6YIRfxsjgFhk9O//lesw9k5pAeWtZHlA2u3nX1F//TFNoC3lKEDAmMRZSao5PeERZhRaomnCQ7hLQA==
+
+bare-os@^3.1.0:
+  version "3.6.0"
+  resolved "https://registry.yarnpkg.com/bare-os/-/bare-os-3.6.0.tgz#1465dd7e1bebe0dec230097a23ad00f7db51f957"
+  integrity sha512-BUrFS5TqSBdA0LwHop4OjPJwisqxGy6JsWVqV6qaFoe965qqtaKfDzHY5T2YA1gUL0ZeeQeA+4BBc1FJTcHiPw==
+
 brace-expansion@^1.1.7:
   version "1.1.11"
   resolved "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.11.tgz"
@@ -851,6 +861,13 @@ esutils@^2.0.2:
   version "2.0.3"
   resolved "https://registry.npmjs.org/esutils/-/esutils-2.0.3.tgz"
   integrity sha512-kVscqXk4OCp68SZ0dkgEKVi6/8ij300KBWTJq32P/dYeWTSwK41WyTxalN1eRmA5Z9UU/LX9D7FWSmV9SAYx6g==
+
+event-loop-delay@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/event-loop-delay/-/event-loop-delay-1.1.0.tgz#da86657d9a17dc911a483398dbb0d3671a647cc6"
+  integrity sha512-2kyV9oJBJFXjfiMXZKQ2KADeGTQtCsVzU6bWwMPcT7rXPk6Xa4qIXYHO16bBETGA642u5hdsbnH6v3f61jn4Rw==
+  dependencies:
+    bare-hrtime "^2.0.9"
 
 exponential-backoff@^3.1.1:
   version "3.1.1"
@@ -1585,10 +1602,25 @@ prelude-ls@^1.2.1:
   resolved "https://registry.npmjs.org/prelude-ls/-/prelude-ls-1.2.1.tgz"
   integrity sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==
 
+prettier-bytes@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/prettier-bytes/-/prettier-bytes-1.0.4.tgz#994b02aa46f699c50b6257b5faaa7fe2557e62d6"
+  integrity sha512-dLbWOa4xBn+qeWeIF60qRoB6Pk2jX5P3DIVgOQyMyvBpu931Q+8dXz8X0snJiFkQdohDDLnZQECjzsAj75hgZQ==
+
 proc-log@^3.0.0:
   version "3.0.0"
   resolved "https://registry.npmjs.org/proc-log/-/proc-log-3.0.0.tgz"
   integrity sha512-++Vn7NS4Xf9NacaU9Xq3URUuqZETPsf8L4j5/ckhaRYsfPeRyzGw+iDjFhV/Jr3uNmTvvddEJFWh5R1gRgUH8A==
+
+process-top@^1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/process-top/-/process-top-1.3.0.tgz#f217cf483b9844ca6be2663faa58ae1571ac01c3"
+  integrity sha512-WZ08E4so0R7nL/twE4N0VkZLVWOFbMhfJ8B3vzB21YZK12B7wzTsaQxJxZ0YQJZ+uatXkepYV5lWrNjW30PN+w==
+  dependencies:
+    bare-hrtime "^2.0.10"
+    bare-os "^3.1.0"
+    event-loop-delay "^1.1.0"
+    prettier-bytes "^1.0.4"
 
 promise-retry@^2.0.1:
   version "2.0.1"

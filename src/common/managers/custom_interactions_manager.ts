@@ -70,11 +70,13 @@ export enum CustomInteractionAccessLevel {
     Public = 1,
     Staff = 2,
     CustomerService = 3,
-    Moderators = 4,
-    Admins = 5,
-    TeamLeaders = 6,
-    CompanyManagement = 7,
-    BotAdmin = 8
+    Dev = 4,
+    SeniorDev = 5,
+    Moderators = 6,
+    Admins = 7,
+    TeamLeaders = 8,
+    CompanyManagement = 9,
+    BotAdmin = 10
 }
 
 //------------------------------------------------------------//

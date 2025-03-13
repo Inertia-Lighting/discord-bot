@@ -21,7 +21,9 @@ export async function illegalNicknameHandler(client: Discord.Client<true>, membe
     if (member.user.bot) return;
     if (member.user.system) return;
     if (!member.manageable) return; // the user has a higher role than the bot, so don't continue
-    if (await fetchHighestAccessLevelForUser(client, member.user) === CustomInteractionAccessLevel.Moderators) return;
+
+    const highest_access_level_for_user = await fetchHighestAccessLevelForUser(client, member.user);
+    if (highest_access_level_for_user === CustomInteractionAccessLevel.Moderators || highest_access_level_for_user === CustomInteractionAccessLevel.SeniorDev) return;
 
     const user_display_name = `${member.displayName}`; // force to be a string
     const non_allowed_occurrences = user_display_name.match(non_allowed_regex_filter) ?? []; // force to be an array
