@@ -10,6 +10,9 @@ import { CustomEmbed } from '@root/common/message';
 
 import { delay, getMarkdownFriendlyTimestamp } from '@root/utilities';
 
+import { bot_config } from '@root/utilities/bot_config';
+
+
 //------------------------------------------------------------//
 
 const support_tickets_category_id = `${process.env.BOT_SUPPORT_TICKETS_CATEGORY_ID ?? ''}`;
@@ -91,6 +94,7 @@ export enum SupportCategoryId {
     Transactions = 'TRANSACTIONS',
     PartnershipRequests = 'PARTNERS',
     Other = 'OTHER',
+    DevlopmentApplication = 'DEVAPP'
 }
 
 export type SupportCategory = {
@@ -473,7 +477,7 @@ export const support_categories: SupportCategory[] = [
         name: 'Transactions',
         description: 'Failed transactions or monetary issues with purchases.',
         staff_role_ids: [
-            bot_product_purchases_support_staff_role_id,
+            bot_config.support_staff_product_purchases_role_id,
         ],
         modal_data: {
             title: 'Transaction Questions',
@@ -553,13 +557,12 @@ export const support_categories: SupportCategory[] = [
                 ],
             });
         },
-    },
-     {
+    }, {
          id: SupportCategoryId.PartnershipRequests,
          name: 'Partnership Requests',
          description: 'Interested in partnering with us?',
          staff_role_ids: [
-             bot_partnership_requests_support_staff_role_id,
+            bot_config.support_staff_partnership_requests_role_id,
          ],
          modal_data: {
              title: 'Partnership Request Questions',
@@ -689,13 +692,13 @@ export const support_categories: SupportCategory[] = [
                  ],
              });
          },
-     },
-    {
+    }, {
         id: SupportCategoryId.Other,
         name: 'Other & Quick Questions',
         description: 'For all other forms of support.',
         staff_role_ids: [
-            bot_other_support_staff_role_id,
+            bot_config.support_staff_other_role_id,
+            bot_config.customer_service_role_id,
         ],
         modal_data: {
             title: 'Other Questions',
@@ -739,6 +742,70 @@ export const support_categories: SupportCategory[] = [
                     }),
                 ],
             });
+        },
+    }, {
+        id: SupportCategoryId.DevlopmentApplication,
+        name: 'Development Application',
+        description: 'Apply for a development position with Inertia!',
+        staff_role_ids: [
+            bot_config.lead_developer_role_id,
+        ],
+        modal_data: {
+            title: 'Developer Application',
+            customId: 'developer_application_modal',
+            components: [
+                {
+                    type: Discord.ComponentType.ActionRow,
+                    components: [
+                        {
+                            type: Discord.ComponentType.TextInput,
+                            style: Discord.TextInputStyle.Paragraph,
+                            customId: 'skills',
+                            label: 'What languages/skills do you have?',
+                            placeholder: 'JavaScript, TypeScript, Luau, Lua',
+                            maxLength: 50,
+                            minLength: 5,
+                            required: true,
+                        },
+                    ],
+                },
+                {
+                    type: Discord.ComponentType.ActionRow,
+                    components: [
+                        {
+                            type: Discord.ComponentType.TextInput,
+                            style: Discord.TextInputStyle.Paragraph,
+                            customId: 'previous_work_group',
+                            label: 'Have you done previous work with a group before (As in you and other developers)?',
+                            maxLength: 250,
+                            minLength: 20,
+                            required: true,
+                        },
+                    ],
+                },
+                {
+                    type: Discord.ComponentType.ActionRow,
+                    components: [
+                        {
+                            type: Discord.ComponentType.TextInput,
+                            style: Discord.TextInputStyle.Paragraph,
+                            customId: 'previous_work_personal',
+                            label: 'What projects have you done on your own?',
+                            maxLength: 250,
+                            minLength: 20,
+                            required: true,
+                        },
+                    ],
+                },
+            ],
+        },
+        modal_handler: async (
+            interaction,
+            support_category,
+            support_ticket_channel,
+            support_ticket_owner,
+        ) => {
+
         },
     },
 ];
