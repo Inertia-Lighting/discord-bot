@@ -15,7 +15,7 @@
   },
   "scripts": {
     "hook": "is-ci || husky install || true",
-    "lint": "npx eslint src",
+    "lint": "yarn eslint src",
     "clean": "run-script-os",
     "clean:windows": "if exist \".\\dist\" rmdir /s /q \".\\dist\"",
     "clean:linux": "rm -rf ./dist",
@@ -27,37 +27,36 @@
     "start": "title && node --trace-warnings --enable-source-maps --require module-alias/register ."
   },
   "devDependencies": {
+    "@stylistic/eslint-plugin": "^4.2.0",
     "@types/string-similarity": "4.0.2",
-    "@types/uuid": "9.0.8",
-    "@typescript-eslint/eslint-plugin": "7.2.0",
-    "@typescript-eslint/parser": "7.2.0",
-    "eslint": "8.57.0",
-    "eslint-plugin-deprecation": "2.0.0",
-    "husky": "9.0.11",
-    "is-ci": "3.0.1",
+    "@types/uuid": "10.0.0",
+    "eslint": "^9.22.0",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "globals": "^16.0.0",
+    "husky": "9.1.7",
+    "is-ci": "4.1.0",
+    "jiti": "^2.4.2",
     "run-script-os": "1.1.6",
-    "typescript": "5.4.2"
+    "typescript": "5.8.2",
+    "typescript-eslint": "^8.26.1"
   },
   "dependencies": {
-    "axios": "1.6.8",
-    "bufferutil": "4.0.8",
+    "bufferutil": "4.0.9",
     "discord-html-transcripts": "3.2.0",
-    "discord.js": "14.14.1",
-    "dotenv": "16.4.5",
-    "go-mongo-db": "https://github.com/MidSpike/go-mongo-db",
+    "discord.js": "14.18.0",
+    "dotenv": "16.4.7",
+    "got": "^14.4.6",
     "lowdb": "^7.0.1",
     "module-alias": "2.2.3",
-    "moment-timezone": "0.5.45",
-    "node-gyp": "10.0.1",
-    "recursive-read-directory": "https://github.com/MidSpike/recursive-read-directory",
+    "moment-timezone": "0.5.47",
     "string-similarity": "4.0.4",
-    "utf-8-validate": "6.0.3",
-    "uuid": "9.0.1"
+    "utf-8-validate": "6.0.5",
+    "uuid": "11.1.0"
   },
   "resolutions": {
     "strip-ansi": "6.0.1",
     "string-width": "4.2.2",
     "wrap-ansi": "7.0.0"
   },
-  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+  "packageManager": "yarn@4.7.0"
 }
