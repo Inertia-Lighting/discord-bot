@@ -23,6 +23,7 @@ dist/
 # node stuff
 node_modules
 npm
+.yarn/sdks/
 
 # bot-related sensitive stuff and runtime generated content
 private
