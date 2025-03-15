@@ -38,3 +38,6 @@ __*
 !start_bot.bat
 !update.bat
 start_bot.bat
+
+#Typescript artifacts
+tsconfig.tsbuildinfo
