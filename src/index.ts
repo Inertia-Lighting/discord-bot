@@ -1,118 +1,84 @@
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
-require('dotenv').config({ path: 'stack.env' });
+import Discord from 'discord.js'
+import 'dotenv/config';
+import fs from 'fs';
+import path from 'path';
+// import { InteractionsManager } from '@root/common/interactions/handler';
 
-import path from 'node:path';
 
-import * as Discord from 'discord.js';
+/* ---------------------------- Handle Rejections --------------------------- */
 
-import recursiveReadDirectory from 'recursive-read-directory';
-
-//------------------------------------------------------------//
-
-/* prevent from crashing for unhandledRejections */
 process.on('unhandledRejection', (reason, promise) => {
-    console.error('----------------------------------------------------------------------------------------------------------------');
-    console.trace('unhandledRejection at:', reason, promise);
-    console.error('----------------------------------------------------------------------------------------------------------------');
+  console.error('----------------------------------------------------------------------------------------------------------------');
+  console.trace('unhandledRejection at:', reason, promise);
+  console.error('----------------------------------------------------------------------------------------------------------------');
 });
 
 /* prevent from crashing for uncaughtExceptions */
 process.on('uncaughtException', (error) => {
-    console.error('----------------------------------------------------------------------------------------------------------------');
-    console.trace('uncaughtException at:', error);
-    console.error('----------------------------------------------------------------------------------------------------------------');
+  console.error('----------------------------------------------------------------------------------------------------------------');
+  console.trace('uncaughtException at:', error);
+  console.error('----------------------------------------------------------------------------------------------------------------');
 });
 
-//------------------------------------------------------------//
+/* -------------------------------------------------------------------------- */
 
-const bot_token = `${process.env.BOT_TOKEN ?? ''}`;
-if (bot_token.length < 1) throw new Error('Environment variable: BOT_TOKEN; is not set correctly.');
-
-//------------------------------------------------------------//
+const bot_token = process.env.BOT_TOKEN;
 
 const client = new Discord.Client({
-    allowedMentions: {
-        parse: [
-            Discord.AllowedMentionsTypes.User,
-            Discord.AllowedMentionsTypes.Role,
-        ],
-        repliedUser: true,
-    },
-    intents: [
-        Discord.GatewayIntentBits.MessageContent,
-        Discord.GatewayIntentBits.Guilds,
-        Discord.GatewayIntentBits.GuildMembers,
-        Discord.GatewayIntentBits.GuildModeration,
-        Discord.GatewayIntentBits.GuildEmojisAndStickers,
-        Discord.GatewayIntentBits.GuildIntegrations,
-        Discord.GatewayIntentBits.GuildWebhooks,
-        Discord.GatewayIntentBits.GuildInvites,
-        Discord.GatewayIntentBits.GuildMessages,
-        Discord.GatewayIntentBits.GuildMessageReactions,
-        Discord.GatewayIntentBits.DirectMessages,
-    ],
-    partials: [
-        Discord.Partials.Channel,
-    ],
-    presence: {
-        status: 'online',
-        activities: [
-            {
-                type: Discord.ActivityType.Listening,
-                name: '/help',
-            },
-        ],
-    },
+  intents: [
+    'AutoModerationExecution',
+    'DirectMessageReactions',
+    'DirectMessages',
+    'GuildBans',
+    'GuildEmojisAndStickers',
+    'GuildExpressions',
+    'GuildIntegrations',
+    'GuildInvites',
+    'GuildMembers',
+    'GuildMessagePolls',
+    'GuildMessageReactions',
+    'GuildMessageTyping',
+    'GuildMessages',
+    'GuildModeration',
+    'GuildPresences',
+    'GuildScheduledEvents',
+    'GuildVoiceStates',
+    'GuildWebhooks',
+    'Guilds',
+    'MessageContent'
+  ],
+  partials: [
+    Discord.Partials.Channel,
+  ],
+  presence: {
+    status: 'online',
+    activities: [
+      {
+        type: Discord.ActivityType.Watching,
+        name: 'Beta Tester',       
+      }
+    ]
+  }
 });
 
-//------------------------------------------------------------//
+function registerEvents(): void {
+  const event_path = path.join(process.cwd(), 'dist', 'events')
+  const events: string[] = fs.readdirSync(event_path)
+  for (const event_file of events) {
+    if (event_file.endsWith('.map.js') || !event_file.endsWith('.js')) continue;
 
-async function registerClientEvents(
-    client: Discord.Client,
-) {
-    const event_files_path = path.join(process.cwd(), 'dist', 'events');
-    const event_files = recursiveReadDirectory(event_files_path);
-
-    for (const event_file of event_files) {
-        if (!event_file.endsWith('.js')) continue;
-
-        const event_file_path = path.join(event_files_path, event_file);
-
-        // required b/c esm imports are quirky
-        const relative_path = path.relative(path.join(process.cwd(), 'dist'), event_file_path);
-        const esm_compatible_path = `./${relative_path.replace(/\\/g, '/')}`;
-
-        console.info(`Registering client event... ${esm_compatible_path}`);
-
-        const { default: bot_event } = await import(esm_compatible_path).then((imported_module) => {
-            // handle esm and commonjs module exports
-            const imported_module_exports = imported_module.default ?? imported_module;
-
-            return imported_module_exports;
-        }) as {
-            default: {
-                name: string;
-                handler: (client: Discord.Client, ...args: unknown[]) => void;
-            },
-        };
-
-        client.on(bot_event.name, (...args) => bot_event.handler(client, ...args));
-    }
-
-    console.info('Registered client events.');
+    import(path.join(event_path, event_file)).then(({ handler }): void => {
+      console.log(event_file.slice(0,-3))
+      client.on(event_file.slice(0,-3), (...args) => handler(client, ...args));
+    }).catch(console.error);
+  }
 }
 
-//------------------------------------------------------------//
+registerEvents()
 
-async function main() {
-    /* login the discord bot */
-    await client.login(bot_token);
 
-    /* register events */
-    await registerClientEvents(client);
-}
-
-main();
+client.login(bot_token).catch(console.error)
