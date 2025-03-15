@@ -1,23 +1,18 @@
-import globals from "globals";
-import tseslint from "typescript-eslint";
-import { defineConfig, globalIgnores } from "eslint/config";
-import simpleImportSort from "eslint-plugin-simple-import-sort";
 import stylistic from '@stylistic/eslint-plugin';
+import { globalIgnores } from 'eslint/config';
+import simpleImportSort from 'eslint-plugin-simple-import-sort';
+import globals from 'globals';
+import tseslint from 'typescript-eslint';
 
 
-export default defineConfig([
-  {
-    name: 'Inertia Main'
-  },
-  {
-    files: ['src/**/*'],
-    languageOptions: { globals: globals.node },
-    ...tseslint.configs.recommended,
-  },
-  globalIgnores(['.yarn/**/*', '*pnp*']),
+export default [
+  { languageOptions: { globals: globals.node } },
+  ...tseslint.configs.recommended,
+  globalIgnores(['dist/'], 'Build Folder'),
+  globalIgnores(['.yarn/**/*'], 'Yarn Stuff'),
   /* -------------------------------------------------------------------------- */
   {
-    files: ['src/**/*'],
+    files: ['src/'],
     plugins: {
       'simple-import-sort': simpleImportSort,
     },
@@ -27,31 +22,29 @@ export default defineConfig([
     }
   },
   {
-    files: ['src/**/*'],
     plugins: {
       '@stylistic': stylistic
     },
     rules: {
-      '@stylistic/indent': ['warn', 2],
-      '@stylistic/eol-last': ['warn', 'always'],
+      // '@stylistic/indent': ['warn', 4],
+      // '@stylistic/eol-last': ['warn', 'always'],
       // '@stylistic/linebreak-style': ['error', 'windows'],
       '@stylistic/quotes': ['warn', 'single'],
-      '@stylistic/no-confusing-arrow': ['warn', {"onlyOneSimpleParam": true}],
+      '@stylistic/no-confusing-arrow': ['warn', { 'onlyOneSimpleParam': true }],
       '@stylistic/spaced-comment': ['warn', 'always']
     }
   },
   /* -------------------------------------------------------------------------- */
   {
-    files: ['src/**/*'],
     rules: {
       'no-duplicate-imports': 'warn',
       /* -------------------------------------------------------------------------- */
-      'complexity': ['error', 4],
+      'complexity': ['error', 20],
       'default-case': 'warn',
       'default-case-last': 'warn',
       'dot-notation': 'warn',
       'eqeqeq': 'warn',
-      'id-length': ['error', { 'min': 3}],
+      'id-length': ['error', { 'min': 2 }],
       'max-depth': ['error', 4],
       'max-nested-callbacks': ['error', 2],
       'max-params': ['error', 5],
@@ -63,7 +56,7 @@ export default defineConfig([
       'no-eval': 'error',
       'no-extra-label': 'warn',
       'no-implied-eval': 'warn',
-      'no-invalid-this': "error",
+      'no-invalid-this': 'error',
       'no-label-var': 'error',
       'no-lonely-if': 'warn',
       'no-negated-condition': 'error',
@@ -76,7 +69,7 @@ export default defineConfig([
       'no-unneeded-ternary': 'warn',
       'no-useless-catch': 'warn',
       'no-useless-escape': 'warn',
-      'no-useless-return': 'warn',
+      // 'no-useless-return': 'warn',
       'no-var': 'warn',
       'prefer-arrow-callback': 'warn',
       'prefer-const': 'warn',
@@ -85,4 +78,4 @@ export default defineConfig([
       'yoda': 'warn'
     }
   }
-])
+];
