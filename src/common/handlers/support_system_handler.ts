@@ -881,6 +881,8 @@ export async function createSupportTicketChannel(
 
     const SupportCategorySize = SupportCategory.children.cache.size;
 
+
+    await sendInitialInformationToSupportTicketChannel(support_ticket_channel, support_ticket_category, support_ticket_owner);
     if (SupportCategorySize > 7) {
         support_ticket_channel.send({
             embeds: [
@@ -892,9 +894,6 @@ export async function createSupportTicketChannel(
             ],
         });
     }
-
-    await sendInitialInformationToSupportTicketChannel(support_ticket_channel, support_ticket_category, support_ticket_owner);
-
     return support_ticket_channel;
 }
 
