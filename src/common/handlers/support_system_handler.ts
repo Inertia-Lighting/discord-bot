@@ -835,7 +835,6 @@ async function sendInitialInformationToSupportTicketChannel(
             'We are only as useful as the information you provide to us.',
         ].join('\n'),
     });
-
     await initial_message.pin();
 }
 
@@ -877,6 +876,22 @@ export async function createSupportTicketChannel(
             },
         ],
     });
+
+    const SupportCategory = (await guild.channels.fetch('805191315947913236') as Discord.CategoryChannel);
+
+    const SupportCategorySize = SupportCategory.children.cache.size;
+
+    if (SupportCategorySize > 7) {
+        support_ticket_channel.send({
+            embeds: [
+                CustomEmbed.from({
+                    color: CustomEmbed.Color.Red,
+                    title: 'Support Delays',
+                    description: 'Please be patient as there are some delays due to the amount of tickets. \n You may have to wait a while for a response.',
+                }),
+            ],
+        });
+    }
 
     await sendInitialInformationToSupportTicketChannel(support_ticket_channel, support_ticket_category, support_ticket_owner);
 
