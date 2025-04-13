@@ -205,7 +205,7 @@ export async function userProfileHandler(
                         value: `${Discord.userMention(db_user_data.identity.discord_user_id)}`,
                     }, {
                         name: 'Roblox',
-                        value: `[${`@${roblox_user_data.name}` ?? 'n/a'}](https://roblox.com/users/${db_user_data.identity.roblox_user_id}/profile) (${roblox_user_data.displayName ?? 'n/a'})`,
+                        value: `[${`@${roblox_user_data.name}`}](https://roblox.com/users/${db_user_data.identity.roblox_user_id}/profile) (${roblox_user_data.displayName ?? 'n/a'})`,
                     },
                     // {
                     //     name: 'Lumens',
