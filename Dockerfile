@@ -7,7 +7,7 @@ WORKDIR /usr/src/app
 COPY . /usr/src/app/
 
 # Corepack
-corepack enable yarn
+RUN corepack enable yarn
 
 # Install dependencies
 RUN yarn
