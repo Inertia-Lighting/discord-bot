@@ -21,10 +21,7 @@
     "clean:linux": "rm -rf ./dist",
     "clean:default": "rm -rf ./dist",
     "build": "yarn clean && tsc --build",
-    "title": "run-script-os",
-    "title:windows": "title Inertia Lighting Discord Bot",
-    "title:default": "",
-    "start": "title && node --trace-warnings --enable-source-maps --require module-alias/register ."
+    "start": "node --trace-warnings --enable-source-maps --require module-alias/register ."
   },
   "devDependencies": {
     "@types/string-similarity": "4.0.2",
