@@ -42,8 +42,8 @@ export default new Interaction({
         if (!interaction.inCachedGuild()) return;
         if (!interaction.channel) return;
 
-        const idType = interaction.options.getString('type', true) as 'discord' | 'roblox';
-        const id = interaction.options.getString('id', true)
+        // const idType = interaction.options.getString('type', true) as 'discord' | 'roblox';
+        // const id = interaction.options.getString('id', true)
         // eslint-disable-next-line default-case
         // switch (idType) {
         //     case 'discord':{
