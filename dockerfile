@@ -6,6 +6,15 @@ WORKDIR /usr/src/app
 # Copy source code
 COPY . /usr/src/app/
 
+# Corepack
+RUN corepack enable yarn
+
+# Corepack update
+RUN corepack up
+
+# Make sure yarn is on stable
+RUN yarn set version stable
+
 # Install dependencies
 RUN yarn
 
