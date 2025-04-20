@@ -21,6 +21,7 @@ declare global {
         [key: string]: unknown,
         required_run_context: InteractionRunContext,
         required_access_level: InteractionAccessLevel,
+        dev_only?: boolean
     };
 
     type InteractionHandler = (client: Discord.Client<true>, interaction: Discord.Interaction) => Promise<void>;
@@ -36,16 +37,17 @@ declare global {
         access_level: PermissionLevel
     }
 
-    const enum PermissionLevel {
-        Public = 1,
-        Staff = 2,
-        CustomerService = 3,
-        Dev = 4,
-        SeniorDev = 5,
-        Moderators = 6,
-        Admins = 7,
-        TeamLeaders = 8,
-        CompanyManagement = 9,
-        BotAdmin = 10
-    }
+const enum PermissionLevel {
+    Public = 1,
+    Staff,
+    CustomerService,
+    Dev,
+    SeniorDev,
+    Moderators,
+    Admins,
+    TeamLeaders,
+    CompanyManagement,
+    BotAdmin
+}
+
 }
