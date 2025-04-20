@@ -13,8 +13,8 @@
     "#root": "./src"
   },
   "engines": {
-    "node": ">=20.0.0",
-    "npm": ">=11.1.0"
+    "node": ">=23.0.0",
+    "npm": ">=10.8.0"
   },
   "scripts": {
     "hook": "is-ci || husky install || true",
@@ -23,35 +23,36 @@
     "clean:windows": "if exist \".\\dist\" rmdir /s /q \".\\dist\"",
     "clean:linux": "rm -rf ./dist",
     "clean:default": "rm -rf ./dist",
-    "build": "yarn clean && tsc --build",
-    "title": "run-script-os",
-    "title:windows": "title Inertia Lighting Discord Bot",
-    "title:default": "",
-    "start": "node --trace-warnings --enable-source-maps --require module-alias/register ."
+    "build": "tsc --build",
+    "start": "node --trace-warnings --enable-source-maps --require module-alias/register -v .",
+    "watch": "yarn nodemon --trace-warnings --enable-source-maps --require module-alias/register ."
   },
   "devDependencies": {
     "@stylistic/eslint-plugin": "^4.2.0",
+    "@types/node": "^22.14.1",
     "@types/string-similarity": "4.0.2",
     "@types/uuid": "10.0.0",
-    "eslint": "^9.22.0",
+    "eslint": "^9.24.0",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "globals": "^16.0.0",
     "husky": "9.1.7",
     "is-ci": "4.1.0",
     "jiti": "^2.4.2",
+    "nodemon": "^3.1.9",
     "run-script-os": "1.1.6",
-    "typescript": "^5.8.2",
-    "typescript-eslint": "^8.26.1"
+    "tsc-watch": "6.3.0",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.29.1"
   },
   "dependencies": {
     "bufferutil": "4.0.9",
     "discord-html-transcripts": "3.2.0",
     "discord.js": "14.18.0",
-    "dotenv": "16.4.7",
-    "got": "^14.4.6",
+    "dotenv": "16.5.0",
+    "got": "^14.4.7",
     "lowdb": "^7.0.1",
     "module-alias": "2.2.3",
-    "moment-timezone": "0.5.47",
+    "moment-timezone": "0.5.48",
     "string-similarity": "4.0.4",
     "utf-8-validate": "6.0.5",
     "uuid": "11.1.0"
@@ -61,5 +62,5 @@
     "string-width": "4.2.2",
     "wrap-ansi": "7.0.0"
   },
-  "packageManager": "yarn@4.7.0"
+  "packageManager": "yarn@4.9.0"
 }
