@@ -65,16 +65,24 @@ const client = new Discord.Client({
   }
 });
 
-function registerEvents(): void {
-  const event_path = path.join(process.cwd(), 'dist', 'events')
-  const events: string[] = fs.readdirSync(event_path)
-  for (const event_file of events) {
-    if (event_file.endsWith('.map.js') || !event_file.endsWith('.js')) continue;
+console.log('hi')
 
-    import(path.join(event_path, event_file)).then(({ handler }): void => {
-      console.log(event_file.slice(0,-3))
-      client.on(event_file.slice(0,-3), (...args) => handler(client, ...args));
-    }).catch(console.error);
+function registerEvents(): void {
+  try {
+    const event_path = path.join(process.cwd(), 'dist', 'events')
+    const resolved_path = path.resolve(process.cwd(), 'dist', 'events')
+    console.log(event_path, resolved_path)
+    const events: string[] = fs.readdirSync(event_path)
+    for (const event_file of events) {
+      if (event_file.endsWith('.map.js') || !event_file.endsWith('.js')) continue;
+      const relative_path = path.relative(__dirname, path.join(event_path, event_file))
+      import(`./${relative_path.replace(/\\/g, '/')}`).then(({ handler }): void => {
+        console.log(event_file.slice(0,-3))
+        client.on(event_file.slice(0,-3), (...args) => handler(client, ...args));
+      }).catch(console.error);
+    }
+  } catch (error) {
+    console.trace(error)
   }
 }
 
@@ -82,3 +90,5 @@ registerEvents()
 
 
 client.login(bot_token).catch(console.error)
+
+export default client;

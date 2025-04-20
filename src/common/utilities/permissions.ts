@@ -11,3 +11,10 @@ export function fetchPermissions(member: Discord.GuildMember): PermissionLevel {
 
         return highestStaffRole.access_level;
 }
+
+export function isDeveloper(member: Discord.GuildMember): boolean {
+    const roles = member.roles.cache
+    .map(role => staff_roles.find(staff_role => role.id === staff_role.id))
+    .filter(staff_role => staff_role !== undefined)
+    return roles.some(staff_role => staff_role.access_level === PermissionLevel.Dev);
+}

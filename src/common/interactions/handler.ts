@@ -3,7 +3,7 @@ import Discord from 'discord.js';
 import path from 'path';
 
 import { delay, findJSFiles } from '../utils';
-import { fetchPermissions } from '../utilities/permissions';
+import { fetchPermissions, isDeveloper } from '../utilities/permissions';
 import { CustomEmbed } from '../utilities/embed';
 
 export class Interaction {
@@ -73,19 +73,16 @@ export class InteractionsManager {
 
       const client_interaction = await import(esm_path).then((imported_module) => {
         const imported_module_exports = imported_module.default ?? imported_module;
-
+        // console.log(imported_module_exports)
         return imported_module_exports;
+        
       }) as {
-        default: Interaction | unknown,
+        default: Interaction,
       };
 
-      if (!(client_interaction instanceof Interaction)) {
-        console.log(client_interaction)
-        console.trace('Failed to load!', interaction_path);
-        continue;
-      }
 
-      InteractionsManager.cached_interactions.set(client_interaction.identifier, client_interaction);
+
+      InteractionsManager.cached_interactions.set(client_interaction.default.identifier, client_interaction.default);
     }
 
     console.info('Registered interactions.');
@@ -117,7 +114,6 @@ export class InteractionsManager {
 
       commands.push(client_interaction.data as Discord.ApplicationCommandDataResolvable);
     }
-    console.log(commands)
     try {
       console.info(`Registering ${commands.length} interactions`);
       await client.application.commands.set(commands);
@@ -126,6 +122,7 @@ export class InteractionsManager {
     }
   }
 
+  // eslint-disable-next-line complexity
   public static async handleInteractionFromDiscord(client: Discord.Client<true>, interaction: Discord.Interaction): Promise<void> {
     let interaction_name: string;
 
@@ -182,6 +179,21 @@ export class InteractionsManager {
                 color: CustomEmbed.color.Violet,
                 title: 'Access Denied',
                 description: `${Discord.userMention(interaction.user.id)}, you are not allowed to use this command!`,
+              }),
+            ],
+          });
+        }
+        return;
+      }
+      const is_dev = isDeveloper(interaction.member)
+      if (client_interaction.metadata.dev_only && !is_dev) {
+        if (interaction.isRepliable()) {
+          await interaction.reply({
+            embeds: [
+              CustomEmbed.from({
+                color: CustomEmbed.color.Violet,
+                title: 'Access Denied',
+                description: `${Discord.userMention(interaction.user.id)}, this command is currently under development!`,
               }),
             ],
           });

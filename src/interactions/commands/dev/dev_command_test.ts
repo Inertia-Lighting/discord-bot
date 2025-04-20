@@ -1,13 +1,13 @@
 import { Interaction } from '@root/common/interactions/handler';
 import Discord from 'discord.js';
-import { CustomEmbed } from '../../common/utilities/embed';
+import { CustomEmbed } from '@root/common/utilities/embed';
 
 export default new Interaction({
-    identifier: 'avatar',
+    identifier: 'dev_command_test',
     type: Discord.InteractionType.ApplicationCommand,
     data: {
         type: Discord.ApplicationCommandType.ChatInput,
-        description: 'Grab an avatar from a user',
+        description: 'Test dev command',
         options: [
             {
                 type: Discord.ApplicationCommandOptionType.User,
@@ -20,6 +20,7 @@ export default new Interaction({
     metadata: {
         required_access_level: PermissionLevel.Public,
         required_run_context: InteractionRunContext.Guild,
+        dev_only: true,
     },
     handler: async (client, interaction) => {
         if (!interaction.isChatInputCommand()) return;

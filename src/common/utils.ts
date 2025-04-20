@@ -4,7 +4,7 @@ export function findJSFiles(dirPath: string): string[] {
   const direntFiles = fs.readdirSync(dirPath, { withFileTypes: true, recursive: true });
   const files = direntFiles
     .filter(dirent => dirent.isFile())
-    .map(dirent => dirent.path+'/'+dirent.name);
+    .map(dirent => dirent.parentPath+'/'+dirent.name);
   // console.log(files)
   const filteredFiles = files.filter(file => file.endsWith('.js') && !file.endsWith('.map.js'));
   // console.log(filteredFiles);

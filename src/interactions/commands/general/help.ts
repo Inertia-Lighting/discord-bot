@@ -6,7 +6,7 @@ import * as Discord from 'discord.js';
 
 import { CustomEmbed } from '@root/common/utilities/embed';
 
-import { fetchPermissions } from '@root/common/utilities/permissions';
+import { fetchPermissions, isDeveloper } from '@root/common/utilities/permissions';
 import { Interaction, InteractionsManager } from '@root/common/interactions/handler';
 
 // ------------------------------------------------------------//
@@ -30,23 +30,29 @@ export default new Interaction({
 
         await interaction.deferReply({ ephemeral: false });
 
-        const highest_access_level_for_user = fetchPermissions(interaction.member);
-        const chat_input_custom_interactions = InteractionsManager.cached_interactions.filter(
-            (client_itneraction) =>
-                client_itneraction.type === Discord.InteractionType.ApplicationCommand &&
-                'type' in client_itneraction.data &&
-                client_itneraction.data.type === Discord.ApplicationCommandType.ChatInput &&
-                client_itneraction.metadata.required_access_level <= highest_access_level_for_user
+        const highestPermission = fetchPermissions(interaction.member);
+        const commands = InteractionsManager.cached_interactions.filter(
+            (client_interaction) =>
+                client_interaction.type === Discord.InteractionType.ApplicationCommand &&
+                'type' in client_interaction.data &&
+                client_interaction.data.type === Discord.ApplicationCommandType.ChatInput &&
+                client_interaction.metadata.required_access_level <= highestPermission
         );
+        const is_dev = isDeveloper(interaction.member);
 
+        const filteredCommands = commands.filter(
+            (client_interaction) =>
+                (!client_interaction.metadata.dev_only || is_dev)
+        );
+        // const filteredCommands = commands.filter((client_interaction) => !client_interaction.metadata.dev_only)
         await interaction.editReply({
             embeds: [
                 CustomEmbed.from({
                     title: 'Commands List',
                     description: [
                         '\`\`\`',
-                        ...chat_input_custom_interactions.map(
-                            (client_itneraction) => `/${client_itneraction.data.name}`
+                        ...filteredCommands.map(
+                            (client_interaction) => `/${client_interaction.data.name}`
                         ),
                         '\`\`\`',
                     ].join('\n'),
