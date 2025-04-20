@@ -1,0 +1,18 @@
+{
+  "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/refs/heads/master/src/schemas/json/nodemon.json",
+    "execMap": {
+      "ts": "yarn build"
+    },
+    "legacyWatch": true,
+    "colours": true,
+    "watch": [
+      "src/**"
+    ],
+    "events": {
+      "restart": "echo 'restarting' && yarn build"
+    },
+    "env": {
+      "NODE_ENV": "development"
+    },
+    "ext": "ts"
+  }
