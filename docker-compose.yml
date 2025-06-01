@@ -2,6 +2,7 @@ services:
   app:
     build:
       context: .
+      dockerfile: dockerfile
     volumes:
       - .:/app
     env_file:
