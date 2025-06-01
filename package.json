@@ -42,6 +42,7 @@
     "discord.js": "14.19.3",
     "dotenv": "16.5.0",
     "go-mongo-db": "https://github.com/MidSpike/go-mongo-db",
+    "got": "^14.4.7",
     "lowdb": "^7.0.1",
     "module-alias": "2.2.3",
     "moment-timezone": "0.6.0",
