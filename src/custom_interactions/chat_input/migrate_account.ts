@@ -1,0 +1,112 @@
+//------------------------------------------------------------//
+//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
+//------------------------------------------------------------//
+
+import * as Discord from 'discord.js';
+
+import { CustomEmbed } from '@root/common/message';
+
+import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
+
+import got from 'got';
+
+//------------------------------------------------------------//
+
+const db_database_name = `${process.env.MONGO_DATABASE_NAME ?? ''}`;
+if (db_database_name.length < 1) throw new Error('Environment variable: MONGO_DATABASE_NAME; is not set correctly.');
+
+const db_users_collection_name = `${process.env.MONGO_USERS_COLLECTION_NAME ?? ''}`;
+if (db_users_collection_name.length < 1) throw new Error('Environment variable: MONGO_USERS_COLLECTION_NAME; is not set correctly.');
+
+const db_blacklisted_users_collection_name = `${process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME ?? ''}`;
+if (db_blacklisted_users_collection_name.length < 1) throw new Error('Environment variable: MONGO_BLACKLISTED_USERS_COLLECTION_NAME; is not set correctly.');
+
+const api_server = `${process.env.API_SERVER ?? ''}`;
+if (api_server.length < 1) throw new Error('Environment variable: API_SERVER; is not set correctly.');
+
+//------------------------------------------------------------//
+
+interface v3Identity {
+    blacklisted: boolean | {}
+    lumens: number;
+    discordId: string;
+    robloxId: string;
+}
+export default new CustomInteraction({
+    identifier: 'lookup',
+    type: Discord.InteractionType.ApplicationCommand,
+    data: {
+        type: Discord.ApplicationCommandType.ChatInput,
+        description: 'Migrate your account to the new V3 system',
+    },
+    metadata: {
+        required_run_context: CustomInteractionRunContext.Guild,
+        required_access_level: CustomInteractionAccessLevel.Public,
+    },
+    handler: async (discord_client, interaction) => {
+        if (!interaction.isChatInputCommand()) return;
+        if (!interaction.inCachedGuild()) return;
+        if (!interaction.channel) return;
+
+        await interaction.deferReply()
+        await interaction.editReply({
+            embeds: [
+                CustomEmbed.from({
+                    title: 'Migration',
+                    description: 'CHecking if account exists in V3'
+                })
+            ]
+        })
+        const alreadyMigrated = await got.post(`http://${api_server}/v3/user/identity/fetch`, {
+            json: {
+                discordId: interaction.user.id,
+            }
+        }).json<v3Identity>()
+        if (alreadyMigrated.discordId) {
+            await interaction.editReply({
+                embeds: [
+                    CustomEmbed.from({
+                        color: CustomEmbed.Color.Red,
+                        title: 'Already Migrated',
+                        description: 'Your account is already migrated to V3'
+                    })
+                ]
+            })
+            return;
+        }
+        await interaction.editReply({
+            embeds: [
+                CustomEmbed.from({
+                    title: 'Migration',
+                    description: 'Migrating account'
+                })
+            ]
+        })
+        const migration = await got.post(`http://${api_server}/v2/identity/fetch`, {
+            json: {
+                discord_user_id: interaction.user.id
+            }
+        });
+        if (migration.statusCode === 200) {
+            await interaction.editReply({
+                embeds: [
+                    CustomEmbed.from({
+                        color: CustomEmbed.Color.Green,
+                        title: 'Migration',
+                        description: 'Migration Successful'
+                    })
+                ]
+            })
+        } else {
+            await interaction.editReply({
+                embeds: [
+                    CustomEmbed.from({
+                        color: CustomEmbed.Color.Red,
+                        title: 'Migration',
+                        description: 'Failed to migrate account'
+                    })
+                ]
+            })
+        }
+    },
+});
