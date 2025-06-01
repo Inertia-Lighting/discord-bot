@@ -41,6 +41,7 @@ export async function suggestionsCategoryHandler(
     }
 
     const suggestions_channel = message.channel;
+    if(!suggestions_channel.isSendable()) throw new Error('The identity manager logging channel is not sendable!');
     if (checkCameraMention(message.content)) {
         const camera_message = await message.reply({
             embeds: [

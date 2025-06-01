@@ -43,6 +43,7 @@ async function guildMemberAddLogger(
     const member_retention_logging_channel = await client.channels.fetch(member_retention_logging_channel_id);
     if (!member_retention_logging_channel) throw new Error('Failed to fetch logging channel');
     if (!member_retention_logging_channel.isTextBased()) throw new TypeError('member_retention_logging_channel is not a text channel');
+    if(!member_retention_logging_channel.isSendable()) throw new Error('member_retention_logging_channel is not sendable!');
 
     const user_creation_timestamp = getMarkdownFriendlyTimestamp(member.user.createdTimestamp);
     const member_joined_timestamp = getMarkdownFriendlyTimestamp(member.joinedTimestamp ?? Date.now());
@@ -80,6 +81,7 @@ async function guildMemberRemoveLogger(
     const member_retention_logging_channel = await client.channels.fetch(member_retention_logging_channel_id);
     if (!member_retention_logging_channel) throw new Error('Failed to fetch logging channel');
     if (!member_retention_logging_channel.isTextBased()) throw new TypeError('member_retention_logging_channel is not a text channel');
+    if(!member_retention_logging_channel.isSendable()) throw new Error('member_retention_logging_channel is not sendable!');
 
     const user_creation_timestamp = getMarkdownFriendlyTimestamp(member.user.createdTimestamp);
     const member_joined_timestamp = getMarkdownFriendlyTimestamp(member.joinedTimestamp ?? Date.now());
@@ -124,6 +126,7 @@ async function guildMemberBannedLogger(
     const member_retention_logging_channel = await client.channels.fetch(member_retention_logging_channel_id);
     if (!member_retention_logging_channel) throw new Error('Failed to fetch logging channel');
     if (!member_retention_logging_channel.isTextBased()) throw new TypeError('member_retention_logging_channel is not a text channel');
+    if(!member_retention_logging_channel.isSendable()) throw new Error('member_retention_logging_channel is not sendable!');
 
     const member_banned_timestamp = getMarkdownFriendlyTimestamp(Date.now());
 

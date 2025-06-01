@@ -441,7 +441,8 @@ async function manageProductsChatInputCommandHandler(
         const logging_channel = await interaction.client.channels.fetch(bot_logging_products_manager_channel_id);
         if (!logging_channel) throw new Error('Unable to find the products manager logging channel!');
         if (!logging_channel.isTextBased()) throw new Error('The products manager logging channel is not text-based!');
-
+        if(!logging_channel.isSendable()) throw new Error('The identity manager logging channel is not sendable!');
+        
         await logging_channel.send({
             embeds: [
                 CustomEmbed.from({

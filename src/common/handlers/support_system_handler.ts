@@ -981,6 +981,7 @@ export async function closeSupportTicketChannel(
         const support_ticket_transcripts_channel = await client.channels.fetch(support_tickets_transcripts_channel_id);
         if (!support_ticket_transcripts_channel) throw new Error('Unable to find the support ticket transcripts channel!');
         if (!support_ticket_transcripts_channel.isTextBased()) throw new Error('The support ticket transcripts channel is not a text channel!');
+        if(!support_ticket_transcripts_channel.isSendable()) throw new Error('The identity manager logging channel is not sendable!');
 
         const transcript_message = await support_ticket_transcripts_channel.send({
             embeds: [

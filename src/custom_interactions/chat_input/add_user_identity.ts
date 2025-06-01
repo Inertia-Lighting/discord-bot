@@ -91,6 +91,7 @@ export default new CustomInteraction({
         const logging_channel = await interaction.client.channels.fetch(bot_logging_identity_manager_channel_id);
         if (!logging_channel) throw new Error('Unable to find the identity manager logging channel!');
         if (!logging_channel.isTextBased()) throw new Error('The identity manager logging channel is not text-based!');
+        if(!logging_channel.isSendable()) throw new Error('The identity manager logging channel is not sendable!');
 
         // get the specified command options
 
