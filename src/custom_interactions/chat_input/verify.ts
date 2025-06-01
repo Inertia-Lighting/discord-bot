@@ -25,11 +25,8 @@ if (db_users_collection_name.length < 1) throw new Error('Environment variable: 
 const user_verification_endpoints_base64_encoded_token = `${process.env.API_BASE64_ENCODED_TOKEN_FOR_USER_VERIFICATION_ENDPOINTS ?? ''}`;
 if (user_verification_endpoints_base64_encoded_token.length < 1) throw new Error('Environment variable: API_BASE64_ENCODED_TOKEN_FOR_USER_VERIFICATION_ENDPOINTS; is not set correctly.');
 
-const api_server_ip = `${process.env.API_SERVER_IP ?? ''}`;
-if (api_server_ip.length < 1) throw new Error('Environment variable: API_SERVER_IP; is not set correctly.');
-
-const api_server_port = `${process.env.API_SERVER_PORT ?? ''}`;
-if (api_server_port.length < 1) throw new Error('Environment variable: API_SERVER_PORT; is not set correctly.');
+const api_server = `${process.env.API_SERVER ?? ''}`;
+if (api_server.length < 1) throw new Error('Environment variable: API_SERVER; is not set correctly.');
 
 //------------------------------------------------------------//
 
@@ -82,7 +79,7 @@ async function verifyHandler(
     try {
         fetch_pending_verification_response = await axios({
             method: 'post',
-            url: `http://${api_server_ip}:${api_server_port}/v2/user/verification/context/fetch`,
+            url: `http://${api_server}/v2/user/verification/context/fetch`,
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `InertiaAuthUserVerificationEndpoints ${user_verification_endpoints_base64_encoded_token}`,
@@ -149,7 +146,7 @@ async function verifyHandler(
     try {
         await axios({
             method: 'post',
-            url: `http://${api_server_ip}:${api_server_port}/v2/user/verification/context/update`,
+            url: `http://${api_server}/v2/user/verification/context/update`,
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `InertiaAuthUserVerificationEndpoints ${user_verification_endpoints_base64_encoded_token}`,
@@ -163,7 +160,7 @@ async function verifyHandler(
 
         await axios({
             method: 'post',
-            url: `http://${api_server_ip}:${api_server_port}/v2/user/verification/context/submit`,
+            url: `http://${api_server}/v2/user/verification/context/submit`,
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `InertiaAuthUserVerificationEndpoints ${user_verification_endpoints_base64_encoded_token}`,
