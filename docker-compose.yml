@@ -5,7 +5,7 @@ services:
     volumes:
       - .:/app
     env_file:
-      - stack.env
+      - .env
     restart: unless-stopped
     entrypoint: >
       sh -c "yarn && exec yarn start"
