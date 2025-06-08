@@ -22,7 +22,8 @@ const prisma =
         punishments: {
             id: true,
         },
-    }
+    },
+    errorFormat: 'pretty',
 });
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
