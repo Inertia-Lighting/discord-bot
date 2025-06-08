@@ -39,4 +39,5 @@ __*
 start_bot.bat
 
 # Yarn
-.yarn/
+.yarn/install-state.gz
+src/lib/prisma
