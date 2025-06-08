@@ -112,6 +112,7 @@ export default {
         console.log('----------------------------------------------------------------------------------------------------------------');
 
         /* register interactions to CustomInteractionsManager */
+        console.info('Registering interactions')
         CustomInteractionsManager.registerClientInteractions();
 
         /* register interactions to discord */
