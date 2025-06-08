@@ -33,7 +33,7 @@ interface v3Identity {
     robloxId: string;
 }
 export default new CustomInteraction({
-    identifier: 'lookup',
+    identifier: 'migrate_account',
     type: Discord.InteractionType.ApplicationCommand,
     data: {
         type: Discord.ApplicationCommandType.ChatInput,
