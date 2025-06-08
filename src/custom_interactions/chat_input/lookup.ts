@@ -11,6 +11,8 @@ import { go_mongo_db } from '@root/common/mongo/mongo';
 import { CustomEmbed } from '@root/common/message';
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
+import { Prisma } from '../../lib/prisma';
+import prisma from '../../lib/prisma_client';
 
 //------------------------------------------------------------//
 
@@ -116,39 +118,30 @@ export default new CustomInteraction({
         }
 
         /* fetch blacklisted user data */
-        const db_blacklisted_user_data_find_cursor = await go_mongo_db.find(db_database_name, db_blacklisted_users_collection_name, {
-            ...(user_id_type === 'discord' ? {
-                'identity.discord_user_id': user_id,
-            } : {
-                'identity.roblox_user_id': user_id,
-            }),
-        }, {
-            projection: {
-                '_id': false,
+        const userData = await prisma.user.findFirst({
+            where:  {
+                OR: [
+                    {
+                        discordId: user_id
+                    },
+                    {
+                        robloxId: user_id
+                    }
+                ]
             },
-        });
-
-        const db_blacklisted_user_data = await db_blacklisted_user_data_find_cursor.next() as unknown as DbBlacklistedUserRecord | null;
-
-        /* fetch the user document */
-        const db_user_data_find_cursor = await go_mongo_db.find(db_database_name, db_users_collection_name, {
-            ...(user_id_type === 'discord' ? {
-                'identity.discord_user_id': user_id,
-            } : {
-                'identity.roblox_user_id': user_id,
-            }),
-        }, {
-            projection: {
-                '_id': false,
-            },
-        });
-
-        const db_user_data = await db_user_data_find_cursor.next() as unknown as DbUserData | null;
+            include: {
+                transactions: true,
+                receivedPunishments: true,
+                issuedPunishments: true,
+                Transfers: true,
+            }
+        }) 
+        const blacklistData = await userData?.receivedPunishments.find((data) => data.punishmentType === 'blacklist')
 
         /* send the user document */
         await interaction.editReply({
             embeds: [
-                ...(db_blacklisted_user_data ? [
+                ...(blacklistData? [
                     CustomEmbed.from({
                         color: CustomEmbed.Color.Red,
                         author: {
@@ -160,7 +153,7 @@ export default new CustomInteraction({
                             'User is blacklisted from using products!',
                             '\`\`\`',
                             '\`\`\`json',
-                            `${Discord.cleanCodeBlockContent(JSON.stringify(db_blacklisted_user_data, null, 2))}`,
+                            `${Discord.cleanCodeBlockContent(JSON.stringify(blacklistData, null, 2))}`,
                             '\`\`\`',
                         ].join('\n'),
                     }),
@@ -172,7 +165,7 @@ export default new CustomInteraction({
                     },
                     description: [
                         '\`\`\`json',
-                        `${Discord.cleanCodeBlockContent(JSON.stringify(db_user_data ?? 'user not found in database', null, 2))}`,
+                        `${Discord.cleanCodeBlockContent(JSON.stringify(userData ?? 'user not found in database', null, 2))}`,
                         '\`\`\`',
                     ].join('\n'),
                 }),
