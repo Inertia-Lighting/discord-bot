@@ -1,19 +1,16 @@
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-//------------------------------------------------------------//
-
-import axios from 'axios';
-
-import * as Discord from 'discord.js';
-
-import { DbBlacklistedUserRecord, DbProductData, DbUserData, DbUserDataArray } from '@root/types';
-
-import { go_mongo_db } from '@root/common/mongo/mongo';
+// ------------------------------------------------------------//
 
 import { CustomEmbed } from '@root/common/message';
+import { go_mongo_db } from '@root/common/mongo/mongo';
+import { DbBlacklistedUserRecord, DbProductData, DbUserData, DbUserDataArray } from '@root/types';
+import axios from 'axios';
+import * as Discord from 'discord.js';
+
 import { dbUserArray } from './user_data/user_data_handler';
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 const db_database_name = `${process.env.MONGO_DATABASE_NAME ?? ''}`;
 if (db_database_name.length < 1) throw new Error('Environment variable: MONGO_DATABASE_NAME; is not set correctly.');
@@ -36,7 +33,7 @@ if (bot_staff_products_role_id.length < 1) throw new Error('\'process.env.BOT_ST
 const bot_subscriptions_tier_1_role_id = `${process.env.BOT_SUBSCRIPTIONS_TIER_1_ROLE_ID ?? ''}`;
 if (bot_subscriptions_tier_1_role_id.length < 1) throw new Error('\'process.env.BOT_SUBSCRIPTIONS_TIER_1_ROLE_ID\' is not defined or is empty');
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 async function newFetchUserProductCodes(
     db_user_data: DbUserDataArray
@@ -45,7 +42,7 @@ async function newFetchUserProductCodes(
 
 }
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 export async function userProfileHandler(
     deferred_interaction: Discord.CommandInteraction | Discord.MessageComponentInteraction,
@@ -185,12 +182,12 @@ export async function userProfileHandler(
                         name: 'Inertia Lighting | User Blacklist System',
                     },
                     description: [
-                        '\`\`\`',
+                        '',
                         'User is blacklisted from using Inertia Lighting products!',
-                        '\`\`\`',
-                        '\`\`\`json',
+                        '',
+                        'json',
                         `${JSON.stringify(db_blacklisted_user_data, null, 2)}`,
-                        '\`\`\`',
+                        '',
                     ].join('\n'),
                 }),
             ] : []),

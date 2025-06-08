@@ -1,14 +1,12 @@
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-//------------------------------------------------------------//
-
-import * as Discord from 'discord.js';
-
-import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
+// ------------------------------------------------------------//
 
 import { addModerationActionToDatabase } from '@root/common/handlers';
+import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
+import * as Discord from 'discord.js';
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 export default new CustomInteraction({
     identifier: 'timeout',
@@ -154,9 +152,9 @@ export default new CustomInteraction({
             content: [
                 `${member_to_timeout}`,
                 `You were put in timeout by ${staff_member} for ${duration / 60_000} minutes for:`,
-                '\`\`\`',
+                '```',
                 Discord.escapeMarkdown(reason),
-                '\`\`\`',
+                '```',
             ].join('\n'),
         };
 

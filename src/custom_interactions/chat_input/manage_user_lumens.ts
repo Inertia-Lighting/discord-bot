@@ -1,18 +1,14 @@
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-//------------------------------------------------------------//
-
-import * as Discord from 'discord.js';
-
-import { DbUserData } from '@root/types';
-
-import { go_mongo_db } from '@root/common/mongo/mongo';
-
-import { CustomEmbed } from '@root/common/message';
+// ------------------------------------------------------------//
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
+import { CustomEmbed } from '@root/common/message';
+import { go_mongo_db } from '@root/common/mongo/mongo';
+import { DbUserData } from '@root/types';
+import * as Discord from 'discord.js';
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 const db_database_name = `${process.env.MONGO_DATABASE_NAME ?? ''}`;
 if (db_database_name.length < 1) throw new Error('Environment variable: MONGO_DATABASE_NAME; is not set correctly.');
@@ -20,7 +16,7 @@ if (db_database_name.length < 1) throw new Error('Environment variable: MONGO_DA
 const db_users_collection_name = `${process.env.MONGO_USERS_COLLECTION_NAME ?? ''}`;
 if (db_users_collection_name.length < 1) throw new Error('Environment variable: MONGO_USERS_COLLECTION_NAME; is not set correctly.');
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 enum ManageLumensAction {
     Add = 'add',
@@ -28,7 +24,7 @@ enum ManageLumensAction {
     Set = 'set',
 }
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 export default new CustomInteraction({
     identifier: 'manage_user_lumens',

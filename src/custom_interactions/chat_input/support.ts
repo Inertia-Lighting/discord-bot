@@ -1,14 +1,12 @@
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-//------------------------------------------------------------//
-
-import * as Discord from 'discord.js';
-
-import { CustomEmbed } from '@root/common/message';
+// ------------------------------------------------------------//
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
+import { CustomEmbed } from '@root/common/message';
+import * as Discord from 'discord.js';
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 export default new CustomInteraction({
     identifier: 'support',

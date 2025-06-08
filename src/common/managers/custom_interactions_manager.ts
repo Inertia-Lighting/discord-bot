@@ -1,22 +1,17 @@
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 import path from 'node:path';
 
+import { CustomEmbed } from '@root/common/message';
+import { fetchHighestAccessLevelForUser } from '@root/common/permissions';
+import { DistributiveOmit } from '@root/types';
+import { delay } from '@root/utilities';
 import * as Discord from 'discord.js';
-
 import recursiveReadDirectory from 'recursive-read-directory';
 
-import { DistributiveOmit } from '@root/types';
-
-import { delay } from '@root/utilities';
-
-import { CustomEmbed } from '@root/common/message';
-
-import { fetchHighestAccessLevelForUser } from '@root/common/permissions';
-
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 const bot_guild_id = `${process.env.BOT_GUILD_ID ?? ''}`;
 if (bot_guild_id.length < 1) throw new Error('Environment variable: BOT_GUILD_ID; was not set correctly!');
@@ -42,7 +37,7 @@ if (guild_team_leaders_role_id.length < 1) throw new Error('Environment variable
 const guild_company_management_role_id = `${process.env.BOT_COMPANY_MANAGEMENT_ROLE_ID ?? ''}`;
 if (guild_company_management_role_id.length < 1) throw new Error('Environment variable: BOT_COMPANY_MANAGEMENT_ROLE_ID; was not set correctly!');
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 type CustomInteractionIdentifier = string;
 
@@ -58,7 +53,7 @@ type CustomInteractionMetadata = {
 
 type CustomInteractionHandler = (discord_client: Discord.Client<true>, interaction: Discord.Interaction) => Promise<void>;
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 export enum CustomInteractionRunContext {
     Global = 1,
@@ -79,7 +74,7 @@ export enum CustomInteractionAccessLevel {
     BotAdmin = 10
 }
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 export class CustomInteraction {
     private _identifier: CustomInteractionIdentifier;

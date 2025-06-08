@@ -1,17 +1,14 @@
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-//------------------------------------------------------------//
-
-import axios from 'axios';
-
-import * as Discord from 'discord.js';
-
-import { CustomEmbed } from '@root/common/message';
+// ------------------------------------------------------------//
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
+import { CustomEmbed } from '@root/common/message';
+import axios from 'axios';
+import * as Discord from 'discord.js';
 import got from 'got';
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 const db_database_name = `${process.env.MONGO_DATABASE_NAME ?? ''}`;
 if (db_database_name.length < 1) throw new Error('Environment variable: MONGO_DATABASE_NAME; is not set correctly.');
@@ -25,7 +22,7 @@ if (user_verification_endpoints_base64_encoded_token.length < 1) throw new Error
 const api_server = `${process.env.API_SERVER ?? ''}`;
 if (api_server.length < 1) throw new Error('Environment variable: API_SERVER; is not set correctly.');
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 async function userAlreadyVerifiedHandler(
     interaction: Discord.ChatInputCommandInteraction,
@@ -42,8 +39,8 @@ async function userAlreadyVerifiedHandler(
                 description: [
                     `${interaction.user} is already verified and linked in our database!`,
                     '',
-                    'Click the \"Your User Profile\" button below to view your profile!',
-                    'To modify your linked accounts, please open an \"Account Recovery\" support ticket.',
+                    'Click the "Your User Profile" button below to view your profile!',
+                    'To modify your linked accounts, please open an "Account Recovery" support ticket.',
                 ].join('\n'),
             }),
         ],
@@ -215,7 +212,7 @@ async function verifyHandler(
     }).catch(console.warn);
 }
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 export default new CustomInteraction({
     identifier: 'verify',
@@ -250,7 +247,7 @@ export default new CustomInteraction({
                 discordId: interaction.user.id
             },
         })
-        if(request.statusCode == 200) {
+        if(request.statusCode === 200) {
             userAlreadyVerifiedHandler(interaction)
         }
 

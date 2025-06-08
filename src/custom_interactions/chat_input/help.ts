@@ -1,16 +1,13 @@
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-//------------------------------------------------------------//
-
-import * as Discord from 'discord.js';
-
-import { CustomEmbed } from '@root/common/message';
+// ------------------------------------------------------------//
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext, CustomInteractionsManager } from '@root/common/managers/custom_interactions_manager';
-
+import { CustomEmbed } from '@root/common/message';
 import { fetchHighestAccessLevelForUser } from '@root/common/permissions';
+import * as Discord from 'discord.js';
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 export default new CustomInteraction({
     identifier: 'help',
@@ -45,11 +42,11 @@ export default new CustomInteraction({
                 CustomEmbed.from({
                     title: 'Commands List',
                     description: [
-                        '\`\`\`',
+                        '```',
                         ...chat_input_custom_interactions.map(
                             (custom_interaction) => `/${custom_interaction.data.name}`
                         ),
-                        '\`\`\`',
+                        '```',
                     ].join('\n'),
                 }),
             ],

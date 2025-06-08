@@ -1,20 +1,18 @@
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-//------------------------------------------------------------//
-
-import * as Discord from 'discord.js';
-
-import { delay, ellipseString } from '@root/utilities';
+// ------------------------------------------------------------//
 
 import { CustomEmbed } from '@root/common/message';
+import { delay, ellipseString } from '@root/utilities';
+import * as Discord from 'discord.js';
 import { findBestMatch } from 'string-similarity';
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 const bot_staff_role_id = `${process.env.BOT_STAFF_ROLE_ID ?? ''}`;
 if (bot_staff_role_id.length < 1) throw new Error('Environment variable: BOT_STAFF_ROLE_ID; was not properly set or is empty');
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 const camera_words: string[] = [
     'camera',

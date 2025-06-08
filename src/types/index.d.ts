@@ -1,18 +1,18 @@
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 import type MongoDB from 'mongodb';
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 //                        Helper Types                        //
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 export type DistributiveOmit<T, K extends keyof T> = T extends unknown ? Omit<T, K> : never;
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 //                      Database Schemas                      //
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 export interface DbProductData {
     _id: MongoDB.ObjectId;
@@ -34,7 +34,7 @@ export interface DbProductData {
     supporter_perk: boolean;
 }
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 export interface DbUserIdentity {
     discord_user_id: string;
@@ -66,20 +66,17 @@ export interface DbUserDataArray {
     ticket_blacklist?: DbUserTicketBlacklist
 }
 
-//------------------------------------------------------------//
-
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface DbBlacklistedUserIdentity extends DbUserIdentity {}
+// ------------------------------------------------------------//
 
 export interface DbBlacklistedUserRecord {
     _id: MongoDB.ObjectId;
-    identity: DbBlacklistedUserIdentity;
+    identity: DbUserIdentity;
     reason: string;
     epoch: number;
     staff_member_id: string;
 }
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 export interface DbPendingVerificationData {
     _id: MongoDB.ObjectId;
@@ -88,7 +85,7 @@ export interface DbPendingVerificationData {
     code: string;
 }
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 export interface DbRobloxPurchaseRecord {
     _id: MongoDB.ObjectId;
@@ -104,9 +101,7 @@ export interface DbPayPalPurchaseRecord {
     product_codes: string[];
 }
 
-//------------------------------------------------------------//
-
-export interface DbModerationActionUserIdentity extends Pick<DbUserIdentity, 'discord_user_id'> {}
+// ------------------------------------------------------------//
 
 export type DbModerationActionType = 'WARN' | 'TIMEOUT' | 'MUTE' | 'KICK' | 'BAN';
 

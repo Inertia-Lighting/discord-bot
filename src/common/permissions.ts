@@ -1,12 +1,11 @@
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-//------------------------------------------------------------//
-
-import * as Discord from 'discord.js';
+// ------------------------------------------------------------//
 
 import { CustomInteractionAccessLevel } from '@root/common/managers/custom_interactions_manager';
+import * as Discord from 'discord.js';
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 const bot_guild_id = `${process.env.BOT_GUILD_ID ?? ''}`;
 if (bot_guild_id.length < 1) throw new Error('Environment variable: BOT_GUILD_ID; was not set correctly!');
@@ -38,7 +37,7 @@ if (guild_company_management_role_id.length < 1) throw new Error('Environment va
 const guild_bot_admin_role_id = `${process.env.BOT_BOT_ADMIN_ROLE_ID ?? ''}`;
 if (guild_company_management_role_id.length < 1) throw new Error('Environment variable: BOT_BOT_ADMIN_ROLE_ID; was not set correctly!');
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 /**
  * Used by custom interactions to determine the highest access level a user has.

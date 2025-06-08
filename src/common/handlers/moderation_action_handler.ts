@@ -1,11 +1,11 @@
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 import { Prisma } from '../../lib/prisma';
 import prisma from '../../lib/prisma_client';
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 /**
  * Adds a moderation action to the database
@@ -31,7 +31,7 @@ export async function addModerationActionToDatabase(punishedUserId: string, staf
             connect: {
                 discordId: staffUserId
             }
-        }
+        },
         ...data
 
     };

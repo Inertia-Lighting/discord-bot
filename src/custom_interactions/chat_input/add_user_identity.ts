@@ -1,18 +1,14 @@
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-//------------------------------------------------------------//
-
-import * as Discord from 'discord.js';
-
-import { DbUserData } from '@root/types';
-
-import { go_mongo_db } from '@root/common/mongo/mongo';
-
-import { CustomEmbed } from '@root/common/message';
+// ------------------------------------------------------------//
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
+import { CustomEmbed } from '@root/common/message';
+import { go_mongo_db } from '@root/common/mongo/mongo';
+import { DbUserData } from '@root/types';
+import * as Discord from 'discord.js';
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 const db_database_name = `${process.env.MONGO_DATABASE_NAME ?? ''}`;
 if (db_database_name.length < 1) throw new Error('Environment variable: MONGO_DATABASE_NAME; is not set correctly.');
@@ -27,11 +23,11 @@ const bot_logging_identity_manager_channel_id = `${process.env.BOT_LOGGING_IDENT
 if (bot_logging_identity_manager_channel_id.length < 1) throw new Error('Environment variable: BOT_LOGGING_IDENTITY_MANAGER_CHANNEL_ID; is not set correctly.');
 
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 const regex_user_id_filter = /^\d+$/;
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 export default new CustomInteraction({
     identifier: 'add_user_identity',
@@ -134,13 +130,13 @@ export default new CustomInteraction({
             },
         });
 
-        //search for Discord ID
+        // search for Discord ID
         const db_user_discord_identity_with_new_identity = await db_user_discord_identity_with_new_identity_find_cursor.next() as unknown as Exclude<DbUserData, '_id'> | null;
 
-        //search for roblox ID
+        // search for roblox ID
         const db_user_user_roblox_identity_with_new_identity = await db_user_roblox_identity_with_new_identity_find_cursor.next() as unknown as Exclude<DbUserData, '_id'> | null;
 
-        //discord check
+        // discord check
         if (db_user_discord_identity_with_new_identity) {
             await interaction.editReply({
                 embeds: [
@@ -162,7 +158,7 @@ export default new CustomInteraction({
             return;
         }
 
-        //roblox check
+        // roblox check
         if (db_user_user_roblox_identity_with_new_identity) {
             await interaction.editReply({
                 embeds: [
@@ -184,7 +180,7 @@ export default new CustomInteraction({
             return;
         }
 
-        //create document for the user
+        // create document for the user
         const db_user_data_update_document = {
             '$set': {
                 'identity.discord_user_id': new_discord_id,

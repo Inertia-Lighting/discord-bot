@@ -1,12 +1,11 @@
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-//------------------------------------------------------------//
-
-import { v4 as uuid_v4 } from 'uuid';
+// ------------------------------------------------------------//
 
 import { go_mongo_db } from '@root/common/mongo/mongo';
+import { v4 as uuid_v4 } from 'uuid';
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 type UserNote = {
     identity: {
@@ -20,7 +19,7 @@ type UserNote = {
     },
 };
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 /**
  * Create note for user
@@ -35,10 +34,10 @@ async function createNoteForUser(
         staff_member_id: string,
     }
 ): Promise<boolean> {
-    if (typeof discord_user_id !== 'string') throw new TypeError('\`discord_user_id\` must be a string!');
-    if (typeof epoch !== 'number') throw new TypeError('\`epoch\` must be a number!');
-    if (typeof note !== 'string') throw new TypeError('\`note\` must be a string!');
-    if (typeof staff_member_id !== 'string') throw new TypeError('\`staff_member_id\` must be a string!');
+    if (typeof discord_user_id !== 'string') throw new TypeError('discord_user_id must be a string!');
+    if (typeof epoch !== 'number') throw new TypeError('epoch must be a number!');
+    if (typeof note !== 'string') throw new TypeError('note must be a string!');
+    if (typeof staff_member_id !== 'string') throw new TypeError('staff_member_id must be a string!');
 
     const record_id = uuid_v4();
 
@@ -64,7 +63,7 @@ async function createNoteForUser(
     return true;
 }
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 /**
  * Updates a note
@@ -77,10 +76,10 @@ async function updateNoteForUser(
         staff_member_id: string,
     }
 ): Promise<boolean> {
-    if (typeof id !== 'string') throw new TypeError('\`id\` must be a string!');
-    if (typeof epoch !== 'number') throw new TypeError('\`epoch\` must be a number!');
-    if (typeof note !== 'string') throw new TypeError('\`note\` must be a string!');
-    if (typeof staff_member_id !== 'string') throw new TypeError('\`staff_member_id\` must be a string!');
+    if (typeof id !== 'string') throw new TypeError('id must be a string!');
+    if (typeof epoch !== 'number') throw new TypeError('epoch must be a number!');
+    if (typeof note !== 'string') throw new TypeError('note must be a string!');
+    if (typeof staff_member_id !== 'string') throw new TypeError('staff_member_id must be a string!');
 
     try {
         await go_mongo_db.update(process.env.MONGO_DATABASE_NAME as string, process.env.MONGO_USER_NOTES_COLLECTION_NAME as string, {
@@ -102,7 +101,7 @@ async function updateNoteForUser(
     return true;
 }
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 /**
  * Removes a note
@@ -112,7 +111,7 @@ async function removeNoteFromUser(
         id: string,
     }
 ): Promise<boolean> {
-    if (typeof id !== 'string') throw new TypeError('\`id\` must be a string!');
+    if (typeof id !== 'string') throw new TypeError('id must be a string!');
 
     try {
         await go_mongo_db.remove(process.env.MONGO_DATABASE_NAME as string, process.env.MONGO_USER_NOTES_COLLECTION_NAME as string, {
@@ -134,7 +133,7 @@ async function purgeNotesFromUser(
         discord_user_id: string,
     }
 ): Promise<boolean> {
-    if (typeof discord_user_id !== 'string') throw new TypeError('\`discord_user_id\` must be a string!');
+    if (typeof discord_user_id !== 'string') throw new TypeError('discord_user_id must be a string!');
 
     try {
         await go_mongo_db.remove(process.env.MONGO_DATABASE_NAME as string, process.env.MONGO_USER_NOTES_COLLECTION_NAME as string, {
@@ -156,7 +155,7 @@ async function lookupNotesForUser(
         discord_user_id: string,
     }
 ): Promise<UserNote[]> {
-    if (typeof discord_user_id !== 'string') throw new TypeError('\`discord_user_id\` must be a string!');
+    if (typeof discord_user_id !== 'string') throw new TypeError('discord_user_id must be a string!');
 
     const user_notes_find_cursor = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME as string, process.env.MONGO_USER_NOTES_COLLECTION_NAME as string, {
         'identity.discord_user_id': discord_user_id,
@@ -175,7 +174,7 @@ async function lookupNoteForUser(
         id: string,
     }
 ): Promise<UserNote | null> {
-    if (typeof id !== 'string') throw new TypeError('\`id\` must be a string!');
+    if (typeof id !== 'string') throw new TypeError('id must be a string!');
 
     const user_notes_find_cursor = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME as string, process.env.MONGO_USER_NOTES_COLLECTION_NAME as string, {
         'record.id': id,
@@ -187,11 +186,11 @@ async function lookupNoteForUser(
 }
 
 export {
-    UserNote,
     createNoteForUser,
-    updateNoteForUser,
-    removeNoteFromUser,
-    purgeNotesFromUser,
-    lookupNotesForUser,
     lookupNoteForUser,
+    lookupNotesForUser,
+    purgeNotesFromUser,
+    removeNoteFromUser,
+    updateNoteForUser,
+    UserNote,
 };

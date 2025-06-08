@@ -1,18 +1,14 @@
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-//------------------------------------------------------------//
-
-import * as Discord from 'discord.js';
-
-import { compareTwoStrings } from 'string-similarity';
-
-import { go_mongo_db } from '@root/common/mongo/mongo';
+// ------------------------------------------------------------//
 
 import { CustomEmbed } from '@root/common/message';
-
+import { go_mongo_db } from '@root/common/mongo/mongo';
 import { clampNumber } from '@root/utilities';
+import * as Discord from 'discord.js';
+import { compareTwoStrings } from 'string-similarity';
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 type QuickSupportTopic = {
     id: string,
@@ -21,13 +17,13 @@ type QuickSupportTopic = {
     support_contents: string,
 };
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 const quick_support_topics: QuickSupportTopic[] = [];
 
 const confidence_threshold = 0.75; // on a scale from <0, 1> (inclusive), how similar the two strings should be to match
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 async function updateQuickSupportTopics() {
     quick_support_topics.length = 0; // empty the array
@@ -43,7 +39,7 @@ async function updateQuickSupportTopics() {
 setImmediate(() => updateQuickSupportTopics());
 setInterval(() => updateQuickSupportTopics(), 5 * 60_000); // every 5 minutes
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 function getSimilarityScore(string_1: string, string_2: string): number {
     return compareTwoStrings(string_1.toLowerCase(), string_2.toLowerCase()); // returns a number between <0, 1> (inclusive)
@@ -86,7 +82,7 @@ function findPotentialMatchingQuickSupportTopics(user_input: string): (QuickSupp
     return matching_qs_topics;
 }
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 export async function automatedQuickSupportHandler(
     message: Discord.Message,

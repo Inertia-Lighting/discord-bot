@@ -1,14 +1,12 @@
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
+import { handleSupportTicketCategoryModalSubmit,SupportCategoryId } from '@root/common/handlers';
+import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
 import * as Discord from 'discord.js';
 
-import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
-
-import { SupportCategoryId, handleSupportTicketCategoryModalSubmit } from '@root/common/handlers';
-
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 export default new CustomInteraction({
     identifier: 'other_questions_modal',

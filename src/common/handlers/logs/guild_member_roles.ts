@@ -1,17 +1,16 @@
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-//------------------------------------------------------------//
-
-import * as Discord from 'discord.js';
+// ------------------------------------------------------------//
 
 import { CustomEmbed } from '@root/common/message';
+import * as Discord from 'discord.js';
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 const logging_channel_id = process.env.BOT_LOGGING_CHANNEL_ID as string;
 if (typeof logging_channel_id !== 'string') throw new TypeError('logging_channel_id is not a string');
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 async function guildMemberRolesAddedLogger(
     old_member: Discord.GuildMember,
@@ -87,7 +86,7 @@ async function guildMemberRolesRemovedLogger(
     }).catch(console.trace);
 }
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 export {
     guildMemberRolesAddedLogger,

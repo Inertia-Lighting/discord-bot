@@ -1,29 +1,24 @@
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 // import { DbProductData } from '@root/types';
 
 // import axios from 'axios';
 
+import { illegalNicknameHandler } from '@root/common/handlers';
+// import { go_mongo_db } from '@root/common/mongo/mongo';
+import { CustomInteractionsManager } from '@root/common/managers/custom_interactions_manager';
+import { delay } from '@root/utilities';
+import * as Discord from 'discord.js';
 import moment from 'moment-timezone';
 
-import * as Discord from 'discord.js';
-
-import { delay } from '@root/utilities';
-
-// import { go_mongo_db } from '@root/common/mongo/mongo';
-
-import { CustomInteractionsManager } from '@root/common/managers/custom_interactions_manager';
-
-import { illegalNicknameHandler } from '@root/common/handlers';
-
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 const bot_guild_id = `${process.env.BOT_GUILD_ID ?? ''}`;
 if (bot_guild_id.length < 1) throw new Error('environment variable: BOT_GUILD_ID; was not properly set or is empty');
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 // async function setProductPricesInDB(
 //     client: Discord.Client,
@@ -95,7 +90,7 @@ async function removeIllegalNicknames(
     }
 }
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 export default {
     name: Discord.Events.ClientReady,

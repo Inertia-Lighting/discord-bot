@@ -1,19 +1,15 @@
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-//------------------------------------------------------------//
-
-import * as Discord from 'discord.js';
-
-import * as DiscordTranscripts from 'discord-html-transcripts';
+// ------------------------------------------------------------//
 
 import { CustomEmbed } from '@root/common/message';
-
 import { delay, getMarkdownFriendlyTimestamp } from '@root/utilities';
-
 import { bot_config } from '@root/utilities/bot_config';
+import * as Discord from 'discord.js';
+import * as DiscordTranscripts from 'discord-html-transcripts';
 
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 const support_tickets_category_id = `${process.env.BOT_SUPPORT_TICKETS_CATEGORY_ID ?? ''}`;
 if (support_tickets_category_id.length < 1) throw new Error('Environment variable: BOT_SUPPORT_TICKETS_CATEGORY_ID; is not set correctly.');
@@ -21,7 +17,7 @@ if (support_tickets_category_id.length < 1) throw new Error('Environment variabl
 const support_tickets_transcripts_channel_id = `${process.env.BOT_SUPPORT_TICKETS_TRANSCRIPTS_CHANNEL_ID ?? ''}`;
 if (support_tickets_transcripts_channel_id.length < 1) throw new Error('Environment variable: BOT_SUPPORT_TICKETS_TRANSCRIPTS_CHANNEL_ID; is not set correctly.');
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 const bot_staff_role_id = `${process.env.BOT_STAFF_ROLE_ID ?? ''}`;
 if (bot_staff_role_id.length < 1) throw new Error('Environment variable: BOT_STAFF_ROLE_ID; is not set correctly.');
@@ -29,7 +25,7 @@ if (bot_staff_role_id.length < 1) throw new Error('Environment variable: BOT_STA
 const bot_customer_service_role_id = `${process.env.BOT_CUSTOMER_SERVICE_ROLE_ID ?? ''}`;
 if (bot_customer_service_role_id.length < 1) throw new Error('Environment variable: BOT_CUSTOMER_SERVICE_ROLE_ID; is not set correctly.');
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 const bot_database_support_staff_role_id = `${process.env.BOT_SUPPORT_STAFF_DATABASE_ROLE_ID ?? ''}`;
 if (bot_database_support_staff_role_id.length < 1) throw new Error('Environment variable: BOT_SUPPORT_STAFF_DATABASE_ROLE_ID; is not set correctly.');
@@ -46,13 +42,13 @@ if (bot_product_purchases_support_staff_role_id.length < 1) throw new Error('Env
 const bot_partnership_requests_support_staff_role_id = `${process.env.BOT_SUPPORT_STAFF_PARTNERSHIP_REQUESTS_ROLE_ID ?? ''}`;
 if (bot_partnership_requests_support_staff_role_id.length < 1) throw new Error('Environment variable: BOT_SUPPORT_STAFF_PARTNERSHIP_REQUESTS_ROLE_ID; is not set correctly.');
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 const support_ticket_cleanup_timeout_in_ms = 10_000; // 10 seconds
 
 const user_feedback_survey_collector_timeout_in_ms = 30 * 60_000; // 30 minutes
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 export const satisfaction_levels = {
     highest_satisfaction: {
@@ -82,7 +78,7 @@ export const satisfaction_levels = {
     },
 };
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 /**
  * Do not modify the values of this enum.
@@ -239,9 +235,9 @@ export const support_categories: SupportCategory[] = [
                             'Please follow the instructions below.',
                             'This is a common issue that affects most of our users.',
                             '',
-                            '\`game.Workspace.StreamingEnabled\` being enabled is not compatible with most of our products.',
+                            'game.Workspace.StreamingEnabled being enabled is not compatible with most of our products.',
                             '',
-                            'Follow the steps in [this guide](https://youtu.be/xApLkcuXwVk) to disable \`game.Workspace.StreamingEnabled\`.',
+                            'Follow the steps in [this guide](https://youtu.be/xApLkcuXwVk) to disable game.Workspace.StreamingEnabled.',
                         ].join('\n'),
                     }),
                 ],
@@ -332,9 +328,7 @@ export const support_categories: SupportCategory[] = [
         },
         modal_handler: async (
             interaction,
-            support_category,
             support_ticket_channel,
-            support_ticket_owner,
         ) => {
             const old_roblox_account_id = interaction.fields.getTextInputValue('old_roblox');
             const new_roblox_account_id = interaction.fields.getTextInputValue('new_roblox');
@@ -441,7 +435,6 @@ export const support_categories: SupportCategory[] = [
             interaction,
             support_category,
             support_ticket_channel,
-            support_ticket_owner,
         ) => {
             const products = interaction.fields.getTextInputValue('products');
             const discord_transfer_to = interaction.fields.getTextInputValue('discord_transfer_to');
@@ -530,7 +523,6 @@ export const support_categories: SupportCategory[] = [
             interaction,
             support_category,
             support_ticket_channel,
-            support_ticket_owner,
         ) => {
             const answer_for_products = interaction.fields.getTextInputValue('products');
             const answer_for_time = interaction.fields.getTextInputValue('time');
@@ -651,9 +643,7 @@ export const support_categories: SupportCategory[] = [
          },
          modal_handler: async (
              interaction,
-             support_category,
              support_ticket_channel,
-             support_ticket_owner,
          ) => {
              const group_name = interaction.fields.getTextInputValue('group_name');
              const group_owner_age = interaction.fields.getTextInputValue('group_owner_age');
@@ -724,7 +714,6 @@ export const support_categories: SupportCategory[] = [
             interaction,
             support_category,
             support_ticket_channel,
-            support_ticket_owner,
         ) => {
             const question = interaction.fields.getTextInputValue('question');
 
@@ -799,18 +788,14 @@ export const support_categories: SupportCategory[] = [
                 },
             ],
         },
-        modal_handler: async (
-            interaction,
-            support_category,
-            support_ticket_channel,
-            support_ticket_owner,
-        ) => {
-
-        },
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        modal_handler: function (interaction: Discord.ModalSubmitInteraction<'cached'>, support_category: SupportCategory, support_ticket_channel: Discord.TextChannel, support_ticket_owner: Discord.GuildMember): Promise<void> {
+            throw new Error('Function not implemented.');
+        }
     },
 ];
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 async function sendInitialInformationToSupportTicketChannel(
     support_ticket_channel: Discord.TextChannel,
@@ -859,7 +844,7 @@ export async function createSupportTicketChannel(
     const support_ticket_channel = await guild.channels.create({
         name: support_channel_name,
         type: Discord.ChannelType.GuildText,
-        topic: `${support_ticket_owner} | ${support_ticket_category.id} | Opened on <t:${Math.floor(Date.now() / 1000)}:F> | Staff may close this ticket using the \`close_ticket\` command.`,
+        topic: `${support_ticket_owner} | ${support_ticket_category.id} | Opened on <t:${Math.floor(Date.now() / 1000)}:F> | Staff may close this ticket using the close_ticket command.`,
         parent: support_tickets_category,
         permissionOverwrites: [
             ...support_tickets_category.permissionOverwrites.cache.values(), // clone the parent channel permissions
@@ -907,10 +892,10 @@ export async function closeSupportTicketChannel(
     const client = support_channel.client;
 
     if (save_transcript) {
-        const support_ticket_category_id = support_channel.name.match(/([a-zA-Z\-\_])+(?![\-\_])\D/i)?.[0];
+        const support_ticket_category_id = support_channel.name.match(/([a-zA-Z\-_])+(?![-_])\D/i)?.[0];
         if (!support_ticket_category_id) throw new Error('Unable to find the support ticket topic name!');
 
-        const support_ticket_owner_id = support_channel.name.match(/(?!.*\-)?([0-9])+/i)?.[0];
+        const support_ticket_owner_id = support_channel.name.match(/(?!.*-)?([0-9])+/i)?.[0];
         if (!support_ticket_owner_id) throw new Error('Unable to find the support ticket owner id!');
 
         const support_category = support_categories.find(({ id }) => id === support_ticket_category_id?.toUpperCase());

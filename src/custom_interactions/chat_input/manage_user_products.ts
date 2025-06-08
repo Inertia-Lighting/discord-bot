@@ -1,20 +1,16 @@
-//------------------------------------------------------------//
+/* eslint-disable complexity */
+// ------------------------------------------------------------//
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-//------------------------------------------------------------//
-
-import * as Discord from 'discord.js';
-
-import { compareTwoStrings } from 'string-similarity';
-
-import { DbProductData, DbUserData } from '@root/types';
-
-import { go_mongo_db } from '@root/common/mongo/mongo';
-
-import { CustomEmbed } from '@root/common/message';
+// ------------------------------------------------------------//
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
+import { CustomEmbed } from '@root/common/message';
+import { go_mongo_db } from '@root/common/mongo/mongo';
+import { DbProductData, DbUserData } from '@root/types';
+import * as Discord from 'discord.js';
+import { compareTwoStrings } from 'string-similarity';
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 const db_database_name = `${process.env.MONGO_DATABASE_NAME ?? ''}`;
 if (db_database_name.length < 1) throw new Error('Environment variable: MONGO_DATABASE_NAME; is not set correctly.');
@@ -31,7 +27,7 @@ if (db_database_support_staff_role_id.length < 1) throw new Error('Environment v
 const bot_logging_products_manager_channel_id = `${process.env.BOT_LOGGING_PRODUCTS_MANAGER_CHANNEL_ID ?? ''}`;
 if (bot_logging_products_manager_channel_id.length < 1) throw new Error('Environment variable: BOT_LOGGING_PRODUCTS_MANAGER_CHANNEL_ID; is not set correctly.');
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 // Note for the future:
 //
@@ -45,12 +41,12 @@ enum ManageProductsAction {
     Remove = 'remove',
 }
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 const ALL_PRODUCTS_CODE = 'ALL';
 const ALL_VIEWABLE_PRODUCTS_CODE = 'ALL_VIEWABLE';
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 class DbProductsCache {
     public static readonly cache_lifetime_ms = 1 * 60_000; // 1 minute
@@ -83,7 +79,7 @@ class DbProductsCache {
 
 }
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 async function manageProductsAutocompleteHandler(
     interaction: Discord.AutocompleteInteraction,
@@ -170,7 +166,7 @@ async function manageProductsAutocompleteHandler(
             return 0;
         }
     ).filter(
-        ({ similarity_score, code }, index) => product_code_search_query.length > 0 ? (
+        ({ similarity_score }, index) => product_code_search_query.length > 0 ? (
             similarity_score >= 0.25 || (similarity_score < 0.25 && index < 10)
         ) : true
     );
@@ -203,7 +199,7 @@ async function manageProductsAutocompleteHandler(
     interaction.respond(autocomplete_results);
 }
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 // Note:
 //
@@ -245,7 +241,7 @@ async function manageUserProduct(
         'identity.roblox_user_id': db_user_data.identity.roblox_user_id,
     }, {
         $set: {
-            [`products.${product_code}`]: (action_to_perform === ManageProductsAction.Add ? true : false),
+            [`products.${product_code}`]: (action_to_perform === ManageProductsAction.Add),
         },
     });
 }
@@ -311,6 +307,7 @@ async function manageProductsChatInputCommandHandler(
             // we need to check if the product code is valid now
 
             const db_roblox_product = db_roblox_products.find(
+                // eslint-disable-next-line no-shadow
                 (db_roblox_product) => db_roblox_product.code === product_code
             );
 
@@ -504,7 +501,7 @@ async function manageProductsChatInputCommandHandler(
     }).catch(console.warn);
 }
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 export default new CustomInteraction({
     identifier: 'manage_user_products',

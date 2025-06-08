@@ -1,21 +1,21 @@
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
+import { delay } from '@root/utilities';
 import * as Discord from 'discord.js';
 
 import { CustomInteractionAccessLevel } from '../managers/custom_interactions_manager';
-import { delay } from '@root/utilities';
 import { fetchHighestAccessLevelForUser } from '../permissions';
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 const non_allowed_regex_filter = /[^\w\d]|_/gi;
 
 const display_name_override_nickname = 'Illegal Nickname';
 const display_name_override_reason = 'The user\'s display name contained too many non-allowed characters.';
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 export async function illegalNicknameHandler(client: Discord.Client<true>, member: Discord.GuildMember) {
     if (member.user.bot) return;
@@ -38,5 +38,5 @@ export async function illegalNicknameHandler(client: Discord.Client<true>, membe
 
     try {
         await member.setNickname(display_name_override_nickname, display_name_override_reason);
-    } catch {} // ignore any errors, as they will most likely be related to missing permissions
+    } catch { /* empty */ } // ignore any errors, as they will most likely be related to missing permissions
 }

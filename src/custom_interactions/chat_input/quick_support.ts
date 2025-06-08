@@ -1,20 +1,15 @@
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-//------------------------------------------------------------//
-
-import * as Discord from 'discord.js';
-
-import { compareTwoStrings } from 'string-similarity';
-
-import { randomArrayItem } from '@root/utilities';
-
-import { go_mongo_db } from '@root/common/mongo/mongo';
+// ------------------------------------------------------------//
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
-
 import { CustomEmbed } from '@root/common/message';
+import { go_mongo_db } from '@root/common/mongo/mongo';
+import { randomArrayItem } from '@root/utilities';
+import * as Discord from 'discord.js';
+import { compareTwoStrings } from 'string-similarity';
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 const db_database_name = `${process.env.MONGO_DATABASE_NAME ?? ''}`;
 if (db_database_name.length < 1) throw new Error('Environment variable: MONGO_DATABASE_NAME; is not set correctly.');
@@ -22,7 +17,7 @@ if (db_database_name.length < 1) throw new Error('Environment variable: MONGO_DA
 const db_quick_support_topics_collection_name = `${process.env.MONGO_QUICK_SUPPORT_TOPICS_COLLECTION_NAME ?? ''}`;
 if (db_quick_support_topics_collection_name.length < 1) throw new Error('Environment variable: MONGO_QUICK_SUPPORT_TOPICS_COLLECTION_NAME; is not set correctly.');
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 type QuickSupportTopic = {
     id: string,
@@ -33,7 +28,7 @@ type QuickSupportTopic = {
 
 type QuickSupportTopics = QuickSupportTopic[];
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 async function fetchQuickSupportTopics(): Promise<QuickSupportTopics> {
     const qs_topics_find_cursor = await go_mongo_db.find(db_database_name, db_quick_support_topics_collection_name, {}, {
@@ -63,7 +58,7 @@ async function fetchQuickSupportTopicById(
     return qs_topic;
 }
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 async function quickSupportAutoCompleteHandler(
     interaction: Discord.AutocompleteInteraction,
@@ -95,7 +90,7 @@ async function quickSupportAutoCompleteHandler(
         (a, b) => b.similarity_score - a.similarity_score
     );
 
-    // eslint-disable-next-line no-inner-declarations
+     
     function generateRandomQuickSupportTopic(): QuickSupportTopic {
         const random_qs_topic = randomArrayItem(qs_topics);
 
@@ -176,7 +171,7 @@ async function quickSupportChatInputHandler(
     }).catch(console.warn);
 }
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 export default new CustomInteraction({
     identifier: 'quick_support',

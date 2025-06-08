@@ -1,16 +1,13 @@
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-//------------------------------------------------------------//
-
-import * as Discord from 'discord.js';
-
-import { CustomEmbed } from '@root/common/message';
+// ------------------------------------------------------------//
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
-
+import { CustomEmbed } from '@root/common/message';
+import * as Discord from 'discord.js';
 import got from 'got';
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 const db_database_name = `${process.env.MONGO_DATABASE_NAME ?? ''}`;
 if (db_database_name.length < 1) throw new Error('Environment variable: MONGO_DATABASE_NAME; is not set correctly.');
@@ -24,10 +21,10 @@ if (db_blacklisted_users_collection_name.length < 1) throw new Error('Environmen
 const api_server = `${process.env.API_SERVER ?? ''}`;
 if (api_server.length < 1) throw new Error('Environment variable: API_SERVER; is not set correctly.');
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 interface v3Identity {
-    blacklisted: boolean | {}
+    blacklisted: boolean | object
     lumens: number;
     discordId: string;
     robloxId: string;

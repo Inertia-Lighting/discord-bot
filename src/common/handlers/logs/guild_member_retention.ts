@@ -1,19 +1,17 @@
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-//------------------------------------------------------------//
-
-import * as Discord from 'discord.js';
-
-import { getMarkdownFriendlyTimestamp } from '@root/utilities';
+// ------------------------------------------------------------//
 
 import { CustomEmbed } from '@root/common/message';
+import { getMarkdownFriendlyTimestamp } from '@root/utilities';
+import * as Discord from 'discord.js';
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 const member_retention_logging_channel_id = process.env.BOT_LOGGING_USER_RETENTION_CHANNEL_ID as string;
 if (typeof member_retention_logging_channel_id !== 'string') throw new TypeError('member_retention_logging_channel_id is not a string');
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 function discordTimestampsDifferenceInDays(
     newest_timestamp: number | string, // in seconds
@@ -31,7 +29,7 @@ function discordTimestampsDifferenceInDays(
     );
 }
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 async function guildMemberAddLogger(
     member: Discord.GuildMember,
@@ -147,7 +145,7 @@ async function guildMemberBannedLogger(
                         value: `<t:${member_banned_timestamp}:F> (<t:${member_banned_timestamp}:R>)`,
                     }, {
                         name: 'Banned for',
-                        value: `\`\`\`\n${ban_reason}\n\`\`\``,
+                        value: `\n${ban_reason}\n`,
                     },
                 ],
             }),
@@ -155,10 +153,10 @@ async function guildMemberBannedLogger(
     }).catch(console.trace);
 }
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 export {
     guildMemberAddLogger,
-    guildMemberRemoveLogger,
     guildMemberBannedLogger,
+    guildMemberRemoveLogger,
 };

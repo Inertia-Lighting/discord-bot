@@ -1,22 +1,16 @@
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-//------------------------------------------------------------//
-
-import moment from 'moment-timezone';
-
-import * as Discord from 'discord.js';
-
-import { DbModerationAction } from '@root/types';
-
-import { chunkArray, delay, ellipseString } from '@root/utilities';
+// ------------------------------------------------------------//
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
-
-import { go_mongo_db } from '@root/common/mongo/mongo';
-
 import { CustomEmbed } from '@root/common/message';
+import { go_mongo_db } from '@root/common/mongo/mongo';
+import { DbModerationAction } from '@root/types';
+import { chunkArray, delay, ellipseString } from '@root/utilities';
+import * as Discord from 'discord.js';
+import moment from 'moment-timezone';
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 const db_database_name = `${process.env.MONGO_DATABASE_NAME ?? ''}`;
 if (db_database_name.length < 1) throw new Error('Environment variable: MONGO_DATABASE_NAME; is not set correctly.');
@@ -24,7 +18,7 @@ if (db_database_name.length < 1) throw new Error('Environment variable: MONGO_DA
 const db_moderation_action_records_collection_name = `${process.env.MONGO_MODERATION_ACTION_RECORDS_COLLECTION_NAME ?? ''}`;
 if (db_moderation_action_records_collection_name.length < 1) throw new Error('Environment variable: MONGO_MODERATION_ACTION_RECORDS_COLLECTION_NAME; is not set correctly.');
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 enum ModerationActionLookupMode {
     All = 'all',
@@ -33,22 +27,7 @@ enum ModerationActionLookupMode {
     Id = 'id',
 }
 
-//------------------------------------------------------------//
-
-async function listModerationActions(
-    interaction: Discord.ChatInputCommandInteraction,
-    { lookup_mode, lookup_query }: {
-        lookup_mode: ModerationActionLookupMode.DiscordUser | ModerationActionLookupMode.StaffMember | ModerationActionLookupMode.Id,
-        lookup_query: string,
-    },
-): Promise<void>;
-async function listModerationActions(
-    interaction: Discord.ChatInputCommandInteraction,
-    { lookup_mode, lookup_query }: {
-        lookup_mode: ModerationActionLookupMode.All,
-        lookup_query: 'all',
-    },
-): Promise<void>;
+// ------------------------------------------------------------//
 async function listModerationActions(
     interaction: Discord.ChatInputCommandInteraction,
     { lookup_mode, lookup_query }: {
@@ -188,9 +167,9 @@ async function listModerationActions(
                             `**Date** \`${moment(moderation_action.record.epoch).tz('America/New_York').format('YYYY[-]MM[-]DD | hh:mm A | [GMT]ZZ')}\``,
                             `**Type** \`${moderation_action.record.type}\``,
                             '**Reason**',
-                            '\`\`\`',
+                            '```',
                             `${ellipseString(Discord.escapeMarkdown(moderation_action.record.reason), 250)}`,
-                            '\`\`\`',
+                            '```',
                         ].join('\n')
                     ).join('\n'),
                 }),

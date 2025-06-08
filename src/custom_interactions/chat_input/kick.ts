@@ -1,14 +1,12 @@
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-//------------------------------------------------------------//
-
-import * as Discord from 'discord.js';
-
-import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
+// ------------------------------------------------------------//
 
 import { addModerationActionToDatabase } from '@root/common/handlers';
+import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
+import * as Discord from 'discord.js';
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 export default new CustomInteraction({
     identifier: 'kick',
@@ -104,9 +102,9 @@ export default new CustomInteraction({
             content: [
                 `${member_to_kick}`,
                 `You were kicked from the Inertia Lighting discord by ${staff_member.user} for:`,
-                '\`\`\`',
+                '```',
                 Discord.escapeMarkdown(kick_reason),
-                '\`\`\`',
+                '```',
             ].join('\n'),
         };
 

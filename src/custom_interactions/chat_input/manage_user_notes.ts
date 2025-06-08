@@ -1,18 +1,14 @@
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
+import { createNoteForUser, lookupNoteForUser, lookupNotesForUser, purgeNotesFromUser, removeNoteFromUser, updateNoteForUser,UserNote } from '@root/common/handlers';
+import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
+import { CustomEmbed } from '@root/common/message';
+import { chunkArray, delay, ellipseString, getMarkdownFriendlyTimestamp } from '@root/utilities';
 import * as Discord from 'discord.js';
 
-import { chunkArray, delay, ellipseString, getMarkdownFriendlyTimestamp } from '@root/utilities';
-
-import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
-
-import { UserNote, createNoteForUser, lookupNoteForUser, lookupNotesForUser, purgeNotesFromUser, removeNoteFromUser, updateNoteForUser } from '@root/common/handlers';
-
-import { CustomEmbed } from '@root/common/message';
-
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 async function manageNotesLookupSubCommandHandler(
     interaction: Discord.ChatInputCommandInteraction,
@@ -56,9 +52,9 @@ async function manageNotesLookupSubCommandHandler(
                     `**Member** ${Discord.userMention(user_note.identity.discord_user_id)}`,
                     `**Date** <t:${getMarkdownFriendlyTimestamp(user_note.record.epoch)}:f>`,
                     '**Content**',
-                    '\`\`\`',
+                    '```',
                     `${ellipseString(Discord.escapeMarkdown(user_note.record.note), 512)}`,
-                    '\`\`\`',
+                    '```',
                 ].join('\n'),
             }),
         ],
@@ -155,9 +151,9 @@ async function manageNotesForSubCommandHandler(
                             `**Member** ${Discord.userMention(user_note.identity.discord_user_id)}`,
                             `**Date** <t:${`${user_note.record.epoch}`.slice(0, -3)}:f>`,
                             '**Content**',
-                            '\`\`\`',
+                            '```',
                             `${ellipseString(Discord.escapeMarkdown(user_note.record.note), 250)}`,
-                            '\`\`\`',
+                            '```',
                         ].join('\n')
                     ).join('\n'),
                 }),
@@ -433,7 +429,7 @@ async function manageNotesPurgeSubCommandHandler(
     }).catch(console.warn);
 }
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 export default new CustomInteraction({
     identifier: 'manage_user_notes',

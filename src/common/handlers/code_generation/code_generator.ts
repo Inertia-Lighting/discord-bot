@@ -1,21 +1,18 @@
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
+import { getMarkdownFriendlyTimestamp } from '@root/utilities';
 import { ButtonStyle, CommandInteraction, ComponentType } from 'discord.js';
 
 import { CustomEmbed } from '../../message.js';
-
-import { getMarkdownFriendlyTimestamp } from '@root/utilities';
-
-import { RobloxUsersApiUser, UserDataClient, event_map, getUserUpdates } from './user_update.js';
-
 import create_db_handler from './create_db_handler.js';
+import { event_map, getUserUpdates,RobloxUsersApiUser, UserDataClient } from './user_update.js';
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 // export const codes: verification_code_data[] = [];
 
@@ -36,7 +33,7 @@ const code_length = 10;
 
 const { getUserData } = new UserDataClient<true>();
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 /**
  * @async
@@ -53,11 +50,11 @@ async function checkUser(user_id: string, interaction: CommandInteraction): Prom
     console.log('Checking user...');
     const user_data = await getUserData(user_id);
     console.log(user_data);
-    //------------------------------------------------------------//
+    // ------------------------------------------------------------//
 
     const { code_db } = await create_db_handler();
 
-   //------------------------------------------------------------//
+   // ------------------------------------------------------------//
 
     code_db.data.codes.filter((data: verification_code_data) => data.roblox_id === user_id).forEach((data) => {
         interaction.editReply({
@@ -99,11 +96,11 @@ async function checkUser(user_id: string, interaction: CommandInteraction): Prom
 export async function generateVerificationCode(user_id: string, interaction: CommandInteraction): Promise<undefined> {
     if (await checkUser(user_id, interaction) === false) return;
 
-    //------------------------------------------------------------//
+    // ------------------------------------------------------------//
 
     const { code_db } = await create_db_handler();
 
-    //------------------------------------------------------------//
+    // ------------------------------------------------------------//
 
     let code: string = '';
     const random_places: Array<[number, string]> = [];
@@ -133,7 +130,7 @@ export async function generateVerificationCode(user_id: string, interaction: Com
         }
         code.trim();
     }
-    //Generic typing because noblox.js doesn't have typings for "onBlurbChange"
+    // Generic typing because noblox.js doesn't have typings for "onBlurbChange"
     const user_data = await getUserData(user_id);
     const event = await getUserUpdates(user_id);
     const message_object = (await interaction.fetchReply());
@@ -149,7 +146,7 @@ export async function generateVerificationCode(user_id: string, interaction: Com
 
     const discord_friendly_timestamp = getMarkdownFriendlyTimestamp(push_data.expiration);
 
-    //send message to channel detailing how to verify.
+    // send message to channel detailing how to verify.
     interaction.editReply({
         embeds: [
             CustomEmbed.from({
@@ -158,7 +155,7 @@ export async function generateVerificationCode(user_id: string, interaction: Com
                 fields: [
                     {
                         name: 'Code',
-                        value: `\`\`\`${push_data.code}\`\`\``,
+                        value: `${push_data.code}`,
                     },
                     {
                         name: 'Help',
@@ -202,6 +199,7 @@ export async function generateVerificationCode(user_id: string, interaction: Com
                     ],
                 });
                 event_map.delete(push_data.roblox_id);
+                // eslint-disable-next-line no-shadow
                 code_db.data.codes.filter((data) => data.roblox_id === user_id).forEach((_Object, index) => code_db.data.codes.splice(index));
                 console.log('The recovery code is part of the user\'s blurb.');
                 return;
@@ -220,11 +218,11 @@ export async function generateVerificationCode(user_id: string, interaction: Com
 /* -------------------------------------------------------------------------- */
 
 setInterval(async () => {
-    //------------------------------------------------------------//
+    // ------------------------------------------------------------//
 
     const { code_db } = await create_db_handler();
 
-    //------------------------------------------------------------//
+    // ------------------------------------------------------------//
 
     code_db.data.codes.filter((element) => element.expiration <= Date.now()).forEach((data, index) => {
         data.interaction?.editReply({

@@ -1,16 +1,15 @@
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
-require('dotenv').config();
+import 'dotenv/config'
 
 import path from 'node:path';
 
 import * as Discord from 'discord.js';
-
 import recursiveReadDirectory from 'recursive-read-directory';
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 /* prevent from crashing for unhandledRejections */
 process.on('unhandledRejection', (reason, promise) => {
@@ -26,12 +25,12 @@ process.on('uncaughtException', (error) => {
     console.error('----------------------------------------------------------------------------------------------------------------');
 });
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 const bot_token = `${process.env.BOT_TOKEN ?? ''}`;
 if (bot_token.length < 1) throw new Error('Environment variable: BOT_TOKEN; is not set correctly.');
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 const client = new Discord.Client({
     allowedMentions: {
@@ -68,10 +67,9 @@ const client = new Discord.Client({
     },
 });
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 async function registerClientEvents(
-    client: Discord.Client,
 ) {
     const event_files_path = path.join(process.cwd(), 'dist', 'events');
     const event_files = recursiveReadDirectory(event_files_path);
@@ -105,7 +103,7 @@ async function registerClientEvents(
     console.info('Registered client events.');
 }
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 async function main() {
     /* login the discord bot */

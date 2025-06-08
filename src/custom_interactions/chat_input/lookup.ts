@@ -1,20 +1,13 @@
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-//------------------------------------------------------------//
-
-import * as Discord from 'discord.js';
-
-import { DbBlacklistedUserRecord, DbUserData } from '@root/types';
-
-import { go_mongo_db } from '@root/common/mongo/mongo';
-
-import { CustomEmbed } from '@root/common/message';
+// ------------------------------------------------------------//
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
-import { Prisma } from '../../lib/prisma';
-import prisma from '../../lib/prisma_client';
+import { CustomEmbed } from '@root/common/message';
+import prisma from '@root/lib/prisma_client';
+import * as Discord from 'discord.js';
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 const db_database_name = `${process.env.MONGO_DATABASE_NAME ?? ''}`;
 if (db_database_name.length < 1) throw new Error('Environment variable: MONGO_DATABASE_NAME; is not set correctly.');
@@ -25,7 +18,7 @@ if (db_users_collection_name.length < 1) throw new Error('Environment variable: 
 const db_blacklisted_users_collection_name = `${process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME ?? ''}`;
 if (db_blacklisted_users_collection_name.length < 1) throw new Error('Environment variable: MONGO_BLACKLISTED_USERS_COLLECTION_NAME; is not set correctly.');
 
-//------------------------------------------------------------//
+// ------------------------------------------------------------//
 
 export default new CustomInteraction({
     identifier: 'lookup',
@@ -86,18 +79,15 @@ export default new CustomInteraction({
 
         await interaction.deferReply({ ephemeral: respond_as_ephemeral });
 
-        let user_id_type: 'discord' | 'roblox';
         let user_id: string;
         switch (subcommand_name) {
             case 'discord': {
-                user_id_type = 'discord';
                 user_id = interaction.options.getUser('user', true).id;
 
                 break;
             }
 
             case 'roblox': {
-                user_id_type = 'roblox';
                 user_id = interaction.options.getString('user', true);
 
                 break;
@@ -149,12 +139,12 @@ export default new CustomInteraction({
                             name: 'Inertia Lighting | User Blacklist System',
                         },
                         description: [
-                            '\`\`\`',
+                            '```',
                             'User is blacklisted from using products!',
-                            '\`\`\`',
-                            '\`\`\`json',
+                            '```',
+                            '```json',
                             `${Discord.cleanCodeBlockContent(JSON.stringify(blacklistData, null, 2))}`,
-                            '\`\`\`',
+                            '```',
                         ].join('\n'),
                     }),
                 ] : []),
@@ -164,9 +154,9 @@ export default new CustomInteraction({
                         name: 'Inertia Lighting | User Lookup System',
                     },
                     description: [
-                        '\`\`\`json',
+                        '```json',
                         `${Discord.cleanCodeBlockContent(JSON.stringify(userData ?? 'user not found in database', null, 2))}`,
-                        '\`\`\`',
+                        '```',
                     ].join('\n'),
                 }),
             ],
