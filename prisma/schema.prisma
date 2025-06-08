@@ -1,0 +1,216 @@
+datasource db {
+    provider = "postgres"
+    url      = env("POSTGRES_DB_CONNECTION_URL")
+}
+
+generator SrcClient {
+    provider = "prisma-client-js"
+    output   = "../src/lib/prisma"
+}
+
+generator DistClient {
+    provider = "prisma-client-js"
+    output   = "../dist/lib/prisma"
+}
+
+//* -------------------------------------------------------------------------- */
+//*                                 Schema Data                                */
+//* -------------------------------------------------------------------------- */
+
+enum AccountType {
+    roblox
+    discord
+}
+
+enum PunishmentType {
+    warn
+    kick
+    ban
+    blacklist
+    mute
+    timeout
+}
+
+enum TransactionType {
+    paypal
+    roblox
+    lumen
+    system
+}
+
+enum GiftcardType {
+    product
+    balance
+}
+
+//* -------------------------------------------------------------------------- */
+//*                                  User Data                                 */
+//* -------------------------------------------------------------------------- */
+
+model User {
+    id String @id @default(cuid()) @map("_id")
+
+    discordId String @unique
+    robloxId  String @unique
+    lumens    Int    @default(0)
+    // productHash String? @unique
+
+    issuedPunishments   Punishments[]  @relation("StaffIssuedPunishments")
+    receivedPunishments Punishments[]  @relation("UserPunishments")
+    transactions        Transactions[]
+    reviews             Reviews[]
+    giftcards           Giftcards[]
+    Transfers           Transfers[]
+    // ProductHashInfoId      String                 @unique
+    // ProductHashInformation ProductHashInformation? @relation("UserProductHashInfo", fields: [ProductHashInfoId], references: [id])
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Punishments {
+    id String @id @default(cuid()) @map("_id")
+
+    punishmentType   PunishmentType
+    punishmentReason String
+    duration         DateTime
+
+    staffUserId    String
+    punishedUserId String
+
+    staffUser    User @relation("StaffIssuedPunishments", fields: [staffUserId], references: [id])
+    punishedUser User @relation("UserPunishments", fields: [punishedUserId], references: [id])
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Transactions {
+    id String @id @default(cuid()) @map("_id")
+
+    transactionType     TransactionType
+    transactionAmount   String
+    purchaseId          String          @unique
+    productCode         String
+    oneTimeTransferUsed Boolean?        @default(false)
+
+    UserId String
+
+    User User @relation(fields: [UserId], references: [id])
+
+    Transfers Transfers[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Transfers {
+    id String @id @default(cuid()) @map("_id")
+
+    transferReason String
+
+    TransactionId String
+    NewUserId     String
+
+    Transaction Transactions @relation(fields: [TransactionId], references: [id])
+    NewUser     User         @relation(fields: [NewUserId], references: [id])
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Giftcards {
+    id String @id @default(cuid()) @map("_id")
+
+    giftcardType GiftcardType
+    purchased    String[]
+    code         String       @unique
+
+    userLocked Boolean
+    UserId     String
+    User       User    @relation(fields: [UserId], references: [id])
+
+    expires DateTime
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Reviews {
+    id String @id @default(cuid()) @map("_id")
+
+    productCode String[]
+    review      String
+    Score       Int
+
+    UserId String
+    User   User   @relation(fields: [UserId], references: [id])
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+// model ProductHashInformation {
+//     id String @id @default(cuid()) @map("_id")
+
+//     timeBinary           String @unique
+//     sequenceNumberBinary String
+//     machineIdBinary      String
+
+//     createdAt DateTime @default(now())
+//     updatedAt DateTime @updatedAt
+
+//     User User? @relation("UserProductHashInfo")
+// }
+
+//* -------------------------------------------------------------------------- */
+//*                                Product Data                                */
+//* -------------------------------------------------------------------------- */
+
+model Products {
+    id String @id @default(cuid()) @map("_id")
+
+    name            String @unique
+    description     String
+    code            String @unique
+    robloxProductId String
+
+    price_in_usd    String
+    price_in_robux  Int
+    price_in_lumens Int
+
+    viewable        Boolean
+    purchaseable    Boolean
+    downloadable    Boolean
+    supporter_perk  Boolean
+    sortingPriority Int
+
+    tags String[] // Store ProductTag IDs as strings
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model ProductTags {
+    id String @id @default(cuid()) @map("_id")
+
+    name        String @unique
+    description String
+    color       String
+
+    viewable Boolean
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Verification {
+    id String @id @default(cuid()) @map("_id")
+
+    accountType AccountType
+    accountId   String      @unique
+    code        String      @unique @default("")
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}

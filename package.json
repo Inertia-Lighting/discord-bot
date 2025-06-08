@@ -36,6 +36,7 @@
     "typescript": "5.8.3"
   },
   "dependencies": {
+    "@prisma/client": "^6.9.0",
     "axios": "1.9.0",
     "bufferutil": "4.0.9",
     "discord-html-transcripts": "3.2.0",
@@ -47,6 +48,7 @@
     "module-alias": "2.2.3",
     "moment-timezone": "0.6.0",
     "node-gyp": "11.2.0",
+    "prisma": "^6.9.0",
     "recursive-read-directory": "https://github.com/MidSpike/recursive-read-directory",
     "string-similarity": "4.0.4",
     "utf-8-validate": "6.0.5",

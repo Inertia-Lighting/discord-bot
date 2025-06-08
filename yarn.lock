@@ -346,6 +346,76 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@prisma/client@npm:^6.9.0":
+  version: 6.9.0
+  resolution: "@prisma/client@npm:6.9.0"
+  peerDependencies:
+    prisma: "*"
+    typescript: ">=5.1.0"
+  peerDependenciesMeta:
+    prisma:
+      optional: true
+    typescript:
+      optional: true
+  checksum: 10c0/4877d9d0f93ca404c066ce0536f4c2180a8a16a2b0ade8f15df9dd5286c74db55c5a99f4632f13b32045b966cb5f01e010806edda865aa22bbb0aef65f8b6e9f
+  languageName: node
+  linkType: hard
+
+"@prisma/config@npm:6.9.0":
+  version: 6.9.0
+  resolution: "@prisma/config@npm:6.9.0"
+  dependencies:
+    jiti: "npm:2.4.2"
+  checksum: 10c0/749c801e31d5284d78ce0df9a41b07a2a1d756d966b857472c2dcbfa1239da3cf8e60f3522d42d201fa08594b8ecbb88816f9381b521230ddac992a9bc566445
+  languageName: node
+  linkType: hard
+
+"@prisma/debug@npm:6.9.0":
+  version: 6.9.0
+  resolution: "@prisma/debug@npm:6.9.0"
+  checksum: 10c0/abb6822299285d6847d7f86723ad4c222a828cb0cec0086bdf616c9d92e3c2c48b9f00d1b49655c489bbe6ad1a33cf4818c468ea8448b58a3233d67a967bb0ee
+  languageName: node
+  linkType: hard
+
+"@prisma/engines-version@npm:6.9.0-10.81e4af48011447c3cc503a190e86995b66d2a28e":
+  version: 6.9.0-10.81e4af48011447c3cc503a190e86995b66d2a28e
+  resolution: "@prisma/engines-version@npm:6.9.0-10.81e4af48011447c3cc503a190e86995b66d2a28e"
+  checksum: 10c0/a81ba1a619d3945ef7840d28f4b6eb0ed345aac86011d03ec8b9388129273e70887a6ece8052195a8d909bfce8f469cdab2a3fe079fe89d432d5510f35ebfa0b
+  languageName: node
+  linkType: hard
+
+"@prisma/engines@npm:6.9.0":
+  version: 6.9.0
+  resolution: "@prisma/engines@npm:6.9.0"
+  dependencies:
+    "@prisma/debug": "npm:6.9.0"
+    "@prisma/engines-version": "npm:6.9.0-10.81e4af48011447c3cc503a190e86995b66d2a28e"
+    "@prisma/fetch-engine": "npm:6.9.0"
+    "@prisma/get-platform": "npm:6.9.0"
+  checksum: 10c0/62fb62141f277376a3194637a1e6123c4eecdd54df89138d0694813dc5d3007b6cec0bcd15dceb76d383f9379f844dffd0a62de87a0c5c761c61d46c91a7c6ba
+  languageName: node
+  linkType: hard
+
+"@prisma/fetch-engine@npm:6.9.0":
+  version: 6.9.0
+  resolution: "@prisma/fetch-engine@npm:6.9.0"
+  dependencies:
+    "@prisma/debug": "npm:6.9.0"
+    "@prisma/engines-version": "npm:6.9.0-10.81e4af48011447c3cc503a190e86995b66d2a28e"
+    "@prisma/get-platform": "npm:6.9.0"
+  checksum: 10c0/cdab9a5e1e0b8f52cb32dfacb8fff4b50cccb64235a8fdc06ae1930089f6acf28cd6b4af4bb306aae25773db76db2d2d378244d23f7b491acf6f3f8d135e0ef6
+  languageName: node
+  linkType: hard
+
+"@prisma/get-platform@npm:6.9.0":
+  version: 6.9.0
+  resolution: "@prisma/get-platform@npm:6.9.0"
+  dependencies:
+    "@prisma/debug": "npm:6.9.0"
+  checksum: 10c0/e70bd4e9733d959b7dd5614d4f6f7af6d9f135e1719ddcf91a6c8baa4235882674b46f1c965e63ecfb7251327e7e670b0396d11c0a9c28648fc430de843da806
+  languageName: node
+  linkType: hard
+
 "@sapphire/async-queue@npm:^1.5.2, @sapphire/async-queue@npm:^1.5.3":
   version: 1.5.5
   resolution: "@sapphire/async-queue@npm:1.5.5"
@@ -1068,6 +1138,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "discord-bot@workspace:."
   dependencies:
+    "@prisma/client": "npm:^6.9.0"
     "@types/string-similarity": "npm:4.0.2"
     "@types/uuid": "npm:10.0.0"
     "@typescript-eslint/eslint-plugin": "npm:8.33.0"
@@ -1087,6 +1158,7 @@ __metadata:
     module-alias: "npm:2.2.3"
     moment-timezone: "npm:0.6.0"
     node-gyp: "npm:11.2.0"
+    prisma: "npm:^6.9.0"
     recursive-read-directory: "https://github.com/MidSpike/recursive-read-directory"
     run-script-os: "npm:1.1.6"
     string-similarity: "npm:4.0.4"
@@ -1804,6 +1876,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jiti@npm:2.4.2":
+  version: 2.4.2
+  resolution: "jiti@npm:2.4.2"
+  bin:
+    jiti: lib/jiti-cli.mjs
+  checksum: 10c0/4ceac133a08c8faff7eac84aabb917e85e8257f5ad659e843004ce76e981c457c390a220881748ac67ba1b940b9b729b30fb85cbaf6e7989f04b6002c94da331
+  languageName: node
+  linkType: hard
+
 "js-tokens@npm:^3.0.0 || ^4.0.0":
   version: 4.0.0
   resolution: "js-tokens@npm:4.0.0"
@@ -2417,6 +2498,23 @@ __metadata:
   version: 1.2.1
   resolution: "prelude-ls@npm:1.2.1"
   checksum: 10c0/b00d617431e7886c520a6f498a2e14c75ec58f6d93ba48c3b639cf241b54232d90daa05d83a9e9b9fef6baa63cb7e1e4602c2372fea5bc169668401eb127d0cd
+  languageName: node
+  linkType: hard
+
+"prisma@npm:^6.9.0":
+  version: 6.9.0
+  resolution: "prisma@npm:6.9.0"
+  dependencies:
+    "@prisma/config": "npm:6.9.0"
+    "@prisma/engines": "npm:6.9.0"
+  peerDependencies:
+    typescript: ">=5.1.0"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  bin:
+    prisma: build/index.js
+  checksum: 10c0/58217bca255ba01ecc23722b9f25f37e3c68780d3801ddd3438fc7987cd6abad5759b87d9a851725516ef035330e58ab3d56362c426f19cd22d2dccdb5bccb41
   languageName: node
   linkType: hard
 
