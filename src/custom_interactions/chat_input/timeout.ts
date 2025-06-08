@@ -172,13 +172,25 @@ export default new CustomInteraction({
         await interaction.editReply(moderation_message_options).catch(console.warn);
 
         /* log to the database */
-        await addModerationActionToDatabase({
-            discord_user_id: member_to_timeout.id,
-        }, {
-            type: 'TIMEOUT',
-            epoch: Date.now(),
-            reason: `${reason} (duration: ${duration / 60_000} minutes)`,
-            staff_member_id: staff_member.id,
-        });
+        // await addModerationActionToDatabase({
+        //     discord_user_id: member_to_timeout.id,
+        // }, {
+        //     type: 'TIMEOUT',
+        //     epoch: Date.now(),
+        //     reason: `${reason} (duration: ${duration / 60_000} minutes)`,
+        //     staff_member_id: staff_member.id,
+        // });
+                const timeoutDate = new Date();
+        timeoutDate.setTime(timeoutDate.getTime() + duration);
+
+        await addModerationActionToDatabase(
+            member_to_timeout.id,
+            interaction.user.id,
+            {
+            duration: timeoutDate.toISOString(),
+            punishmentType: 'timeout',
+            punishmentReason: `${reason} (duration: ${duration / 60_000} minutes)`,
+            }
+        )
     },
 });

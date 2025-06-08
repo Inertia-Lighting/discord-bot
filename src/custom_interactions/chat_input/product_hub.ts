@@ -43,7 +43,7 @@ export default new CustomInteraction({
                             type: Discord.ComponentType.Button,
                             style: Discord.ButtonStyle.Link,
                             label: 'Product Hub',
-                            url: 'https://product-hub.inertia.lighting/',
+                            url: 'https://hub.inertia.lighting/',
                         },
                     ],
                 },

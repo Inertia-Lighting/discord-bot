@@ -136,14 +136,18 @@ export default new CustomInteraction({
         }
 
          /* log to the database */
-         const successfully_logged_to_database = await addModerationActionToDatabase({
-            discord_user_id: member_to_kick.id,
-        }, {
-            type: 'KICK',
-            epoch: Date.now(),
-            reason: kick_reason,
-            staff_member_id: staff_member.id,
-        });
+        const warnDate = new Date();
+        warnDate.setFullYear(warnDate.getFullYear() + 1);
+
+        const successfully_logged_to_database = await addModerationActionToDatabase(
+            member_to_kick.id,
+            interaction.user.id,
+            {
+            duration: warnDate.toISOString(),
+            punishmentType: 'kick',
+            punishmentReason: kick_reason,
+            }
+        )
 
         /* if logging to the database failed, dm the staff member */
         if (!successfully_logged_to_database) {

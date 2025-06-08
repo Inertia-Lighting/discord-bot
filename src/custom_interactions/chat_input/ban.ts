@@ -141,14 +141,19 @@ export default new CustomInteraction({
         }
 
         /* add the moderation action to the database */
-        const successfully_logged_to_database = await addModerationActionToDatabase({
-            discord_user_id: user_to_ban.id,
-        }, {
-            type: 'BAN',
-            epoch: Date.now(),
-            reason: ban_reason,
-            staff_member_id: staff_member.id,
-        });
+        // Calculate one year ahead from now
+        const banDate = new Date();
+        banDate.setFullYear(banDate.getFullYear() + 10);
+
+        const successfully_logged_to_database = await addModerationActionToDatabase(
+            user_to_ban.id,
+            interaction.user.id,
+            {
+            duration: banDate.toISOString(),
+            punishmentType: 'ban',
+            punishmentReason: ban_reason,
+            }
+        )
 
         /* if logging to the database failed, dm the staff member */
         if (!successfully_logged_to_database) {

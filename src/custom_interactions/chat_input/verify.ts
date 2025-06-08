@@ -6,13 +6,10 @@ import axios from 'axios';
 
 import * as Discord from 'discord.js';
 
-import { DbUserData } from '@root/types';
-
-import { go_mongo_db } from '@root/common/mongo/mongo';
-
 import { CustomEmbed } from '@root/common/message';
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
+import got from 'got';
 
 //------------------------------------------------------------//
 
@@ -79,7 +76,7 @@ async function verifyHandler(
     try {
         fetch_pending_verification_response = await axios({
             method: 'post',
-            url: `http://${api_server}/v2/user/verification/context/fetch`,
+            url: `http://${api_server}/v3/user/verification/context/fetch`,
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `InertiaAuthUserVerificationEndpoints ${user_verification_endpoints_base64_encoded_token}`,
@@ -146,14 +143,14 @@ async function verifyHandler(
     try {
         await axios({
             method: 'post',
-            url: `http://${api_server}/v2/user/verification/context/update`,
+            url: `http://${api_server}/v3/user/verification/context/update`,
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `InertiaAuthUserVerificationEndpoints ${user_verification_endpoints_base64_encoded_token}`,
             },
             data: {
                 verification_code: fetch_pending_verification_response.data.verification_code,
-                discord_user_id: interaction.user.id,
+                discordId: interaction.user.id,
             },
             validateStatus: (status) => status === 200,
         });
@@ -248,21 +245,15 @@ export default new CustomInteraction({
 
         await interaction.deferReply({ ephemeral: false });
 
-        const db_user_data_find_cursor = await go_mongo_db.find(db_database_name, db_users_collection_name, {
-            'identity.discord_user_id': interaction.user.id,
-        }, {
-            projection: {
-                '_id': false,
+        const request = await got.post(`http://${api_server}/v3/user/identity/fetch`, {
+            json: {
+                discordId: interaction.user.id
             },
-        });
-
-        const db_user_data = await db_user_data_find_cursor.next() as DbUserData | null;
-
-        if (db_user_data) {
-            await userAlreadyVerifiedHandler(interaction);
-
-            return;
+        })
+        if(request.statusCode == 200) {
+            userAlreadyVerifiedHandler(interaction)
         }
+
 
         await verifyHandler(interaction);
     },

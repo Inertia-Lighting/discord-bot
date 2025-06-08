@@ -121,15 +121,19 @@ export default new CustomInteraction({
         /* message the member in the server */
         await interaction.editReply(moderation_message_options).catch(console.warn);
 
-         /* log to the database */
-         const successfully_logged_to_database = await addModerationActionToDatabase({
-            discord_user_id: member_to_warn.id,
-        }, {
-            type: 'WARN',
-            epoch: Date.now(),
-            reason: warn_reason,
-            staff_member_id: staff_member.id,
-        });
+        /* log to the database */
+        const warnDate = new Date();
+        warnDate.setFullYear(warnDate.getFullYear() + 1);
+
+        const successfully_logged_to_database = await addModerationActionToDatabase(
+            member_to_warn.id,
+            interaction.user.id,
+            {
+            duration: warnDate.toISOString(),
+            punishmentType: 'warn',
+            punishmentReason: warn_reason,
+            }
+        )
 
         /* if logging to the database failed, dm the staff member */
         if (!successfully_logged_to_database) {
