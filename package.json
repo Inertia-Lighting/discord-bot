@@ -27,8 +27,8 @@
     "@stylistic/eslint-plugin": "^4.4.1",
     "@types/string-similarity": "4.0.2",
     "@types/uuid": "10.0.0",
-    "@typescript-eslint/eslint-plugin": "8.33.1",
-    "@typescript-eslint/parser": "8.33.1",
+    "@typescript-eslint/eslint-plugin": "8.34.0",
+    "@typescript-eslint/parser": "8.34.0",
     "eslint": "9.28.0",
     "eslint-plugin-deprecation": "3.0.0",
     "eslint-plugin-simple-import-sort": "^12.1.1",
@@ -37,7 +37,7 @@
     "is-ci": "4.1.0",
     "run-script-os": "1.1.6",
     "typescript": "5.8.3",
-    "typescript-eslint": "^8.33.1"
+    "typescript-eslint": "^8.34.0"
   },
   "dependencies": {
     "@prisma/client": "^6.9.0",
