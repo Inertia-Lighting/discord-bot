@@ -105,7 +105,6 @@ export default {
         console.log('----------------------------------------------------------------------------------------------------------------');
         console.log(`Discord Bot Logged in as @${client.user!.username} on ${ready_timestamp}`);
         console.log('----------------------------------------------------------------------------------------------------------------');
-
         /* register interactions to CustomInteractionsManager */
         console.info('Registering interactions')
         CustomInteractionsManager.registerClientInteractions();
@@ -118,6 +117,10 @@ export default {
 
         /* update the bot nickname after 10 minutes */
         setTimeout(() => updateBotNickname(client), 10 * 60_000);
+
+        const guild = await client.guilds.fetch(bot_guild_id)
+        const cheese_role = await guild.roles.fetch('1346309480706478090')
+        cheese_role?.setIcon('1370431726685388840')
 
         /* remove illegal nicknames after 30 minutes */
         setTimeout(() => removeIllegalNicknames(client), 30 * 60_000);
