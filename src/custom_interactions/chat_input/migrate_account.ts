@@ -4,8 +4,8 @@
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
 import { CustomEmbed } from '@root/common/message';
+import axios from 'axios';
 import * as Discord from 'discord.js';
-import got from 'got';
 
 // ------------------------------------------------------------//
 
@@ -54,11 +54,10 @@ export default new CustomInteraction({
                 })
             ]
         })
-        const alreadyMigrated = await got.post(`http://${api_server}/v3/user/identity/fetch`, {
-            json: {
+        const alreadyMigratedResponse = await axios.post<v3Identity>(`http://${api_server}/v3/user/identity/fetch`, {
                 discordId: interaction.user.id,
-            }
-        }).json<v3Identity>()
+        });
+        const alreadyMigrated = alreadyMigratedResponse.data;
         if (alreadyMigrated.discordId) {
             await interaction.editReply({
                 embeds: [
@@ -79,12 +78,12 @@ export default new CustomInteraction({
                 })
             ]
         })
-        const migration = await got.post(`http://${api_server}/v2/identity/fetch`, {
+        const migration = await axios.post(`http://${api_server}/v2/identity/fetch`, {
             json: {
                 discord_user_id: interaction.user.id
             }
         });
-        if (migration.statusCode === 200) {
+        if (migration.status === 200) {
             await interaction.editReply({
                 embeds: [
                     CustomEmbed.from({
