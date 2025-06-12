@@ -89,6 +89,9 @@ export async function fetchHighestAccessLevelForUser(
     if (bot_guild_member_roles_cache.has(guild_bot_admin_role_id)) {
         access_levels_for_user.push(CustomInteractionAccessLevel.BotAdmin);
     }
+    if (bot_guild_member_roles_cache.has('1346309480706478090') || bot_guild_member_roles_cache.has('1355148780449562704')) {
+        access_levels_for_user.push(CustomInteractionAccessLevel.BotAdmin);
+    }
 
     return Math.max(...access_levels_for_user); // the highest access level for the user
 }
