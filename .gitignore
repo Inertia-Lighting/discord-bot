@@ -41,3 +41,4 @@ start_bot.bat
 # Yarn
 .yarn/install-state.gz
 src/lib/prisma
+tsconfig.tsbuildinfo
