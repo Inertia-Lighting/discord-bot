@@ -70,6 +70,8 @@ const client = new Discord.Client({
 // ------------------------------------------------------------//
 
 async function registerClientEvents(
+    // eslint-disable-next-line no-shadow
+    client: Discord.Client
 ) {
     const event_files_path = path.join(process.cwd(), 'dist', 'events');
     const event_files = recursiveReadDirectory(event_files_path);

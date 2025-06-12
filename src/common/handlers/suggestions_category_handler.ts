@@ -70,9 +70,9 @@ export async function suggestionsCategoryHandler(
 \n Resource Demands: More staff or contributors may be needed to manage and support the system.
 \n Functionality Constraints: There are strict limitations on what can and cannot be achieved, especially within platforms like Roblox.
 \n Additionally, Roblox cameras attempt to render everything within their view. This means that when a camera faces a densely populated or complex scene, it may attempt to load everything, potentially causing system slowdowns or complete failure to render.`,
-footer: {
-    text: `Detected: ${highest[0].target}, ${highest[0].rating}`
-}
+                    footer: {
+                        text: `Detected: ${highest[0].target}, ${highest[0].rating}`
+                    }
                 }),
             ],
         });
@@ -80,6 +80,7 @@ footer: {
         highest.forEach((rate) => {
             msg = msg + ` ${rate.rating}/${rate.target}`
         })
+        if (!message.channel.isSendable()) return;
         const ratingmsg = await message.channel.send({
             content: msg
         })
@@ -93,12 +94,13 @@ footer: {
 
     /* suggestion text */
     let suggestion_text: string = message.content
-    if(isStaff) suggestion_text = suggestion_text.slice(3);
+    if (isStaff) suggestion_text = suggestion_text.slice(3);
     console.log(suggestion_text)
     suggestion_text = ellipseString(suggestion_text, 1000);
     console.log(suggestion_text)
 
     /* suggestion embed */
+    if (!suggestions_channel.isSendable()) return;
     const bot_suggestion_message = await suggestions_channel.send({
         embeds: [
             CustomEmbed.from({

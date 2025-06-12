@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 // ------------------------------------------------------------//
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 // ------------------------------------------------------------//
@@ -190,7 +192,7 @@ export const support_categories: SupportCategory[] = [
         },
         modal_handler: async (
             interaction,
-            support_category,
+            _support_category,
             support_ticket_channel,
             support_ticket_owner,
         ) => {
@@ -328,7 +330,9 @@ export const support_categories: SupportCategory[] = [
         },
         modal_handler: async (
             interaction,
+            _support_category,
             support_ticket_channel,
+            _support_ticket_owner
         ) => {
             const old_roblox_account_id = interaction.fields.getTextInputValue('old_roblox');
             const new_roblox_account_id = interaction.fields.getTextInputValue('new_roblox');
@@ -433,8 +437,9 @@ export const support_categories: SupportCategory[] = [
         },
         modal_handler: async (
             interaction,
-            support_category,
+            _support_category,
             support_ticket_channel,
+            _support_ticket_owner
         ) => {
             const products = interaction.fields.getTextInputValue('products');
             const discord_transfer_to = interaction.fields.getTextInputValue('discord_transfer_to');
@@ -521,8 +526,9 @@ export const support_categories: SupportCategory[] = [
         },
         modal_handler: async (
             interaction,
-            support_category,
+            _support_category,
             support_ticket_channel,
+            _support_ticket_owner
         ) => {
             const answer_for_products = interaction.fields.getTextInputValue('products');
             const answer_for_time = interaction.fields.getTextInputValue('time');
@@ -641,10 +647,12 @@ export const support_categories: SupportCategory[] = [
                  },
              ],
          },
-         modal_handler: async (
-             interaction,
-             support_ticket_channel,
-         ) => {
+        modal_handler: async (
+            interaction,
+            _support_category,
+            support_ticket_channel,
+            _support_ticket_owner
+        ) => {
              const group_name = interaction.fields.getTextInputValue('group_name');
              const group_owner_age = interaction.fields.getTextInputValue('group_owner_age');
              const group_member_count = interaction.fields.getTextInputValue('group_member_count');
@@ -712,8 +720,9 @@ export const support_categories: SupportCategory[] = [
         },
         modal_handler: async (
             interaction,
-            support_category,
+            _support_category,
             support_ticket_channel,
+            _support_ticket_owner
         ) => {
             const question = interaction.fields.getTextInputValue('question');
 
@@ -789,7 +798,7 @@ export const support_categories: SupportCategory[] = [
             ],
         },
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        modal_handler: function (interaction: Discord.ModalSubmitInteraction<'cached'>, support_category: SupportCategory, support_ticket_channel: Discord.TextChannel, support_ticket_owner: Discord.GuildMember): Promise<void> {
+        modal_handler: function (_interaction: Discord.ModalSubmitInteraction<'cached'>, _support_category: SupportCategory, _support_ticket_channel: Discord.TextChannel, _support_ticket_owner: Discord.GuildMember): Promise<void> {
             throw new Error('Function not implemented.');
         }
     },
