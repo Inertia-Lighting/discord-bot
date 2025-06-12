@@ -6,7 +6,6 @@ import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunCo
 import { CustomEmbed } from '@root/common/message';
 import axios from 'axios';
 import * as Discord from 'discord.js';
-import got from 'got';
 
 // ------------------------------------------------------------//
 
@@ -242,12 +241,10 @@ export default new CustomInteraction({
 
         await interaction.deferReply({ ephemeral: false });
 
-        const request = await got.post(`http://${api_server}/v3/user/identity/fetch`, {
-            json: {
+        const request = await axios.post(`http://${api_server}/v3/user/identity/fetch`, {
                 discordId: interaction.user.id
-            },
         })
-        if(request.statusCode === 200) {
+        if(request.status === 200) {
             userAlreadyVerifiedHandler(interaction)
         }
 
