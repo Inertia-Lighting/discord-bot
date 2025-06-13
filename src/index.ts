@@ -113,6 +113,7 @@ async function main() {
 
     /* register events */
     await registerClientEvents(client);
+
 }
 
 main();
