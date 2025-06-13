@@ -50,12 +50,14 @@ export default new CustomInteraction({
             embeds: [
                 CustomEmbed.from({
                     title: 'Migration',
-                    description: 'CHecking if account exists in V3'
+                    description: 'Checking if account exists in V3'
                 })
             ]
         })
-        const alreadyMigratedResponse = await axios.post<v3Identity>(`http://${api_server}/v3/user/identity/fetch`, {
-                discordId: interaction.user.id,
+        const alreadyMigratedResponse = await axios.post<v3Identity>(`https://${api_server}/v3/user/identity/fetch`, {
+            discordId: interaction.user.id,
+        }).catch((err) => {
+            throw new Error(err)
         });
         const alreadyMigrated = alreadyMigratedResponse.data;
         if (alreadyMigrated.discordId) {
@@ -78,10 +80,8 @@ export default new CustomInteraction({
                 })
             ]
         })
-        const migration = await axios.post(`http://${api_server}/v2/identity/fetch`, {
-            json: {
-                discord_user_id: interaction.user.id
-            }
+        const migration = await axios.post(`https://${api_server}/v2/identity/fetch`, {
+            discord_user_id: interaction.user.id
         });
         if (migration.status === 200) {
             await interaction.editReply({

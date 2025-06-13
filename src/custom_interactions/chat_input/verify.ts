@@ -72,7 +72,7 @@ async function verifyHandler(
     try {
         fetch_pending_verification_response = await axios({
             method: 'post',
-            url: `http://${api_server}/v3/user/verification/context/fetch`,
+            url: `https://${api_server}/v3/user/verification/context/fetch`,
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `InertiaAuthUserVerificationEndpoints ${user_verification_endpoints_base64_encoded_token}`,
@@ -139,7 +139,7 @@ async function verifyHandler(
     try {
         await axios({
             method: 'post',
-            url: `http://${api_server}/v3/user/verification/context/update`,
+            url: `https://${api_server}/v3/user/verification/context/update`,
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `InertiaAuthUserVerificationEndpoints ${user_verification_endpoints_base64_encoded_token}`,
@@ -153,7 +153,7 @@ async function verifyHandler(
 
         await axios({
             method: 'post',
-            url: `http://${api_server}/v2/user/verification/context/submit`,
+            url: `https://${api_server}/v2/user/verification/context/submit`,
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `InertiaAuthUserVerificationEndpoints ${user_verification_endpoints_base64_encoded_token}`,
@@ -241,7 +241,7 @@ export default new CustomInteraction({
 
         await interaction.deferReply({ ephemeral: false });
 
-        const request = await axios.post(`http://${api_server}/v3/user/identity/fetch`, {
+        const request = await axios.post(`https://${api_server}/v3/user/identity/fetch`, {
                 discordId: interaction.user.id
         })
         if(request.status === 200) {
