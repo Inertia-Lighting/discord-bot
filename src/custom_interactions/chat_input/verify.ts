@@ -139,7 +139,7 @@ async function verifyHandler(
     try {
         await axios({
             method: 'post',
-            url: `https://${api_server}/v3/user/verification/context/update`,
+            url: `https://${api_server}/v3/user/verification/context/submit`,
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `InertiaAuthUserVerificationEndpoints ${user_verification_endpoints_base64_encoded_token}`,
@@ -147,19 +147,6 @@ async function verifyHandler(
             data: {
                 verification_code: fetch_pending_verification_response.data.verification_code,
                 discordId: interaction.user.id,
-            },
-            validateStatus: (status) => status === 200,
-        });
-
-        await axios({
-            method: 'post',
-            url: `https://${api_server}/v2/user/verification/context/submit`,
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `InertiaAuthUserVerificationEndpoints ${user_verification_endpoints_base64_encoded_token}`,
-            },
-            data: {
-                verification_code: fetch_pending_verification_response.data.verification_code,
             },
             validateStatus: (status) => status === 200,
         });
@@ -243,9 +230,10 @@ export default new CustomInteraction({
 
         const request = await axios.post(`https://${api_server}/v3/user/identity/fetch`, {
                 discordId: interaction.user.id
-        })
-        if(request.status === 200) {
-            userAlreadyVerifiedHandler(interaction)
+        }).catch((err) => { return;})
+
+        if(request && request.status == 200) {
+            await userAlreadyVerifiedHandler(interaction)
         }
 
 
