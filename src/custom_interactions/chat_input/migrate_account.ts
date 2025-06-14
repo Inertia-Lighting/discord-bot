@@ -81,7 +81,7 @@ export default new CustomInteraction({
                 })
             ]
         })
-        const migration = await axios.post(`https://${api_server}/v2/identity/fetch`, {
+        const migration = await axios.post(`https://${api_server}/v2/user/identity/fetch`, {
             discord_user_id: interaction.user.id
         });
         if (migration.status === 200) {
