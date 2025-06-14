@@ -57,10 +57,11 @@ export default new CustomInteraction({
         const alreadyMigratedResponse = await axios.post<v3Identity>(`https://${api_server}/v3/user/identity/fetch`, {
             discordId: interaction.user.id,
         }).catch((err) => {
-            throw new Error(err)
+            //blank
         });
-        const alreadyMigrated = alreadyMigratedResponse.data;
-        if (alreadyMigrated.discordId) {
+        try {
+        const alreadyMigrated = alreadyMigratedResponse;
+        if (alreadyMigrated) {
             await interaction.editReply({
                 embeds: [
                     CustomEmbed.from({
@@ -104,5 +105,16 @@ export default new CustomInteraction({
                 ]
             })
         }
+    } catch {
+        await interaction.editReply({
+            embeds: [
+                CustomEmbed.from({
+                    color: CustomEmbed.Color.Red,
+                    title: 'Migration',
+                    description: 'Failed to migrate account'
+                })
+            ]
+        })
+    }
     },
 });
