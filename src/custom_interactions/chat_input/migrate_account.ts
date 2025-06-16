@@ -60,8 +60,8 @@ export default new CustomInteraction({
             //blank
         });
         try {
-        const alreadyMigrated = alreadyMigratedResponse;
-        if (alreadyMigrated) {
+        if (alreadyMigratedResponse) {
+            console.log('Starting migration for ' + interaction.user.username)
             await interaction.editReply({
                 embeds: [
                     CustomEmbed.from({
@@ -95,6 +95,8 @@ export default new CustomInteraction({
                 ]
             })
         } else {
+        console.log(migration.status)
+        console.log(JSON.stringify(migration.data))
             await interaction.editReply({
                 embeds: [
                     CustomEmbed.from({
@@ -105,7 +107,8 @@ export default new CustomInteraction({
                 ]
             })
         }
-    } catch {
+    } catch (err) {
+        console.trace(err)
         await interaction.editReply({
             embeds: [
                 CustomEmbed.from({
