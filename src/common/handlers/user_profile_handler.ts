@@ -17,7 +17,7 @@ export async function userProfileHandler(
     const client = deferred_interaction.client;
     const db_user = await prisma.user.findFirst({
         where: {
-            discordId: deferred_interaction.user.id
+            discordId: discord_user_id
         },
         select: {
             id: true,
