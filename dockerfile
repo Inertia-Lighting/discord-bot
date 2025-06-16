@@ -7,7 +7,15 @@ WORKDIR /usr/src/app/
 COPY . /usr/src/app/
 
 #Install Prisma Prerequisites
-RUN apk add openssl zlib libgcc libc6-compat
+RUN apk add --no-cache \
+    openssl \
+    zlib \
+    libgcc \
+    libc6-compat \
+    python3 \
+    make \
+    g++ \
+    git
 
 # Corepack
 RUN corepack enable
