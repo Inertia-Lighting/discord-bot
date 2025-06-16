@@ -4,8 +4,8 @@
 
 import { CustomEmbed } from '@root/common/message';
 import { delay, ellipseString } from '@root/utilities/index';
-import { findBestMatch, Rating } from 'string-similarity';
 import Discord from 'discord.js'
+import { findBestMatch, Rating } from 'string-similarity';
 
 // ------------------------------------------------------------//
 
@@ -16,7 +16,7 @@ if (bot_staff_role_id.length < 1) throw new Error('Environment variable: BOT_STA
 
 const camera_words: string[] = [
     'camera',
-    'camreas',
+    'cameras',
     'cam',
     'live camera',
     'working camera',
