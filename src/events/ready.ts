@@ -9,6 +9,7 @@
 import { illegalNicknameHandler } from '@root/common/handlers';
 // import { go_mongo_db } from '@root/common/mongo/mongo';
 import { CustomInteractionsManager } from '@root/common/managers/custom_interactions_manager';
+import prisma from '@root/lib/prisma_client';
 import { delay } from '@root/utilities';
 import * as Discord from 'discord.js';
 import moment from 'moment-timezone';
@@ -100,7 +101,7 @@ export default {
         if (!client.isReady()) {
             throw new Error('This shouldn\'t happen, but if it does, the client was not ready in the ready event!');
         }
-
+        prisma.$connect()
         const ready_timestamp = `${moment()}`;
         console.log('----------------------------------------------------------------------------------------------------------------');
         console.log(`Discord Bot Logged in as @${client.user!.username} on ${ready_timestamp}`);
