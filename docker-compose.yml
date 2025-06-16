@@ -2,11 +2,11 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: dockerfile
     volumes:
       - .:/app
     env_file:
       - .env
-    restart: unless-stopped
+    pull_policy: build
     entrypoint: >
-      sh -c "exec yarn start"
+      sh -c "exec yarn run start"
