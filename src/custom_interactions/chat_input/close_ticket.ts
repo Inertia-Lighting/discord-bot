@@ -48,7 +48,7 @@ export default new CustomInteraction({
         if (!interaction.inCachedGuild()) return;
         if (!interaction.channel) return;
 
-        await interaction.deferReply({ ephemeral: false });
+        await interaction.deferReply();
 
         const reason = interaction.options.getString('reason', true);
         const request_feedback = interaction.options.getBoolean('request_feedback', false) ?? true; // ask for feedback by default

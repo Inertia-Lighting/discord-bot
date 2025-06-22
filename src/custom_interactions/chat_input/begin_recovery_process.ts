@@ -45,7 +45,7 @@ export default new CustomInteraction({
         if (!interaction.inCachedGuild()) return;
         if (!interaction.channel) return;
 
-        await interaction.deferReply({ ephemeral: false });
+        await interaction.deferReply();
         const staff_member = interaction.member;
         const staff_member_is_permitted = staff_member.roles.cache.has(bot_customer_service_role_id);
         if (!staff_member_is_permitted) {

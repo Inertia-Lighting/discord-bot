@@ -797,7 +797,6 @@ export const support_categories: SupportCategory[] = [
                 },
             ],
         },
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         modal_handler: function (_interaction: Discord.ModalSubmitInteraction<'cached'>, _support_category: SupportCategory, _support_ticket_channel: Discord.TextChannel, _support_ticket_owner: Discord.GuildMember): Promise<void> {
             throw new Error('Function not implemented.');
         }

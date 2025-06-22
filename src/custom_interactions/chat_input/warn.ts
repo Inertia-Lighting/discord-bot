@@ -39,7 +39,7 @@ export default new CustomInteraction({
         if (!interaction.inCachedGuild()) return;
         if (!interaction.channel) return;
 
-        await interaction.deferReply({ ephemeral: false });
+        await interaction.deferReply({ flags: ['Ephemeral'] });
 
         const staff_member = interaction.member;
         const member_to_warn = interaction.options.getMember('member');

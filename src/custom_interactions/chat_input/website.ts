@@ -25,7 +25,7 @@ export default new CustomInteraction({
         if (!interaction.inCachedGuild()) return;
         if (!interaction.channel) return;
 
-        await interaction.deferReply({ ephemeral: false });
+        await interaction.deferReply();
 
         await interaction.editReply({
             embeds: [

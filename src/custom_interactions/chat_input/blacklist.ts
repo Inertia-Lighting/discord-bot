@@ -488,7 +488,7 @@ export default new CustomInteraction({
         if (!interaction.inCachedGuild()) return;
         if (!interaction.channel) return;
 
-        await interaction.deferReply({ ephemeral: false });
+        await interaction.deferReply({ flags: ['Ephemeral'] });
 
         const sub_command_name = interaction.options.getSubcommand(true);
         const sub_command_group_name = interaction.options.getSubcommandGroup(false);

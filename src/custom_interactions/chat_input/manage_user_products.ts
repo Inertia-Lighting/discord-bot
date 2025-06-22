@@ -251,7 +251,7 @@ async function manageProductsChatInputCommandHandler(
 ): Promise<void> {
     if (!interaction.inCachedGuild()) return;
 
-    await interaction.deferReply({ ephemeral: false });
+    await interaction.deferReply();
 
     const interaction_guild_member = await interaction.guild.members.fetch(interaction.user.id);
 

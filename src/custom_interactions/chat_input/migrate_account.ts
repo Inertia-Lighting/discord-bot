@@ -56,11 +56,11 @@ export default new CustomInteraction({
         })
         const alreadyMigratedResponse = await axios.post<v3Identity>(`https://${api_server}/v3/user/identity/fetch`, {
             discordId: interaction.user.id,
-        }).catch((err) => {
-            throw new Error(err)
+        }).catch(() => {
+            // Blank
         });
-        const alreadyMigrated = alreadyMigratedResponse.data;
-        if (alreadyMigrated.discordId) {
+        const alreadyMigrated = alreadyMigratedResponse?.data;
+        if (alreadyMigrated && alreadyMigrated.discordId) {
             await interaction.editReply({
                 embeds: [
                     CustomEmbed.from({

@@ -124,7 +124,7 @@ async function quickSupportChatInputHandler(
     if (!interaction.inCachedGuild()) return;
     if (!interaction.channel) return;
 
-    await interaction.deferReply({ ephemeral: false });
+    await interaction.deferReply();
 
     const interaction_topic_option = interaction.options.get('topic', true);
     const quick_support_topic_id = interaction_topic_option.value;
