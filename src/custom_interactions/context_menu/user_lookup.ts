@@ -36,7 +36,7 @@ export default new CustomInteraction({
         if (!interaction.inCachedGuild()) return;
         if (!interaction.isUserContextMenuCommand()) return;
 
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ flags: ['Ephemeral'] });
 
         const db_user_data_find_cursor = await go_mongo_db.find(db_database_name, db_users_collection_name, {
             'identity.discord_user_id': interaction.targetUser.id,

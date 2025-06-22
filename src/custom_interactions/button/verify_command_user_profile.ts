@@ -28,7 +28,7 @@ export default new CustomInteraction({
         if (!interaction.inCachedGuild()) return;
         if (!interaction.isButton()) return;
 
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ flags: ['Ephemeral'] });
 
         const original_interaction_user_id = interaction.message.interaction?.user.id;
         const user_id = original_interaction_user_id ?? interaction.user.id;

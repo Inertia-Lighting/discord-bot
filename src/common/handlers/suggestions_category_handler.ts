@@ -4,8 +4,8 @@
 
 import { CustomEmbed } from '@root/common/message';
 import { delay, ellipseString } from '@root/utilities/index';
-import { findBestMatch, Rating } from 'string-similarity';
 import Discord from 'discord.js'
+import { findBestMatch, Rating } from 'string-similarity';
 
 // ------------------------------------------------------------//
 

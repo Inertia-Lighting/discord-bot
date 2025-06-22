@@ -45,13 +45,13 @@ export default new CustomInteraction({
                         {
                             type: Discord.ComponentType.Button,
                             style: Discord.ButtonStyle.Danger,
-                            label: "Yes, I'm sure",
+                            label: 'Yes, I\'m sure',
                             custom_id: 'i_fd_up_confirm'
                         },
                         {
                             type: Discord.ComponentType.Button,
                             style: Discord.ButtonStyle.Secondary,
-                            label: "No, I don't want to",
+                            label: 'No, I don\'t want to',
                             custom_id: 'i_fd_up_cancel'
                         }
                     ]

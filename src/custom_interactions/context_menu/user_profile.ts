@@ -30,7 +30,7 @@ export default new CustomInteraction({
         if (!interaction.inCachedGuild()) return;
         if (!interaction.isUserContextMenuCommand()) return;
 
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ flags: ['Ephemeral'] });
 
         await userProfileHandler(interaction, interaction.targetUser.id);
     },
