@@ -8,7 +8,7 @@ import * as Discord from 'discord.js';
 // ------------------------------------------------------------//
 
 export default new CustomInteraction({
-    identifier: 'i_fd_up_confirm',
+    identifier: 'i_fd_up_cancel',
     type: Discord.InteractionType.MessageComponent,
     data: undefined,
     metadata: {

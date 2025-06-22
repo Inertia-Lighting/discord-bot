@@ -33,9 +33,9 @@ export default new CustomInteraction({
                         content: '# Account Reset'
                     },
                     {
-                    type: Discord.ComponentType.TextDisplay,
-                    content: 'Clearing account from database...'
-                }]
+                        type: Discord.ComponentType.TextDisplay,
+                        content: 'Clearing account from database...'
+                    }]
             }]
         });
 
@@ -67,25 +67,26 @@ export default new CustomInteraction({
                         type: Discord.ComponentType.TextDisplay,
                         content: 'Failed to reset account'
                     }
-                ]
+                    ]
                 }]
             });
         })
-            await interaction.editReply({
+        await interaction.editReply({
+            flags: 'IsComponentsV2',
+            components: [{
+                type: Discord.ComponentType.Container,
+                accent_color: CustomEmbed.Color.Green,
                 components: [{
-                    type: Discord.ComponentType.Container,
-                    accent_color: CustomEmbed.Color.Green,
-                    components: [{
-                        type: Discord.ComponentType.TextDisplay,
-                        content: '# Account Reset'
-                    },
-                    {
-                        type: Discord.ComponentType.TextDisplay,
-                        content: 'Account reset successfully'
-                    }
+                    type: Discord.ComponentType.TextDisplay,
+                    content: '# Account Reset'
+                },
+                {
+                    type: Discord.ComponentType.TextDisplay,
+                    content: 'Account reset successfully'
+                }
                 ]
-                }]
-            });
+            }]
+        });
 
     },
 });

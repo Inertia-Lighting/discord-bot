@@ -28,6 +28,7 @@ export default new CustomInteraction({
         await interaction.deferReply();
 
         await interaction.editReply({
+            flags: 'IsComponentsV2',
             components: [{
                 type: Discord.ComponentType.Container,
                 accent_color: CustomEmbed.Color.Blue,
