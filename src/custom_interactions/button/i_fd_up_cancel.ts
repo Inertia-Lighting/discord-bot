@@ -20,6 +20,8 @@ export default new CustomInteraction({
         if (!interaction.inCachedGuild()) return;
         if (!interaction.channel) return;
 
-        interaction.deleteReply();
+        if(interaction.message.deletable) {
+            await interaction.message.delete()
+        }
     },
 });
