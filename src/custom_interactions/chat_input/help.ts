@@ -26,7 +26,7 @@ export default new CustomInteraction({
         if (!interaction.inCachedGuild()) return;
         if (!interaction.channel) return;
 
-        await interaction.deferReply({ ephemeral: false });
+        await interaction.deferReply({ flags: ['Ephemeral'] });
 
         const highest_access_level_for_user = await fetchHighestAccessLevelForUser(discord_client, interaction.user);
         const chat_input_custom_interactions = CustomInteractionsManager.interactions.filter(

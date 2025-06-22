@@ -226,7 +226,7 @@ export default new CustomInteraction({
         if (!interaction.inCachedGuild()) return;
         if (!interaction.channel) return;
 
-        await interaction.deferReply({ ephemeral: false });
+        await interaction.deferReply({ flags: ['Ephemeral'] });
 
         const request = await axios.post(`https://${api_server}/v3/user/identity/fetch`, {
                 discordId: interaction.user.id

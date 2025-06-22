@@ -56,8 +56,8 @@ export default new CustomInteraction({
         })
         const alreadyMigratedResponse = await axios.post<v3Identity>(`https://${api_server}/v3/user/identity/fetch`, {
             discordId: interaction.user.id,
-        }).catch((err) => {
-            //blank
+        }).catch(() => {
+            // Blank
         });
         try {
         if (alreadyMigratedResponse) {
