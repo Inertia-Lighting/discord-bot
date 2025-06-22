@@ -39,7 +39,7 @@ export default new CustomInteraction({
 
         const respond_as_ephemeral: boolean = interaction.options.getBoolean('ephemeral', false) ?? false; // default to false
 
-        await interaction.deferReply({ ephemeral: respond_as_ephemeral });
+        await interaction.deferReply({ flags: respond_as_ephemeral ? ['Ephemeral'] : [] });
 
         const user = interaction.options.getUser('user', false) ?? interaction.user;
 
