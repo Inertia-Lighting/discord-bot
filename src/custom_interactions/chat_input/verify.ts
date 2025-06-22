@@ -230,9 +230,9 @@ export default new CustomInteraction({
 
         const request = await axios.post(`https://${api_server}/v3/user/identity/fetch`, {
                 discordId: interaction.user.id
-        }).catch((err) => { return;})
+        }).catch(() => { return;})
 
-        if(request && request.status == 200) {
+        if(request && request.status === 200) {
             await userAlreadyVerifiedHandler(interaction)
         }
 

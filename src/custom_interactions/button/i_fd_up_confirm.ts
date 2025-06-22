@@ -3,9 +3,9 @@
 // ------------------------------------------------------------//
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
-import * as Discord from 'discord.js';
 import { CustomEmbed } from '@root/common/message';
 import prisma from '@root/lib/prisma_client';
+import * as Discord from 'discord.js';
 
 // ------------------------------------------------------------//
 
@@ -71,5 +71,21 @@ export default new CustomInteraction({
                 }]
             });
         })
+            await interaction.editReply({
+                components: [{
+                    type: Discord.ComponentType.Container,
+                    accent_color: CustomEmbed.Color.Green,
+                    components: [{
+                        type: Discord.ComponentType.TextDisplay,
+                        content: '# Account Reset'
+                    },
+                    {
+                        type: Discord.ComponentType.TextDisplay,
+                        content: 'Account reset successfully'
+                    }
+                ]
+                }]
+            });
+
     },
 });
