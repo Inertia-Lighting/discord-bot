@@ -21,7 +21,7 @@ export default new CustomInteraction({
         if (!interaction.isButton()) return;
         if (!interaction.inCachedGuild()) return;
         if (!interaction.channel) return;
-
+        interaction.deferReply()
         /* send the support category selection menu */
         await interaction.editReply({
             components: [{
