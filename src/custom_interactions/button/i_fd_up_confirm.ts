@@ -22,7 +22,8 @@ export default new CustomInteraction({
         if (!interaction.inCachedGuild()) return;
         if (!interaction.channel) return;
         /* send the support category selection menu */
-        await interaction.message.edit({
+        const sendMessage = await interaction.channel.send({
+            flags: 'IsComponentsV2',
             components: [{
                 type: Discord.ComponentType.Container,
                 accent_color: CustomEmbed.Color.Blue,
@@ -54,7 +55,8 @@ export default new CustomInteraction({
         ]).catch(async (err) => {
             // throw new Error('Failed to delete user data', {cause: err})
             console.trace(err)
-            await interaction.message.edit({
+            await sendMessage.edit({
+                flags: 'IsComponentsV2',
                 components: [{
                     type: Discord.ComponentType.Container,
                     accent_color: CustomEmbed.Color.Red,
@@ -70,8 +72,7 @@ export default new CustomInteraction({
                 }]
             });
         })
-        await interaction.message.delete()
-        await interaction.message.edit({
+        await sendMessage.edit({
             flags: 'IsComponentsV2',
             components: [{
                 type: Discord.ComponentType.Container,
