@@ -167,7 +167,7 @@ export default new CustomInteraction({
             }
         }
 
-        const userData = await prisma.user.findFirst({
+        const baseUserData = await prisma.user.findFirst({
             where: {
                 OR: [
                     { discordId: user_id },
@@ -178,10 +178,19 @@ export default new CustomInteraction({
         const blacklistUserData = await prisma.punishments.findFirst({
             where: {
                 punishedUser: {
-                    id: userData?.id
+                    id: baseUserData?.id
                 }
             }
         })
+        const userData = await prisma.user.findFirst({
+            where: {
+                OR: [
+                    { discordId: user_id },
+                    { robloxId: user_id }
+                ]
+            },
+            select: includeOptions,
+        });
         const blacklistData = blacklistUserData;
         /* send the user document */
         await interaction.editReply({
@@ -210,8 +219,7 @@ export default new CustomInteraction({
                     },
                     description: [
                         '```json',
-                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                        `${Discord.cleanCodeBlockContent(JSON.stringify(userData ? (({ id, ...rest }) => rest)(userData) : 'user not found in database', null, 2))}`,
+                        `${Discord.cleanCodeBlockContent(JSON.stringify(userData ? (({...rest }) => rest)(userData) : 'user not found in database', null, 2))}`,
                         '```',
                     ].join('\n'),
                 }),
