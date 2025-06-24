@@ -4,24 +4,16 @@
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
 import { CustomEmbed } from '@root/common/message';
-import { go_mongo_db } from '@root/common/mongo/mongo';
-import { DbUserData } from '@root/types';
+import prisma from '@root/lib/prisma_client';
 import * as Discord from 'discord.js';
 
 // ------------------------------------------------------------//
-
-const db_database_name = `${process.env.MONGO_DATABASE_NAME ?? ''}`;
-if (db_database_name.length < 1) throw new Error('Environment variable: MONGO_DATABASE_NAME; is not set correctly.');
-
-const db_users_collection_name = `${process.env.MONGO_USERS_COLLECTION_NAME ?? ''}`;
-if (db_users_collection_name.length < 1) throw new Error('Environment variable: MONGO_USERS_COLLECTION_NAME; is not set correctly.');
 
 const bot_support_staff_database_role_id = `${process.env.BOT_SUPPORT_STAFF_DATABASE_ROLE_ID ?? ''}`;
 if (bot_support_staff_database_role_id.length < 1) throw new Error('Environment variable: BOT_SUPPORT_STAFF_DATABASE_ROLE_ID; is not set correctly.');
 
 const bot_logging_identity_manager_channel_id = `${process.env.BOT_LOGGING_IDENTITY_MANAGER_CHANNEL_ID ?? ''}`;
 if (bot_logging_identity_manager_channel_id.length < 1) throw new Error('Environment variable: BOT_LOGGING_IDENTITY_MANAGER_CHANNEL_ID; is not set correctly.');
-
 
 // ------------------------------------------------------------//
 
@@ -90,7 +82,6 @@ export default new CustomInteraction({
         if(!logging_channel.isSendable()) throw new Error('The identity manager logging channel is not sendable!');
 
         // get the specified command options
-
         const new_roblox_id = interaction.options.getString('new_roblox_id', true);
         const new_discord_id = interaction.options.getString('new_discord_id', true);
         const reason = interaction.options.getString('reason', true);
@@ -110,34 +101,23 @@ export default new CustomInteraction({
             return;
         }
 
-        // create the update filter based on the provided information
-        const db_user_discord_identity_update_filter = {
-            'identity.discord_user_id': new_discord_id,
-        };
-        const db_user_roblox_identity_update_filter = {
-            'identity.roblox_user_id': new_roblox_id,
-        };
-        // ensure that the new identity is not already in the database
-        const db_user_discord_identity_with_new_identity_find_cursor = await go_mongo_db.find(db_database_name, db_users_collection_name, db_user_discord_identity_update_filter, {
-            projection: {
-                '_id': false,
+        // search for discord ID and roblox ID 
+        const db_user_data_with_new_identity = await prisma.user.findFirst({
+            where: {
+                OR: [
+                    { discordId: new_discord_id },
+                    { robloxId: new_roblox_id },
+                ]
+            },
+            select: {
+                id: true,
+                discordId: true,
+                robloxId: true,
             },
         });
 
-        const db_user_roblox_identity_with_new_identity_find_cursor = await go_mongo_db.find(db_database_name, db_users_collection_name, db_user_roblox_identity_update_filter, {
-            projection: {
-                '_id': false,
-            },
-        });
-
-        // search for Discord ID
-        const db_user_discord_identity_with_new_identity = await db_user_discord_identity_with_new_identity_find_cursor.next() as unknown as Exclude<DbUserData, '_id'> | null;
-
-        // search for roblox ID
-        const db_user_user_roblox_identity_with_new_identity = await db_user_roblox_identity_with_new_identity_find_cursor.next() as unknown as Exclude<DbUserData, '_id'> | null;
-
-        // discord check
-        if (db_user_discord_identity_with_new_identity) {
+        // check if discord ID and roblox ID already exists in the database
+        if (db_user_data_with_new_identity) {
             await interaction.editReply({
                 embeds: [
                     CustomEmbed.from({
@@ -148,7 +128,7 @@ export default new CustomInteraction({
                             '',
                             '**Identity:**',
                             '```json',
-                            JSON.stringify(db_user_discord_identity_with_new_identity.identity, null, 4),
+                            JSON.stringify(db_user_data_with_new_identity, null, 4),
                             '```',
                         ].join('\n'),
                     }),
@@ -157,40 +137,56 @@ export default new CustomInteraction({
 
             return;
         }
-
-        // roblox check
-        if (db_user_user_roblox_identity_with_new_identity) {
-            await interaction.editReply({
-                embeds: [
-                    CustomEmbed.from({
-                        color: CustomEmbed.Color.Red,
-                        title: 'Inertia Lighting | Identity Manager',
-                        description: [
-                            'Specified new identity is already in the database.',
-                            '',
-                            '**Identity:**',
-                            '```json',
-                            JSON.stringify(db_user_user_roblox_identity_with_new_identity.identity, null, 4),
-                            '```',
-                        ].join('\n'),
-                    }),
-                ],
-            });
-
-            return;
-        }
-
-        // create document for the user
-        const db_user_data_update_document = {
-            '$set': {
-                'identity.discord_user_id': new_discord_id,
-                'identity.roblox_user_id': new_roblox_id,
-            },
-        };
 
         // attempt to add the user's identity
         try {
-            await go_mongo_db.add(db_database_name, db_users_collection_name, [ db_user_data_update_document ]);
+            const db_new_user_data_document = await prisma.user.create({
+                data: {
+                    discordId: new_discord_id,
+                    robloxId: new_roblox_id,
+                },
+            });
+
+            // send a success message
+            await interaction.editReply({
+                embeds: [
+                    CustomEmbed.from({
+                        color: CustomEmbed.Color.Green,
+                        title: 'Inertia Lighting | Identity Manager',
+                        description: [
+                            'Successfully added the user\'s identity.',
+                            '',
+                            '**Added Identity:**',
+                            '```json',
+                            JSON.stringify(db_new_user_data_document, null, 4),
+                            '```',
+                        ].join('\n'),
+                    }),
+                ],
+            });
+
+            // log the identity change
+            await logging_channel.send({
+                embeds: [
+                    CustomEmbed.from({
+                        color: CustomEmbed.Color.Brand,
+                        title: 'Inertia Lighting | Identity Manager',
+                        description: [
+                            `${Discord.userMention(staff_member.id)} added a an identity to the database.`,
+                            '',
+                            '**Added Identity:**',
+                            '```json',
+                            JSON.stringify(db_new_user_data_document, null, 4),
+                            '```',
+                            '',
+                            '**Reason:**',
+                            '```',
+                            reason,
+                            '```',
+                        ].join('\n'),
+                    }),
+                ],
+            });
         } catch (error: unknown) {
             console.trace('Failed to add the user\'s identity:', error);
 
@@ -212,49 +208,6 @@ export default new CustomInteraction({
                     }),
                 ],
             });
-
-            return;
         }
-
-        // send a success message
-        await interaction.editReply({
-            embeds: [
-                CustomEmbed.from({
-                    color: CustomEmbed.Color.Green,
-                    title: 'Inertia Lighting | Identity Manager',
-                    description: [
-                        'Successfully added the user\'s identity.',
-                        '',
-                        '**Added Identity:**',
-                        '```json',
-                        JSON.stringify(db_user_data_update_document, null, 4),
-                        '```',
-                    ].join('\n'),
-                }),
-            ],
-        });
-
-        // log the identity change
-        await logging_channel.send({
-            embeds: [
-                CustomEmbed.from({
-                    color: CustomEmbed.Color.Brand,
-                    title: 'Inertia Lighting | Identity Manager',
-                    description: [
-                        `${Discord.userMention(staff_member.id)} added a an identity to the database.`,
-                        '',
-                        '**Added Identity:**',
-                        '```json',
-                        JSON.stringify(db_user_data_update_document, null, 4),
-                        '```',
-                        '',
-                        '**Reason:**',
-                        '```',
-                        reason,
-                        '```',
-                    ].join('\n'),
-                }),
-            ],
-        });
     },
 });
