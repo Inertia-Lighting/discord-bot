@@ -7,7 +7,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [ 20.x ]
+        node-version: [ 23.x ]
 
     steps:
     - name: Checkout repository
@@ -18,6 +18,9 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
 
+    - name: Install Yarn with Corepack
+      run: corepack enable
+    
     - name: Install Dependencies
       run: yarn
 
