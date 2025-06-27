@@ -61,7 +61,6 @@ export default new CustomInteraction({
         });
         try {
         if (alreadyMigratedResponse) {
-            console.log('Starting migration for ' + interaction.user.username)
             await interaction.editReply({
                 embeds: [
                     CustomEmbed.from({
@@ -73,9 +72,11 @@ export default new CustomInteraction({
             })
             return;
         }
+        console.log('Starting migration for ' + interaction.user.username)
         await interaction.editReply({
             embeds: [
                 CustomEmbed.from({
+                    color: CustomEmbed.Color.Yellow,
                     title: 'Migration',
                     description: 'Migrating account'
                 })
@@ -83,6 +84,8 @@ export default new CustomInteraction({
         })
         const migration = await axios.post(`https://${api_server}/v2/user/identity/fetch`, {
             discord_user_id: interaction.user.id
+        }, {
+            validateStatus: (status) => [200, 404].includes(status)
         });
         if (migration.status === 200) {
             await interaction.editReply({

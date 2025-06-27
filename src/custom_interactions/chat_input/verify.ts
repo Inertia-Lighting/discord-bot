@@ -80,7 +80,7 @@ async function verifyHandler(
             data: {
                 verification_code: sanitized_verification_code,
             },
-            validateStatus: (status) => [ 200, 404 ].includes(status),
+            validateStatus: (status) => [200, 404].includes(status),
         });
     } catch (error) {
         console.error(error);
@@ -229,10 +229,13 @@ export default new CustomInteraction({
         await interaction.deferReply({ flags: ['Ephemeral'] });
 
         const request = await axios.post(`https://${api_server}/v3/user/identity/fetch`, {
-                discordId: interaction.user.id
-        }).catch(() => { return;})
+            discordId: interaction.user.id
+        },
+            {
+                validateStatus: (status) => [200, 404].includes(status),
+            }).catch((err) => { console.error(err) })
 
-        if(request && request.status === 200) {
+        if (request && request.status === 200) {
             await userAlreadyVerifiedHandler(interaction)
         }
 
