@@ -108,11 +108,11 @@ async function registerClientEvents(
 // ------------------------------------------------------------//
 
 async function main() {
-    /* login the discord bot */
-    await client.login(bot_token);
-
     /* register events */
     await registerClientEvents(client);
+
+    /* login the discord bot */
+    await client.login(bot_token);
 }
 
 main();
