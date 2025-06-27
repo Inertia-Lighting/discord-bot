@@ -4,6 +4,8 @@
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
 import { CustomEmbed } from '@root/common/message';
+import { Prisma } from '@root/lib/prisma';
+import { DefaultArgs } from '@root/lib/prisma/runtime/library';
 import prisma from '@root/lib/prisma_client';
 import * as Discord from 'discord.js';
 
@@ -37,7 +39,20 @@ export default new CustomInteraction({
                         type: Discord.ApplicationCommandOptionType.User,
                         description: 'The discord user to lookup.',
                         required: true,
-                    }, {
+                    },
+                    {
+                        name: 'properties',
+                        type: Discord.ApplicationCommandOptionType.String,
+                        description: 'Properties of the user to look up',
+                        choices: [
+                            { name: 'General', value: 'general' },
+                            { name: 'Transactions', value: 'transactions' },
+                            { name: 'Transfers', value: 'transfers' },
+                            { name: 'Punishments', value: 'punishments' }
+                        ],
+                        required: false,
+                    },
+                    {
                         name: 'ephemeral',
                         type: Discord.ApplicationCommandOptionType.Boolean,
                         description: 'Whether or not to respond with an ephemeral message.',
@@ -54,7 +69,20 @@ export default new CustomInteraction({
                         type: Discord.ApplicationCommandOptionType.String,
                         description: 'The roblox user id to lookup.',
                         required: true,
-                    }, {
+                    },
+                    {
+                        name: 'properties',
+                        type: Discord.ApplicationCommandOptionType.String,
+                        description: 'Properties of the user to look up',
+                        choices: [
+                            { name: 'General', value: 'general' },
+                            { name: 'Transactions', value: 'transactions' },
+                            { name: 'Transfers', value: 'transfers' },
+                            { name: 'Punishments', value: 'punishments' }
+                        ],
+                        required: false,
+                    },
+                    {
                         name: 'ephemeral',
                         type: Discord.ApplicationCommandOptionType.Boolean,
                         description: 'Whether or not to respond with an ephemeral message.',
@@ -62,6 +90,7 @@ export default new CustomInteraction({
                     },
                 ],
             },
+
         ],
     },
     metadata: {
@@ -74,7 +103,7 @@ export default new CustomInteraction({
         if (!interaction.channel) return;
 
         const subcommand_name = interaction.options.getSubcommand(true);
-
+        const selection = interaction.options.getString('properties', false) as 'general' | 'transactions' | 'transfers' | 'punishments'
         const respond_as_ephemeral: boolean = interaction.options.getBoolean('ephemeral', false) ?? false; // default to false
 
         await interaction.deferReply({ ephemeral: respond_as_ephemeral });
@@ -108,30 +137,56 @@ export default new CustomInteraction({
         }
 
         /* fetch blacklisted user data */
-        const userData = await prisma.user.findFirst({
-            where:  {
-                OR: [
-                    {
-                        discordId: user_id
-                    },
-                    {
-                        robloxId: user_id
+        const includeOptions: Prisma.UserInclude<DefaultArgs> = {};
+
+        switch (selection) {
+            case 'punishments': {
+                includeOptions.issuedPunishments = true;
+                includeOptions.receivedPunishments = true;
+                break;
+            }
+            case 'transactions': {
+                includeOptions.transactions = {
+                    select: {
+                        productCode: true,
+                        purchaseId: true,
+                        oneTimeTransferUsed: true,
+                        transactionType: true,
+                        updatedAt: true,
+                        createdAt: true,
                     }
+                };
+                break;
+            }
+            case 'transfers': {
+                includeOptions.Transfers = true;
+                break;
+            }
+            default: {
+                break;
+            }
+        }
+
+        const userData = await prisma.user.findFirst({
+            where: {
+                OR: [
+                    { discordId: user_id },
+                    { robloxId: user_id }
                 ]
             },
-            include: {
-                transactions: true,
-                receivedPunishments: true,
-                issuedPunishments: true,
-                Transfers: true,
+        });
+        const blacklistUserData = await prisma.punishments.findFirst({
+            where: {
+                punishedUser: {
+                    id: userData?.id
+                }
             }
-        }) 
-        const blacklistData = await userData?.receivedPunishments.find((data) => data.punishmentType === 'blacklist')
-
+        })
+        const blacklistData = blacklistUserData;
         /* send the user document */
         await interaction.editReply({
             embeds: [
-                ...(blacklistData? [
+                ...(blacklistData ? [
                     CustomEmbed.from({
                         color: CustomEmbed.Color.Red,
                         author: {
@@ -155,7 +210,8 @@ export default new CustomInteraction({
                     },
                     description: [
                         '```json',
-                        `${Discord.cleanCodeBlockContent(JSON.stringify(userData ?? 'user not found in database', null, 2))}`,
+                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                        `${Discord.cleanCodeBlockContent(JSON.stringify(userData ? (({ id, ...rest }) => rest)(userData) : 'user not found in database', null, 2))}`,
                         '```',
                     ].join('\n'),
                 }),
