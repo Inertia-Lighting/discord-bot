@@ -7,8 +7,8 @@ import { randomUUID } from 'node:crypto';
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
 import { CustomEmbed } from '@root/common/message';
-import { Prisma } from '@root/lib/prisma';
 import prisma from '@root/lib/prisma_client';
+import { PrismaProductData } from '@root/types';
 import * as Discord from 'discord.js';
 import { compareTwoStrings } from 'string-similarity';
 
@@ -19,23 +19,6 @@ if (db_database_support_staff_role_id.length < 1) throw new Error('Environment v
 
 const bot_logging_products_manager_channel_id = `${process.env.BOT_LOGGING_PRODUCTS_MANAGER_CHANNEL_ID ?? ''}`;
 if (bot_logging_products_manager_channel_id.length < 1) throw new Error('Environment variable: BOT_LOGGING_PRODUCTS_MANAGER_CHANNEL_ID; is not set correctly.');
-
-// ------------------------------------------------------------//
-
-type DbUserData = Prisma.UserGetPayload<{
-    select: {
-        discordId: true;
-        transactions: true;
-    }
-}>
-
-type DbProductData = Prisma.ProductsGetPayload<{
-    select: {
-        code: true;
-        name: true;
-        viewable: true;
-    }
-}>
 
 // ------------------------------------------------------------//
 
@@ -63,11 +46,11 @@ class DbProductsCache {
 
     public static cache_expiration_epoch_ms = 0; // default to expired so it will be fetched on first call
 
-    public static cache: DbProductData[] = [];
+    public static cache: PrismaProductData[] = [];
 
     public static async fetch(
         bypass_cache: boolean = false,
-    ): Promise<DbProductData[]> {
+    ): Promise<PrismaProductData[]> {
         const now_epoch_ms = Date.now();
 
         if (
@@ -134,7 +117,6 @@ async function manageProductsAutocompleteHandler(
         },
         select: {
             discordId: true,
-            robloxId: true,
             transactions: true,
         },
     }) 
@@ -232,65 +214,6 @@ async function manageProductsAutocompleteHandler(
 // Alternatively, if the user doesn't own the product
 // and the action is to remove the product,
 // don't add the product to this array.
-
-function dbRobloxProductsOwnershipPredicate(
-    db_user_data: DbUserData,
-    action_to_perform: ManageTransactionsAction,
-    db_roblox_product_code: string,
-): boolean {
-    const user_owns_product = db_user_data.transactions.some(
-        (t: DbUserData['transactions'][number]) => t.productCode === db_roblox_product_code
-    );
-
-    return (
-        // action add: only add the product if the user doesn't already own it
-        (action_to_perform === ManageTransactionsAction.Add && !user_owns_product) ||
-        // action remove: only remove the product if the user currently owns it
-        (action_to_perform === ManageTransactionsAction.Remove && user_owns_product)
-    );
-}
-
-async function manageUserTransactions(
-    db_user_data: DbUserData,
-    action_to_perform: ManageTransactionsAction,
-    product_code: string,
-    interaction_user_id: string,
-): Promise<void> {
-    /* modify the user's transactions */
-    return prisma.$transaction(async (tx) => {
-        if (action_to_perform === ManageTransactionsAction.Add) {
-            await tx.transactions.create({
-                data: {
-                    transactionType: 'system',
-                    productCode: product_code,
-                    purchaseId: `SYSTEM_MANUAL_${interaction_user_id}_${randomUUID()}`,
-                    transactionAmount: '0',
-                    User: {
-                        connect: {
-                            discordId: db_user_data.discordId,
-                        },
-                    },
-                },
-            });
-        }
-        else if (action_to_perform === ManageTransactionsAction.Remove) {
-            await tx.transactions.deleteMany({
-                where: {
-                    AND: [
-                        {
-                            User: {
-                                discordId: db_user_data.discordId,
-                            },
-                        },
-                        {
-                            productCode: product_code,
-                        },
-                    ]
-                }
-            });
-        }
-    });
-}
 
 async function manageProductsChatInputCommandHandler(
     interaction: Discord.ChatInputCommandInteraction,
@@ -403,9 +326,10 @@ async function manageProductsChatInputCommandHandler(
     switch (product_code) {
         case ALL_PRODUCTS_CODE: {
             product_codes_to_manage.push(
-                ...db_roblox_products.filter(
-                    (db_roblox_product) => dbRobloxProductsOwnershipPredicate(db_user_data, action_to_perform, db_roblox_product.code)
-                ).map(
+                ...db_roblox_products.filter(p => {
+                    const user_owns_product = db_user_data.transactions.some(t => t.productCode === p.code);
+                    return (action_to_perform === ManageTransactionsAction.Add && !user_owns_product) || (action_to_perform === ManageTransactionsAction.Remove && user_owns_product);
+                }).map(
                     (db_roblox_product) => db_roblox_product.code
                 )
             );
@@ -417,9 +341,10 @@ async function manageProductsChatInputCommandHandler(
             product_codes_to_manage.push(
                 ...db_roblox_products.filter(
                     (db_roblox_product) => db_roblox_product.viewable
-                ).filter(
-                    (db_roblox_product) => dbRobloxProductsOwnershipPredicate(db_user_data, action_to_perform, db_roblox_product.code)
-                ).map(
+                ).filter(p => {
+                    const user_owns_product = db_user_data.transactions.some(t => t.productCode === p.code);
+                    return (action_to_perform === ManageTransactionsAction.Add && !user_owns_product) || (action_to_perform === ManageTransactionsAction.Remove && user_owns_product);
+                }).map(
                     (db_roblox_product) => db_roblox_product.code
                 )
             );
@@ -432,7 +357,18 @@ async function manageProductsChatInputCommandHandler(
             // we can assume this is a valid product code because we checked earlier
 
             // only add the product code if it passes the ownership predicate
-            if (dbRobloxProductsOwnershipPredicate(db_user_data, action_to_perform, product_code)) {
+            const filtered_db_roblox_products = db_roblox_products.filter(db_roblox_product => {
+                const user_owns_product = db_user_data.transactions.some(
+                    t => t.productCode === db_roblox_product.code
+                );
+
+                return (
+                    (action_to_perform === ManageTransactionsAction.Add && !user_owns_product) ||
+                    (action_to_perform === ManageTransactionsAction.Remove && user_owns_product)
+                );
+            });
+
+            if (filtered_db_roblox_products) {
                 product_codes_to_manage.push(product_code);
             }
 
@@ -458,7 +394,40 @@ async function manageProductsChatInputCommandHandler(
     /* manage the user's transactions */
     for (const product_code_to_manage of product_codes_to_manage) {
         try {
-            await manageUserTransactions(db_user_data, action_to_perform, product_code_to_manage, interaction.user.id);
+            /* modify the user's transactions */
+            prisma.$transaction(async (tx) => {
+                if (action_to_perform === ManageTransactionsAction.Add) {
+                    await tx.transactions.create({
+                        data: {
+                            transactionType: 'system',
+                            productCode: product_code,
+                            purchaseId: `SYSTEM_MANUAL_${interaction.user.id}_${randomUUID()}`,
+                            transactionAmount: '0',
+                            User: {
+                                connect: {
+                                    discordId: db_user_data.discordId,
+                                },
+                            },
+                        },
+                    });
+                }
+                else if (action_to_perform === ManageTransactionsAction.Remove) {
+                    await tx.transactions.deleteMany({
+                        where: {
+                            AND: [
+                                {
+                                    User: {
+                                        discordId: db_user_data.discordId,
+                                    },
+                                },
+                                {
+                                    productCode: product_code,
+                                },
+                            ]
+                        }
+                    });
+                }
+            });
         } catch (error) {
             console.trace(error);
 
@@ -592,6 +561,7 @@ export default new CustomInteraction({
     },
     handler: async (discord_client, interaction) => {
         if (!interaction.inCachedGuild()) return;
+
 
         if (interaction.isAutocomplete()) {
             await manageProductsAutocompleteHandler(interaction);
