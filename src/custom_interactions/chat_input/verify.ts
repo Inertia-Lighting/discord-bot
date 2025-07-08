@@ -21,6 +21,9 @@ if (user_verification_endpoints_base64_encoded_token.length < 1) throw new Error
 const api_server = `${process.env.API_SERVER ?? ''}`;
 if (api_server.length < 1) throw new Error('Environment variable: API_SERVER; is not set correctly.');
 
+const verified_role_id = `${process.env.BOT_VERIFIED_ROLE_ID ?? ''}`;
+if (verified_role_id.length < 1) throw new Error('Environment variable: BOT_VERIFIED_ROLE_ID; is not set correctly.');
+
 // ------------------------------------------------------------//
 
 async function userAlreadyVerifiedHandler(
@@ -175,6 +178,16 @@ async function verifyHandler(
         }).catch(console.warn);
 
         return;
+    }
+
+    /* assign verified role to the user */
+    try {
+        const guild_member = await interaction.guild!.members.fetch(interaction.user.id);
+        await guild_member.roles.add(verified_role_id);
+        console.log(`Successfully assigned verified role to user: ${interaction.user.id}`);
+    } catch (error) {
+        console.error('Failed to assign verified role:', error);
+        // Continue with verification success message even if role assignment fails
     }
 
     /* inform the user */
