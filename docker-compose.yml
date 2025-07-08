@@ -1,33 +1,25 @@
 services:
+  # otel-lgtm:
+  #   image: grafana/otel-lgtm
+  #   container_name: otel_lgtm
+  #   ports:
+  #     - "4317:4317"  # OpenTelemetery GRPC endpoint
+  #     - "4318:4318"  # OpenTelemetry HTTP endpoint
+  #     - "3000:3000"  # Grafana UI
+  #   env_file:
+  #     - .env
+  #   restart: unless-stopped
+    
   app:
     build:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - .:/app
+      - ./data/app:/app
     env_file:
       - .env
-      # Uncomment to load OpenTelemetry configuration
-      # - .env.otel
     restart: unless-stopped
     entrypoint: >
       sh -c "exec yarn start"
-    # Uncomment the environment section below to configure OpenTelemetry
-    # environment:
-    #   - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-lgtm:3100
-    #   - OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
-    #   - OTEL_TRACES_EXPORTER=otlp
-    #   - OTEL_METRICS_EXPORTER=otlp
-    #   - OTEL_LOGS_EXPORTER=otlp
-
-  # Uncomment to deploy OTEL LGTM alongside the bot
-  # otel-lgtm:
-  #   image: grafana/otel-lgtm:latest
-  #   ports:
-  #     - "3000:3000"  # Grafana
-  #     - "3100:3100"  # OTLP HTTP receiver
-  #     - "4317:4317"  # OTLP gRPC receiver
-  #     - "4318:4318"  # OTLP HTTP receiver (alternative)
-  #   environment:
-  #     - ENABLE_LOGS_ALL=true
-  #   restart: unless-stopped
+    # depends_on:
+    #   - otel-lgtm
