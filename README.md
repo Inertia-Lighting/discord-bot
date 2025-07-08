@@ -13,6 +13,10 @@ Any attempt to use it without explicit permission is prohibited.
 
 Assume that all works contained in this repository are copyrighted and protected under law.
 
+## Features
+
+- **OpenTelemetry Monitoring**: Built-in observability with metrics, traces, and logs. See [docs/MONITORING.md](docs/MONITORING.md) for setup instructions.
+
 ## Copyright
 
 Copyright &copy; Inertia Lighting, Some Rights Reserved

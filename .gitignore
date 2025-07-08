@@ -38,6 +38,9 @@ __*
 !update.bat
 start_bot.bat
 
+# Testing files
+test-otel.js
+
 # Yarn
 .yarn/install-state.gz
 src/lib/prisma
