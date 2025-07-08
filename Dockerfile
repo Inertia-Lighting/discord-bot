@@ -20,5 +20,10 @@ RUN yarn build
 # Create tmp directory
 RUN mkdir -p /usr/src/app/temporary
 
+# OpenTelemetry environment variables (can be overridden at runtime)
+ENV OTEL_SERVICE_NAME="discord-bot"
+ENV OTEL_SERVICE_VERSION="3.0.0"
+ENV OTEL_NODE_RESOURCE_DETECTORS="env,host,os,process,serviceinstance"
+
 # Start the bot
 CMD ["yarn", "start"]
