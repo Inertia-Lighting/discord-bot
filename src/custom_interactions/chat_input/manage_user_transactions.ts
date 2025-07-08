@@ -3,23 +3,16 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 // ------------------------------------------------------------//
 
+import { randomUUID } from 'node:crypto';
+
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
 import { CustomEmbed } from '@root/common/message';
-import { go_mongo_db } from '@root/common/mongo/mongo';
-import { DbProductData, DbUserData } from '@root/types';
+import prisma from '@root/lib/prisma_client';
+import { PrismaProductData } from '@root/types';
 import * as Discord from 'discord.js';
 import { compareTwoStrings } from 'string-similarity';
 
 // ------------------------------------------------------------//
-
-const db_database_name = `${process.env.MONGO_DATABASE_NAME ?? ''}`;
-if (db_database_name.length < 1) throw new Error('Environment variable: MONGO_DATABASE_NAME; is not set correctly.');
-
-const db_products_collection_name = `${process.env.MONGO_PRODUCTS_COLLECTION_NAME ?? ''}`;
-if (db_products_collection_name.length < 1) throw new Error('Environment variable: MONGO_PRODUCTS_COLLECTION_NAME; is not set correctly.');
-
-const db_users_collection_name = `${process.env.MONGO_USERS_COLLECTION_NAME ?? ''}`;
-if (db_users_collection_name.length < 1) throw new Error('Environment variable: MONGO_USERS_COLLECTION_NAME; is not set correctly.');
 
 const db_database_support_staff_role_id = `${process.env.BOT_SUPPORT_STAFF_DATABASE_ROLE_ID ?? ''}`;
 if (db_database_support_staff_role_id.length < 1) throw new Error('Environment variable: BOT_SUPPORT_STAFF_DATABASE_ROLE_ID; is not set correctly.');
@@ -36,7 +29,7 @@ if (bot_logging_products_manager_channel_id.length < 1) throw new Error('Environ
 //
 // Assumptions were made that the enum would only have two values.
 // As such ternary operators were used in some places.
-enum ManageProductsAction {
+enum ManageTransactionsAction {
     Add = 'add',
     Remove = 'remove',
 }
@@ -53,20 +46,24 @@ class DbProductsCache {
 
     public static cache_expiration_epoch_ms = 0; // default to expired so it will be fetched on first call
 
-    public static cache: DbProductData[] = [];
+    public static cache: PrismaProductData[] = [];
 
     public static async fetch(
         bypass_cache: boolean = false,
-    ): Promise<DbProductData[]> {
+    ): Promise<PrismaProductData[]> {
         const now_epoch_ms = Date.now();
 
         if (
             bypass_cache ||
             this.cache_expiration_epoch_ms < now_epoch_ms
         ) {
-            const db_roblox_products_find_cursor = await go_mongo_db.find(db_database_name, db_products_collection_name, {});
-
-            const db_roblox_products = await db_roblox_products_find_cursor.toArray() as unknown as DbProductData[];
+            const db_roblox_products = await prisma.products.findMany({
+                select: {
+                    code: true,
+                    name: true,
+                    viewable: true,
+                },
+            });
 
             this.cache_expiration_epoch_ms = now_epoch_ms + this.cache_lifetime_ms;
             this.cache = db_roblox_products;
@@ -85,9 +82,9 @@ async function manageProductsAutocompleteHandler(
     interaction: Discord.AutocompleteInteraction,
 ): Promise<void> {
     const db_roblox_products = await DbProductsCache.fetch(false);
-
+  
     const user_id_to_modify = interaction.options.get('for')?.value; // required to be like this because of a weird discord.js bug
-    const action_to_perform = interaction.options.getString('action') as ManageProductsAction;
+    const action_to_perform = interaction.options.getString('action') as ManageTransactionsAction;
     const focused_option = interaction.options.getFocused(true);
 
     /* ensure the user to modify is valid */
@@ -98,7 +95,7 @@ async function manageProductsAutocompleteHandler(
     }
 
     /* ensure the action to perform is valid */
-    if (!Object.values(ManageProductsAction).includes(action_to_perform)) {
+    if (!Object.values(ManageTransactionsAction).includes(action_to_perform)) {
         await interaction.respond([]);
 
         return;
@@ -114,15 +111,15 @@ async function manageProductsAutocompleteHandler(
     const product_code_search_query = focused_option.value.toUpperCase();
 
     /* find the user in the database */
-    const db_user_data_find_cursor = await go_mongo_db.find(db_database_name, db_users_collection_name, {
-        'identity.discord_user_id': user_id_to_modify,
-    }, {
-        projection: {
-            '_id': false,
+    const db_user_data = await prisma.user.findUnique({
+        where: {
+            discordId: user_id_to_modify,
         },
-    });
-
-    const db_user_data = await db_user_data_find_cursor.next() as unknown as DbUserData | null;
+        select: {
+            discordId: true,
+            transactions: true,
+        },
+    }) 
 
     if (!db_user_data) {
         await interaction.respond([]);
@@ -131,11 +128,13 @@ async function manageProductsAutocompleteHandler(
     }
 
     const filtered_db_roblox_products = db_roblox_products.filter(db_roblox_product => {
-        const user_owns_product = Boolean(db_user_data.products[db_roblox_product.code]);
+        const user_owns_product = db_user_data.transactions.some(
+            t => t.productCode === db_roblox_product.code
+        );
 
         return (
-            (action_to_perform === ManageProductsAction.Add && !user_owns_product) ||
-            (action_to_perform === ManageProductsAction.Remove && user_owns_product)
+            (action_to_perform === ManageTransactionsAction.Add && !user_owns_product) ||
+            (action_to_perform === ManageTransactionsAction.Remove && user_owns_product)
         );
     });
 
@@ -179,7 +178,7 @@ async function manageProductsAutocompleteHandler(
 
     const autocomplete_results = matching_db_roblox_products.slice(0, 5).map(
         (db_roblox_product) => ({
-            name: db_roblox_product.code,
+            name: `${db_roblox_product.name}: ${db_roblox_product.code}`,
             value: db_roblox_product.code,
         })
     );
@@ -215,36 +214,6 @@ async function manageProductsAutocompleteHandler(
 // Alternatively, if the user doesn't own the product
 // and the action is to remove the product,
 // don't add the product to this array.
-function dbRobloxProductsOwnershipPredicate(
-    db_user_data: DbUserData,
-    action_to_perform: ManageProductsAction,
-    db_roblox_product_code: string,
-): boolean {
-    const user_owns_product: boolean = db_user_data.products[db_roblox_product_code];
-
-    return (
-        // action add: only add the product if the user doesn't already own it
-        (action_to_perform === ManageProductsAction.Add && !user_owns_product) ||
-        // action remove: only remove the product if the user currently owns it
-        (action_to_perform === ManageProductsAction.Remove && user_owns_product)
-    );
-}
-
-async function manageUserProduct(
-    db_user_data: DbUserData,
-    action_to_perform: ManageProductsAction,
-    product_code: string,
-): Promise<void> {
-    /* modify the user's products */
-    await go_mongo_db.update(db_database_name, db_users_collection_name, {
-        'identity.discord_user_id': db_user_data.identity.discord_user_id,
-        'identity.roblox_user_id': db_user_data.identity.roblox_user_id,
-    }, {
-        $set: {
-            [`products.${product_code}`]: (action_to_perform === ManageProductsAction.Add),
-        },
-    });
-}
 
 async function manageProductsChatInputCommandHandler(
     interaction: Discord.ChatInputCommandInteraction,
@@ -262,7 +231,7 @@ async function manageProductsChatInputCommandHandler(
             embeds: [
                 CustomEmbed.from({
                     color: CustomEmbed.Color.Violet,
-                    title: 'Inertia Lighting | Products Manager',
+                    title: 'Inertia Lighting | Transactions Manager',
                     description: 'You aren\'t allowed to use this command!',
                 }),
             ],
@@ -272,17 +241,17 @@ async function manageProductsChatInputCommandHandler(
     }
 
     const user_to_modify = interaction.options.getUser('for', true);
-    const action_to_perform = interaction.options.getString('action', true) as ManageProductsAction;
+    const action_to_perform = interaction.options.getString('action', true) as ManageTransactionsAction;
     const product_code = interaction.options.getString('product_code', true);
     const reason = interaction.options.getString('reason', true);
 
     /* ensure the action to perform is valid */
-    if (!Object.values(ManageProductsAction).includes(action_to_perform)) {
+    if (!Object.values(ManageTransactionsAction).includes(action_to_perform)) {
         await interaction.editReply({
             embeds: [
                 CustomEmbed.from({
                     color: CustomEmbed.Color.Yellow,
-                    title: 'Inertia Lighting | Products Manager',
+                    title: 'Inertia Lighting | Transactions Manager',
                     description: 'Invalid action to perform!',
                 }),
             ],
@@ -299,13 +268,10 @@ async function manageProductsChatInputCommandHandler(
         case ALL_PRODUCTS_CODE:
         case ALL_VIEWABLE_PRODUCTS_CODE: {
             // these are valid product codes, so do nothing
-
             break;
         }
-
         default: {
             // we need to check if the product code is valid now
-
             const db_roblox_product = db_roblox_products.find(
                 // eslint-disable-next-line no-shadow
                 (db_roblox_product) => db_roblox_product.code === product_code
@@ -316,7 +282,7 @@ async function manageProductsChatInputCommandHandler(
                     embeds: [
                         CustomEmbed.from({
                             color: CustomEmbed.Color.Yellow,
-                            title: 'Inertia Lighting | Products Manager',
+                            title: 'Inertia Lighting | Transactions Manager',
                             description: `\`${product_code}\` is not a valid product code!`,
                         }),
                     ],
@@ -330,15 +296,15 @@ async function manageProductsChatInputCommandHandler(
     }
 
     /* find the user in the database */
-    const db_user_data_find_cursor = await go_mongo_db.find(db_database_name, db_users_collection_name, {
-        'identity.discord_user_id': user_to_modify.id,
-    }, {
-        projection: {
-            '_id': false,
+    const db_user_data = await prisma.user.findUnique({
+        where: {
+            discordId: user_to_modify.id,
         },
-    });
-
-    const db_user_data = await db_user_data_find_cursor.next() as unknown as DbUserData | null;
+        select: {
+            discordId: true,
+            transactions: true,
+        },
+    })
 
     /* check if the user exists */
     if (!db_user_data) {
@@ -346,7 +312,7 @@ async function manageProductsChatInputCommandHandler(
             embeds: [
                 CustomEmbed.from({
                     color: CustomEmbed.Color.Yellow,
-                    title: 'Inertia Lighting | Products Manager',
+                    title: 'Inertia Lighting | Transactions Manager',
                     description: `${user_to_modify} does not exist in the database!`,
                 }),
             ],
@@ -360,9 +326,10 @@ async function manageProductsChatInputCommandHandler(
     switch (product_code) {
         case ALL_PRODUCTS_CODE: {
             product_codes_to_manage.push(
-                ...db_roblox_products.filter(
-                    (db_roblox_product) => dbRobloxProductsOwnershipPredicate(db_user_data, action_to_perform, db_roblox_product.code)
-                ).map(
+                ...db_roblox_products.filter(p => {
+                    const user_owns_product = db_user_data.transactions.some(t => t.productCode === p.code);
+                    return (action_to_perform === ManageTransactionsAction.Add && !user_owns_product) || (action_to_perform === ManageTransactionsAction.Remove && user_owns_product);
+                }).map(
                     (db_roblox_product) => db_roblox_product.code
                 )
             );
@@ -374,9 +341,10 @@ async function manageProductsChatInputCommandHandler(
             product_codes_to_manage.push(
                 ...db_roblox_products.filter(
                     (db_roblox_product) => db_roblox_product.viewable
-                ).filter(
-                    (db_roblox_product) => dbRobloxProductsOwnershipPredicate(db_user_data, action_to_perform, db_roblox_product.code)
-                ).map(
+                ).filter(p => {
+                    const user_owns_product = db_user_data.transactions.some(t => t.productCode === p.code);
+                    return (action_to_perform === ManageTransactionsAction.Add && !user_owns_product) || (action_to_perform === ManageTransactionsAction.Remove && user_owns_product);
+                }).map(
                     (db_roblox_product) => db_roblox_product.code
                 )
             );
@@ -389,7 +357,18 @@ async function manageProductsChatInputCommandHandler(
             // we can assume this is a valid product code because we checked earlier
 
             // only add the product code if it passes the ownership predicate
-            if (dbRobloxProductsOwnershipPredicate(db_user_data, action_to_perform, product_code)) {
+            const filtered_db_roblox_products = db_roblox_products.filter(db_roblox_product => {
+                const user_owns_product = db_user_data.transactions.some(
+                    t => t.productCode === db_roblox_product.code
+                );
+
+                return (
+                    (action_to_perform === ManageTransactionsAction.Add && !user_owns_product) ||
+                    (action_to_perform === ManageTransactionsAction.Remove && user_owns_product)
+                );
+            });
+
+            if (filtered_db_roblox_products) {
                 product_codes_to_manage.push(product_code);
             }
 
@@ -403,7 +382,7 @@ async function manageProductsChatInputCommandHandler(
             embeds: [
                 CustomEmbed.from({
                     color: CustomEmbed.Color.Yellow,
-                    title: 'Inertia Lighting | Products Manager',
+                    title: 'Inertia Lighting | Transactions Manager',
                     description: `${user_to_modify} does not have any available products to ${action_to_perform ? 'add' : 'remove'}!`,
                 }),
             ],
@@ -412,10 +391,43 @@ async function manageProductsChatInputCommandHandler(
         return;
     }
 
-    /* manage the user's products */
+    /* manage the user's transactions */
     for (const product_code_to_manage of product_codes_to_manage) {
         try {
-            await manageUserProduct(db_user_data, action_to_perform, product_code_to_manage);
+            /* modify the user's transactions */
+            prisma.$transaction(async (tx) => {
+                if (action_to_perform === ManageTransactionsAction.Add) {
+                    await tx.transactions.create({
+                        data: {
+                            transactionType: 'system',
+                            productCode: product_code,
+                            purchaseId: `SYSTEM_MANUAL_${interaction.user.id}_${randomUUID()}`,
+                            transactionAmount: '0',
+                            User: {
+                                connect: {
+                                    discordId: db_user_data.discordId,
+                                },
+                            },
+                        },
+                    });
+                }
+                else if (action_to_perform === ManageTransactionsAction.Remove) {
+                    await tx.transactions.deleteMany({
+                        where: {
+                            AND: [
+                                {
+                                    User: {
+                                        discordId: db_user_data.discordId,
+                                    },
+                                },
+                                {
+                                    productCode: product_code,
+                                },
+                            ]
+                        }
+                    });
+                }
+            });
         } catch (error) {
             console.trace(error);
 
@@ -423,34 +435,34 @@ async function manageProductsChatInputCommandHandler(
                 embeds: [
                     CustomEmbed.from({
                         color: CustomEmbed.Color.Red,
-                        title: 'Inertia Lighting | Products Manager',
+                        title: 'Inertia Lighting | Transactions Manager',
                         description: `An error occurred while modifying: \`${product_code_to_manage}\` for ${user_to_modify}!`,
                     }),
                 ],
             }).catch(console.warn);
 
-            continue;
+            return;
         }
     }
 
-    /* log to the products manager logging channel */
+    /* log to the transactions manager logging channel */
     try {
         const logging_channel = await interaction.client.channels.fetch(bot_logging_products_manager_channel_id);
-        if (!logging_channel) throw new Error('Unable to find the products manager logging channel!');
-        if (!logging_channel.isTextBased()) throw new Error('The products manager logging channel is not text-based!');
+        if (!logging_channel) throw new Error('Unable to find the transactions manager logging channel!');
+        if (!logging_channel.isTextBased()) throw new Error('The transactions manager logging channel is not text-based!');
         if(!logging_channel.isSendable()) throw new Error('The identity manager logging channel is not sendable!');
         
         await logging_channel.send({
             embeds: [
                 CustomEmbed.from({
-                    color: action_to_perform === ManageProductsAction.Add ? CustomEmbed.Color.Green : CustomEmbed.Color.Red,
-                    title: 'Inertia Lighting | Products Manager',
+                    color: action_to_perform === ManageTransactionsAction.Add ? CustomEmbed.Color.Green : CustomEmbed.Color.Red,
+                    title: 'Inertia Lighting | Transactions Manager',
                     description: [
-                        `${interaction.user} ${action_to_perform === ManageProductsAction.Add ? 'added' : 'removed'}:`,
+                        `${interaction.user} ${action_to_perform === ManageTransactionsAction.Add ? 'added' : 'removed'}:`,
                         ...product_codes_to_manage.map(
                             (product_code_to_manage) => `- \`${product_code_to_manage}\``
                         ),
-                        `${action_to_perform === ManageProductsAction.Add ? 'to' : 'from'} ${user_to_modify}.`,
+                        `${action_to_perform === ManageTransactionsAction.Add ? 'to' : 'from'} ${user_to_modify}.`,
                     ].join('\n'),
                     fields: [
                         {
@@ -468,8 +480,8 @@ async function manageProductsChatInputCommandHandler(
             embeds: [
                 CustomEmbed.from({
                     color: CustomEmbed.Color.Red,
-                    title: 'Inertia Lighting | Products Manager',
-                    description: 'An error occurred while logging to the products manager logging channel!',
+                    title: 'Inertia Lighting | Transactions Manager',
+                    description: 'An error occurred while logging to the transactions manager logging channel!',
                 }),
             ],
         }).catch(console.warn);
@@ -481,14 +493,14 @@ async function manageProductsChatInputCommandHandler(
     await interaction.editReply({
         embeds: [
             CustomEmbed.from({
-                color: action_to_perform === ManageProductsAction.Add ? CustomEmbed.Color.Green : CustomEmbed.Color.Red,
-                title: 'Inertia Lighting | Products Manager',
+                color: action_to_perform === ManageTransactionsAction.Add ? CustomEmbed.Color.Green : CustomEmbed.Color.Red,
+                title: 'Inertia Lighting | Transactions Manager',
                 description: [
-                    `${action_to_perform === ManageProductsAction.Add ? 'Added' : 'Removed'}:`,
+                    `${action_to_perform === ManageTransactionsAction.Add ? 'Added' : 'Removed'}:`,
                     ...product_codes_to_manage.map(
                         (product_code_to_manage) => `- \`${product_code_to_manage}\``
                     ),
-                    `${action_to_perform === ManageProductsAction.Add ? 'to' : 'from'} ${user_to_modify}.`,
+                    `${action_to_perform === ManageTransactionsAction.Add ? 'to' : 'from'} ${user_to_modify}.`,
                 ].join('\n'),
                 fields: [
                     {
@@ -504,16 +516,16 @@ async function manageProductsChatInputCommandHandler(
 // ------------------------------------------------------------//
 
 export default new CustomInteraction({
-    identifier: 'manage_user_products',
+    identifier: 'manage_user_transactions',
     type: Discord.InteractionType.ApplicationCommand,
     data: {
         type: Discord.ApplicationCommandType.ChatInput,
-        description: 'Used by staff to manage user products.',
+        description: 'Used by staff to manage user transactions.',
         options: [
             {
                 name: 'for',
                 type: Discord.ApplicationCommandOptionType.User,
-                description: 'The user to manage products for.',
+                description: 'The user to manage transactions for.',
                 required: true,
             }, {
                 name: 'action',
@@ -522,10 +534,10 @@ export default new CustomInteraction({
                 choices: [
                     {
                         name: 'Add',
-                        value: ManageProductsAction.Add,
+                        value: ManageTransactionsAction.Add,
                     }, {
                         name: 'Remove',
-                        value: ManageProductsAction.Remove,
+                        value: ManageTransactionsAction.Remove,
                     },
                 ],
                 required: true,
@@ -538,7 +550,7 @@ export default new CustomInteraction({
             }, {
                 name: 'reason',
                 type: Discord.ApplicationCommandOptionType.String,
-                description: 'The reason for managing user products.',
+                description: 'The reason for managing user transactions.',
                 required: true,
             },
         ],
@@ -549,6 +561,7 @@ export default new CustomInteraction({
     },
     handler: async (discord_client, interaction) => {
         if (!interaction.inCachedGuild()) return;
+
 
         if (interaction.isAutocomplete()) {
             await manageProductsAutocompleteHandler(interaction);

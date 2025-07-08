@@ -1,17 +1,36 @@
 // ------------------------------------------------------------//
-//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
+//    Copyright (c) Inertia Lighting, Some Rights Reserved     //
 // ------------------------------------------------------------//
 
 import type MongoDB from 'mongodb';
 
 // ------------------------------------------------------------//
-//                        Helper Types                        //
+//                        Helper Types                         //
 // ------------------------------------------------------------//
 
 export type DistributiveOmit<T, K extends keyof T> = T extends unknown ? Omit<T, K> : never;
 
 // ------------------------------------------------------------//
-//                      Database Schemas                      //
+//                      Prisma Database Schemas                //
+// ------------------------------------------------------------//
+
+type PrismaUserData = Prisma.UserGetPayload<{
+    select: {
+        discordId: true;
+        transactions: true;
+    }
+}>
+
+type PrismaProductData = Prisma.ProductsGetPayload<{
+    select: {
+        code: true;
+        name: true;
+        viewable: true;
+    }
+}>
+
+// ------------------------------------------------------------//
+//                      Database Schemas                       //
 // ------------------------------------------------------------//
 
 export interface DbProductData {
