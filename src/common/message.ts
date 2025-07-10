@@ -17,6 +17,7 @@ enum CustomEmbedColor {
     Indigo = 0x550088,
     Violet = 0xAA00FF,
     Magenta = 0xFF00FF,
+    Gray = 0x808080,
 }
 
 export class CustomEmbed {

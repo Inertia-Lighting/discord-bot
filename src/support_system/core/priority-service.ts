@@ -272,7 +272,7 @@ export class TicketPriorityServiceImpl implements TicketPriorityService {
                 await channel.setName(newName);
                 console.log(`Updated channel name from "${currentName}" to "${newName}"`);
             } catch (error) {
-                console.error(`Failed to update channel name for ${channelId}:`, error);
+                console.error(`Failed to update channel name for ${channel.id}:`, error);
             }
         }
     }

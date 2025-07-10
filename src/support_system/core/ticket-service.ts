@@ -229,7 +229,7 @@ export class SupportTicketServiceImpl implements SupportTicketService {
             }
 
             const ticketLinkEmbed = CustomEmbed.from({
-                color: 0x0099ff,
+                color: CustomEmbed.Color.Blue,
                 title: '🎫 New Support Ticket Created',
                 description: [
                     `**User:** ${context.owner}`,
