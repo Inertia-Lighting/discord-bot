@@ -5,6 +5,38 @@
 import * as Discord from 'discord.js';
 
 /**
+ * Ticket priority levels
+ */
+export enum TicketPriority {
+    Low = 'low',
+    Medium = 'medium',
+    High = 'high'
+}
+
+/**
+ * Priority configuration with SLA and emoji
+ */
+export interface PriorityConfig {
+    priority: TicketPriority;
+    emoji: string;
+    slaHours: number;
+    color: number;
+    label: string;
+}
+
+/**
+ * Ticket priority context information
+ */
+export interface TicketPriorityContext {
+    channelId: string;
+    priority: TicketPriority;
+    slaDeadline: Date;
+    lastStaffResponse?: Date;
+    escalationStarted?: Date;
+    escalationCount: number;
+}
+
+/**
  * Represents a support category identifier
  */
 export enum SupportCategoryId {
@@ -162,4 +194,49 @@ export interface ValidationService {
      * Validates user input for support categories
      */
     validateUserInput(categoryId: SupportCategoryId, input: Record<string, string>): Promise<boolean>;
+}
+
+/**
+ * Interface for ticket priority service
+ */
+export interface TicketPriorityService {
+    /**
+     * Sets the priority for a ticket channel
+     */
+    setPriority(channelId: string, priority: TicketPriority, setBy: Discord.GuildMember): Promise<void>;
+    
+    /**
+     * Gets the priority context for a ticket channel
+     */
+    getPriority(channelId: string): Promise<TicketPriorityContext | null>;
+    
+    /**
+     * Checks if SLA deadline has passed for a ticket
+     */
+    checkSLADeadline(channelId: string): Promise<boolean>;
+    
+    /**
+     * Records staff response to stop escalation
+     */
+    recordStaffResponse(channelId: string, staffMember: Discord.GuildMember): Promise<void>;
+    
+    /**
+     * Starts escalation for a ticket
+     */
+    startEscalation(channelId: string): Promise<void>;
+    
+    /**
+     * Gets all tickets that need escalation
+     */
+    getTicketsNeedingEscalation(): Promise<TicketPriorityContext[]>;
+    
+    /**
+     * Updates channel name with priority emoji
+     */
+    updateChannelName(channel: Discord.TextChannel, priority: TicketPriority): Promise<void>;
+    
+    /**
+     * Gets priority configuration
+     */
+    getPriorityConfig(priority: TicketPriority): PriorityConfig;
 }

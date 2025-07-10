@@ -12,6 +12,8 @@ import { AccountRecoveryConfig, AccountRecoveryHandler } from './categories/reco
 import { ProductTransactionsConfig, ProductTransactionsHandler } from './categories/transactions';
 import { ProductTransfersConfig, ProductTransfersHandler } from './categories/transfers';
 import { loadSupportSystemConfig } from './config';
+import { getEscalationService } from './core/escalation-service';
+import { TicketPriorityServiceImpl } from './core/priority-service';
 import { SupportCategoryRegistryImpl } from './core/registry';
 import { SupportTicketServiceImpl } from './core/ticket-service';
 import { 
@@ -19,7 +21,8 @@ import {
     SupportCategoryId, 
     SupportCategoryRegistry, 
     SupportTicketContext, 
-    SupportTicketService} from './types';
+    SupportTicketService,
+    TicketPriorityService} from './types';
 
 /**
  * Main support system manager
@@ -27,14 +30,24 @@ import {
 export class SupportSystemManager {
     private registry: SupportCategoryRegistry;
     private ticketService: SupportTicketService;
+    private priorityService: TicketPriorityService;
     private config: ReturnType<typeof loadSupportSystemConfig>;
 
     constructor() {
         this.config = loadSupportSystemConfig();
         this.registry = new SupportCategoryRegistryImpl();
         this.ticketService = new SupportTicketServiceImpl(this.config);
+        this.priorityService = new TicketPriorityServiceImpl();
         
         this.initializeCategories();
+    }
+
+    /**
+     * Initializes escalation monitoring service
+     */
+    initializeEscalationService(client: Discord.Client): void {
+        const escalationService = getEscalationService(client);
+        escalationService.start();
     }
 
     /**
@@ -178,7 +191,19 @@ export class SupportSystemManager {
         }
 
         // Extract current ticket information from channel name
-        const channelNameParts = channel.name.split('-');
+        let channelNameParts = channel.name.split('-');
+        
+        // Handle priority emoji prefix
+        const priorityEmojis = ['🟢', '🟡', '🔴'];
+        for (const emoji of priorityEmojis) {
+            if (channel.name.startsWith(emoji + '-')) {
+                // Remove emoji prefix and re-split
+                const nameWithoutEmoji = channel.name.substring(2);
+                channelNameParts = nameWithoutEmoji.split('-');
+                break;
+            }
+        }
+        
         if (channelNameParts.length < 2) {
             throw new Error('Invalid ticket channel name format');
         }
@@ -191,9 +216,16 @@ export class SupportSystemManager {
             throw new Error('Ticket is already of the specified type');
         }
 
-        // Update channel name
+        // Update channel name (preserving priority emoji)
+        const currentPriority = await this.priorityService.getPriority(channel.id);
         const newChannelName = `${newCategoryId}-${userId}`.toLowerCase();
-        await channel.setName(newChannelName);
+        
+        // If there's a priority, update the channel name with the priority emoji
+        if (currentPriority) {
+            await this.priorityService.updateChannelName(channel, currentPriority.priority);
+        } else {
+            await channel.setName(newChannelName);
+        }
 
         // Update channel topic
         const ticketOwner = await channel.client.users.fetch(userId);
@@ -214,6 +246,20 @@ export class SupportSystemManager {
                 },
             ],
         });
+    }
+
+    /**
+     * Gets the priority service instance
+     */
+    getPriorityService(): TicketPriorityService {
+        return this.priorityService;
+    }
+
+    /**
+     * Records a staff response for escalation tracking
+     */
+    async recordStaffResponse(channelId: string, staffMember: Discord.GuildMember): Promise<void> {
+        await this.priorityService.recordStaffResponse(channelId, staffMember);
     }
 
     /**
