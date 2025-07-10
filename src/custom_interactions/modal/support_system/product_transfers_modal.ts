@@ -2,8 +2,9 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 // ------------------------------------------------------------//
 
-import { handleSupportTicketCategoryModalSubmit,SupportCategoryId } from '@root/common/handlers';
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
+import { supportSystemManager } from '@root/support_system';
+import { SupportCategoryId } from '@root/support_system/types';
 import * as Discord from 'discord.js';
 
 // ------------------------------------------------------------//
@@ -20,6 +21,33 @@ export default new CustomInteraction({
         if (!interaction.inCachedGuild()) return;
         if (!interaction.isModalSubmit()) return;
 
-        await handleSupportTicketCategoryModalSubmit(interaction, SupportCategoryId.Transfers);
+        await interaction.deferReply({
+            ephemeral: true,
+            fetchReply: true,
+        });
+
+        try {
+            await supportSystemManager.handleModalSubmission(interaction, SupportCategoryId.Transfers);
+
+            const modalReplyMessage = await interaction.editReply({
+                content: [
+                    'You selected Transfer Products.',
+                    'Go to your support ticket channel to continue.',
+                ].join('\n'),
+            });
+
+            setTimeout(async () => {
+                try {
+                    await interaction.deleteReply(modalReplyMessage);
+                } catch {
+                    // ignore any errors
+                }
+            }, 30_000);
+        } catch (error) {
+            console.error('Error handling support modal submission:', error);
+            await interaction.editReply({
+                content: 'An error occurred while processing your support request. Please try again.',
+            });
+        }
     },
 });
