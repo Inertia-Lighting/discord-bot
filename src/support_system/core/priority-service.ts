@@ -36,6 +36,13 @@ const PRIORITY_CONFIGS: Record<TicketPriority, PriorityConfig> = {
         slaHours: 1, // 1 hour
         color: CustomEmbed.Color.Red,
         label: 'High Priority'
+    },
+    [TicketPriority.OnHold]: {
+        priority: TicketPriority.OnHold,
+        emoji: '⏸️',
+        slaHours: 0, // No SLA
+        color: CustomEmbed.Color.Gray,
+        label: 'On Hold'
     }
 };
 
@@ -55,7 +62,11 @@ export class TicketPriorityServiceImpl implements TicketPriorityService {
      */
     async setPriority(channelId: string, priority: TicketPriority, setBy: Discord.GuildMember): Promise<void> {
         const config = this.getPriorityConfig(priority);
-        const slaDeadline = new Date(Date.now() + config.slaHours * 60 * 60 * 1000);
+        
+        // Calculate SLA deadline - OnHold tickets have no SLA
+        const slaDeadline = priority === TicketPriority.OnHold ? 
+            new Date(Date.now() + 365 * 24 * 60 * 60 * 1000) : // 1 year from now (effectively no SLA)
+            new Date(Date.now() + config.slaHours * 60 * 60 * 1000);
         
         const existingContext = ticketPriorities.get(channelId);
         
@@ -163,6 +174,11 @@ export class TicketPriorityServiceImpl implements TicketPriorityService {
         const needingEscalation: TicketPriorityContext[] = [];
         
         for (const context of ticketPriorities.values()) {
+            // Skip OnHold tickets - they don't have SLA requirements
+            if (context.priority === TicketPriority.OnHold) {
+                continue;
+            }
+            
             // Check if SLA deadline has passed
             if (now > context.slaDeadline) {
                 // If no staff response yet, or last escalation was more than 2 hours ago
@@ -242,7 +258,7 @@ export class TicketPriorityServiceImpl implements TicketPriorityService {
         let baseName = currentName;
         for (const priorityConfig of Object.values(PRIORITY_CONFIGS)) {
             if (currentName.startsWith(priorityConfig.emoji + '-')) {
-                baseName = currentName.substring(2); // Remove emoji and dash
+                baseName = currentName.substring(priorityConfig.emoji.length + 1); // Remove emoji and dash
                 break;
             }
         }
@@ -250,8 +266,14 @@ export class TicketPriorityServiceImpl implements TicketPriorityService {
         // Add new priority emoji
         const newName = `${config.emoji}-${baseName}`;
         
+        // Always update the channel name to ensure consistency
         if (newName !== currentName) {
-            await channel.setName(newName);
+            try {
+                await channel.setName(newName);
+                console.log(`Updated channel name from "${currentName}" to "${newName}"`);
+            } catch (error) {
+                console.error(`Failed to update channel name for ${channelId}:`, error);
+            }
         }
     }
     

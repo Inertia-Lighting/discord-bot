@@ -40,6 +40,10 @@ export default new CustomInteraction({
                         name: '🔴 High Priority (1 hour)',
                         value: TicketPriority.High,
                     },
+                    {
+                        name: '⏸️ On Hold (No SLA)',
+                        value: TicketPriority.OnHold,
+                    },
                 ],
             },
         ],
@@ -138,10 +142,10 @@ async function isUserTicketOwner(channel: Discord.TextChannel, member: Discord.G
     
     // Remove priority emoji if present
     let baseName = channelName;
-    const priorityEmojis = ['🟢', '🟡', '🔴'];
+    const priorityEmojis = ['🟢', '🟡', '🔴', '⏸️'];
     for (const emoji of priorityEmojis) {
         if (channelName.startsWith(emoji + '-')) {
-            baseName = channelName.substring(2);
+            baseName = channelName.substring(emoji.length + 1);
             break;
         }
     }

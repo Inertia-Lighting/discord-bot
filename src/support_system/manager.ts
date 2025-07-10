@@ -194,11 +194,11 @@ export class SupportSystemManager {
         let channelNameParts = channel.name.split('-');
         
         // Handle priority emoji prefix
-        const priorityEmojis = ['🟢', '🟡', '🔴'];
+        const priorityEmojis = ['🟢', '🟡', '🔴', '⏸️'];
         for (const emoji of priorityEmojis) {
             if (channel.name.startsWith(emoji + '-')) {
                 // Remove emoji prefix and re-split
-                const nameWithoutEmoji = channel.name.substring(2);
+                const nameWithoutEmoji = channel.name.substring(emoji.length + 1);
                 channelNameParts = nameWithoutEmoji.split('-');
                 break;
             }

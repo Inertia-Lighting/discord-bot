@@ -207,10 +207,10 @@ export class TicketEscalationService {
     private extractTicketOwnerId(channelName: string): string | null {
         // Remove priority emoji if present
         let baseName = channelName;
-        const priorityEmojis = ['🟢', '🟡', '🔴'];
+        const priorityEmojis = ['🟢', '🟡', '🔴', '⏸️'];
         for (const emoji of priorityEmojis) {
             if (channelName.startsWith(emoji + '-')) {
-                baseName = channelName.substring(2);
+                baseName = channelName.substring(emoji.length + 1);
                 break;
             }
         }
