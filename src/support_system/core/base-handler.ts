@@ -24,20 +24,26 @@ export abstract class BaseSupportCategoryHandler implements SupportCategoryHandl
         interaction: Discord.ModalSubmitInteraction<'cached'>,
         context: SupportTicketContext
     ): Promise<void> {
-        // Validate input first
-        const isValid = await this.validateInput(interaction);
-        if (!isValid) {
-            throw new Error('Invalid input provided');
-        }
+        try {
+            // Validate input first
+            const isValid = await this.validateInput(interaction);
+            if (!isValid) {
+                console.error(`Invalid input for ${this.categoryId} category from user ${interaction.user.id}`);
+                throw new Error('Invalid input provided. Please check your responses and try again.');
+            }
 
-        // Get formatted responses
-        const responses = this.extractResponses(interaction);
-        
-        // Send the responses to the channel
-        await this.sendResponsesToChannel(context.channel!, responses, interaction);
-        
-        // Send any additional messages
-        await this.sendAdditionalMessages(context, interaction);
+            // Get formatted responses
+            const responses = this.extractResponses(interaction);
+            
+            // Send the responses to the channel
+            await this.sendResponsesToChannel(context.channel!, responses, interaction);
+            
+            // Send any additional messages
+            await this.sendAdditionalMessages(context, interaction);
+        } catch (error) {
+            console.error(`Error handling modal submission for ${this.categoryId}:`, error);
+            throw error;
+        }
     }
 
     /**

@@ -48,20 +48,44 @@ export class AccountRecoveryHandler extends BaseSupportCategoryHandler {
      * Validates the modal input for account recovery
      */
     async validateInput(interaction: Discord.ModalSubmitInteraction<'cached'>): Promise<boolean> {
-        const oldRoblox = interaction.fields.getTextInputValue('old_roblox');
-        const newRoblox = interaction.fields.getTextInputValue('new_roblox');
-        const oldDiscord = interaction.fields.getTextInputValue('old_discord');
-        const newDiscord = interaction.fields.getTextInputValue('new_discord');
-        const reason = interaction.fields.getTextInputValue('recovery_reason');
+        try {
+            const oldRoblox = interaction.fields.getTextInputValue('old_roblox');
+            const newRoblox = interaction.fields.getTextInputValue('new_roblox');
+            const oldDiscord = interaction.fields.getTextInputValue('old_discord');
+            const newDiscord = interaction.fields.getTextInputValue('new_discord');
+            const reason = interaction.fields.getTextInputValue('recovery_reason');
 
-        // Basic validation
-        if (!oldRoblox || oldRoblox.length < 5 || !/^\d+$/.test(oldRoblox)) return false;
-        if (!newRoblox || newRoblox.length < 5 || !/^\d+$/.test(newRoblox)) return false;
-        if (!oldDiscord || oldDiscord.length < 10 || !/^\d+$/.test(oldDiscord)) return false;
-        if (!newDiscord || newDiscord.length < 10 || !/^\d+$/.test(newDiscord)) return false;
-        if (!reason || reason.length < 1) return false;
+            // Basic validation with better error reporting
+            if (!oldRoblox || oldRoblox.trim().length < 5 || !/^\d+$/.test(oldRoblox.trim())) {
+                console.error(`Old Roblox ID validation failed: "${oldRoblox}"`);
+                return false;
+            }
+            
+            if (!newRoblox || newRoblox.trim().length < 5 || !/^\d+$/.test(newRoblox.trim())) {
+                console.error(`New Roblox ID validation failed: "${newRoblox}"`);
+                return false;
+            }
+            
+            if (!oldDiscord || oldDiscord.trim().length < 10 || !/^\d+$/.test(oldDiscord.trim())) {
+                console.error(`Old Discord ID validation failed: "${oldDiscord}"`);
+                return false;
+            }
+            
+            if (!newDiscord || newDiscord.trim().length < 10 || !/^\d+$/.test(newDiscord.trim())) {
+                console.error(`New Discord ID validation failed: "${newDiscord}"`);
+                return false;
+            }
+            
+            if (!reason || reason.trim().length < 1) {
+                console.error(`Recovery reason validation failed: "${reason}"`);
+                return false;
+            }
 
-        return true;
+            return true;
+        } catch (error) {
+            console.error('Error during validation:', error);
+            return false;
+        }
     }
 }
 

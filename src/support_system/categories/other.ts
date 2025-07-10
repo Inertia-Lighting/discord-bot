@@ -32,8 +32,17 @@ export class OtherQuestionsHandler extends BaseSupportCategoryHandler {
      * Validates the modal input for other questions
      */
     async validateInput(interaction: Discord.ModalSubmitInteraction<'cached'>): Promise<boolean> {
-        const question = interaction.fields.getTextInputValue('question');
-        return question !== null && question.length >= 32;
+        try {
+            const question = interaction.fields.getTextInputValue('question');
+            if (!question || question.trim().length < 32) {
+                console.error(`Question validation failed: length ${question?.length || 0} (required: 32+)`);
+                return false;
+            }
+            return true;
+        } catch (error) {
+            console.error('Error during validation:', error);
+            return false;
+        }
     }
 }
 
