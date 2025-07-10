@@ -22,7 +22,7 @@ export default new CustomInteraction({
         if (!interaction.isModalSubmit()) return;
 
         await interaction.deferReply({
-            ephemeral: true,
+            flags: ['Ephemeral'],
             fetchReply: true,
         });
 

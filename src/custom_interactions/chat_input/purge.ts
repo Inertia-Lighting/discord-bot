@@ -34,7 +34,7 @@ export default new CustomInteraction({
         if (!interaction.channel) return;
 
         const bot_msg = await interaction.reply({
-            ephemeral: false,
+            flags: [],
             content: 'Purging messages...',
         });
 

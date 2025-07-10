@@ -25,7 +25,7 @@ export default new CustomInteraction({
 
         /* send the support category selection menu */
         await interaction.reply({
-            ephemeral: true,
+            flags: ['Ephemeral'],
             content: 'Please select a support category!',
             components: [
                 {

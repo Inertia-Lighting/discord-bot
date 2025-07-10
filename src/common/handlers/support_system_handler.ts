@@ -1106,7 +1106,7 @@ export async function handleSupportTicketCategoryModalSubmit(
     support_category_id: SupportCategoryId,
 ): Promise<void> {
     await interaction.deferReply({
-        ephemeral: true,
+        flags: ['Ephemeral'],
         fetchReply: true,
     });
 

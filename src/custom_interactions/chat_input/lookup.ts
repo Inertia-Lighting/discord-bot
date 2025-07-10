@@ -106,7 +106,7 @@ export default new CustomInteraction({
         const selection = interaction.options.getString('properties', false) as 'general' | 'transactions' | 'transfers' | 'punishments'
         const respond_as_ephemeral: boolean = interaction.options.getBoolean('ephemeral', false) ?? false; // default to false
 
-        await interaction.deferReply({ ephemeral: respond_as_ephemeral });
+        await interaction.deferReply({ flags: respond_as_ephemeral ? ['Ephemeral'] : [] });
 
         let user_id: string;
         switch (subcommand_name) {
