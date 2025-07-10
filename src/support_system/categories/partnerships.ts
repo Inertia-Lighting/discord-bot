@@ -154,6 +154,20 @@ export const PartnershipRequestsConfig = {
                     },
                 ],
             },
+            {
+                type: Discord.ComponentType.ActionRow,
+                components: [
+                    {
+                        type: Discord.ComponentType.TextInput,
+                        customId: 'group_social_links',
+                        style: Discord.TextInputStyle.Paragraph,
+                        label: 'What are your group\'s social links?',
+                        minLength: 1,
+                        maxLength: 1024,
+                        required: true,
+                    },
+                ],
+            },
         ],
     } as Discord.ModalComponentData,
 };
