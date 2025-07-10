@@ -15,6 +15,7 @@ import { loadSupportSystemConfig } from './config';
 import { SupportCategoryRegistryImpl } from './core/registry';
 import { SupportTicketServiceImpl } from './core/ticket-service';
 import { 
+    SupportCategoryConfig,
     SupportCategoryId, 
     SupportCategoryRegistry, 
     SupportTicketContext, 
@@ -160,6 +161,97 @@ export class SupportSystemManager {
         categoryId: SupportCategoryId
     ): Promise<Discord.TextChannel | null> {
         return this.ticketService.findExistingTicket(guild, userId, categoryId);
+    }
+
+    /**
+     * Changes the type of an existing support ticket
+     */
+    async changeTicketType(
+        channel: Discord.TextChannel,
+        newCategoryId: SupportCategoryId,
+        changedBy: Discord.GuildMember
+    ): Promise<void> {
+        // Validate that the new category exists and is enabled
+        const newConfig = this.registry.getConfig(newCategoryId);
+        if (!newConfig || !newConfig.isEnabled) {
+            throw new Error(`Invalid or disabled category: ${newCategoryId}`);
+        }
+
+        // Extract current ticket information from channel name
+        const channelNameParts = channel.name.split('-');
+        if (channelNameParts.length < 2) {
+            throw new Error('Invalid ticket channel name format');
+        }
+
+        const currentCategoryId = channelNameParts[0].toUpperCase();
+        const userId = channelNameParts[1];
+
+        // Check if it's already the same type
+        if (currentCategoryId === newCategoryId) {
+            throw new Error('Ticket is already of the specified type');
+        }
+
+        // Update channel name
+        const newChannelName = `${newCategoryId}-${userId}`.toLowerCase();
+        await channel.setName(newChannelName);
+
+        // Update channel topic
+        const ticketOwner = await channel.client.users.fetch(userId);
+        const newChannelTopic = `${ticketOwner} | ${newCategoryId} | Opened on <t:${Math.floor(channel.createdTimestamp! / 1000)}:F> | Staff may close this ticket using the close_ticket command.`;
+        await channel.setTopic(newChannelTopic);
+
+        // Update permissions based on new category
+        await this.updateChannelPermissions(channel, newConfig);
+
+        // Send notification message
+        await channel.send({
+            embeds: [
+                {
+                    color: 0x00ff00,
+                    title: 'Ticket Type Changed',
+                    description: `This ticket has been changed from **${currentCategoryId}** to **${newCategoryId}** by ${changedBy}.`,
+                    timestamp: new Date().toISOString(),
+                },
+            ],
+        });
+    }
+
+    /**
+     * Updates channel permissions based on category configuration
+     */
+    private async updateChannelPermissions(
+        channel: Discord.TextChannel,
+        categoryConfig: SupportCategoryConfig
+    ): Promise<void> {
+        // Get the current permission overwrites
+        const currentOverwrites = Array.from(channel.permissionOverwrites.cache.values());
+        
+        // Update staff role permissions for the new category
+        const staffRoleOverwrites = categoryConfig.staffRoleIds.map(roleId => ({
+            id: roleId,
+            allow: [Discord.PermissionFlagsBits.ViewChannel, Discord.PermissionFlagsBits.SendMessages],
+        }));
+
+        // Keep existing overwrites for non-staff roles and add new staff role permissions
+        const newOverwrites = [
+            ...currentOverwrites.filter(overwrite => 
+                !categoryConfig.staffRoleIds.includes(overwrite.id) &&
+                overwrite.id !== this.config.roles.customerServiceRoleId &&
+                overwrite.id !== this.config.roles.staffRoleId
+            ),
+            ...staffRoleOverwrites,
+            {
+                id: this.config.roles.customerServiceRoleId,
+                allow: [Discord.PermissionFlagsBits.ViewChannel, Discord.PermissionFlagsBits.SendMessages],
+            },
+            {
+                id: this.config.roles.staffRoleId,
+                allow: [Discord.PermissionFlagsBits.ViewChannel],
+                deny: [Discord.PermissionFlagsBits.SendMessages],
+            },
+        ];
+
+        await channel.permissionOverwrites.set(newOverwrites);
     }
 }
 
