@@ -2,8 +2,8 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 // ------------------------------------------------------------//
 
-import { support_categories } from '@root/common/handlers';
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
+import { supportSystemManager } from '@root/support_system';
 import * as Discord from 'discord.js';
 
 // ------------------------------------------------------------//
@@ -21,6 +21,8 @@ export default new CustomInteraction({
         if (!interaction.inCachedGuild()) return;
         if (!interaction.channel) return;
 
+        const categories = supportSystemManager.getEnabledCategories();
+
         /* send the support category selection menu */
         await interaction.reply({
             ephemeral: true,
@@ -33,10 +35,10 @@ export default new CustomInteraction({
                             type: Discord.ComponentType.StringSelect,
                             custom_id: 'support_category_selection_menu',
                             placeholder: 'Select a support category...',
-                            options: support_categories.map((support_category) => ({
-                                value: support_category.id,
-                                label: support_category.name,
-                                description: support_category.description,
+                            options: categories.map((category) => ({
+                                value: category.id,
+                                label: category.name,
+                                description: category.description,
                             })),
                             min_values: 1,
                             max_values: 1,

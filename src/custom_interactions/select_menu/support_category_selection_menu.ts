@@ -2,8 +2,9 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 // ------------------------------------------------------------//
 
-import { support_categories } from '@root/common/handlers';
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
+import { supportSystemManager } from '@root/support_system';
+import { SupportCategoryId } from '@root/support_system/types';
 import * as Discord from 'discord.js';
 
 // ------------------------------------------------------------//
@@ -26,7 +27,7 @@ export default new CustomInteraction({
          * as it will cause the modal to not show.
          */
 
-        const support_category_id = interaction.values.at(0);
+        const support_category_id = interaction.values.at(0) as SupportCategoryId;
         if (!support_category_id) {
             console.trace('Missing support category id from support category selection menu!');
 
@@ -37,8 +38,8 @@ export default new CustomInteraction({
             return;
         }
 
-        const support_category = support_categories.find(({ id }) => id === support_category_id);
-        if (!support_category) {
+        const modalConfig = supportSystemManager.getModalConfig(support_category_id);
+        if (!modalConfig) {
             console.trace(`Invalid support category id from support category selection menu: ${support_category_id}`);
 
             await interaction.reply({
@@ -49,7 +50,7 @@ export default new CustomInteraction({
         }
 
         /* send the support category's modal */
-        await interaction.showModal(support_category.modal_data);
+        await interaction.showModal(modalConfig);
 
         /* delete the support category selection menu */
         try {

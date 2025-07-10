@@ -2,18 +2,15 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 // ------------------------------------------------------------//
 
-import { closeSupportTicketChannel } from '@root/common/handlers';
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
 import { fetchHighestAccessLevelForUser } from '@root/common/permissions';
+import { supportSystemManager } from '@root/support_system';
+import { loadSupportSystemConfig } from '@root/support_system/config';
 import * as Discord from 'discord.js';
 
 // ------------------------------------------------------------//
 
-const support_tickets_category_id = `${process.env.BOT_SUPPORT_TICKETS_CATEGORY_ID ?? ''}`;
-if (support_tickets_category_id.length < 1) throw new Error('Environment variable: BOT_SUPPORT_TICKETS_CATEGORY_ID; is not set correctly.');
-
-const support_tickets_transcripts_channel_id = `${process.env.BOT_SUPPORT_TICKETS_TRANSCRIPTS_CHANNEL_ID ?? ''}`;
-if (support_tickets_transcripts_channel_id.length < 1) throw new Error('Environment variable: BOT_SUPPORT_TICKETS_TRANSCRIPTS_CHANNEL_ID; is not set correctly.');
+const config = loadSupportSystemConfig();
 
 // ------------------------------------------------------------//
 
@@ -66,8 +63,8 @@ export default new CustomInteraction({
             return;
         }
 
-        const channel_exists_in_support_tickets_category = interaction.channel?.parentId === support_tickets_category_id;
-        const channel_is_not_transcripts_channel = interaction.channel?.id !== support_tickets_transcripts_channel_id;
+        const channel_exists_in_support_tickets_category = interaction.channel?.parentId === config.channels.ticketsCategoryId;
+        const channel_is_not_transcripts_channel = interaction.channel?.id !== config.channels.transcriptsChannelId;
         if (!(channel_exists_in_support_tickets_category && channel_is_not_transcripts_channel)) {
             interaction.editReply({
                 content: 'This channel is not an active support ticket.',
@@ -90,6 +87,14 @@ export default new CustomInteraction({
             ].join('\n'),
         }).catch(console.warn);
 
-        await closeSupportTicketChannel(interaction.channel, true, interaction.member, reason, request_feedback);
+        await supportSystemManager.closeTicket(
+            interaction.channel, 
+            interaction.member, 
+            reason, 
+            {
+                saveTranscript: true,
+                sendFeedback: request_feedback,
+            }
+        );
     },
 });
