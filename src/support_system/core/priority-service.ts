@@ -64,8 +64,11 @@ export class TicketPriorityServiceImpl implements TicketPriorityService {
             priority,
             slaDeadline,
             lastStaffResponse: existingContext?.lastStaffResponse,
+            lastUserResponse: existingContext?.lastUserResponse,
             escalationStarted: undefined, // Reset escalation when priority changes
-            escalationCount: 0
+            escalationCount: 0,
+            userPingStarted: undefined,
+            userPingCount: 0
         };
         
         ticketPriorities.set(channelId, context);
@@ -76,24 +79,7 @@ export class TicketPriorityServiceImpl implements TicketPriorityService {
             await this.updateChannelName(channel, priority);
         }
         
-        // Send priority update message
-        if (channel?.isTextBased()) {
-            await channel.send({
-                embeds: [
-                    CustomEmbed.from({
-                        color: config.color,
-                        title: `Priority Updated - ${config.label}`,
-                        description: [
-                            `Ticket priority has been set to **${config.label}** by ${setBy}.`,
-                            '',
-                            `**SLA Deadline:** <t:${Math.floor(slaDeadline.getTime() / 1000)}:R>`,
-                            `**Expected Response Time:** ${config.slaHours} ${config.slaHours === 1 ? 'hour' : 'hours'}`
-                        ].join('\n'),
-                        timestamp: new Date().toISOString()
-                    })
-                ],
-            });
-        }
+        // No message sent to channel - handled by ephemeral response in command
     }
     
     /**
@@ -124,10 +110,34 @@ export class TicketPriorityServiceImpl implements TicketPriorityService {
         context.escalationStarted = undefined;
         context.escalationCount = 0;
         
+        // Start user ping timer when staff responds
+        if (!context.userPingStarted) {
+            context.userPingStarted = new Date();
+            context.userPingCount = 0;
+        }
+        
         ticketPriorities.set(channelId, context);
         
         // Log the staff response for debugging
         console.log(`Staff response recorded for ticket ${channelId} by ${staffMember.displayName}`);
+    }
+    
+    /**
+     * Records user response to stop user pinging
+     */
+    async recordUserResponse(channelId: string, user: Discord.GuildMember): Promise<void> {
+        const context = ticketPriorities.get(channelId);
+        if (!context) return;
+        
+        context.lastUserResponse = new Date();
+        // Reset user pinging when user responds
+        context.userPingStarted = undefined;
+        context.userPingCount = 0;
+        
+        ticketPriorities.set(channelId, context);
+        
+        // Log the user response for debugging
+        console.log(`User response recorded for ticket ${channelId} by ${user.displayName}`);
     }
     
     /**
@@ -173,6 +183,55 @@ export class TicketPriorityServiceImpl implements TicketPriorityService {
     }
     
     /**
+     * Gets all tickets that need user pinging
+     */
+    async getTicketsNeedingUserPing(): Promise<TicketPriorityContext[]> {
+        const now = new Date();
+        const needingUserPing: TicketPriorityContext[] = [];
+        
+        for (const context of ticketPriorities.values()) {
+            if (this.shouldPingUser(context, now)) {
+                needingUserPing.push(context);
+            }
+        }
+        
+        return needingUserPing;
+    }
+
+    /**
+     * Determines if a user should be pinged for a ticket
+     */
+    private shouldPingUser(context: TicketPriorityContext, now: Date): boolean {
+        // Check if there was a staff response and user needs to be pinged
+        if (!context.lastStaffResponse || !context.userPingStarted) {
+            return false;
+        }
+
+        const timeSinceStaffResponse = now.getTime() - context.lastStaffResponse.getTime();
+        
+        // 24 hours = 24 * 60 * 60 * 1000 = 86400000ms
+        // 4 hours = 4 * 60 * 60 * 1000 = 14400000ms
+        
+        // If it's been 24 hours since staff response
+        if (timeSinceStaffResponse < 86400000) {
+            return false;
+        }
+
+        // Check if user has responded since staff response
+        const userRespondedAfterStaff = context.lastUserResponse && 
+            context.lastUserResponse.getTime() > context.lastStaffResponse.getTime();
+        
+        if (userRespondedAfterStaff) {
+            return false;
+        }
+
+        const timeSinceUserPingStarted = now.getTime() - context.userPingStarted.getTime();
+        
+        // Ping every 4 hours or if this is the first ping
+        return timeSinceUserPingStarted >= 14400000 || context.userPingCount === 0;
+    }
+    
+    /**
      * Updates channel name with priority emoji
      */
     async updateChannelName(channel: Discord.TextChannel, priority: TicketPriority): Promise<void> {
@@ -214,7 +273,8 @@ export class TicketPriorityServiceImpl implements TicketPriorityService {
             channelId,
             priority: TicketPriority.Low,
             slaDeadline,
-            escalationCount: 0
+            escalationCount: 0,
+            userPingCount: 0
         };
         
         ticketPriorities.set(channelId, context);
