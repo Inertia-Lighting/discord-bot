@@ -32,8 +32,11 @@ export interface TicketPriorityContext {
     priority: TicketPriority;
     slaDeadline: Date;
     lastStaffResponse?: Date;
+    lastUserResponse?: Date;
     escalationStarted?: Date;
     escalationCount: number;
+    userPingStarted?: Date;
+    userPingCount: number;
 }
 
 /**
@@ -221,6 +224,11 @@ export interface TicketPriorityService {
     recordStaffResponse(channelId: string, staffMember: Discord.GuildMember): Promise<void>;
     
     /**
+     * Records user response to stop user pinging
+     */
+    recordUserResponse(channelId: string, user: Discord.GuildMember): Promise<void>;
+    
+    /**
      * Starts escalation for a ticket
      */
     startEscalation(channelId: string): Promise<void>;
@@ -229,6 +237,11 @@ export interface TicketPriorityService {
      * Gets all tickets that need escalation
      */
     getTicketsNeedingEscalation(): Promise<TicketPriorityContext[]>;
+    
+    /**
+     * Gets all tickets that need user pinging
+     */
+    getTicketsNeedingUserPing(): Promise<TicketPriorityContext[]>;
     
     /**
      * Updates channel name with priority emoji
