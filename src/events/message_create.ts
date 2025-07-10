@@ -3,6 +3,8 @@
 // ------------------------------------------------------------//
 
 import { automatedQuickSupportHandler, suggestionsCategoryHandler } from '@root/common/handlers';
+import { loadSupportSystemConfig } from '@root/support_system/config';
+import { getEscalationService } from '@root/support_system/core/escalation-service';
 import * as Discord from 'discord.js';
 
 // ------------------------------------------------------------//
@@ -12,6 +14,9 @@ if (bot_guild_id.length < 1) throw new Error('environment variable: BOT_GUILD_ID
 
 const suggestions_category_id = `${process.env.BOT_SUGGESTIONS_CATEGORY_ID ?? ''}`;
 if (suggestions_category_id.length < 1) throw new Error('environment variable: BOT_SUGGESTIONS_CATEGORY_ID; was not properly set or is empty');
+
+// Load support system config
+const supportConfig = loadSupportSystemConfig();
 
 // ------------------------------------------------------------//
 
@@ -35,6 +40,11 @@ export default {
 
         /* only allow text channels */
         if (!message.channel.isTextBased()) return;
+
+        /* handle messages in support ticket channels */
+        if (message.channel.parent?.id === supportConfig.channels.ticketsCategoryId) {
+            await handleSupportTicketMessage(client, message);
+        }
 
         /* handle messages sent in suggestions channels */
         if (message.channel.parent?.id === suggestions_category_id) {
@@ -61,3 +71,22 @@ export default {
         automatedQuickSupportHandler(message).catch(console.trace);
     },
 };
+
+/**
+ * Handles messages in support ticket channels for priority tracking
+ */
+async function handleSupportTicketMessage(client: Discord.Client, message: Discord.Message): Promise<void> {
+    try {
+        if (!message.inGuild() || !message.member) return;
+        
+        const escalationService = getEscalationService(client);
+        
+        // Check if the message author is staff
+        if (escalationService.isStaffMember(message.member)) {
+            // Record staff response to stop escalation
+            await escalationService.recordStaffResponse(message.channel.id, message.member);
+        }
+    } catch (error) {
+        console.error('Error handling support ticket message:', error);
+    }
+}

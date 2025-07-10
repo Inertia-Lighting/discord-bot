@@ -11,16 +11,22 @@ import { SupportSystemConfig } from '../config';
 import { 
     SupportCategoryId, 
     SupportTicketContext, 
-    SupportTicketService 
+    SupportTicketService,
+    TicketPriority 
 } from '../types';
+import { TicketPriorityServiceImpl } from './priority-service';
 
 /**
  * Implementation of the support ticket service
  */
 export class SupportTicketServiceImpl implements SupportTicketService {
+    private priorityService: TicketPriorityServiceImpl;
+    
     constructor(
         private config: SupportSystemConfig
-    ) {}
+    ) {
+        this.priorityService = new TicketPriorityServiceImpl();
+    }
 
     /**
      * Creates a new support ticket channel
@@ -68,6 +74,10 @@ export class SupportTicketServiceImpl implements SupportTicketService {
             ],
         });
 
+        // Set default priority (Low) and update channel name with emoji
+        await this.priorityService.createDefaultPriority(supportTicketChannel.id);
+        await this.priorityService.updateChannelName(supportTicketChannel, TicketPriority.Low);
+
         // Send initial information
         await this.sendInitialInformation(supportTicketChannel, context);
 
@@ -95,6 +105,9 @@ export class SupportTicketServiceImpl implements SupportTicketService {
             await this.saveTranscript(channel, closedBy, reason, sendFeedback);
         }
 
+        // Clean up priority data
+        await this.priorityService.removePriority(channel.id);
+
         await delay(this.config.timeouts.cleanupTimeoutMs);
 
         try {
@@ -117,9 +130,23 @@ export class SupportTicketServiceImpl implements SupportTicketService {
 
         const channelName = `${categoryId}-${userId}`.toLowerCase();
         const existingChannel = guild.channels.cache.find(
-            (channel) =>
-                channel.parentId === supportTicketsCategory.id &&
-                channel.name === channelName
+            (channel) => {
+                if (channel.parentId !== supportTicketsCategory.id) return false;
+                
+                // Check if channel name matches with or without priority emoji
+                const channelNameLower = channel.name.toLowerCase();
+                
+                // Direct match
+                if (channelNameLower === channelName) return true;
+                
+                // Check if it matches with priority emoji prefix
+                const priorityEmojis = ['🟢', '🟡', '🔴'];
+                for (const emoji of priorityEmojis) {
+                    if (channelNameLower === `${emoji}-${channelName}`) return true;
+                }
+                
+                return false;
+            }
         );
 
         return existingChannel as Discord.TextChannel || null;
@@ -132,18 +159,44 @@ export class SupportTicketServiceImpl implements SupportTicketService {
         channel: Discord.TextChannel,
         context: SupportTicketContext
     ): Promise<void> {
-        // This will be implemented by the specific category handlers
-        // For now, we'll send a basic message
-        const initialMessage = await channel.send({
-            content: [
-                `${context.owner}, welcome to your support ticket.`,
+        // Get priority context for SLA information
+        const priorityContext = await this.priorityService.getPriority(channel.id);
+        const priorityConfig = this.priorityService.getPriorityConfig(TicketPriority.Low);
+        
+        // Create initial embed with priority and SLA information
+        const initialEmbed = CustomEmbed.from({
+            color: priorityConfig.color,
+            title: `${priorityConfig.emoji} Support Ticket - ${priorityConfig.label}`,
+            description: [
+                `Welcome to your support ticket, ${context.owner}!`,
                 '',
-                'Our support staff are volunteers who generously donate their time.',
-                'Please do not \\@mention, harass, or otherwise annoy our support staff.',
+                '**Priority Information:**',
+                `• Current Priority: ${priorityConfig.label}`,
+                `• Expected Response Time: ${priorityConfig.slaHours} ${priorityConfig.slaHours === 1 ? 'hour' : 'hours'}`,
+                `• SLA Deadline: ${priorityContext ? `<t:${Math.floor(priorityContext.slaDeadline.getTime() / 1000)}:R>` : 'Not set'}`,
                 '',
-                'Please provide us with as much information as possible.',
-                'We are only as useful as the information you provide to us.',
+                '**Important Guidelines:**',
+                '• Our support staff are volunteers who generously donate their time',
+                '• Please do not @mention, harass, or otherwise annoy our support staff',
+                '• Provide as much information as possible to help us assist you',
+                '• Use `/priority` to change the priority level if needed',
             ].join('\n'),
+            fields: [
+                {
+                    name: 'Available Priority Levels',
+                    value: [
+                        '🟢 **Low Priority** - General questions (24 hours)',
+                        '🟡 **Medium Priority** - Issues affecting functionality (8 hours)',
+                        '🔴 **High Priority** - Critical issues needing immediate attention (1 hour)',
+                    ].join('\n'),
+                    inline: false,
+                },
+            ],
+            timestamp: new Date().toISOString(),
+        });
+
+        const initialMessage = await channel.send({
+            embeds: [initialEmbed],
         });
         
         await initialMessage.pin();
