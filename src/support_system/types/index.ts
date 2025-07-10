@@ -14,7 +14,7 @@ export enum SupportCategoryId {
     Transactions = 'TRANSACTIONS',
     PartnershipRequests = 'PARTNERS',
     Other = 'OTHER',
-    DevlopmentApplication = 'DEVAPP'
+    DevelopmentApplication = 'DEVAPP'
 }
 
 /**
