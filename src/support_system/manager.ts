@@ -5,12 +5,12 @@
 import * as Discord from 'discord.js';
 
 // Category handlers
-import { ProductIssuesConfig,ProductIssuesHandler } from './categories/issues';
-import { OtherQuestionsConfig,OtherQuestionsHandler } from './categories/other';
-import { PartnershipRequestsConfig,PartnershipRequestsHandler } from './categories/partnerships';
-import { AccountRecoveryConfig,AccountRecoveryHandler } from './categories/recovery';
-import { ProductTransactionsConfig,ProductTransactionsHandler } from './categories/transactions';
-import { ProductTransfersConfig,ProductTransfersHandler } from './categories/transfers';
+import { ProductIssuesConfig, ProductIssuesHandler } from './categories/issues';
+import { OtherQuestionsConfig, OtherQuestionsHandler } from './categories/other';
+import { PartnershipRequestsConfig, PartnershipRequestsHandler } from './categories/partnerships';
+import { AccountRecoveryConfig, AccountRecoveryHandler } from './categories/recovery';
+import { ProductTransactionsConfig, ProductTransactionsHandler } from './categories/transactions';
+import { ProductTransfersConfig, ProductTransfersHandler } from './categories/transfers';
 import { loadSupportSystemConfig } from './config';
 import { SupportCategoryRegistryImpl } from './core/registry';
 import { SupportTicketServiceImpl } from './core/ticket-service';
