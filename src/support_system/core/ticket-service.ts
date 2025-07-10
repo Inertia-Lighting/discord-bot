@@ -181,8 +181,8 @@ export class SupportTicketServiceImpl implements SupportTicketService {
         sendFeedback: boolean
     ): Promise<void> {
         // Extract ticket information from channel name
-        const ticketCategoryId = channel.name.match(/([a-zA-Z\-_])+(?![-_])\D/i)?.[0];
-        const ticketOwnerId = channel.name.match(/(?!.*-)?([0-9])+/i)?.[0];
+        const ticketCategoryId = channel.name.split('-')[0];
+        const ticketOwnerId = channel.name.split('-')[1];
         
         if (!ticketCategoryId || !ticketOwnerId) {
             throw new Error('Unable to extract ticket information from channel name!');
