@@ -133,7 +133,7 @@ export class TicketPriorityServiceImpl implements TicketPriorityService {
         const now = new Date();
         
         // Update in database
-        await prisma.ticketPriorities.updateMany({
+        await prisma.ticketPriorities.update({
             where: { channelId },
             data: {
                 lastStaffResponse: now,
