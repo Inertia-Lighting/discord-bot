@@ -2,6 +2,7 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved     //
 // ------------------------------------------------------------//
 
+import { Prisma } from '@root/lib/prisma';
 import type MongoDB from 'mongodb';
 
 // ------------------------------------------------------------//
