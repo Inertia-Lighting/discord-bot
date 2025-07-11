@@ -93,6 +93,14 @@ export default new CustomInteraction({
         const isTicketOwner = await isUserTicketOwner(support_channel, interaction.member);
         const hasStaffPermissions = support_channel.permissionsFor(interaction.member)?.has(Discord.PermissionFlagsBits.ManageChannels) ?? false;
 
+        // Debug logging
+        console.log('Priority command access check for', interaction.member.displayName, ':', {
+            channelName: support_channel.name,
+            isTicketOwner,
+            hasStaffPermissions,
+            userId: interaction.member.id
+        });
+
         if (!isTicketOwner && !hasStaffPermissions) {
             await interaction.editReply({
                 content: 'You can only change the priority of your own tickets, or you need staff permissions to change any ticket priority.',
@@ -119,12 +127,15 @@ export default new CustomInteraction({
             await interaction.editReply({
                 content: `✅ Successfully set ticket priority to **${newConfig.label}**.`,
             });
+            
+            // Log successful priority change for debugging
+            console.log(`Priority changed for channel ${support_channel.id} to ${priorityLevel} by ${interaction.member.displayName}`);
         } catch (error) {
             console.error('Error setting ticket priority:', error);
             
             let errorMessage = 'An error occurred while setting the ticket priority.';
             if (error instanceof Error) {
-                errorMessage = error.message;
+                errorMessage = `${error.message}`;
             }
             
             await interaction.editReply({
@@ -141,20 +152,32 @@ async function isUserTicketOwner(channel: Discord.TextChannel, member: Discord.G
     const channelName = channel.name;
     
     // Remove priority emoji if present
-    let baseName = channelName;
     const priorityEmojis = ['🟢', '🟡', '🔴', '⏸️'];
+    let nameWithoutEmoji = channelName;
     for (const emoji of priorityEmojis) {
         if (channelName.startsWith(emoji + '-')) {
-            baseName = channelName.substring(emoji.length + 1);
+            nameWithoutEmoji = channelName.substring(emoji.length + 1);
             break;
         }
     }
     
     // Extract user ID from channel name (format: categoryId-userId)
-    const parts = baseName.split('-');
+    const parts = nameWithoutEmoji.split('-');
     if (parts.length >= 2) {
         const ticketOwnerId = parts[parts.length - 1]; // Last part should be user ID
-        return member.id === ticketOwnerId;
+        const isOwner = member.id === ticketOwnerId;
+        
+        // Debug logging
+        console.log('Ticket ownership check:', {
+            channelName,
+            nameWithoutEmoji,
+            parts,
+            ticketOwnerId,
+            memberId: member.id,
+            isOwner
+        });
+        
+        return isOwner;
     }
     
     return false;
