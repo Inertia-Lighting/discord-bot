@@ -2,8 +2,8 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved     //
 // ------------------------------------------------------------//
 
-import type MongoDB from 'mongodb';
 import { Prisma } from '@root/lib/prisma';
+import type MongoDB from 'mongodb';
 
 // ------------------------------------------------------------//
 //                        Helper Types                         //
