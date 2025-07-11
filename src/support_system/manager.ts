@@ -199,23 +199,25 @@ export class SupportSystemManager {
         // Extract current ticket information from channel name
         let channelNameParts = channel.name.split('-');
         
-        // Handle priority emoji prefix
+        // Handle priority emoji prefix - remove it first
         const priorityEmojis = ['🟢', '🟡', '🔴', '⏸️'];
+        let nameWithoutEmoji = channel.name;
         for (const emoji of priorityEmojis) {
             if (channel.name.startsWith(emoji + '-')) {
-                // Remove emoji prefix and re-split
-                const nameWithoutEmoji = channel.name.substring(emoji.length + 1);
-                channelNameParts = nameWithoutEmoji.split('-');
+                nameWithoutEmoji = channel.name.substring(emoji.length + 1);
                 break;
             }
         }
         
-        if (channelNameParts.length < 2) {
+        // Now split the name without emoji
+        channelNameParts = nameWithoutEmoji.split('-');
+        
+        if (channelNameParts.length < 2 || channelNameParts[0] === '' || channelNameParts[channelNameParts.length - 1] === '') {
             throw new Error('Invalid ticket channel name format');
         }
 
         const currentCategoryId = channelNameParts[0].toUpperCase();
-        const userId = channelNameParts[1];
+        const userId = channelNameParts[channelNameParts.length - 1]; // Take the last part as user ID
 
         // Check if it's already the same type
         if (currentCategoryId === newCategoryId) {
@@ -226,11 +228,12 @@ export class SupportSystemManager {
         const currentPriority = await this.priorityService.getPriority(channel.id);
         const newChannelName = `${newCategoryId}-${userId}`.toLowerCase();
         
-        // If there's a priority, update the channel name with the priority emoji
+        // First update the channel name to the new format
+        await channel.setName(newChannelName);
+        
+        // Then if there's a priority, update the channel name with the priority emoji
         if (currentPriority) {
             await this.priorityService.updateChannelName(channel, currentPriority.priority);
-        } else {
-            await channel.setName(newChannelName);
         }
 
         // Update channel topic
