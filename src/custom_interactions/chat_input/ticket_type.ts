@@ -88,7 +88,6 @@ export default new CustomInteraction({
         }
 
         // Validate channel name format (should be like "ISSUES-123456789" or "🟢-ISSUES-123456789")
-        let channelNameParts = channel.name.split('-');
         
         // Handle priority emoji prefix - check if the channel name starts with an emoji
         const priorityEmojis = ['🟢', '🟡', '🔴', '⏸️'];
