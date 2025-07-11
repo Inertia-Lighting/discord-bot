@@ -3,6 +3,7 @@
 // ------------------------------------------------------------//
 
 import type MongoDB from 'mongodb';
+import { Prisma } from '@root/lib/prisma';
 
 // ------------------------------------------------------------//
 //                        Helper Types                         //
