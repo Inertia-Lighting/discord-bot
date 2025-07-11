@@ -13,6 +13,7 @@ The ticket priority system adds comprehensive priority management to Discord sup
 | Low      | 🟢    | 24 hours | Green | General questions and non-urgent issues |
 | Medium   | 🟡    | 8 hours  | Yellow | Issues affecting functionality |
 | High     | 🔴    | 1 hour   | Red | Critical issues needing immediate attention |
+| On Hold  | ⏸️    | No SLA   | Gray | Tickets paused pending user response or external dependencies |
 
 ### Key Functionality
 
@@ -33,7 +34,9 @@ The ticket priority system adds comprehensive priority management to Discord sup
 
 **Examples**:
 - `/priority level:medium` - Sets ticket to medium priority (8 hours SLA)
-- `/priority level:high` - Sets ticket to high priority (1 hour SLA)
+- `/priority level:high` - Sets ticket to high priority (1 hour SLA)  
+- `/priority level:onhold` - Sets ticket to on hold (no SLA, no escalation)
+- `/priority level:low` - Sets ticket to low priority (24 hours SLA)
 
 ## How It Works
 
@@ -54,6 +57,7 @@ The ticket priority system adds comprehensive priority management to Discord sup
 2. When SLA deadline passes, escalation begins
 3. Customer service role is pinged every 2 hours
 4. Escalation stops when staff responds
+5. **On Hold tickets are excluded from SLA monitoring and escalation**
 
 ### Staff Response Detection
 1. System monitors messages in ticket channels
@@ -81,6 +85,7 @@ enum TicketPriority {
     low
     medium
     high
+    onhold
 }
 ```
 
@@ -91,6 +96,7 @@ enum TicketPriority {
   - `🟢-issues-123456789` (Low priority)
   - `🟡-recovery-987654321` (Medium priority)
   - `🔴-transactions-555666777` (High priority)
+  - `⏸️-partners-444555666` (On Hold priority)
 
 ### Escalation Timeline
 1. **SLA Exceeded**: First escalation ping sent immediately

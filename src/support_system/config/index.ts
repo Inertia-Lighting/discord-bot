@@ -11,6 +11,7 @@ export interface SupportSystemConfig {
     channels: {
         ticketsCategoryId: string;
         transcriptsChannelId: string;
+        supportChannelId?: string;
     };
     roles: {
         staffRoleId: string;
@@ -59,6 +60,7 @@ export function loadSupportSystemConfig(): SupportSystemConfig {
         channels: {
             ticketsCategoryId: process.env.BOT_SUPPORT_TICKETS_CATEGORY_ID!,
             transcriptsChannelId: process.env.BOT_SUPPORT_TICKETS_TRANSCRIPTS_CHANNEL_ID!,
+            supportChannelId: process.env.BOT_SUPPORT_CHANNEL_ID,
         },
         roles: {
             staffRoleId: process.env.BOT_STAFF_ROLE_ID!,

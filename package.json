@@ -16,11 +16,12 @@
   "scripts": {
     "hook": "is-ci || husky install || true",
     "lint": "npx eslint src",
-    "clean": "run-script-os",
+    "clean": "rm -rf ./dist",
     "clean:windows": "if exist \".\\dist\" rmdir /s /q \".\\dist\"",
     "clean:linux": "rm -rf ./dist",
     "clean:default": "rm -rf ./dist",
-    "build": "yarn clean ; prisma generate --no-hints ; tsc --build",
+    "build": "rm -rf ./dist && tsc --build",
+    "build:full": "rm -rf ./dist && prisma generate --no-hints && tsc --build",
     "start": "node --trace-warnings --enable-source-maps --require module-alias/register ."
   },
   "devDependencies": {

@@ -10,7 +10,8 @@ import * as Discord from 'discord.js';
 export enum TicketPriority {
     Low = 'low',
     Medium = 'medium',
-    High = 'high'
+    High = 'high',
+    OnHold = 'onhold'
 }
 
 /**

@@ -75,20 +75,44 @@ export class ProductIssuesHandler extends BaseSupportCategoryHandler {
      * Validates the modal input for product issues
      */
     async validateInput(interaction: Discord.ModalSubmitInteraction<'cached'>): Promise<boolean> {
-        const product = interaction.fields.getTextInputValue('product');
-        const readMe = interaction.fields.getTextInputValue('read_me');
-        const http = interaction.fields.getTextInputValue('http');
-        const output = interaction.fields.getTextInputValue('output');
-        const issue = interaction.fields.getTextInputValue('issue');
+        try {
+            const product = interaction.fields.getTextInputValue('product');
+            const readMe = interaction.fields.getTextInputValue('read_me');
+            const http = interaction.fields.getTextInputValue('http');
+            const output = interaction.fields.getTextInputValue('output');
+            const issue = interaction.fields.getTextInputValue('issue');
 
-        // Basic validation
-        if (!product || product.length < 3) return false;
-        if (!readMe || !['yes', 'no'].includes(readMe.toLowerCase())) return false;
-        if (!http || !['yes', 'no', 'idk'].includes(http.toLowerCase())) return false;
-        if (!output || output.length < 5) return false;
-        if (!issue || issue.length < 1) return false;
+            // Basic validation with more detailed logging
+            if (!product || product.trim().length < 3) {
+                console.error(`Product validation failed: "${product}"`);
+                return false;
+            }
+            
+            if (!readMe || !['yes', 'no'].includes(readMe.trim().toLowerCase())) {
+                console.error(`ReadMe validation failed: "${readMe}"`);
+                return false;
+            }
+            
+            if (!http || !['yes', 'no', 'idk'].includes(http.trim().toLowerCase())) {
+                console.error(`HTTP validation failed: "${http}"`);
+                return false;
+            }
+            
+            if (!output || output.trim().length < 5) {
+                console.error(`Output validation failed: "${output}"`);
+                return false;
+            }
+            
+            if (!issue || issue.trim().length < 1) {
+                console.error(`Issue validation failed: "${issue}"`);
+                return false;
+            }
 
-        return true;
+            return true;
+        } catch (error) {
+            console.error('Error during validation:', error);
+            return false;
+        }
     }
 }
 

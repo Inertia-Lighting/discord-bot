@@ -140,7 +140,7 @@ export class SupportTicketServiceImpl implements SupportTicketService {
                 if (channelNameLower === channelName) return true;
                 
                 // Check if it matches with priority emoji prefix
-                const priorityEmojis = ['🟢', '🟡', '🔴'];
+                const priorityEmojis = ['🟢', '🟡', '🔴', '⏸️'];
                 for (const emoji of priorityEmojis) {
                     if (channelNameLower === `${emoji}-${channelName}`) return true;
                 }
@@ -188,6 +188,7 @@ export class SupportTicketServiceImpl implements SupportTicketService {
                         '🟢 **Low Priority** - General questions (24 hours)',
                         '🟡 **Medium Priority** - Issues affecting functionality (8 hours)',
                         '🔴 **High Priority** - Critical issues needing immediate attention (1 hour)',
+                        '⏸️ **On Hold** - Ticket is paused (No SLA)',
                     ].join('\n'),
                     inline: false,
                 },
@@ -195,11 +196,56 @@ export class SupportTicketServiceImpl implements SupportTicketService {
             timestamp: new Date().toISOString(),
         });
 
+        // Send initial message with user mention for notification
         const initialMessage = await channel.send({
+            content: `${context.owner} Your support ticket has been created! Please provide details about your issue below.`,
             embeds: [initialEmbed],
         });
         
         await initialMessage.pin();
+
+        // Post ticket link in main support channel
+        await this.postTicketLinkToSupportChannel(channel, context);
+    }
+
+    /**
+     * Posts a ticket link to the main support channel
+     */
+    private async postTicketLinkToSupportChannel(
+        channel: Discord.TextChannel,
+        context: SupportTicketContext
+    ): Promise<void> {
+        try {
+            // Check if support channel is configured
+            if (!this.config.channels.supportChannelId) {
+                console.log('Support channel not configured, skipping ticket link posting');
+                return;
+            }
+
+            const supportChannel = await channel.client.channels.fetch(this.config.channels.supportChannelId);
+            if (!supportChannel || !supportChannel.isTextBased() || !supportChannel.isSendable()) {
+                console.warn('Support channel not found or not sendable');
+                return;
+            }
+
+            const ticketLinkEmbed = CustomEmbed.from({
+                color: CustomEmbed.Color.Blue,
+                title: '🎫 New Support Ticket Created',
+                description: [
+                    `**User:** ${context.owner}`,
+                    `**Category:** ${context.categoryId}`,
+                    `**Channel:** ${Discord.channelMention(channel.id)}`,
+                    `**Created:** <t:${Math.floor(context.createdAt.getTime() / 1000)}:R>`,
+                ].join('\n'),
+                timestamp: new Date().toISOString(),
+            });
+
+            await supportChannel.send({
+                embeds: [ticketLinkEmbed],
+            });
+        } catch (error) {
+            console.error('Failed to post ticket link to support channel:', error);
+        }
     }
 
     /**
