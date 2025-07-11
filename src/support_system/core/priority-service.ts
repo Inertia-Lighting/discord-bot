@@ -307,7 +307,7 @@ export class TicketPriorityServiceImpl implements TicketPriorityService {
      * Removes priority context when ticket is closed
      */
     async removePriority(channelId: string): Promise<void> {
-        await prisma.ticketPriorities.deleteMany({
+        await prisma.ticketPriorities.delete({
             where: { channelId }
         });
         
