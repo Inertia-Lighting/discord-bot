@@ -17,7 +17,7 @@ COPY package.json yarn.lock .yarnrc.yml ./
 
 # Enable corepack to use the correct yarn version and install dependencies
 RUN corepack enable || true && \
-    yarn install --network-timeout 100000 || \
+    yarn install --immutable --network-timeout 100000 || \
     npm install --legacy-peer-deps --production=false || \
     echo "Some dependencies failed to install"
 
