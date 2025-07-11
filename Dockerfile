@@ -15,8 +15,11 @@ RUN apt-get update && apt-get install -y \
 # Copy package files
 COPY package.json yarn.lock .yarnrc.yml ./
 
-# Use npm instead of yarn to avoid corepack issues
-RUN npm install --legacy-peer-deps --production=false || echo "Some dependencies failed to install"
+# Enable corepack to use the correct yarn version and install dependencies
+RUN corepack enable || true && \
+    yarn install --network-timeout 100000 || \
+    npm install --legacy-peer-deps --production=false || \
+    echo "Some dependencies failed to install"
 
 # Copy source code
 COPY . .
@@ -27,10 +30,10 @@ RUN mkdir -p /usr/src/app/temporary && \
     mkdir -p /usr/src/app/src/lib/prisma
 
 # Try to generate Prisma client, fallback to mock if it fails
-RUN npx prisma generate --no-hints 2>/dev/null || echo "Prisma generate failed, using mock client"
+RUN yarn prisma generate --no-hints 2>/dev/null || echo "Prisma generate failed, using mock client"
 
 # Build the application, skip if it fails
-RUN npm run build || echo "Build failed, will handle at runtime"
+RUN yarn run build || echo "Build failed, will handle at runtime"
 
 # Create startup script that handles missing dependencies
 RUN echo '#!/bin/bash\n\
@@ -39,13 +42,13 @@ echo "Starting Discord Bot..."\n\
 # Try to generate Prisma client if missing\n\
 if [ ! -f "node_modules/.prisma/client/index.js" ]; then\n\
     echo "Attempting to generate Prisma client..."\n\
-    npx prisma generate --no-hints 2>/dev/null || echo "Prisma client generation failed"\n\
+    yarn prisma generate --no-hints 2>/dev/null || echo "Prisma client generation failed"\n\
 fi\n\
 \n\
 # Try to build if dist is missing or empty\n\
 if [ ! -d "dist" ] || [ -z "$(ls -A dist 2>/dev/null)" ]; then\n\
     echo "Building application..."\n\
-    npm run build 2>/dev/null || echo "Build failed"\n\
+    yarn run build 2>/dev/null || echo "Build failed"\n\
 fi\n\
 \n\
 # Start the application\n\
