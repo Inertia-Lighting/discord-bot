@@ -115,9 +115,9 @@ export default {
         setTimeout(() => CustomInteractionsManager.syncInteractionsToDiscord(client), 1 * 30_000);
 
         /* initialize support system escalation monitoring */
-        setTimeout(() => {
+        setTimeout(async () => {
             console.info('Initializing support system escalation monitoring');
-            supportSystemManager.initializeEscalationService(client);
+            await supportSystemManager.initializeEscalationService(client);
         }, 2 * 60_000); // Start after 2 minutes to ensure bot is fully ready
 
         /* set the product prices in the database after 1 minute */
