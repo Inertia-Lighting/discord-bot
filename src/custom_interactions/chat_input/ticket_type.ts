@@ -87,8 +87,22 @@ export default new CustomInteraction({
             return;
         }
 
-        // Validate channel name format (should be like "ISSUES-123456789")
-        const channelNameParts = support_channel.name.split('-');
+        // Validate channel name format (should be like "ISSUES-123456789" or "🟢-ISSUES-123456789")
+        let channelNameParts = channel.name.split('-');
+        
+        // Handle priority emoji prefix - check if the channel name starts with an emoji
+        const priorityEmojis = ['🟢', '🟡', '🔴', '⏸️'];
+        let nameWithoutEmoji = channel.name;
+        for (const emoji of priorityEmojis) {
+            if (channel.name.startsWith(emoji + '-')) {
+                nameWithoutEmoji = channel.name.substring(emoji.length + 1);
+                break;
+            }
+        }
+        
+        // Now split the name without emoji
+        channelNameParts = nameWithoutEmoji.split('-');
+        
         if (channelNameParts.length < 2) {
             await interaction.editReply({
                 content: 'Invalid ticket channel format. This does not appear to be a support ticket.',
