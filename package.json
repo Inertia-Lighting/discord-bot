@@ -20,8 +20,7 @@
     "clean:windows": "if exist \".\\dist\" rmdir /s /q \".\\dist\"",
     "clean:linux": "rm -rf ./dist",
     "clean:default": "rm -rf ./dist",
-    "build": "rm -rf ./dist && tsc --build",
-    "build:full": "rm -rf ./dist && prisma generate --no-hints && tsc --build",
+    "build": "rm -rf ./dist && prisma generate --no-hints && tsc --build",
     "start": "node --trace-warnings --enable-source-maps --require module-alias/register ."
   },
   "devDependencies": {
