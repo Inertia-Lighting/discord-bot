@@ -93,14 +93,6 @@ export default new CustomInteraction({
         const isTicketOwner = await isUserTicketOwner(support_channel, interaction.member);
         const hasStaffPermissions = support_channel.permissionsFor(interaction.member)?.has(Discord.PermissionFlagsBits.ManageChannels) ?? false;
 
-        // Debug logging
-        console.log('Priority command access check for', interaction.member.displayName, ':', {
-            channelName: support_channel.name,
-            isTicketOwner,
-            hasStaffPermissions,
-            userId: interaction.member.id
-        });
-
         if (!isTicketOwner && !hasStaffPermissions) {
             await interaction.editReply({
                 content: 'You can only change the priority of your own tickets, or you need staff permissions to change any ticket priority.',
@@ -129,7 +121,7 @@ export default new CustomInteraction({
             });
             
             // Log successful priority change for debugging
-            console.log(`Priority changed for channel ${support_channel.id} to ${priorityLevel} by ${interaction.member.displayName}`);
+            console.log('Priority changed for channel', support_channel.id, 'to', priorityLevel, 'by', interaction.member.displayName);
         } catch (error) {
             console.error('Error setting ticket priority:', error);
             
@@ -163,21 +155,9 @@ async function isUserTicketOwner(channel: Discord.TextChannel, member: Discord.G
     
     // Extract user ID from channel name (format: categoryId-userId)
     const parts = nameWithoutEmoji.split('-');
-    if (parts.length >= 2) {
+    if (parts.length >= 2 && parts[0] !== '' && parts[parts.length - 1] !== '') {
         const ticketOwnerId = parts[parts.length - 1]; // Last part should be user ID
-        const isOwner = member.id === ticketOwnerId;
-        
-        // Debug logging
-        console.log('Ticket ownership check:', {
-            channelName,
-            nameWithoutEmoji,
-            parts,
-            ticketOwnerId,
-            memberId: member.id,
-            isOwner
-        });
-        
-        return isOwner;
+        return member.id === ticketOwnerId;
     }
     
     return false;

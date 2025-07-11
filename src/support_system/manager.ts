@@ -212,7 +212,7 @@ export class SupportSystemManager {
         // Now split the name without emoji
         channelNameParts = nameWithoutEmoji.split('-');
         
-        if (channelNameParts.length < 2) {
+        if (channelNameParts.length < 2 || channelNameParts[0] === '' || channelNameParts[channelNameParts.length - 1] === '') {
             throw new Error('Invalid ticket channel name format');
         }
 
