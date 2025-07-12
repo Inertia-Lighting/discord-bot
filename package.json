@@ -16,17 +16,15 @@
   "scripts": {
     "hook": "is-ci || husky install || true",
     "lint": "npx eslint src",
-    "clean": "rm -rf ./dist",
+    "clean": "run-script-os",
     "clean:windows": "if exist \".\\dist\" rmdir /s /q \".\\dist\"",
     "clean:linux": "rm -rf ./dist",
     "clean:default": "rm -rf ./dist",
-    "build": "rm -rf ./dist && tsc --build",
-    "build:full": "rm -rf ./dist && prisma generate --no-hints && tsc --build",
+    "build": "yarn clean ; prisma generate --no-hints ; tsc --build",
     "start": "node --trace-warnings --enable-source-maps --require module-alias/register ."
   },
   "devDependencies": {
     "@stylistic/eslint-plugin": "^4.4.1",
-    "@types/node": "^24.0.13",
     "@types/string-similarity": "4.0.2",
     "@types/uuid": "10.0.0",
     "@typescript-eslint/eslint-plugin": "8.34.0",
