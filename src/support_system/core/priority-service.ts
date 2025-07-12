@@ -325,24 +325,7 @@ export class TicketPriorityServiceImpl implements TicketPriorityService {
      * Restores priority states from database on bot startup
      */
     async restorePriorityStates(): Promise<void> {
-        try {
-            const tickets = await prisma.ticketPriorities.findMany();
-            
-            // Initialize in-memory state
-            this.priorityContexts = new Map<string, TicketPriorityContext>();
-            for (const ticket of tickets) {
-                this.priorityContexts.set(ticket.channelId, {
-                    channelId: ticket.channelId,
-                    priority: ticket.priority as TicketPriority,
-                    slaDeadline: ticket.slaDeadline,
-                    escalationCount: ticket.escalationCount,
-                    userPingCount: 0 // Default value, can be updated later
-                });
-            }
-            
-            console.log(`Restored ${tickets.length} ticket priority states from database`);
-        } catch (error) {
-            console.error('Failed to restore priority states from database:', error);
-        }
-    }
+    console.log('restorePriorityStates is not implemented.')
+    return;
+  }
 }
