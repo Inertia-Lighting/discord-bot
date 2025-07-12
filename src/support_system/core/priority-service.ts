@@ -51,6 +51,10 @@ const PRIORITY_CONFIGS: Record<TicketPriority, PriorityConfig> = {
  * Implementation of the ticket priority service with database persistence
  */
 export class TicketPriorityServiceImpl implements TicketPriorityService {
+    /**
+     * In-memory cache of priority contexts for performance
+     */
+    private priorityContexts: Map<string, TicketPriorityContext> = new Map();
     
     /**
      * Sets the priority for a ticket channel
