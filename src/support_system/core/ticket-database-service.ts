@@ -42,7 +42,6 @@ export class SupportTicketDatabaseService {
             where: { channelId },
             data: { 
                 categoryId: newCategoryId,
-                updatedAt: new Date(),
             },
         });
     }
