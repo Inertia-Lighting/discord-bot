@@ -91,16 +91,16 @@ export default new CustomInteraction({
         
         // Handle priority emoji prefix - check if the channel name starts with an emoji
         const priorityEmojis = ['🟢', '🟡', '🔴', '⏸️'];
-        let nameWithoutEmoji = channel.name;
+        let nameWithoutEmoji = support_channel.name;
         for (const emoji of priorityEmojis) {
-            if (channel.name.startsWith(emoji + '-')) {
-                nameWithoutEmoji = channel.name.substring(emoji.length + 1);
+            if (support_channel.name.startsWith(emoji + '-')) {
+                nameWithoutEmoji = support_channel.name.substring(emoji.length + 1);
                 break;
             }
         }
         
         // Now split the name without emoji
-        channelNameParts = nameWithoutEmoji.split('-');
+        let channelNameParts = nameWithoutEmoji.split('-');
         
         if (channelNameParts.length < 2) {
             await interaction.editReply({
