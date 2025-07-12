@@ -139,7 +139,7 @@ export class SupportTicketDatabaseService {
     /**
      * Gets a ticket by channel ID
      */
-    async getTicket(channelId: string): Promise<any | null> {
+    async getTicket(channelId: string): Promise<SupportTicket | null> {
         return await prisma.supportTickets.findUnique({
             where: { channelId },
         });
