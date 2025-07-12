@@ -82,7 +82,7 @@ export class TicketPriorityServiceImpl implements TicketPriorityService {
         return {
             channelId: ticket.channelId,
             priority: ticket.priority as TicketPriority,
-            slaDeadline: ticket.slaDeadline || new Date(),
+            slaDeadline: ticket.slaDeadline ?? undefined,
             lastStaffResponse: ticket.lastStaffResponse || undefined,
             lastUserResponse: ticket.lastUserResponse || undefined,
             escalationStarted: ticket.escalationStarted || undefined,
