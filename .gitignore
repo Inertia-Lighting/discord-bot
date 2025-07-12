@@ -42,3 +42,7 @@ start_bot.bat
 .yarn/install-state.gz
 src/lib/prisma
 tsconfig.tsbuildinfo
+
+# Test files
+test-*.js
+test-*.ts

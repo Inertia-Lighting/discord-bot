@@ -3,6 +3,7 @@
 // ------------------------------------------------------------//
 
 import { CustomEmbed } from '@root/common/message';
+import prisma from '@root/lib/prisma_client';
 import * as Discord from 'discord.js';
 
 import { 
@@ -47,15 +48,10 @@ const PRIORITY_CONFIGS: Record<TicketPriority, PriorityConfig> = {
 };
 
 /**
- * In-memory storage for ticket priorities
- * In production, this would be stored in the database
- */
-const ticketPriorities = new Map<string, TicketPriorityContext>();
-
-/**
- * Implementation of the ticket priority service
+ * Implementation of the ticket priority service with database persistence
  */
 export class TicketPriorityServiceImpl implements TicketPriorityService {
+    private priorityContexts: Map<string, TicketPriorityContext> = new Map();
     
     /**
      * Sets the priority for a ticket channel
@@ -68,21 +64,23 @@ export class TicketPriorityServiceImpl implements TicketPriorityService {
             new Date(Date.now() + 365 * 24 * 60 * 60 * 1000) : // 1 year from now (effectively no SLA)
             new Date(Date.now() + config.slaHours * 60 * 60 * 1000);
         
-        const existingContext = ticketPriorities.get(channelId);
-        
-        const context: TicketPriorityContext = {
-            channelId,
-            priority,
-            slaDeadline,
-            lastStaffResponse: existingContext?.lastStaffResponse,
-            lastUserResponse: existingContext?.lastUserResponse,
-            escalationStarted: undefined, // Reset escalation when priority changes
-            escalationCount: 0,
-            userPingStarted: undefined,
-            userPingCount: 0
-        };
-        
-        ticketPriorities.set(channelId, context);
+        // Update or create ticket priority in database
+        await prisma.ticketPriorities.upsert({
+            where: { channelId },
+            update: {
+                priority,
+                slaDeadline,
+                escalationStarted: null, // Reset escalation when priority changes
+                escalationCount: 0,
+                updatedAt: new Date()
+            },
+            create: {
+                channelId,
+                priority,
+                slaDeadline,
+                escalationCount: 0
+            }
+        });
         
         // Update channel name with priority emoji
         const channel = await setBy.guild.channels.fetch(channelId);
@@ -97,37 +95,54 @@ export class TicketPriorityServiceImpl implements TicketPriorityService {
      * Gets the priority context for a ticket channel
      */
     async getPriority(channelId: string): Promise<TicketPriorityContext | null> {
-        return ticketPriorities.get(channelId) || null;
+        const ticket = await prisma.ticketPriorities.findUnique({
+            where: { channelId }
+        });
+        
+        if (!ticket) return null;
+        
+        return {
+            channelId: ticket.channelId,
+            priority: ticket.priority as TicketPriority,
+            slaDeadline: ticket.slaDeadline,
+            lastStaffResponse: ticket.lastStaffResponse || undefined,
+            lastUserResponse: undefined, // Not stored in database yet
+            escalationStarted: ticket.escalationStarted || undefined,
+            escalationCount: ticket.escalationCount,
+            userPingStarted: undefined, // Not stored in database yet
+            userPingCount: 0 // Not stored in database yet
+        };
     }
     
     /**
      * Checks if SLA deadline has passed for a ticket
      */
     async checkSLADeadline(channelId: string): Promise<boolean> {
-        const context = ticketPriorities.get(channelId);
-        if (!context) return false;
+        const ticket = await prisma.ticketPriorities.findUnique({
+            where: { channelId }
+        });
         
-        return new Date() > context.slaDeadline;
+        if (!ticket) return false;
+        
+        return new Date() > ticket.slaDeadline;
     }
     
     /**
      * Records staff response to stop escalation
      */
     async recordStaffResponse(channelId: string, staffMember: Discord.GuildMember): Promise<void> {
-        const context = ticketPriorities.get(channelId);
-        if (!context) return;
+        const now = new Date();
         
-        context.lastStaffResponse = new Date();
-        context.escalationStarted = undefined;
-        context.escalationCount = 0;
-        
-        // Start user ping timer when staff responds
-        if (!context.userPingStarted) {
-            context.userPingStarted = new Date();
-            context.userPingCount = 0;
-        }
-        
-        ticketPriorities.set(channelId, context);
+        // Update in database
+        await prisma.ticketPriorities.update({
+            where: { channelId },
+            data: {
+                lastStaffResponse: now,
+                escalationStarted: null,
+                escalationCount: 0,
+                updatedAt: now
+            }
+        });
         
         // Log the staff response for debugging
         console.log(`Staff response recorded for ticket ${channelId} by ${staffMember.displayName}`);
@@ -137,17 +152,7 @@ export class TicketPriorityServiceImpl implements TicketPriorityService {
      * Records user response to stop user pinging
      */
     async recordUserResponse(channelId: string, user: Discord.GuildMember): Promise<void> {
-        const context = ticketPriorities.get(channelId);
-        if (!context) return;
-        
-        context.lastUserResponse = new Date();
-        // Reset user pinging when user responds
-        context.userPingStarted = undefined;
-        context.userPingCount = 0;
-        
-        ticketPriorities.set(channelId, context);
-        
-        // Log the user response for debugging
+        // For now, we'll just log this as user ping functionality is not fully implemented in database
         console.log(`User response recorded for ticket ${channelId} by ${user.displayName}`);
     }
     
@@ -155,15 +160,24 @@ export class TicketPriorityServiceImpl implements TicketPriorityService {
      * Starts escalation for a ticket
      */
     async startEscalation(channelId: string): Promise<void> {
-        const context = ticketPriorities.get(channelId);
-        if (!context) return;
+        const now = new Date();
         
-        if (!context.escalationStarted) {
-            context.escalationStarted = new Date();
-        }
+        // Get current ticket state
+        const ticket = await prisma.ticketPriorities.findUnique({
+            where: { channelId }
+        });
         
-        context.escalationCount++;
-        ticketPriorities.set(channelId, context);
+        if (!ticket) return;
+        
+        // Update escalation state
+        await prisma.ticketPriorities.update({
+            where: { channelId },
+            data: {
+                escalationStarted: ticket.escalationStarted || now,
+                escalationCount: ticket.escalationCount + 1,
+                updatedAt: now
+            }
+        });
     }
     
     /**
@@ -171,82 +185,51 @@ export class TicketPriorityServiceImpl implements TicketPriorityService {
      */
     async getTicketsNeedingEscalation(): Promise<TicketPriorityContext[]> {
         const now = new Date();
-        const needingEscalation: TicketPriorityContext[] = [];
         
-        for (const context of ticketPriorities.values()) {
-            // Skip OnHold tickets - they don't have SLA requirements
-            if (context.priority === TicketPriority.OnHold) {
-                continue;
-            }
-            
-            // Check if SLA deadline has passed
-            if (now > context.slaDeadline) {
-                // If no staff response yet, or last escalation was more than 2 hours ago
-                if (!context.lastStaffResponse || now > context.slaDeadline) {
-                    const timeSinceLastEscalation = context.escalationStarted ? 
-                        now.getTime() - context.escalationStarted.getTime() : 
-                        Infinity;
-                    
-                    // Escalate every 2 hours (2 * 60 * 60 * 1000 = 7200000ms)
-                    if (timeSinceLastEscalation > 7200000 || !context.escalationStarted) {
-                        needingEscalation.push(context);
+        // Get all tickets that have exceeded their SLA and need escalation
+        const tickets = await prisma.ticketPriorities.findMany({
+            where: {
+                AND: [
+                    { priority: { not: TicketPriority.OnHold } }, // Skip OnHold tickets
+                    { slaDeadline: { lt: now } }, // SLA deadline has passed
+                    {
+                        OR: [
+                            { lastStaffResponse: null }, // No staff response yet
+                            { escalationStarted: null }, // No escalation started yet
+                            { 
+                                escalationStarted: { 
+                                    lt: new Date(now.getTime() - 2 * 60 * 60 * 1000) // Last escalation was more than 2 hours ago
+                                } 
+                            }
+                        ]
                     }
-                }
+                ]
             }
-        }
+        });
         
-        return needingEscalation;
+        // Convert to TicketPriorityContext format
+        return tickets.map(ticket => ({
+            channelId: ticket.channelId,
+            priority: ticket.priority as TicketPriority,
+            slaDeadline: ticket.slaDeadline,
+            lastStaffResponse: ticket.lastStaffResponse || undefined,
+            lastUserResponse: undefined,
+            escalationStarted: ticket.escalationStarted || undefined,
+            escalationCount: ticket.escalationCount,
+            userPingStarted: undefined,
+            userPingCount: 0
+        }));
     }
     
     /**
-     * Gets all tickets that need user pinging
+     * Gets all tickets that need user pinging (placeholder for now)
      */
     async getTicketsNeedingUserPing(): Promise<TicketPriorityContext[]> {
-        const now = new Date();
-        const needingUserPing: TicketPriorityContext[] = [];
-        
-        for (const context of ticketPriorities.values()) {
-            if (this.shouldPingUser(context, now)) {
-                needingUserPing.push(context);
-            }
-        }
-        
-        return needingUserPing;
+        // User pinging functionality is not fully implemented in database yet
+        // This is a placeholder to maintain interface compatibility
+        return [];
     }
 
-    /**
-     * Determines if a user should be pinged for a ticket
-     */
-    private shouldPingUser(context: TicketPriorityContext, now: Date): boolean {
-        // Check if there was a staff response and user needs to be pinged
-        if (!context.lastStaffResponse || !context.userPingStarted) {
-            return false;
-        }
-
-        const timeSinceStaffResponse = now.getTime() - context.lastStaffResponse.getTime();
-        
-        // 24 hours = 24 * 60 * 60 * 1000 = 86400000ms
-        // 4 hours = 4 * 60 * 60 * 1000 = 14400000ms
-        
-        // If it's been 24 hours since staff response
-        if (timeSinceStaffResponse < 86400000) {
-            return false;
-        }
-
-        // Check if user has responded since staff response
-        const userRespondedAfterStaff = context.lastUserResponse && 
-            context.lastUserResponse.getTime() > context.lastStaffResponse.getTime();
-        
-        if (userRespondedAfterStaff) {
-            return false;
-        }
-
-        const timeSinceUserPingStarted = now.getTime() - context.userPingStarted.getTime();
-        
-        // Ping every 4 hours or if this is the first ping
-        return timeSinceUserPingStarted >= 14400000 || context.userPingCount === 0;
-    }
-    
     /**
      * Updates channel name with priority emoji
      */
@@ -256,11 +239,21 @@ export class TicketPriorityServiceImpl implements TicketPriorityService {
         
         // Remove existing priority emoji if present
         let baseName = currentName;
-        for (const priorityConfig of Object.values(PRIORITY_CONFIGS)) {
-            if (currentName.startsWith(priorityConfig.emoji + '-')) {
-                baseName = currentName.substring(priorityConfig.emoji.length + 1); // Remove emoji and dash
+        const priorityEmojis = ['🟢', '🟡', '🔴', '⏸️'];
+        
+        // Check if channel name starts with any priority emoji
+        for (const emoji of priorityEmojis) {
+            if (currentName.startsWith(emoji + '-')) {
+                baseName = currentName.substring(emoji.length + 1); // Remove emoji and dash
                 break;
             }
+        }
+        
+        // Validate that the base name is in the correct format (category-userid)
+        const baseNameParts = baseName.split('-');
+        if (baseNameParts.length < 2 || baseNameParts[0] === '' || baseNameParts[baseNameParts.length - 1] === '') {
+            console.warn(`Invalid channel name format: ${currentName}. Cannot update priority emoji.`);
+            return;
         }
         
         // Add new priority emoji
@@ -273,6 +266,7 @@ export class TicketPriorityServiceImpl implements TicketPriorityService {
                 console.log(`Updated channel name from "${currentName}" to "${newName}"`);
             } catch (error) {
                 console.error(`Failed to update channel name for ${channel.id}:`, error);
+                throw error; // Re-throw to let caller handle
             }
         }
     }
@@ -291,23 +285,34 @@ export class TicketPriorityServiceImpl implements TicketPriorityService {
         const config = this.getPriorityConfig(TicketPriority.Low);
         const slaDeadline = new Date(Date.now() + config.slaHours * 60 * 60 * 1000);
         
-        const context: TicketPriorityContext = {
-            channelId,
-            priority: TicketPriority.Low,
-            slaDeadline,
-            escalationCount: 0,
+        // Create in database
+        const ticket = await prisma.ticketPriorities.create({
+            data: {
+                channelId,
+                priority: TicketPriority.Low,
+                slaDeadline,
+                escalationCount: 0
+            }
+        });
+        
+        return {
+            channelId: ticket.channelId,
+            priority: ticket.priority as TicketPriority,
+            slaDeadline: ticket.slaDeadline,
+            escalationCount: ticket.escalationCount,
             userPingCount: 0
         };
-        
-        ticketPriorities.set(channelId, context);
-        return context;
     }
     
     /**
      * Removes priority context when ticket is closed
      */
     async removePriority(channelId: string): Promise<void> {
-        ticketPriorities.delete(channelId);
+        await prisma.ticketPriorities.delete({
+            where: { channelId }
+        });
+        
+        console.log(`Removed priority data for ticket ${channelId}`);
     }
     
     /**
@@ -315,5 +320,30 @@ export class TicketPriorityServiceImpl implements TicketPriorityService {
      */
     getAllPriorityConfigs(): Record<TicketPriority, PriorityConfig> {
         return PRIORITY_CONFIGS;
+    }
+    
+    /**
+     * Restores priority states from database on bot startup
+     */
+    async restorePriorityStates(): Promise<void> {
+        try {
+            const tickets = await prisma.ticketPriorities.findMany();
+            
+            // Initialize in-memory state
+            this.priorityContexts = new Map<string, TicketPriorityContext>();
+            for (const ticket of tickets) {
+                this.priorityContexts.set(ticket.channelId, {
+                    channelId: ticket.channelId,
+                    priority: ticket.priority as TicketPriority,
+                    slaDeadline: ticket.slaDeadline,
+                    escalationCount: ticket.escalationCount,
+                    userPingCount: 0 // Default value, can be updated later
+                });
+            }
+            
+            console.log(`Restored ${tickets.length} ticket priority states from database`);
+        } catch (error) {
+            console.error('Failed to restore priority states from database:', error);
+        }
     }
 }

@@ -45,7 +45,10 @@ export class SupportSystemManager {
     /**
      * Initializes escalation monitoring service
      */
-    initializeEscalationService(client: Discord.Client): void {
+    async initializeEscalationService(client: Discord.Client): Promise<void> {
+        // Restore priority states from database first
+        await this.priorityService.restorePriorityStates();
+        
         const escalationService = getEscalationService(client);
         escalationService.start();
     }

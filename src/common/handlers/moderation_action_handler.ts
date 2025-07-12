@@ -2,7 +2,7 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 // ------------------------------------------------------------//
 
-import { Prisma } from '../../lib/prisma';
+import { Prisma } from '@prisma/client';
 import prisma from '../../lib/prisma_client';
 
 // ------------------------------------------------------------//

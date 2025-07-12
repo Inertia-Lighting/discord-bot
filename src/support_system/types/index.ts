@@ -253,4 +253,9 @@ export interface TicketPriorityService {
      * Gets priority configuration
      */
     getPriorityConfig(priority: TicketPriority): PriorityConfig;
+    
+    /**
+     * Restores priority states from database on bot startup
+     */
+    restorePriorityStates(): Promise<void>;
 }

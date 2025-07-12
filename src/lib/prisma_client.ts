@@ -1,6 +1,6 @@
 // import { createHmac } from 'node:crypto';
 
-import { PrismaClient } from './prisma';
+import { PrismaClient } from '@prisma/client';
 
 
 // import SnowflakeGenerator from './SnowflakeGenerator';v
