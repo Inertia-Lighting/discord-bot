@@ -15,7 +15,7 @@ RUN apk add --no-cache python3 make g++
 RUN yarn install
 
 # Build the bot
-RUN yarn build
+RUN yarn build:full
 
 # Create tmp directory
 RUN mkdir -p /usr/src/app/temporary
