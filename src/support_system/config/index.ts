@@ -11,6 +11,7 @@ export interface SupportSystemConfig {
     channels: {
         ticketsCategoryId: string;
         transcriptsChannelId: string;
+        slaNotificationsChannelId: string;
         supportChannelId?: string;
     };
     roles: {
@@ -40,6 +41,7 @@ export function loadSupportSystemConfig(): SupportSystemConfig {
     const requiredEnvVars = [
         'BOT_SUPPORT_TICKETS_CATEGORY_ID',
         'BOT_SUPPORT_TICKETS_TRANSCRIPTS_CHANNEL_ID',
+        'BOT_SUPPORT_TICKETS_SLA_NOTIFICATIONS_CHANNEL_ID',
         'BOT_STAFF_ROLE_ID',
         'BOT_CUSTOMER_SERVICE_ROLE_ID',
         'BOT_SUPPORT_STAFF_DATABASE_ROLE_ID',
@@ -60,6 +62,7 @@ export function loadSupportSystemConfig(): SupportSystemConfig {
         channels: {
             ticketsCategoryId: process.env.BOT_SUPPORT_TICKETS_CATEGORY_ID!,
             transcriptsChannelId: process.env.BOT_SUPPORT_TICKETS_TRANSCRIPTS_CHANNEL_ID!,
+            slaNotificationsChannelId: process.env.BOT_SUPPORT_TICKETS_SLA_NOTIFICATIONS_CHANNEL_ID!,
             supportChannelId: process.env.BOT_SUPPORT_CHANNEL_ID,
         },
         roles: {

@@ -156,6 +156,21 @@ Environment variables are centralized in the configuration service. To add new v
 2. Add to the configuration object structure
 3. Update the `SupportSystemConfig` interface if needed
 
+### Required Environment Variables
+
+The following environment variables are required for the support system:
+
+- `BOT_SUPPORT_TICKETS_CATEGORY_ID` - Discord category ID for support tickets
+- `BOT_SUPPORT_TICKETS_TRANSCRIPTS_CHANNEL_ID` - Discord channel ID for ticket transcripts
+- `BOT_SUPPORT_TICKETS_SLA_NOTIFICATIONS_CHANNEL_ID` - Discord channel ID for SLA notifications
+- `BOT_STAFF_ROLE_ID` - Discord role ID for general staff
+- `BOT_CUSTOMER_SERVICE_ROLE_ID` - Discord role ID for customer service
+- `BOT_SUPPORT_STAFF_DATABASE_ROLE_ID` - Discord role ID for database support staff
+- `BOT_SUPPORT_STAFF_OTHER_ROLE_ID` - Discord role ID for other support staff
+- `BOT_SUPPORT_STAFF_PRODUCT_ISSUES_ROLE_ID` - Discord role ID for product issues support staff
+- `BOT_SUPPORT_STAFF_PRODUCT_PURCHASES_ROLE_ID` - Discord role ID for product purchases support staff
+- `BOT_SUPPORT_STAFF_PARTNERSHIP_REQUESTS_ROLE_ID` - Discord role ID for partnership requests support staff
+
 ## Benefits
 
 ### 1. Modularity
@@ -192,6 +207,31 @@ The new system is designed to be backward compatible:
 - User experience remains the same
 
 The old `support_system_handler.ts` can be safely removed after the new system is verified to work correctly.
+
+## Database-Driven Workflows
+
+The support system now uses a comprehensive database-driven approach for ticket management:
+
+### Creation Workflow
+1. **Ticket Creation**: When a support ticket is created, it's stored in the database with relevant metadata
+2. **No Initial Priority**: Tickets start without a priority set
+3. **Staff Message Restriction**: Staff cannot send messages in the channel until a priority is set
+4. **Channel Creation**: Discord channel is created with proper permissions
+
+### Command Workflows
+- **`/ticket_type` command**: Updates ticket type metadata in the database and reflects changes in the channel
+- **`/priority` command**: Updates priority metadata in database and channel; SLA countdown starts from first use of this command
+- **`/close_ticket` command**: Updates database as needed, deletes the ticket channel, sends transcript to appropriate locations with feedback request
+
+### SLA Notification Workflows
+- **Staff Non-Response**: If support staff do not respond within SLA, ping relevant ticket role every 24 hours in the ticket channel
+- **Half-SLA Notifications**: If support staff do not respond within half the SLA time after ticket owner sends a message, ping relevant ticket role every 24 hours in the SLA notification channel
+- **User Inactivity**: If ticket owner does not respond within 24 hours after a staff message, ping ticket owner every 24 hours in the ticket channel as a reminder
+- **Auto-Close**: If ticket owner's last message is over 7 days old (and a staff response has come after that), auto-close the ticket with no feedback requested
+
+### Startup Cleanup
+- **Orphaned Tickets**: On bot startup, check all open tickets in the database; if the associated Discord channel doesn't exist, delete the ticket record
+- **Data Integrity**: Ensures database and Discord state remain synchronized
 
 ## Error Handling
 

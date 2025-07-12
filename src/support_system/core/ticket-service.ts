@@ -15,6 +15,7 @@ import {
     TicketPriority 
 } from '../types';
 import { TicketPriorityServiceImpl } from './priority-service';
+import { supportTicketDatabaseService } from './ticket-database-service';
 
 /**
  * Implementation of the support ticket service
@@ -74,9 +75,12 @@ export class SupportTicketServiceImpl implements SupportTicketService {
             ],
         });
 
-        // Set default priority (Low) and update channel name with emoji
-        await this.priorityService.createDefaultPriority(supportTicketChannel.id);
-        await this.priorityService.updateChannelName(supportTicketChannel, TicketPriority.Low);
+        // Create ticket in database with no priority initially
+        await supportTicketDatabaseService.createTicket(
+            supportTicketChannel.id, 
+            owner.id, 
+            categoryId
+        );
 
         // Send initial information
         await this.sendInitialInformation(supportTicketChannel, context);
@@ -105,8 +109,8 @@ export class SupportTicketServiceImpl implements SupportTicketService {
             await this.saveTranscript(channel, closedBy, reason, sendFeedback);
         }
 
-        // Clean up priority data
-        await this.priorityService.removePriority(channel.id);
+        // Clean up ticket data from database
+        await supportTicketDatabaseService.deleteTicket(channel.id);
 
         await delay(this.config.timeouts.cleanupTimeoutMs);
 

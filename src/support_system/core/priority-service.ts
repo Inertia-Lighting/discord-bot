@@ -12,6 +12,7 @@ import {
     TicketPriorityContext,
     TicketPriorityService
 } from '../types';
+import { supportTicketDatabaseService } from './ticket-database-service';
 
 /**
  * Priority configurations with SLA and visual indicators
@@ -58,28 +59,8 @@ export class TicketPriorityServiceImpl implements TicketPriorityService {
     async setPriority(channelId: string, priority: TicketPriority, setBy: Discord.GuildMember): Promise<void> {
         const config = this.getPriorityConfig(priority);
         
-        // Calculate SLA deadline - OnHold tickets have no SLA
-        const slaDeadline = priority === TicketPriority.OnHold ? 
-            new Date(Date.now() + 365 * 24 * 60 * 60 * 1000) : // 1 year from now (effectively no SLA)
-            new Date(Date.now() + config.slaHours * 60 * 60 * 1000);
-        
-        // Update or create ticket priority in database
-        await prisma.ticketPriorities.upsert({
-            where: { channelId },
-            update: {
-                priority,
-                slaDeadline,
-                escalationStarted: null, // Reset escalation when priority changes
-                escalationCount: 0,
-                updatedAt: new Date()
-            },
-            create: {
-                channelId,
-                priority,
-                slaDeadline,
-                escalationCount: 0
-            }
-        });
+        // Use the new database service to set priority
+        await supportTicketDatabaseService.setPriority(channelId, priority, config.slaHours);
         
         // Update channel name with priority emoji
         const channel = await setBy.guild.channels.fetch(channelId);
@@ -94,22 +75,20 @@ export class TicketPriorityServiceImpl implements TicketPriorityService {
      * Gets the priority context for a ticket channel
      */
     async getPriority(channelId: string): Promise<TicketPriorityContext | null> {
-        const ticket = await prisma.ticketPriorities.findUnique({
-            where: { channelId }
-        });
+        const ticket = await supportTicketDatabaseService.getTicket(channelId);
         
         if (!ticket) return null;
         
         return {
             channelId: ticket.channelId,
             priority: ticket.priority as TicketPriority,
-            slaDeadline: ticket.slaDeadline,
+            slaDeadline: ticket.slaDeadline || new Date(),
             lastStaffResponse: ticket.lastStaffResponse || undefined,
-            lastUserResponse: undefined, // Not stored in database yet
+            lastUserResponse: ticket.lastUserResponse || undefined,
             escalationStarted: ticket.escalationStarted || undefined,
-            escalationCount: ticket.escalationCount,
-            userPingStarted: undefined, // Not stored in database yet
-            userPingCount: 0 // Not stored in database yet
+            escalationCount: ticket.escalationCount || 0,
+            userPingStarted: ticket.userPingStarted || undefined,
+            userPingCount: ticket.userPingCount || 0
         };
     }
     
@@ -117,11 +96,9 @@ export class TicketPriorityServiceImpl implements TicketPriorityService {
      * Checks if SLA deadline has passed for a ticket
      */
     async checkSLADeadline(channelId: string): Promise<boolean> {
-        const ticket = await prisma.ticketPriorities.findUnique({
-            where: { channelId }
-        });
+        const ticket = await supportTicketDatabaseService.getTicket(channelId);
         
-        if (!ticket) return false;
+        if (!ticket || !ticket.slaDeadline) return false;
         
         return new Date() > ticket.slaDeadline;
     }
@@ -151,82 +128,54 @@ export class TicketPriorityServiceImpl implements TicketPriorityService {
      * Records user response to stop user pinging
      */
     async recordUserResponse(channelId: string, user: Discord.GuildMember): Promise<void> {
-        // For now, we'll just log this as user ping functionality is not fully implemented in database
-        console.log(`User response recorded for ticket ${channelId} by ${user.displayName}`);
+        await supportTicketDatabaseService.recordUserResponse(channelId);
     }
     
     /**
      * Starts escalation for a ticket
      */
     async startEscalation(channelId: string): Promise<void> {
-        const now = new Date();
-        
-        // Get current ticket state
-        const ticket = await prisma.ticketPriorities.findUnique({
-            where: { channelId }
-        });
-        
-        if (!ticket) return;
-        
-        // Update escalation state
-        await prisma.ticketPriorities.update({
-            where: { channelId },
-            data: {
-                escalationStarted: ticket.escalationStarted || now,
-                escalationCount: ticket.escalationCount + 1,
-                updatedAt: now
-            }
-        });
+        await supportTicketDatabaseService.startEscalation(channelId);
     }
     
     /**
      * Gets all tickets that need escalation
      */
     async getTicketsNeedingEscalation(): Promise<TicketPriorityContext[]> {
-        const now = new Date();
-        
-        // Get all tickets that have exceeded their SLA and need escalation
-        const tickets = await prisma.ticketPriorities.findMany({
-            where: {
-                AND: [
-                    { priority: { not: TicketPriority.OnHold } }, // Skip OnHold tickets
-                    { slaDeadline: { lt: now } }, // SLA deadline has passed
-                    {
-                        OR: [
-                            { lastStaffResponse: null }, // No staff response yet
-                            { escalationStarted: null }, // No escalation started yet
-                            { 
-                                escalationStarted: { 
-                                    lt: new Date(now.getTime() - 2 * 60 * 60 * 1000) // Last escalation was more than 2 hours ago
-                                } 
-                            }
-                        ]
-                    }
-                ]
-            }
-        });
+        const tickets = await supportTicketDatabaseService.getTicketsNeedingEscalation();
         
         // Convert to TicketPriorityContext format
         return tickets.map(ticket => ({
             channelId: ticket.channelId,
             priority: ticket.priority as TicketPriority,
-            slaDeadline: ticket.slaDeadline,
+            slaDeadline: ticket.slaDeadline || new Date(),
             lastStaffResponse: ticket.lastStaffResponse || undefined,
-            lastUserResponse: undefined,
+            lastUserResponse: ticket.lastUserResponse || undefined,
             escalationStarted: ticket.escalationStarted || undefined,
-            escalationCount: ticket.escalationCount,
-            userPingStarted: undefined,
-            userPingCount: 0
+            escalationCount: ticket.escalationCount || 0,
+            userPingStarted: ticket.userPingStarted || undefined,
+            userPingCount: ticket.userPingCount || 0
         }));
     }
     
     /**
-     * Gets all tickets that need user pinging (placeholder for now)
+     * Gets all tickets that need user pinging
      */
     async getTicketsNeedingUserPing(): Promise<TicketPriorityContext[]> {
-        // User pinging functionality is not fully implemented in database yet
-        // This is a placeholder to maintain interface compatibility
-        return [];
+        const tickets = await supportTicketDatabaseService.getTicketsNeedingUserPing();
+        
+        // Convert to TicketPriorityContext format
+        return tickets.map(ticket => ({
+            channelId: ticket.channelId,
+            priority: ticket.priority as TicketPriority,
+            slaDeadline: ticket.slaDeadline || new Date(),
+            lastStaffResponse: ticket.lastStaffResponse || undefined,
+            lastUserResponse: ticket.lastUserResponse || undefined,
+            escalationStarted: ticket.escalationStarted || undefined,
+            escalationCount: ticket.escalationCount || 0,
+            userPingStarted: ticket.userPingStarted || undefined,
+            userPingCount: ticket.userPingCount || 0
+        }));
     }
 
     /**
@@ -325,7 +274,7 @@ export class TicketPriorityServiceImpl implements TicketPriorityService {
      * Restores priority states from database on bot startup
      */
     async restorePriorityStates(): Promise<void> {
-    console.log('restorePriorityStates is not implemented.')
-    return;
-  }
+        console.log('Priority states restoration is handled by startup cleanup process.');
+        return;
+    }
 }

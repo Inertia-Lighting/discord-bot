@@ -4,7 +4,7 @@
 
 import { automatedQuickSupportHandler, suggestionsCategoryHandler } from '@root/common/handlers';
 import { loadSupportSystemConfig } from '@root/support_system/config';
-import { getEscalationService } from '@root/support_system/core/escalation-service';
+import { handleTicketMessage } from '@root/support_system/core/message-handler';
 import * as Discord from 'discord.js';
 
 // ------------------------------------------------------------//
@@ -43,7 +43,7 @@ export default {
 
         /* handle messages in support ticket channels */
         if (message.channel.parent?.id === supportConfig.channels.ticketsCategoryId) {
-            await handleSupportTicketMessage(client, message);
+            await handleTicketMessage(message);
         }
 
         /* handle messages sent in suggestions channels */
@@ -71,53 +71,3 @@ export default {
         automatedQuickSupportHandler(message).catch(console.trace);
     },
 };
-
-/**
- * Handles messages in support ticket channels for priority tracking
- */
-async function handleSupportTicketMessage(client: Discord.Client, message: Discord.Message): Promise<void> {
-    try {
-        if (!message.inGuild() || !message.member) return;
-        
-        const escalationService = getEscalationService(client);
-        
-        // Check if the message author is staff
-        if (escalationService.isStaffMember(message.member)) {
-            // Record staff response to stop escalation
-            await escalationService.recordStaffResponse(message.channel.id, message.member);
-        } else if (await isUserTicketOwner(message.channel, message.member)) {
-            // Record user response to stop user pinging
-            await escalationService.recordUserResponse(message.channel.id, message.member);
-        }
-    } catch (error) {
-        console.error('Error handling support ticket message:', error);
-    }
-}
-
-/**
- * Checks if a user is the owner of a ticket channel
- */
-async function isUserTicketOwner(channel: Discord.TextBasedChannel, member: Discord.GuildMember): Promise<boolean> {
-    if (!('name' in channel) || !channel.name) return false;
-    
-    const channelName = channel.name;
-    
-    // Remove priority emoji if present
-    let baseName = channelName;
-    const priorityEmojis = ['🟢', '🟡', '🔴'];
-    for (const emoji of priorityEmojis) {
-        if (channelName.startsWith(emoji + '-')) {
-            baseName = channelName.substring(2);
-            break;
-        }
-    }
-    
-    // Extract user ID from channel name (format: categoryId-userId)
-    const parts = baseName.split('-');
-    if (parts.length >= 2) {
-        const ticketOwnerId = parts[parts.length - 1]; // Last part should be user ID
-        return member.id === ticketOwnerId;
-    }
-    
-    return false;
-}

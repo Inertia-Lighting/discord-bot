@@ -222,15 +222,22 @@ model Verification {
     updatedAt DateTime @updatedAt
 }
 
-model TicketPriorities {
+model SupportTickets {
     id String @id @default(cuid()) @map("_id")
 
     channelId           String        @unique
-    priority            TicketPriority @default(low)
-    slaDeadline         DateTime
+    ownerId             String
+    categoryId          String        
+    priority            TicketPriority?
+    slaDeadline         DateTime?
     lastStaffResponse   DateTime?
+    lastUserResponse    DateTime?
     escalationStarted   DateTime?
     escalationCount     Int           @default(0)
+    userPingStarted     DateTime?
+    userPingCount       Int           @default(0)
+    prioritySetAt       DateTime?
+    isAutoCloseScheduled Boolean      @default(false)
     
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt

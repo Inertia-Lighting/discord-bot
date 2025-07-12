@@ -16,13 +16,14 @@ import { getEscalationService } from './core/escalation-service';
 import { TicketPriorityServiceImpl } from './core/priority-service';
 import { SupportCategoryRegistryImpl } from './core/registry';
 import { SupportTicketServiceImpl } from './core/ticket-service';
-import { 
-    SupportCategoryConfig,
+import { SupportCategoryConfig,
     SupportCategoryId, 
     SupportCategoryRegistry, 
     SupportTicketContext, 
     SupportTicketService,
     TicketPriorityService} from './types';
+import { supportTicketDatabaseService } from './core/ticket-database-service';
+import { performStartupCleanup } from './core/startup-cleanup';
 
 /**
  * Main support system manager
@@ -46,7 +47,10 @@ export class SupportSystemManager {
      * Initializes escalation monitoring service
      */
     async initializeEscalationService(client: Discord.Client): Promise<void> {
-        // Restore priority states from database first
+        // Perform startup cleanup first
+        await performStartupCleanup(client);
+        
+        // Restore priority states from database
         await this.priorityService.restorePriorityStates();
         
         const escalationService = getEscalationService(client);
@@ -243,6 +247,9 @@ export class SupportSystemManager {
         const ticketOwner = await channel.client.users.fetch(userId);
         const newChannelTopic = `${ticketOwner} | ${newCategoryId} | Opened on <t:${Math.floor(channel.createdTimestamp! / 1000)}:F> | Staff may close this ticket using the close_ticket command.`;
         await channel.setTopic(newChannelTopic);
+
+        // Update database with new category
+        await supportTicketDatabaseService.updateTicketType(channel.id, newCategoryId);
 
         // Update permissions based on new category
         await this.updateChannelPermissions(channel, newConfig);
