@@ -100,7 +100,7 @@ export default new CustomInteraction({
         }
         
         // Now split the name without emoji
-        let channelNameParts = nameWithoutEmoji.split('-');
+        const channelNameParts = nameWithoutEmoji.split('-');
         
         if (channelNameParts.length < 2) {
             await interaction.editReply({
