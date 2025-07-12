@@ -3,7 +3,6 @@
 // ------------------------------------------------------------//
 
 import prisma from '@root/lib/prisma_client';
-import * as Discord from 'discord.js';
 
 import { SupportCategoryId, TicketPriority } from '../types';
 
@@ -162,18 +161,13 @@ export class SupportTicketDatabaseService {
             where: {
                 priority: { not: null },
                 slaDeadline: { lte: now },
-                OR: [
-                    { lastStaffResponse: null },
-                    { 
-                        AND: [
-                            { lastStaffResponse: { not: null } },
-                            { slaDeadline: { not: null } },
-                        ]
+                AND: [
+                    {
+                        OR: [
+                            { escalationStarted: null },
+                            { escalationStarted: { lte: twentyFourHoursAgo } },
+                        ],
                     },
-                ],
-                OR: [
-                    { escalationStarted: null },
-                    { escalationStarted: { lte: twentyFourHoursAgo } },
                 ],
             },
         });
@@ -193,16 +187,15 @@ export class SupportTicketDatabaseService {
         return await prisma.supportTickets.findMany({
             where: {
                 lastStaffResponse: { not: null },
-                lastUserResponse: { not: null },
-                lastUserResponse: { lte: twentyFourHoursAgo },
+                lastUserResponse: { not: null, lte: twentyFourHoursAgo },
                 OR: [
                     { userPingStarted: null },
                     { userPingStarted: { lte: twentyFourHoursAgo } },
                 ],
             },
-        }).then(tickets => {
+        }).then((tickets: any[]) => {
             // Filter for tickets where staff responded after user's last response
-            return tickets.filter(ticket => {
+            return tickets.filter((ticket: any) => {
                 if (!ticket.lastStaffResponse || !ticket.lastUserResponse) return false;
                 return new Date(ticket.lastStaffResponse) >= new Date(ticket.lastUserResponse);
             });
@@ -226,9 +219,9 @@ export class SupportTicketDatabaseService {
                 lastStaffResponse: { not: null },
                 isAutoCloseScheduled: false,
             },
-        }).then(tickets => {
+        }).then((tickets: any[]) => {
             // Filter for tickets where staff responded after user's last response
-            return tickets.filter(ticket => {
+            return tickets.filter((ticket: any) => {
                 if (!ticket.lastStaffResponse || !ticket.lastUserResponse) return false;
                 return new Date(ticket.lastStaffResponse) >= new Date(ticket.lastUserResponse);
             });
@@ -286,9 +279,9 @@ export class SupportTicketDatabaseService {
                     { escalationStarted: { lte: twentyFourHoursAgo } },
                 ],
             },
-        }).then(tickets => {
+        }).then((tickets: any[]) => {
             // Filter for tickets that are past half their SLA time and user responded after staff
-            return tickets.filter(ticket => {
+            return tickets.filter((ticket: any) => {
                 if (!ticket.prioritySetAt || !ticket.slaDeadline || !ticket.lastUserResponse || !ticket.lastStaffResponse) return false;
                 
                 // Check if user responded after staff's last response

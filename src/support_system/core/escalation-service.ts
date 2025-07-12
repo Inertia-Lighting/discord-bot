@@ -2,20 +2,17 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 // ------------------------------------------------------------//
 
-import { CustomEmbed } from '@root/common/message';
 import * as Discord from 'discord.js';
 
 import { loadSupportSystemConfig } from '../config';
-import { TicketPriorityServiceImpl } from './priority-service';
+import { SupportCategoryId } from '../types';
 import { performPeriodicCleanup } from './startup-cleanup';
 import { supportTicketDatabaseService } from './ticket-database-service';
-import { SupportCategoryId } from '../types';
 
 /**
  * Service for monitoring ticket SLA and handling escalations
  */
 export class TicketEscalationService {
-    private priorityService: TicketPriorityServiceImpl;
     private config: ReturnType<typeof loadSupportSystemConfig>;
     private client: Discord.Client;
     private intervalId: NodeJS.Timeout | null = null;
@@ -23,7 +20,6 @@ export class TicketEscalationService {
     constructor(client: Discord.Client) {
         this.client = client;
         this.config = loadSupportSystemConfig();
-        this.priorityService = new TicketPriorityServiceImpl();
     }
 
     /**
@@ -121,7 +117,7 @@ export class TicketEscalationService {
         try {
             const channel = await this.client.channels.fetch(ticket.channelId);
             
-            if (!channel || !channel.isTextBased()) {
+            if (!channel || !channel.isTextBased() || !channel.isSendable()) {
                 return;
             }
 
@@ -134,7 +130,7 @@ export class TicketEscalationService {
                     {
                         color: 0xff0000,
                         title: '⚠️ SLA Escalation',
-                        description: `This ticket has exceeded its SLA deadline and needs immediate attention.`,
+                        description: 'This ticket has exceeded its SLA deadline and needs immediate attention.',
                         fields: [
                             {
                                 name: 'Priority',
@@ -172,7 +168,7 @@ export class TicketEscalationService {
         try {
             const slaChannel = await this.client.channels.fetch(this.config.channels.slaNotificationsChannelId);
             
-            if (!slaChannel || !slaChannel.isTextBased()) {
+            if (!slaChannel || !slaChannel.isTextBased() || !slaChannel.isSendable()) {
                 return;
             }
 
@@ -185,7 +181,7 @@ export class TicketEscalationService {
                     {
                         color: 0xff9900,
                         title: '⏰ Half-SLA Notification',
-                        description: `A ticket has passed half of its SLA time and the user has responded after staff.`,
+                        description: 'A ticket has passed half of its SLA time and the user has responded after staff.',
                         fields: [
                             {
                                 name: 'Ticket',
@@ -228,7 +224,7 @@ export class TicketEscalationService {
         try {
             const channel = await this.client.channels.fetch(ticket.channelId);
             
-            if (!channel || !channel.isTextBased()) {
+            if (!channel || !channel.isTextBased() || !channel.isSendable()) {
                 return;
             }
 
@@ -238,7 +234,7 @@ export class TicketEscalationService {
                     {
                         color: 0x0099ff,
                         title: '📞 Response Reminder',
-                        description: `We're still waiting for your response to continue with your support request.`,
+                        description: 'We\'re still waiting for your response to continue with your support request.',
                         fields: [
                             {
                                 name: 'Last Response',

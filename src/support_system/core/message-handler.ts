@@ -13,7 +13,7 @@ const config = loadSupportSystemConfig();
  */
 export async function handleTicketMessage(message: Discord.Message): Promise<void> {
     // Only process messages in ticket channels
-    if (!message.guild || message.channel.parentId !== config.channels.ticketsCategoryId) {
+    if (!message.guild || !('parentId' in message.channel) || message.channel.parentId !== config.channels.ticketsCategoryId) {
         return;
     }
 
@@ -48,14 +48,18 @@ export async function handleTicketMessage(message: Discord.Message): Promise<voi
             await message.delete();
             
             // Send ephemeral message to staff member
-            const warningMessage = await message.channel.send({
-                content: `${member}, please set a priority for this ticket before sending messages. Use the \`/priority\` command.`,
-            });
+            if (message.channel.isTextBased() && message.channel.isSendable()) {
+                const warningMessage = await message.channel.send({
+                    content: `${member}, please set a priority for this ticket before sending messages. Use the \`/priority\` command.`,
+                });
 
-            // Delete the warning message after 10 seconds
-            setTimeout(() => {
-                warningMessage.delete().catch(() => {});
-            }, 10000);
+                // Delete the warning message after 10 seconds
+                setTimeout(() => {
+                    warningMessage.delete().catch(() => {
+                        // Ignore errors when deleting messages
+                    });
+                }, 10000);
+            }
         } catch (error) {
             console.error('Failed to delete staff message in unprioritized ticket:', error);
         }

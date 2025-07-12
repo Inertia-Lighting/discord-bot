@@ -35,6 +35,7 @@ export async function performStartupCleanup(client: Discord.Client): Promise<voi
                 // Check if channel exists and is in the correct category
                 if (!channel || 
                     !channel.isTextBased() || 
+                    !('parentId' in channel) ||
                     channel.parentId !== config.channels.ticketsCategoryId) {
                     
                     console.log(`Cleaning up orphaned ticket: ${ticket.channelId}`);
@@ -75,40 +76,36 @@ export async function performPeriodicCleanup(client: Discord.Client): Promise<vo
             try {
                 const channel = await client.channels.fetch(ticket.channelId);
                 
-                if (channel && channel.isTextBased() && channel.parentId === config.channels.ticketsCategoryId) {
+                if (channel && channel.isTextBased() && 'parentId' in channel && channel.parentId === config.channels.ticketsCategoryId) {
                     // Mark as scheduled for auto-close
                     await supportTicketDatabaseService.markForAutoClose(ticket.channelId);
                     
                     // Send auto-close notification
-                    await channel.send({
-                        embeds: [
-                            {
-                                color: 0xff9900,
-                                title: 'Ticket Auto-Close',
-                                description: 'This ticket will be automatically closed due to inactivity (no response from ticket owner for 7 days after staff response).',
-                                timestamp: new Date().toISOString(),
-                            },
-                        ],
-                    });
+                    if (channel.isSendable()) {
+                        await channel.send({
+                            embeds: [
+                                {
+                                    color: 0xff9900,
+                                    title: 'Ticket Auto-Close',
+                                    description: 'This ticket will be automatically closed due to inactivity (no response from ticket owner for 7 days after staff response).',
+                                    timestamp: new Date().toISOString(),
+                                },
+                            ],
+                        });
+                    }
                     
                     // Close the ticket after a delay
                     setTimeout(async () => {
                         try {
-                            const guild = channel.guild;
-                            const botMember = await guild.members.fetch(client.user!.id);
-                            
-                            // Import the support system manager to close the ticket
-                            const { supportSystemManager } = await import('@root/support_system/manager');
-                            
-                            await supportSystemManager.closeTicket(
-                                channel as Discord.GuildTextBasedChannel,
-                                botMember,
-                                'Auto-closed due to inactivity (no response from ticket owner for 7 days)',
-                                {
-                                    saveTranscript: true,
-                                    sendFeedback: false, // Don't request feedback for auto-closed tickets
-                                }
-                            );
+                            if ('guild' in channel) {
+                                // Auto-close directly without importing manager to avoid circular dependencies
+                                await supportTicketDatabaseService.deleteTicket(ticket.channelId);
+                                
+                                // Delete the channel
+                                await channel.delete('Auto-closed due to inactivity');
+                                
+                                console.log(`Auto-closed ticket ${ticket.channelId} due to inactivity`);
+                            }
                         } catch (error) {
                             console.error(`Failed to auto-close ticket ${ticket.channelId}:`, error);
                         }

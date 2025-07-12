@@ -127,7 +127,7 @@ export class TicketPriorityServiceImpl implements TicketPriorityService {
     /**
      * Records user response to stop user pinging
      */
-    async recordUserResponse(channelId: string, user: Discord.GuildMember): Promise<void> {
+    async recordUserResponse(channelId: string, _user: Discord.GuildMember): Promise<void> {
         await supportTicketDatabaseService.recordUserResponse(channelId);
     }
     

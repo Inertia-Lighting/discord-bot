@@ -15,6 +15,8 @@ import { loadSupportSystemConfig } from './config';
 import { getEscalationService } from './core/escalation-service';
 import { TicketPriorityServiceImpl } from './core/priority-service';
 import { SupportCategoryRegistryImpl } from './core/registry';
+import { performStartupCleanup } from './core/startup-cleanup';
+import { supportTicketDatabaseService } from './core/ticket-database-service';
 import { SupportTicketServiceImpl } from './core/ticket-service';
 import { SupportCategoryConfig,
     SupportCategoryId, 
@@ -22,8 +24,6 @@ import { SupportCategoryConfig,
     SupportTicketContext, 
     SupportTicketService,
     TicketPriorityService} from './types';
-import { supportTicketDatabaseService } from './core/ticket-database-service';
-import { performStartupCleanup } from './core/startup-cleanup';
 
 /**
  * Main support system manager
