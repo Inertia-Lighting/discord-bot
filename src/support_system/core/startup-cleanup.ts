@@ -3,7 +3,7 @@
 // ------------------------------------------------------------//
 
 import { loadSupportSystemConfig } from '@root/support_system/config';
-import { supportTicketDatabaseService } from '@root/support_system/core/ticket-database-service';
+import { supportTicketDatabaseService } from './ticket-database-service';
 import * as Discord from 'discord.js';
 
 const config = loadSupportSystemConfig();
