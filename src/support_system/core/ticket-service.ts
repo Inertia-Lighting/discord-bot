@@ -281,7 +281,7 @@ export class SupportTicketServiceImpl implements SupportTicketService {
     ): Promise<void> {
         // Extract ticket information from channel name
         const filtered_ticket_name = channel.name.slice(3);
-        const ticketCategoryId = filtered_ticket_name.slice.name.split('-')[0];
+        const ticketCategoryId = filtered_ticket_name.split('-')[0];
         const ticketOwnerId = filtered_ticket_name.split('-')[1];
         
         if (!ticketCategoryId || !ticketOwnerId) {
