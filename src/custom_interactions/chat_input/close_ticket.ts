@@ -75,7 +75,8 @@ export default new CustomInteraction({
         const support_channel = interaction.channel;
         if (!(support_channel instanceof Discord.TextChannel)) throw new Error('Expected support_channel to be a text channel');
 
-        const support_ticket_topic_name = support_channel.name.match(/([a-zA-Z\-_])+(?![-_])\D/i)?.[0];
+        const filtered_support_channel_name = support_channel.name.slice(3);
+        const support_ticket_topic_name = filtered_support_channel_name.match(/([a-zA-Z\-_])+(?![-_])\D/i)?.[0];
         if (!support_ticket_topic_name) throw new Error('Expected support_ticket_topic_name to be a string');
 
         await interaction.editReply({
