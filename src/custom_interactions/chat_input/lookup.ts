@@ -174,6 +174,7 @@ export default new CustomInteraction({
                     { robloxId: user_id }
                 ]
             },
+            include: includeOptions,
         });
         const blacklistUserData = await prisma.punishments.findFirst({
             where: {
