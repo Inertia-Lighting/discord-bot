@@ -13,6 +13,9 @@ import * as Discord from 'discord.js';
 const config = loadSupportSystemConfig();
 const priorityService = new TicketPriorityServiceImpl();
 
+const bot_customer_service_role_id = `${process.env.BOT_CUSTOMER_SERVICE_ROLE_ID ?? ''}`;
+if (bot_customer_service_role_id.length < 1) throw new Error('Environment variable: BOT_CUSTOMER_SERVICE_ROLE_ID; is not set correctly.');
+
 // ------------------------------------------------------------//
 
 export default new CustomInteraction({
@@ -50,7 +53,7 @@ export default new CustomInteraction({
     },
     metadata: {
         required_run_context: CustomInteractionRunContext.Guild,
-        required_access_level: CustomInteractionAccessLevel.Public, // Allow everyone to use this command
+        required_access_level: CustomInteractionAccessLevel.CustomerService, // Allow customer service to use this command
     },
     handler: async (discord_client, interaction) => {
         if (!interaction.isChatInputCommand()) return;
@@ -85,17 +88,6 @@ export default new CustomInteraction({
         if (channelNameParts.length < 2) {
             await interaction.editReply({
                 content: 'Invalid ticket channel format. This does not appear to be a support ticket.',
-            });
-            return;
-        }
-
-        // Check if user is ticket owner or has staff permissions
-        const isTicketOwner = await isUserTicketOwner(support_channel, interaction.member);
-        const hasStaffPermissions = support_channel.permissionsFor(interaction.member)?.has(Discord.PermissionFlagsBits.ManageChannels) ?? false;
-
-        if (!isTicketOwner && !hasStaffPermissions) {
-            await interaction.editReply({
-                content: 'You can only change the priority of your own tickets, or you need staff permissions to change any ticket priority.',
             });
             return;
         }
@@ -140,25 +132,25 @@ export default new CustomInteraction({
 /**
  * Checks if a user is the owner of a ticket channel
  */
-async function isUserTicketOwner(channel: Discord.TextChannel, member: Discord.GuildMember): Promise<boolean> {
-    const channelName = channel.name;
+// async function isUserTicketOwner(channel: Discord.TextChannel, member: Discord.GuildMember): Promise<boolean> {
+//     const channelName = channel.name;
     
-    // Remove priority emoji if present
-    const priorityEmojis = ['🟢', '🟡', '🔴', '⏸️'];
-    let nameWithoutEmoji = channelName;
-    for (const emoji of priorityEmojis) {
-        if (channelName.startsWith(emoji + '-')) {
-            nameWithoutEmoji = channelName.substring(emoji.length + 1);
-            break;
-        }
-    }
+//     // Remove priority emoji if present
+//     const priorityEmojis = ['🟢', '🟡', '🔴', '⏸️'];
+//     let nameWithoutEmoji = channelName;
+//     for (const emoji of priorityEmojis) {
+//         if (channelName.startsWith(emoji + '-')) {
+//             nameWithoutEmoji = channelName.substring(emoji.length + 1);
+//             break;
+//         }
+//     }
     
-    // Extract user ID from channel name (format: categoryId-userId)
-    const parts = nameWithoutEmoji.split('-');
-    if (parts.length >= 2 && parts[0] !== '' && parts[parts.length - 1] !== '') {
-        const ticketOwnerId = parts[parts.length - 1]; // Last part should be user ID
-        return member.id === ticketOwnerId;
-    }
+//     // Extract user ID from channel name (format: categoryId-userId)
+//     const parts = nameWithoutEmoji.split('-');
+//     if (parts.length >= 2 && parts[0] !== '' && parts[parts.length - 1] !== '') {
+//         const ticketOwnerId = parts[parts.length - 1]; // Last part should be user ID
+//         return member.id === ticketOwnerId;
+//     }
     
-    return false;
-}
+//     return false;
+// }
