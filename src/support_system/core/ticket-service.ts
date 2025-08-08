@@ -179,7 +179,6 @@ export class SupportTicketServiceImpl implements SupportTicketService {
                 '• Our support staff are volunteers who generously donate their time',
                 '• Please do not @mention, harass, or otherwise annoy our support staff',
                 '• Provide as much information as possible to help us assist you',
-                '• Use `/priority` to change the priority level if needed',
             ].join('\n'),
             fields: [
                 {
