@@ -8,6 +8,13 @@ import * as Discord from 'discord.js';
 import { loadSupportSystemConfig } from '../config';
 import { TicketPriorityServiceImpl } from './priority-service';
 
+// ------------------------------------------------------------//
+
+const bot_support_tickets_sla_channel_id = `${process.env.BOT_SUPPORT_TICKETS_SLA_CHANNEL_ID ?? ''}`;
+if (bot_support_tickets_sla_channel_id.length < 1) throw new Error('Environment variable: BOT_SUPPORT_TICKETS_SLA_CHANNEL_ID; was not set correctly!');
+
+// ------------------------------------------------------------//
+
 /**
  * Service for monitoring ticket SLA and handling escalations
  */
@@ -32,8 +39,8 @@ export class TicketEscalationService {
         }
 
         // Check every 30 minutes for tickets needing escalation
-        this.intervalId = setInterval(async () => {
-            await this.checkForEscalations();
+                this.intervalId = setInterval(async () => {
+                        await this.checkForEscalations();
         }, 30 * 60 * 1000); // 30 minutes
 
         console.log('Ticket escalation monitoring service started');
@@ -77,7 +84,7 @@ export class TicketEscalationService {
      */
     private async handleTicketEscalation(channelId: string): Promise<void> {
         try {
-            const channel = await this.client.channels.fetch(channelId);
+            const channel = await this.client.channels.fetch(bot_support_tickets_sla_channel_id);
             if (!channel || !channel.isTextBased() || channel.type !== Discord.ChannelType.GuildText) {
                 return;
             }
@@ -111,7 +118,7 @@ export class TicketEscalationService {
 
             // Send escalation notification
             await channel.send({
-                content: `<@&${this.config.roles.customerServiceRoleId}> - SLA Escalation Required`,
+                content: `<#${channelId}> - SLA Escalation Required`,
                 embeds: [escalationEmbed],
             });
 
