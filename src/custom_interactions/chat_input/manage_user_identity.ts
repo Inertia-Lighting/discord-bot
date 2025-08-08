@@ -4,8 +4,7 @@
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
 import { CustomEmbed } from '@root/common/message';
-import { go_mongo_db } from '@root/common/mongo/mongo';
-import { DbUserData } from '@root/types';
+import prisma from '@root/lib/prisma_client';
 import * as Discord from 'discord.js';
 
 // ------------------------------------------------------------//
@@ -25,9 +24,9 @@ if (bot_logging_identity_manager_channel_id.length < 1) throw new Error('Environ
 // ------------------------------------------------------------//
 
 enum IdentityType {
-    Roblox = 'roblox',
+    Roblox = 'robloxId',
     // eslint-disable-next-line no-shadow
-    Discord = 'discord',
+    Discord = 'discordId',
 }
 
 // ------------------------------------------------------------//
@@ -194,50 +193,24 @@ export default new CustomInteraction({
             return;
         }
 
-        // create the update filter based on the provided information
-        let user_update_filter: {
-            'identity.discord_user_id': string;
-        } | {
-            'identity.roblox_user_id': string;
-        };
-        switch (current_id_type) {
-            case IdentityType.Discord: {
-                user_update_filter = {
-                    'identity.discord_user_id': current_id,
-                };
-
-                break;
-            }
-
-            case IdentityType.Roblox: {
-                user_update_filter = {
-                    'identity.roblox_user_id': current_id,
-                };
-
-                break;
-            }
-
-            default: {
-                throw new Error(`Mange User Identity: Invalid current_id_type: ${current_id_type}`);
-            }
-        }
-
         // fetch the user document to modify from the database
-        const db_user_data_before_update_find_cursor = await go_mongo_db.find(db_database_name, db_users_collection_name, user_update_filter, {
-            projection: {
-                '_id': false,
+        const db_user_data = await prisma.user.findFirst({
+            where: { 
+                [current_id_type]: current_id 
+            },
+            select: {
+                discordId: true,
+                robloxId: true,
             },
         });
 
-        const db_user_data_before_update = await db_user_data_before_update_find_cursor.next() as unknown as Exclude<DbUserData, '_id'> | null;
-
-        if (!db_user_data_before_update) {
+        if (!db_user_data) {
             await interaction.editReply({
                 embeds: [
                     CustomEmbed.from({
                         color: CustomEmbed.Color.Yellow,
                         title: 'Inertia Lighting | Identity Manager',
-                        description: `Unable to find user in database matching identity: \`${current_id_type}\` \`${current_id}\``,
+                        description: `Unable to find user in database matching identity: \`${Object.keys(IdentityType).find(key => IdentityType[key as keyof typeof IdentityType] === current_id_type)}\` \`${current_id}\``,
                     }),
                 ],
             });
@@ -245,63 +218,16 @@ export default new CustomInteraction({
             return;
         }
 
-        // create the update filter and update document based on the provided information
-        let db_user_data_update_filter: {
-            'identity.discord_user_id': string;
-        } | {
-            'identity.roblox_user_id': string;
-        };
-        let db_user_data_update_document: {
-            '$set': {
-                'identity.discord_user_id': string;
-            };
-        } | {
-            '$set': {
-                'identity.roblox_user_id': string;
-            };
-        };
-        switch (new_id_type) {
-            case IdentityType.Discord: {
-                db_user_data_update_filter = {
-                    'identity.discord_user_id': new_id,
-                };
-
-                db_user_data_update_document = {
-                    '$set': {
-                        'identity.discord_user_id': new_id,
-                    },
-                };
-
-                break;
-            }
-
-            case IdentityType.Roblox: {
-                db_user_data_update_filter = {
-                    'identity.roblox_user_id': new_id,
-                };
-
-                db_user_data_update_document = {
-                    '$set': {
-                        'identity.roblox_user_id': new_id,
-                    },
-                };
-
-                break;
-            }
-
-            default: {
-                throw new Error(`Mange User Identity: Invalid new_id_type: ${new_id_type}`);
-            }
-        }
-
         // ensure that the new identity is not already in the database
-        const db_user_data_with_new_identity_find_cursor = await go_mongo_db.find(db_database_name, db_users_collection_name, db_user_data_update_filter, {
-            projection: {
-                '_id': false,
+        const db_user_data_with_new_identity = await prisma.user.findFirst({
+            where: {
+                [new_id_type]: new_id,
+            },
+            select: {
+                discordId: true,
+                robloxId: true,
             },
         });
-
-        const db_user_data_with_new_identity = await db_user_data_with_new_identity_find_cursor.next() as unknown as Exclude<DbUserData, '_id'> | null;
 
         if (db_user_data_with_new_identity) {
             await interaction.editReply({
@@ -314,7 +240,7 @@ export default new CustomInteraction({
                             '',
                             '**Identity:**',
                             '```json',
-                            JSON.stringify(db_user_data_with_new_identity.identity, null, 4),
+                            JSON.stringify(db_user_data_with_new_identity, null, 4),
                             '```',
                         ].join('\n'),
                     }),
@@ -326,7 +252,13 @@ export default new CustomInteraction({
 
         // attempt to update the user's identity
         try {
-            await go_mongo_db.update(db_database_name, db_users_collection_name, user_update_filter, db_user_data_update_document);
+            await prisma.user.update({
+                where: current_id_type === 'discordId' ? { discordId: current_id } : { robloxId: current_id },
+                data: {
+                    [new_id_type]: new_id,
+                },
+            });
+            //await go_mongo_db.update(db_database_name, db_users_collection_name, user_update_filter, db_user_data_update_document);
         } catch (error: unknown) {
             console.trace('Failed to update the user\'s identity:', error);
 
@@ -363,12 +295,12 @@ export default new CustomInteraction({
                         '',
                         '**Identity Before:**',
                         '```json',
-                        JSON.stringify(db_user_data_before_update.identity, null, 4),
+                        JSON.stringify(db_user_data, null, 4),
                         '```',
                         '',
                         '**Changes Made:**',
                         '```json',
-                        JSON.stringify(db_user_data_update_document, null, 4),
+                        JSON.stringify({ [new_id_type]: new_id }, null, 4),
                         '```',
                     ].join('\n'),
                 }),
@@ -386,12 +318,12 @@ export default new CustomInteraction({
                         '',
                         '**Identity Before:**',
                         '```json',
-                        JSON.stringify(db_user_data_before_update.identity, null, 4),
+                        JSON.stringify(db_user_data, null, 4),
                         '```',
                         '',
                         '**Changes Made:**',
                         '```json',
-                        JSON.stringify(db_user_data_update_document, null, 4),
+                        JSON.stringify({ [new_id_type]: new_id }, null, 4),
                         '```',
                         '',
                         '**Reason:**',
