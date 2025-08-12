@@ -32,9 +32,12 @@ export abstract class BaseSupportCategoryHandler implements SupportCategoryHandl
                 throw new Error('Invalid input provided. Please check your responses and try again.');
             }
 
+            // Create or get existing ticket channel
+            context.channel = await context.ticketService.createTicketChannel(context);
+
             // Get formatted responses
             const responses = this.extractResponses(interaction);
-            
+
             // Send the responses to the channel
             await this.sendResponsesToChannel(context.channel!, responses, interaction);
             

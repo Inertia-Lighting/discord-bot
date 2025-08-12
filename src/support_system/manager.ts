@@ -145,10 +145,8 @@ export class SupportSystemManager {
                 owner: interaction.member,
                 createdAt: new Date(),
                 categoryId,
+                ticketService: this.ticketService,
             };
-
-            // Create or get existing ticket channel
-            context.channel = await this.ticketService.createTicketChannel(context);
 
             // Handle the modal submission
             await handler.handleModalSubmission(interaction, context);
