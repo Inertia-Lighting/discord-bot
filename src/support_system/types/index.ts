@@ -62,6 +62,7 @@ export interface SupportTicketContext {
     channel?: Discord.TextChannel;
     createdAt: Date;
     categoryId: SupportCategoryId;
+    ticketService: SupportTicketService;
 }
 
 /**
