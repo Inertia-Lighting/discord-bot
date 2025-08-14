@@ -102,6 +102,11 @@ export class ProductIssuesHandler extends BaseSupportCategoryHandler {
                 console.error(`Output validation failed: "${output}"`);
                 return false;
             }
+
+            if (!output.startsWith('https://pastebin.com/')){
+              console.error(`Invalid Output URL: ${output}`)
+        return false;
+            }
             
             if (!issue || issue.trim().length < 1) {
                 console.error(`Issue validation failed: "${issue}"`);
