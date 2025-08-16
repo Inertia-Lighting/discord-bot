@@ -7,13 +7,13 @@ WORKDIR /usr/src/app
 COPY . /usr/src/app/
 
 # Corepack
-RUN corepack enable yarn \
+RUN corepack enable yarn ;\
 # Install dependencies
-yarn install \
+yarn install ;\
 # Clean Cache
-yarn cache clean\
+yarn cache clean ;\
 # Build the bot
-yarn build \
+yarn build ;\
 # Create tmp directory
 mkdir -p /usr/src/app/temporary
 
