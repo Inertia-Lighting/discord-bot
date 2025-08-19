@@ -98,7 +98,7 @@ export class ProductIssuesHandler extends BaseSupportCategoryHandler {
                 return false;
             }
             
-            if (!output || output.trim().length < 5) {
+            if (!output || output.trim().length < 25 || !output.startsWith('https://pastebin.com/')) {
                 console.error(`Output validation failed: "${output}"`);
                 return false;
             }
@@ -185,7 +185,7 @@ export const ProductIssuesConfig = {
                         style: Discord.TextInputStyle.Short,
                         label: 'Please provide us with a link to your output.',
                         placeholder: 'https://pastebin.com/...',
-                        minLength: 5,
+                        minLength: 25,
                         maxLength: 1024,
                         required: true,
                     },
