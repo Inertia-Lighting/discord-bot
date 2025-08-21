@@ -6,6 +6,7 @@ import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunCo
 import { CustomEmbed } from '@root/common/message';
 import axios from 'axios';
 import * as Discord from 'discord.js';
+import prisma from '@root/lib/prisma_client';
 
 // ------------------------------------------------------------//
 
@@ -23,14 +24,6 @@ if (api_server.length < 1) throw new Error('Environment variable: API_SERVER; is
 
 // ------------------------------------------------------------//
 
-enum IdentityType {
-    Roblox = 'robloxId',
-    // eslint-disable-next-line no-shadow
-    Discord = 'discordId',
-}
-
-// ------------------------------------------------------------//
-
 export default new CustomInteraction({
     identifier: 'transfer',
     type: Discord.InteractionType.ApplicationCommand,
@@ -41,47 +34,21 @@ export default new CustomInteraction({
             {
                 name: 'user_a',
                 description: 'Source user',
-                type: Discord.ApplicationCommandOptionType.String,
-                choices: [
-                    {
-                        name: 'Discord',
-                        value: IdentityType.Discord,
-                    },
-                    {
-                        name: 'Roblox',
-                        value: IdentityType.Roblox,
-                    },
-                ],
+                type: Discord.ApplicationCommandOptionType.User,
                 required: true,
             },
             {
                 name: 'user_b',
                 description: 'Target user',
-                type: Discord.ApplicationCommandOptionType.String,
-                choices: [
-                    {
-                        name: 'Discord',
-                        value: IdentityType.Discord,
-                    },
-                    {
-                        name: 'Roblox',
-                        value: IdentityType.Roblox,
-                    },
-                ],
+                type: Discord.ApplicationCommandOptionType.User,
                 required: true,
             },
             {
-                name: 'product',
+                name: 'product_code',
                 description: 'Product code',
                 type: Discord.ApplicationCommandOptionType.String,
                 required: true,
-            },
-            {
-                name: 'reason',
-                description: 'Transfer reason',
-                type: Discord.ApplicationCommandOptionType.String,
-                required: false,
-            },
+            }
         ],
     },
     metadata: {
@@ -93,15 +60,74 @@ export default new CustomInteraction({
         if (!interaction.inCachedGuild()) return;
         if (!interaction.channel) return;
 
+        const user_a = interaction.options.getUser('user_a', true);
+        const user_b = interaction.options.getUser('user_b', true);
+        const product_code = interaction.options.getString('product_code', true);
+
+        if (user_a.id === user_b.id) {
+            await interaction.reply({
+                ephemeral: true,
+                embeds: [
+                    CustomEmbed.from({
+                        color: CustomEmbed.Color.Red,
+                        title: 'Transfer',
+                        description: 'USER_A and USER_B cannot be the same user.',
+                    }),
+                ],
+            });
+            return;
+        }
+
         await interaction.deferReply()
         await interaction.editReply({
             embeds: [
                 CustomEmbed.from({
                     title: 'Migration',
-                    description: 'Checking if account exists in V3'
+                    description: 'Checking if users exists'
                 })
             ]
         })
+
+        const user_a_db = await prisma.user.findUnique({ 
+            where: { 
+                discordId: user_a.id 
+            } 
+        });
+
+        const user_b_db = await prisma.user.findUnique({ 
+            where: { 
+                discordId: user_b.id 
+            },
+            select: {
+                oneTimeTransferUsed: true,
+            }
+        });
+
+        if (!user_a_db) {
+            await interaction.editReply({
+                embeds: [
+                    CustomEmbed.from({
+                        color: CustomEmbed.Color.Red,
+                        title: 'Transfer',
+                        description: 'USER_A was not found in the database.',
+                    }),
+                ],
+            });
+            return;
+        }
+        if (!user_b_db) {
+            await interaction.editReply({
+                embeds: [
+                    CustomEmbed.from({
+                        color: CustomEmbed.Color.Red,
+                        title: 'Transfer',
+                        description: 'USER_B was not found in the database.',
+                    }),
+                ],
+            });
+            return;
+        }
+
         const alreadyMigratedResponse = await axios.post<v3Identity>(`https://${api_server}/v3/user/identity/fetch`, {
             discordId: interaction.user.id,
         }).catch(() => {
