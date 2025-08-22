@@ -4,9 +4,8 @@
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
 import { CustomEmbed } from '@root/common/message';
-import axios from 'axios';
-import * as Discord from 'discord.js';
 import prisma from '@root/lib/prisma_client';
+import * as Discord from 'discord.js';
 
 // ------------------------------------------------------------//
 
@@ -48,6 +47,12 @@ export default new CustomInteraction({
                 description: 'Product code',
                 type: Discord.ApplicationCommandOptionType.String,
                 required: true,
+            },
+            {
+                name: 'reason',
+                description: 'Reason',
+                type: Discord.ApplicationCommandOptionType.String,
+                required: true,
             }
         ],
     },
@@ -63,6 +68,7 @@ export default new CustomInteraction({
         const user_a = interaction.options.getUser('user_a', true);
         const user_b = interaction.options.getUser('user_b', true);
         const product_code = interaction.options.getString('product_code', true);
+        const reason = interaction.options.getString('reason', true);
 
         if (user_a.id === user_b.id) {
             await interaction.reply({
@@ -82,7 +88,7 @@ export default new CustomInteraction({
         await interaction.editReply({
             embeds: [
                 CustomEmbed.from({
-                    title: 'Migration',
+                    title: 'Transfer',
                     description: 'Checking if users exists'
                 })
             ]
@@ -91,7 +97,10 @@ export default new CustomInteraction({
         const user_a_db = await prisma.user.findUnique({ 
             where: { 
                 discordId: user_a.id 
-            } 
+            },
+            select: {
+                id: true
+            }
         });
 
         const user_b_db = await prisma.user.findUnique({ 
@@ -99,7 +108,7 @@ export default new CustomInteraction({
                 discordId: user_b.id 
             },
             select: {
-                oneTimeTransferUsed: true,
+                id: true
             }
         });
 
@@ -109,7 +118,7 @@ export default new CustomInteraction({
                     CustomEmbed.from({
                         color: CustomEmbed.Color.Red,
                         title: 'Transfer',
-                        description: 'USER_A was not found in the database.',
+                        description: `<@${user_a.id}> was not found in the database.`,
                     }),
                 ],
             });
@@ -121,80 +130,129 @@ export default new CustomInteraction({
                     CustomEmbed.from({
                         color: CustomEmbed.Color.Red,
                         title: 'Transfer',
-                        description: 'USER_B was not found in the database.',
+                        description: `<@${user_b.id}> was not found in the database.`,
                     }),
                 ],
             });
             return;
         }
 
-        const alreadyMigratedResponse = await axios.post<v3Identity>(`https://${api_server}/v3/user/identity/fetch`, {
-            discordId: interaction.user.id,
-        }).catch(() => {
-            // Blank
+        const user_a_transaction = await prisma.transactions.findFirst({
+            where: {
+                UserId: user_a_db.id,
+                productCode: product_code,
+            },
+            select: {
+                id: true,
+                productCode: true,
+                UserId: true,
+                oneTimeTransferUsed: true,
+            },
         });
-        try {
-            if (alreadyMigratedResponse) {
-                await interaction.editReply({
-                    embeds: [
-                        CustomEmbed.from({
-                            color: CustomEmbed.Color.Red,
-                            title: 'Already Migrated',
-                            description: 'Your account is already migrated to V3'
-                        })
-                    ]
-                })
-                return;
-            }
-            console.log('Starting migration for ' + interaction.user.username)
-            await interaction.editReply({
-                embeds: [
-                    CustomEmbed.from({
-                        color: CustomEmbed.Color.Yellow,
-                        title: 'Migration',
-                        description: 'Migrating account'
-                    })
-                ]
-            })
-            const migration = await axios.post(`https://${api_server}/v2/user/identity/fetch`, {
-                discord_user_id: interaction.user.id
-            }, {
-                validateStatus: (status) => [200, 404].includes(status)
-            });
-            if (migration.status === 200) {
-                await interaction.editReply({
-                    embeds: [
-                        CustomEmbed.from({
-                            color: CustomEmbed.Color.Green,
-                            title: 'Migration',
-                            description: 'Migration Successful'
-                        })
-                    ]
-                })
-            } else {
-                console.log(migration.status)
-                console.log(JSON.stringify(migration.data))
-                await interaction.editReply({
-                    embeds: [
-                        CustomEmbed.from({
-                            color: CustomEmbed.Color.Red,
-                            title: 'Migration',
-                            description: 'Failed to migrate account'
-                        })
-                    ]
-                })
-            }
-        } catch (err) {
-            console.trace(err)
+
+        if (!user_a_transaction) { 
             await interaction.editReply({
                 embeds: [
                     CustomEmbed.from({
                         color: CustomEmbed.Color.Red,
-                        title: 'Migration',
-                        description: 'Failed to migrate account'
+                        title: 'Transfer',
+                        description: `No valid transaction for <@${user_a.id}>, transaction not exists.`,
+                    }),
+                ],
+            });
+            return;
+        }
+
+        if (user_a_transaction.oneTimeTransferUsed) {
+            await interaction.editReply({
+                embeds: [
+                    CustomEmbed.from({
+                        color: CustomEmbed.Color.Red,
+                        title: 'Transfer',
+                        description: `No valid transaction for <@${user_a.id}>, product it was already transferred.`,
+                    }),
+                ],
+            });
+            return;
+        }
+
+        const confirm_row = new Discord.ActionRowBuilder<Discord.ButtonBuilder>().addComponents(
+            new Discord.ButtonBuilder().setCustomId('transfer_confirm').setLabel('Confirm').setStyle(Discord.ButtonStyle.Success),
+            new Discord.ButtonBuilder().setCustomId('transfer_cancel').setLabel('Cancel').setStyle(Discord.ButtonStyle.Secondary),
+        );
+
+        const confirm_msg = await interaction.editReply({
+            embeds: [
+                CustomEmbed.from({
+                    color: CustomEmbed.Color.Blue,
+                    title: 'Transfer',
+                    description: `Confirm transfer for product: **${product_code}** from <@${user_a.id}> to <@${user_b.id}>`,
+                }),
+            ],
+            components: [confirm_row]
+        });
+
+        const clicked = await (confirm_msg as Discord.Message).awaitMessageComponent<Discord.ComponentType.Button>({
+            time: 60_000,
+            filter: (i: Discord.MessageComponentInteraction<Discord.CacheType>) => i.user.id === interaction.user.id && ['transfer_confirm', 'transfer_cancel'].includes(i.customId),
+        });
+
+        if (clicked.customId === 'transfer_cancel') {
+            await clicked.update({ 
+                components: [], 
+                embeds: [
+                    CustomEmbed.from({ 
+                        color: CustomEmbed.Color.Red, 
+                        title: 'Transfer',
+                        description: 'Transfer cancelled.',
                     })
-                ]
-            })
+                ] 
+            });
+            return;
+        }
+
+        try {
+            await prisma.$transaction(async (tx) => {
+                await tx.transactions.update({
+                    where: { 
+                        id: user_a_transaction.id 
+                    },
+                    data: {
+                        oneTimeTransferUsed: true,
+                        UserId: user_b_db.id,
+                    },
+                });
+
+                await tx.transfers.create({
+                    data: {
+                        transferReason: reason,
+                        TransactionId: user_a_transaction.id,
+                        NewUserId: user_b_db.id,
+                    },
+                });
+            });
+
+            await clicked.update({
+                components: [],
+                embeds: [
+                    CustomEmbed.from({
+                        color: CustomEmbed.Color.Green,
+                        title: 'Transfer',
+                        description: `Transaction: \`${user_a_transaction.id}\`, Product: \`${product_code}\` transferred from <@${user_a.id}> to <@${user_b.id}>.`,
+                    }),
+                ],
+            });
+        } catch {
+            await clicked.update({
+                components: [],
+                embeds: [
+                    CustomEmbed.from({
+                        color: CustomEmbed.Color.Red,
+                        title: 'Transfer',
+                        description: 'Could not complete the transfer.',
+                    }),
+                ],
+            });
         }
     },
 });
