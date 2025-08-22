@@ -4,7 +4,7 @@
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
 import { CustomEmbed } from '@root/common/message';
-import prisma from '@root/lib/prisma_client';
+import prisma from '@root/lib/prisma_client'; 
 import * as Discord from 'discord.js';
 
 // ------------------------------------------------------------//
