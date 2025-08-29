@@ -7,18 +7,15 @@ WORKDIR /usr/src/app
 COPY . /usr/src/app/
 
 # Corepack
-RUN corepack enable yarn
-
-RUN apk add --no-cache python3 make g++
-
+RUN corepack enable yarn ;\
 # Install dependencies
-RUN yarn install
-
+yarn install ;\
+# Clean Cache
+yarn cache clean ;\
 # Build the bot
-RUN yarn build
-
+yarn build ;\
 # Create tmp directory
-RUN mkdir -p /usr/src/app/temporary
+mkdir -p /usr/src/app/temporary
 
 # Start the bot
 CMD ["yarn", "start"]

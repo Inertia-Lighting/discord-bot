@@ -1,0 +1,67 @@
+# Git
+.git
+.gitignore
+.github
+
+# Node.js (keep node_modules if it exists for Docker builds)
+# node_modules - commented out to allow copying existing node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+
+# Build artifacts (keep dist if it exists)
+# dist - commented out to allow copying existing dist
+build
+coverage
+.nyc_output
+
+# Environment files
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode
+.idea
+*.swp
+*.swo
+
+# Logs
+logs
+*.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Temporary files
+tmp
+temp
+temporary
+.tmp
+
+# Documentation
+README.md
+CODE_OF_CONDUCT.md
+SECURITY.md
+PRIORITY_SYSTEM.md
+SUPPORT_SYSTEM.md
+
+# Scripts
+*.bat
+test-*.js
+verify-*.js
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
