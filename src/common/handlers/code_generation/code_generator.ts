@@ -47,9 +47,9 @@ const { getUserData } = new UserDataClient<true>();
 
 async function checkUser(user_id: string, interaction: CommandInteraction): Promise<boolean> {
 
-    console.log('Checking user...');
+    // console.log('Checking user...');
     const user_data = await getUserData(user_id);
-    console.log(user_data);
+    // console.log(user_data);
     // ------------------------------------------------------------//
 
     const { code_db } = await create_db_handler();
@@ -183,11 +183,11 @@ export async function generateVerificationCode(user_id: string, interaction: Com
 
 
         event.on('Update', (data: RobloxUsersApiUser) => {
-            console.log('event fired');
+            // console.log('event fired');
             const regexFilter = `\\b${push_data.code.trim()}\\b`;
-            console.log(regexFilter);
+            // console.log(regexFilter);
             const contains_code = new RegExp(regexFilter, 'i').test(data.description);
-            console.log(contains_code);
+            // console.log(contains_code);
             if (contains_code) {
                 interaction.editReply({
                     embeds: [
@@ -201,12 +201,12 @@ export async function generateVerificationCode(user_id: string, interaction: Com
                 event_map.delete(push_data.roblox_id);
                 // eslint-disable-next-line no-shadow
                 code_db.data.codes.filter((data) => data.roblox_id === user_id).forEach((_Object, index) => code_db.data.codes.splice(index));
-                console.log('The recovery code is part of the user\'s blurb.');
+                // console.log('The recovery code is part of the user\'s blurb.');
                 return;
             } else {
-                console.log('The recovery code is not part of the user\'s blurb.');
-                console.log(`Wanted: ${push_data.code}`);
-                console.log(`Got this instead: ${data.description}`);
+                // console.log('The recovery code is not part of the user\'s blurb.');
+                // console.log(`Wanted: ${push_data.code}`);
+                // console.log(`Got this instead: ${data.description}`);
             }
         });
     } catch (error) {

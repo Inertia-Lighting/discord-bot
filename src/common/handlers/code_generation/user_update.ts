@@ -60,7 +60,7 @@ export async function getUserUpdates(roblox_id: string | number): Promise<UserUp
 export class UserDataClient<AlwaysReturn extends boolean = boolean> {
      
     async getUserData(roblox_id: string | number): Promise<AlwaysReturn extends true ? RobloxUsersApiUser : RobloxUsersApiUser | undefined> {
-        console.log(`v1/users/${roblox_id}`);
+        // console.log(`v1/users/${roblox_id}`);
         console.trace(roblox_id);
         const request = users_api.get<RobloxUsersApiUser>(`v1/users/${roblox_id}`);
         try {
@@ -93,7 +93,7 @@ setInterval(async () => {
 
     // ------------------------------------------------------------//
     code_db.event_map.forEach(async (v, k) => {
-        console.log(k);
+        // console.log(k);
         const request = await users_api.get<RobloxUsersApiUser>(`v1/users/${k}`);
         const request_data = request.data;
         v.emit('Update', request_data);
