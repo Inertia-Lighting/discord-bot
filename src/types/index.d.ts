@@ -2,7 +2,7 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved     //
 // ------------------------------------------------------------//
 
-import { Prisma } from '@root/lib/prisma';
+import { AccountType, Prisma, Verification } from '@root/lib/prisma';
 import type MongoDB from 'mongodb';
 
 // ------------------------------------------------------------//
@@ -98,31 +98,6 @@ export interface DbBlacklistedUserRecord {
 
 // ------------------------------------------------------------//
 
-export interface DbPendingVerificationData {
-    _id: MongoDB.ObjectId;
-    identity: Partial<DbUserIdentity>;
-    creation_epoch: number;
-    code: string;
-}
-
-// ------------------------------------------------------------//
-
-export interface DbRobloxPurchaseRecord {
-    _id: MongoDB.ObjectId;
-    roblox_purchase_id: string;
-    roblox_user_id: string;
-    product_codes: string[];
-}
-
-export interface DbPayPalPurchaseRecord {
-    _id: MongoDB.ObjectId;
-    paypal_order_id: string;
-    discord_user_id: string;
-    product_codes: string[];
-}
-
-// ------------------------------------------------------------//
-
 export type DbModerationActionType = 'WARN' | 'TIMEOUT' | 'MUTE' | 'KICK' | 'BAN';
 
 export interface DbModerationActionRecord {
@@ -137,3 +112,18 @@ export interface DbModerationAction {
     identity: DbModerationActionUserIdentity;
     record: DbModerationActionRecord;
 }
+
+
+interface UserVerificationContextFetch {
+    verification_code: Verification['code'];
+    account_id: string;
+    account_type: AccountType;
+}
+
+interface FailedRequest {
+    success: false,
+    message: string,
+    errors: object, // Contains detailed error info
+}
+
+type v3VerificationFetch = UserVerificationContextFetch | FailedRequest
