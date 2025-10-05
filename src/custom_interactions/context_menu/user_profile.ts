@@ -8,14 +8,6 @@ import * as Discord from 'discord.js';
 
 // ------------------------------------------------------------//
 
-const db_database_name = `${process.env.MONGO_DATABASE_NAME ?? ''}`;
-if (db_database_name.length < 1) throw new Error('Environment variable: MONGO_DATABASE_NAME; is not set correctly.');
-
-const db_users_collection_name = `${process.env.MONGO_USERS_COLLECTION_NAME ?? ''}`;
-if (db_users_collection_name.length < 1) throw new Error('Environment variable: MONGO_USERS_COLLECTION_NAME; is not set correctly.');
-
-// ------------------------------------------------------------//
-
 export default new CustomInteraction({
     identifier: 'User Profile',
     type: Discord.InteractionType.ApplicationCommand,

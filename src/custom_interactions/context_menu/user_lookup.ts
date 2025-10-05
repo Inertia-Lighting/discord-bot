@@ -23,7 +23,7 @@ if (db_blacklisted_users_collection_name.length < 1) throw new Error('Environmen
 // ------------------------------------------------------------//
 
 export default new CustomInteraction({
-    identifier: 'User Lookup',
+    identifier: 'User Lookup V2',
     type: Discord.InteractionType.ApplicationCommand,
     data: {
         type: Discord.ApplicationCommandType.User,
