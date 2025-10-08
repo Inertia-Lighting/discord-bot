@@ -9,4 +9,4 @@ services:
       - .env
     restart: unless-stopped
     entrypoint: >
-      sh -c "exec yarn start"
+      sh -c "exec pnpm start"
