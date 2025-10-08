@@ -12,7 +12,6 @@ import { AccountRecoveryConfig, AccountRecoveryHandler } from './categories/reco
 import { ProductTransactionsConfig, ProductTransactionsHandler } from './categories/transactions';
 import { ProductTransfersConfig, ProductTransfersHandler } from './categories/transfers';
 import { loadSupportSystemConfig } from './config';
-import { getEscalationService } from './core/escalation-service';
 import { TicketPriorityServiceImpl } from './core/priority-service';
 import { SupportCategoryRegistryImpl } from './core/registry';
 import { SupportTicketServiceImpl } from './core/ticket-service';
@@ -40,17 +39,6 @@ export class SupportSystemManager {
         this.priorityService = new TicketPriorityServiceImpl();
         
         this.initializeCategories();
-    }
-
-    /**
-     * Initializes escalation monitoring service
-     */
-    async initializeEscalationService(client: Discord.Client): Promise<void> {
-        // Restore priority states from database first
-        await this.priorityService.restorePriorityStates();
-        
-        const escalationService = getEscalationService(client);
-        escalationService.start();
     }
 
     /**

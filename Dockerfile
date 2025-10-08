@@ -6,16 +6,16 @@ WORKDIR /usr/src/app
 # Copy source code
 COPY . /usr/src/app/
 
+ENV CI=true
+
 # Corepack
-RUN corepack enable yarn ;\
+RUN corepack enable
+
 # Install dependencies
-yarn install ;\
-# Clean Cache
-yarn cache clean ;\
-# Build the bot
-yarn build ;\
+RUN pnpm install
+
 # Create tmp directory
-mkdir -p /usr/src/app/temporary
+RUN mkdir -p /usr/src/app/temporary
 
 # Start the bot
-CMD ["yarn", "start"]
+CMD ["pnpm", "start"]

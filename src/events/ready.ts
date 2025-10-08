@@ -9,7 +9,6 @@
 import { illegalNicknameHandler } from '@root/common/handlers';
 import { CustomInteractionsManager } from '@root/common/managers/custom_interactions_manager';
 import prisma from '@root/lib/prisma_client';
-import { supportSystemManager } from '@root/support_system';
 import { delay } from '@root/utilities';
 import * as Discord from 'discord.js';
 import moment from 'moment-timezone';
@@ -113,12 +112,6 @@ export default {
 
         /* register interactions to discord */
         setTimeout(() => CustomInteractionsManager.syncInteractionsToDiscord(client), 1 * 30_000);
-
-        /* initialize support system escalation monitoring */
-        setTimeout(async () => {
-            console.info('Initializing support system escalation monitoring');
-            await supportSystemManager.initializeEscalationService(client);
-        }, 2 * 60_000); // Start after 2 minutes to ensure bot is fully ready
 
         /* set the product prices in the database after 1 minute */
         // setTimeout(() => setProductPricesInDB(client), 1 * 60_000);
