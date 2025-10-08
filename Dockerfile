@@ -14,6 +14,8 @@ RUN corepack enable
 # Install dependencies
 RUN pnpm install
 
+RUN pnpm build
+
 # Create tmp directory
 RUN mkdir -p /usr/src/app/temporary
 
