@@ -310,7 +310,7 @@ export class TicketPriorityServiceImpl implements TicketPriorityService {
     async removePriority(channelId: string): Promise<void> {
         await prisma.ticketPriorities.delete({
             where: { channelId }
-        });
+        }).catch();
         
         console.log(`Removed priority data for ticket ${channelId}`);
     }
