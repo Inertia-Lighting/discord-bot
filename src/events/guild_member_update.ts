@@ -2,8 +2,9 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 // ------------------------------------------------------------//
 
-import { guildMemberRolesAddedLogger, guildMemberRolesRemovedLogger, illegalNicknameHandler } from '@root/common/handlers';
 import * as Discord from 'discord.js';
+
+import { guildMemberRolesAddedLogger, guildMemberRolesRemovedLogger, illegalNicknameHandler } from '@/common/handlers';
 
 // ------------------------------------------------------------//
 

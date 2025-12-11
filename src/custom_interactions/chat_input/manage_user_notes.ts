@@ -2,11 +2,12 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 // ------------------------------------------------------------//
 
-import { createNoteForUser, lookupNoteForUser, lookupNotesForUser, purgeNotesFromUser, removeNoteFromUser, updateNoteForUser,UserNote } from '@root/common/handlers';
-import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
-import { CustomEmbed } from '@root/common/message';
-import { chunkArray, delay, ellipseString, getMarkdownFriendlyTimestamp } from '@root/utilities';
 import * as Discord from 'discord.js';
+
+import { createNoteForUser, lookupNoteForUser, lookupNotesForUser, purgeNotesFromUser, removeNoteFromUser, updateNoteForUser,UserNote } from '@/common/handlers';
+import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager';
+import { CustomEmbed } from '@/common/message';
+import { chunkArray, delay, ellipseString, getMarkdownFriendlyTimestamp } from '@/utilities';
 
 // ------------------------------------------------------------//
 

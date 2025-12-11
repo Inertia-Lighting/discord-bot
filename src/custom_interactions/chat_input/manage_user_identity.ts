@@ -2,10 +2,11 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 // ------------------------------------------------------------//
 
-import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
-import { CustomEmbed } from '@root/common/message';
-import prisma from '@root/lib/prisma_client';
 import * as Discord from 'discord.js';
+
+import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager';
+import { CustomEmbed } from '@/common/message';
+import prisma from '@/lib/prisma_client';
 
 // ------------------------------------------------------------//
 
@@ -252,7 +253,7 @@ export default new CustomInteraction({
                     [new_id_type]: new_id,
                 },
             });
-            //await go_mongo_db.update(db_database_name, db_users_collection_name, user_update_filter, db_user_data_update_document);
+            // await go_mongo_db.update(db_database_name, db_users_collection_name, user_update_filter, db_user_data_update_document);
         } catch (error: unknown) {
             console.trace('Failed to update the user\'s identity:', error);
 

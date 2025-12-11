@@ -2,8 +2,9 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 // ------------------------------------------------------------//
 
-import { delay } from '@root/utilities';
 import * as Discord from 'discord.js';
+
+import { delay } from '@/utilities';
 
 import { CustomInteractionAccessLevel } from '../managers/custom_interactions_manager';
 import { fetchHighestAccessLevelForUser } from '../permissions';

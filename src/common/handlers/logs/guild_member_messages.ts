@@ -2,9 +2,10 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 // ------------------------------------------------------------//
 
-import { CustomEmbed } from '@root/common/message';
-import { ellipseString, getMarkdownFriendlyTimestamp } from '@root/utilities';
 import * as Discord from 'discord.js';
+
+import { CustomEmbed } from '@/common/message';
+import { ellipseString, getMarkdownFriendlyTimestamp } from '@/utilities';
 
 // ------------------------------------------------------------//
 

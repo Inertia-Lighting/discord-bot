@@ -2,12 +2,13 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 // ------------------------------------------------------------//
 
-import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
-import { CustomEmbed } from '@root/common/message';
-import { Prisma } from '@root/lib/prisma';
-import { DefaultArgs } from '@root/lib/prisma/runtime/library';
-import prisma from '@root/lib/prisma_client';
+import { DefaultArgs } from '@prisma/client/runtime/client';
 import * as Discord from 'discord.js';
+
+import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager';
+import { CustomEmbed } from '@/common/message';
+import { Prisma } from '@/lib/prisma/browser';
+import prisma from '@/lib/prisma_client';
 
 // ------------------------------------------------------------//
 

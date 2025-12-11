@@ -2,11 +2,12 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 // ------------------------------------------------------------//
 
-import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
-import { loadSupportSystemConfig } from '@root/support_system/config';
-import { TicketPriorityServiceImpl } from '@root/support_system/core/priority-service';
-import { TicketPriority } from '@root/support_system/types';
 import * as Discord from 'discord.js';
+
+import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager';
+import { loadSupportSystemConfig } from '@/support_system/config';
+import { TicketPriorityServiceImpl } from '@/support_system/core/priority-service';
+import { TicketPriority } from '@/support_system/types';
 
 // ------------------------------------------------------------//
 

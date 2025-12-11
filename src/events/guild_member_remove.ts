@@ -2,8 +2,9 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 // ------------------------------------------------------------//
 
-import { guildMemberRemoveLogger } from '@root/common/handlers';
 import * as Discord from 'discord.js';
+
+import { guildMemberRemoveLogger } from '@/common/handlers';
 
 // ------------------------------------------------------------//
 

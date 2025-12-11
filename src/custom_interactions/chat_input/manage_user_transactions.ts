@@ -5,12 +5,13 @@
 
 import { randomUUID } from 'node:crypto';
 
-import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
-import { CustomEmbed } from '@root/common/message';
-import prisma from '@root/lib/prisma_client';
-import { PrismaProductData } from '@root/types';
 import * as Discord from 'discord.js';
 import { compareTwoStrings } from 'string-similarity';
+
+import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager';
+import { CustomEmbed } from '@/common/message';
+import prisma from '@/lib/prisma_client';
+import { PrismaProductData } from '@/types';
 
 // ------------------------------------------------------------//
 

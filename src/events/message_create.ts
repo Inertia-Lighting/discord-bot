@@ -2,8 +2,9 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 // ------------------------------------------------------------//
 
-import { automatedQuickSupportHandler, suggestionsCategoryHandler } from '@root/common/handlers';
 import * as Discord from 'discord.js';
+
+import { automatedQuickSupportHandler, suggestionsCategoryHandler } from '@/common/handlers';
 
 // ------------------------------------------------------------//
 

@@ -2,8 +2,9 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 // ------------------------------------------------------------//
 
-import { getMarkdownFriendlyTimestamp } from '@root/utilities';
 import { ButtonStyle, CommandInteraction, ComponentType } from 'discord.js';
+
+import { getMarkdownFriendlyTimestamp } from '@/utilities';
 
 import { CustomEmbed } from '../../message.js';
 import create_db_handler from './create_db_handler.js';

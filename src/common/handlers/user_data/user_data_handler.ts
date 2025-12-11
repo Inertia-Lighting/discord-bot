@@ -1,4 +1,4 @@
-import { DbUserData, DbUserDataArray } from '@root/types';
+import { DbUserData, DbUserDataArray } from '@/types';
 
 export async function dbUserArray(
     db_user_data: DbUserData

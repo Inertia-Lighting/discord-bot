@@ -2,12 +2,13 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 // ------------------------------------------------------------//
 
-import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
-import { CustomEmbed } from '@root/common/message';
-import { go_mongo_db } from '@root/common/mongo/mongo';
-import { DbBlacklistedUserRecord, DbUserData } from '@root/types';
-import { getMarkdownFriendlyTimestamp } from '@root/utilities';
 import * as Discord from 'discord.js';
+
+import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager';
+import { CustomEmbed } from '@/common/message';
+import { go_mongo_db } from '@/common/mongo/mongo';
+import { DbBlacklistedUserRecord, DbUserData } from '@/types';
+import { getMarkdownFriendlyTimestamp } from '@/utilities';
 
 // ------------------------------------------------------------//
 

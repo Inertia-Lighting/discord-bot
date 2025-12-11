@@ -2,8 +2,9 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 // ------------------------------------------------------------//
 
-import { go_mongo_db } from '@root/common/mongo/mongo';
 import { v4 as uuid_v4 } from 'uuid';
+
+import { go_mongo_db } from '@/common/mongo/mongo';
 
 // ------------------------------------------------------------//
 

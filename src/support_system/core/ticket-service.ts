@@ -2,10 +2,11 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 // ------------------------------------------------------------//
 
-import { CustomEmbed } from '@root/common/message';
-import { delay, getMarkdownFriendlyTimestamp } from '@root/utilities';
 import * as Discord from 'discord.js';
 import * as DiscordTranscripts from 'discord-html-transcripts';
+
+import { CustomEmbed } from '@/common/message';
+import { delay, getMarkdownFriendlyTimestamp } from '@/utilities';
 
 import { SupportSystemConfig } from '../config';
 import { 

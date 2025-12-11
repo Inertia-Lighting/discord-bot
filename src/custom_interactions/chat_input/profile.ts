@@ -2,9 +2,10 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 // ------------------------------------------------------------//
 
-import { userProfileHandler } from '@root/common/handlers';
-import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@root/common/managers/custom_interactions_manager';
 import * as Discord from 'discord.js';
+
+import { userProfileHandler } from '@/common/handlers';
+import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager';
 
 // ------------------------------------------------------------//
 

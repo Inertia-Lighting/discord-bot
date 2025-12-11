@@ -2,9 +2,10 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 // ------------------------------------------------------------//
 
-import { CustomEmbed } from '@root/common/message';
-import prisma from '@root/lib/prisma_client';
 import * as Discord from 'discord.js';
+
+import { CustomEmbed } from '@/common/message';
+import prisma from '@/lib/prisma_client';
 
 import { 
     PriorityConfig,

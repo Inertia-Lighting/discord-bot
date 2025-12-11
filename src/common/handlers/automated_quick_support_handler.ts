@@ -2,11 +2,12 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 // ------------------------------------------------------------//
 
-import { CustomEmbed } from '@root/common/message';
-import { go_mongo_db } from '@root/common/mongo/mongo';
-import { clampNumber } from '@root/utilities';
 import * as Discord from 'discord.js';
 import { compareTwoStrings } from 'string-similarity';
+
+import { CustomEmbed } from '@/common/message';
+import { go_mongo_db } from '@/common/mongo/mongo';
+import { clampNumber } from '@/utilities';
 
 // ------------------------------------------------------------//
 

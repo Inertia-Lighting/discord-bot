@@ -2,8 +2,9 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 // ------------------------------------------------------------//
 
-import { CustomInteractionsManager } from '@root/common/managers/custom_interactions_manager';
 import * as Discord from 'discord.js';
+
+import { CustomInteractionsManager } from '@/common/managers/custom_interactions_manager';
 
 // ------------------------------------------------------------//
 

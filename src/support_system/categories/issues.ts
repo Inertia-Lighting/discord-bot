@@ -2,8 +2,9 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 // ------------------------------------------------------------//
 
-import { CustomEmbed } from '@root/common/message';
 import * as Discord from 'discord.js';
+
+import { CustomEmbed } from '@/common/message';
 
 import { BaseSupportCategoryHandler } from '../core/base-handler';
 import { SupportCategoryId, SupportTicketContext } from '../types';

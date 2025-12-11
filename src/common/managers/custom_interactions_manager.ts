@@ -4,12 +4,13 @@
 
 import path from 'node:path';
 
-import { CustomEmbed } from '@root/common/message';
-import { fetchHighestAccessLevelForUser } from '@root/common/permissions';
-import { DistributiveOmit } from '@root/types';
-import { delay } from '@root/utilities';
 import * as Discord from 'discord.js';
 import recursiveReadDirectory from 'recursive-read-directory';
+
+import { CustomEmbed } from '@/common/message';
+import { fetchHighestAccessLevelForUser } from '@/common/permissions';
+import { DistributiveOmit } from '@/types';
+import { delay } from '@/utilities';
 
 // ------------------------------------------------------------//
 

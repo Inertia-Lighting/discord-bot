@@ -1,9 +1,10 @@
 import { event_map } from './user_update';
+interface userData {
+    codes: verification_code_data[]
+}
+
 export default async function genHandler() {
     const { JSONFilePreset } = await import('lowdb/node');
-    interface userData {
-        codes: verification_code_data[]
-    }
 
     const defaultData: userData = {
         codes: [],

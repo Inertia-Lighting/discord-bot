@@ -2,10 +2,11 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 // ------------------------------------------------------------//
 
-import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext, CustomInteractionsManager } from '@root/common/managers/custom_interactions_manager';
-import { CustomEmbed } from '@root/common/message';
-import { fetchHighestAccessLevelForUser } from '@root/common/permissions';
 import * as Discord from 'discord.js';
+
+import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext, CustomInteractionsManager } from '@/common/managers/custom_interactions_manager';
+import { CustomEmbed } from '@/common/message';
+import { fetchHighestAccessLevelForUser } from '@/common/permissions';
 
 // ------------------------------------------------------------//
 
