@@ -1,11 +1,12 @@
-// import { createHmac } from 'node:crypto';
+import { PrismaPg } from '@prisma/adapter-pg'
+import { env } from 'prisma/config'
 
-import { PrismaClient } from './prisma';
-
-
-// import SnowflakeGenerator from './SnowflakeGenerator';v
+import { PrismaClient } from '@/lib/prisma/client.js'
 
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient }
+const connectionString = env('DATABASE_URL')
+
+const adapter = new PrismaPg({ connectionString }, { schema: 'inertia_main' })
 
 const prisma =
   globalForPrisma.prisma || new PrismaClient({
@@ -23,6 +24,7 @@ const prisma =
             id: true,
         },
     },
+    adapter,
     errorFormat: 'pretty',
 });
 

@@ -2,7 +2,7 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved     //
 // ------------------------------------------------------------//
 
-import { AccountType, Prisma, Verification } from '@root/lib/prisma';
+import { AccountType, Prisma, Verification } from '@//lib/prisma';
 import type MongoDB from 'mongodb';
 
 // ------------------------------------------------------------//

@@ -1,17 +1,16 @@
 datasource db {
     provider = "postgres"
-    url      = env("POSTGRES_DB_CONNECTION_URL")
 }
 
 generator SrcClient {
-    provider = "prisma-client-js"
+    provider = "prisma-client"
     output   = "../src/lib/prisma"
 }
 
-generator DistClient {
-    provider = "prisma-client-js"
-    output   = "../dist/lib/prisma"
-}
+// generator DistClient {
+//     provider = "prisma-client"
+//     output   = "../dist/lib/prisma"
+// }
 
 //* -------------------------------------------------------------------------- */
 //*                                 Schema Data                                */
