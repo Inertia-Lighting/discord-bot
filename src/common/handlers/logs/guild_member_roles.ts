@@ -4,7 +4,8 @@
 
 import * as Discord from 'discord.js';
 
-import { CustomEmbed } from '@/common/message';
+import { CustomEmbed } from '@/common/message.js'
+;
 
 // ------------------------------------------------------------//
 

@@ -4,8 +4,10 @@
 
 import * as Discord from 'discord.js';
 
-import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager';
-import { supportSystemManager } from '@/support_system';
+import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
+;
+import { supportSystemManager } from '@/support_system/index.js'
+;
 
 // ------------------------------------------------------------//
 

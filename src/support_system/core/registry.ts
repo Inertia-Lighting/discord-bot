@@ -7,7 +7,8 @@ import {
     SupportCategoryHandler, 
     SupportCategoryId, 
     SupportCategoryRegistry 
-} from '../types';
+} from '../types/index.js'
+;
 
 /**
  * Implementation of the support category registry

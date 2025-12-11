@@ -4,13 +4,15 @@
 
 import * as Discord from 'discord.js';
 
-import { CustomEmbed } from '@/common/message';
+import { CustomEmbed } from '@/common/message.js'
+;
 
 import { 
     SupportCategoryHandler, 
     SupportCategoryId, 
     SupportTicketContext 
-} from '../types';
+} from '../types/index.js'
+;
 
 /**
  * Base implementation for support category handlers

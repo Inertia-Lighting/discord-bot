@@ -4,10 +4,13 @@
 
 import * as Discord from 'discord.js';
 
-import { CustomEmbed } from '@/common/message';
+import { CustomEmbed } from '@/common/message.js'
+;
 
-import { BaseSupportCategoryHandler } from '../core/base-handler';
-import { SupportCategoryId, SupportTicketContext } from '../types';
+import { BaseSupportCategoryHandler } from '../core/base-handler.js'
+;
+import { SupportCategoryId, SupportTicketContext } from '../types/index.js'
+;
 
 /**
  * Handler for product issues support category

@@ -4,15 +4,18 @@
 
 import * as Discord from 'discord.js';
 
-import { CustomEmbed } from '@/common/message';
-import prisma from '@/lib/prisma_client';
+import { CustomEmbed } from '@/common/message.js'
+;
+import prisma from '@/lib/prisma_client.js'
+;
 
 import { 
     PriorityConfig,
     TicketPriority, 
     TicketPriorityContext,
     TicketPriorityService
-} from '../types';
+} from '../types/index.js'
+;
 
 /**
  * Priority configurations with SLA and visual indicators
@@ -308,11 +311,22 @@ export class TicketPriorityServiceImpl implements TicketPriorityService {
      * Removes priority context when ticket is closed
      */
     async removePriority(channelId: string): Promise<void> {
-        await prisma.ticketPriorities.delete({
+        await prisma.ticketPriorities.findFirst({
             where: { channelId }
-        }).catch();
+        }).then((data) => {
+            if(!data) return;
+            prisma.ticketPriorities.delete({
+                where: {
+                    id: data.id
+                }
+            })
+            return;
+        }).catch((err) => {
+            console.trace(`Could not remove priority data for ticket ${channelId}`, err);
+        })
         
         console.log(`Removed priority data for ticket ${channelId}`);
+        return;
     }
     
     /**

@@ -1,4 +1,5 @@
-import { DbUserData, DbUserDataArray } from '@/types';
+import { DbUserData, DbUserDataArray } from '@/types/index.js'
+;
 
 export async function dbUserArray(
     db_user_data: DbUserData

@@ -2,11 +2,13 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 // ------------------------------------------------------------//
 
-import Discord from 'discord.js'
+import { Message } from 'discord.js'
 import { findBestMatch, Rating } from 'string-similarity';
 
-import { CustomEmbed } from '@/common/message';
-import { delay, ellipseString } from '@/utilities/index';
+import { CustomEmbed } from '@/common/message.js'
+;
+import { delay, ellipseString } from '@/utilities/index.js'
+;
 
 // ------------------------------------------------------------//
 
@@ -42,7 +44,7 @@ function checkCameraMention(msg: string): coolStuff {
 }
 
 export async function suggestionsCategoryHandler(
-    message: Discord.Message,
+    message: Message,
 ) {
     if (!message.member) return;
     if (message.author.system || message.author.bot) return;

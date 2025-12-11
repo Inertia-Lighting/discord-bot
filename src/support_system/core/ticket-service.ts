@@ -3,19 +3,23 @@
 // ------------------------------------------------------------//
 
 import * as Discord from 'discord.js';
-import * as DiscordTranscripts from 'discord-html-transcripts';
 
-import { CustomEmbed } from '@/common/message';
-import { delay, getMarkdownFriendlyTimestamp } from '@/utilities';
+import { CustomEmbed } from '@/common/message.js'
+;
+import { delay, getMarkdownFriendlyTimestamp } from '@/utilities/index.js'
+;
 
-import { SupportSystemConfig } from '../config';
+import { SupportSystemConfig } from '../config/index.js'
+;
 import { 
     SupportCategoryId, 
     SupportTicketContext, 
     SupportTicketService,
     TicketPriority 
-} from '../types';
-import { TicketPriorityServiceImpl } from './priority-service';
+} from '../types/index.js'
+;
+import { TicketPriorityServiceImpl } from './priority-service.js'
+;
 
 /**
  * Implementation of the support ticket service
@@ -294,12 +298,12 @@ export class SupportTicketServiceImpl implements SupportTicketService {
             'unknown';
 
         // Generate transcript
-        const transcript = await DiscordTranscripts.createTranscript(channel, {
-            limit: -1,
-            filename: `transcript_${channel.name}.html`,
-            saveImages: true,
-            poweredBy: false,
-        });
+        // const transcript = await DiscordTranscripts.createTranscript(channel, {
+        //     limit: -1,
+        //     filename: `transcript_${channel.name}.html`,
+        //     saveImages: true,
+        //     poweredBy: false,
+        // });
 
         // Get channel participants
         const messages = await channel.messages.fetch();
@@ -359,12 +363,12 @@ export class SupportTicketServiceImpl implements SupportTicketService {
 
         const transcriptMessage = await transcriptsChannel.send({
             embeds: [transcriptEmbed],
-            files: [transcript],
+            // files: [transcript],
         });
 
         // Send feedback survey if requested
         if (sendFeedback) {
-            await this.sendFeedbackSurvey(ticketOwner, closedBy, reason, transcript, {
+            await this.sendFeedbackSurvey(ticketOwner, closedBy, reason, {
                 message: transcriptMessage,
                 embed: transcriptEmbed,
             });
@@ -378,7 +382,7 @@ export class SupportTicketServiceImpl implements SupportTicketService {
         ticketOwner: Discord.User,
         closedBy: Discord.GuildMember,
         reason: string,
-        transcript: Discord.AttachmentBuilder,
+        // transcript: Discord.AttachmentBuilder,
         transcriptMessageData: {
             message: Discord.Message;
             embed: Discord.EmbedBuilder;
@@ -399,7 +403,7 @@ export class SupportTicketServiceImpl implements SupportTicketService {
                         ].join('\n'),
                     }),
                 ],
-                files: [transcript],
+                // files: [transcript],
             });
 
             // Send feedback survey
@@ -453,7 +457,9 @@ export class SupportTicketServiceImpl implements SupportTicketService {
                     });
 
                     await transcriptMessageData.message.edit({
-                        embeds: [transcriptMessageData.embed, customerReviewEmbed],
+                        embeds: [
+                            // transcriptMessageData.embed,
+                             customerReviewEmbed],
                     }).catch(console.warn);
                 }
 

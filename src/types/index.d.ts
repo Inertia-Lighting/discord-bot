@@ -4,7 +4,8 @@
 
 import type MongoDB from 'mongodb';
 
-import { AccountType, Prisma, Verification } from '@//lib/prisma';
+import { AccountType, Prisma, Verification } from '@//lib/prisma.js'
+;
 
 // ------------------------------------------------------------//
 //                        Helper Types                         //

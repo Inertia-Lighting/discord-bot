@@ -4,7 +4,8 @@
 
 import { ButtonStyle, CommandInteraction, ComponentType } from 'discord.js';
 
-import { getMarkdownFriendlyTimestamp } from '@/utilities';
+import { getMarkdownFriendlyTimestamp } from '@/utilities/index.js'
+;
 
 import { CustomEmbed } from '../../message.js';
 import create_db_handler from './create_db_handler.js';

@@ -4,10 +4,14 @@
 
 import * as Discord from 'discord.js';
 
-import { createNoteForUser, lookupNoteForUser, lookupNotesForUser, purgeNotesFromUser, removeNoteFromUser, updateNoteForUser,UserNote } from '@/common/handlers';
-import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager';
-import { CustomEmbed } from '@/common/message';
-import { chunkArray, delay, ellipseString, getMarkdownFriendlyTimestamp } from '@/utilities';
+import { createNoteForUser, lookupNoteForUser, lookupNotesForUser, purgeNotesFromUser, removeNoteFromUser, updateNoteForUser,UserNote } from '@/common/handlers/index.js'
+;
+import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
+;
+import { CustomEmbed } from '@/common/message.js'
+;
+import { chunkArray, delay, ellipseString, getMarkdownFriendlyTimestamp } from '@/utilities/index.js'
+;
 
 // ------------------------------------------------------------//
 

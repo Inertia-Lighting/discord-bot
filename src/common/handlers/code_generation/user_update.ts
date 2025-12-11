@@ -6,7 +6,8 @@ import EventEmitter from 'node:events';
 
 import axios from 'axios';
 
-import create_db_handler from './create_db_handler';
+import create_db_handler from './create_db_handler.js'
+;
 
 // ------------------------------------------------------------//
 

@@ -7,10 +7,14 @@ import path from 'node:path';
 import * as Discord from 'discord.js';
 import recursiveReadDirectory from 'recursive-read-directory';
 
-import { CustomEmbed } from '@/common/message';
-import { fetchHighestAccessLevelForUser } from '@/common/permissions';
-import { DistributiveOmit } from '@/types';
-import { delay } from '@/utilities';
+import { CustomEmbed } from '@/common/message.js'
+;
+import { fetchHighestAccessLevelForUser } from '@/common/permissions.js'
+;
+import { DistributiveOmit } from '@/types/index.js'
+;
+import { delay } from '@/utilities/index.js'
+;
 
 // ------------------------------------------------------------//
 
@@ -147,17 +151,16 @@ export class CustomInteractionsManager {
 
             console.info(`Registering client interaction... ${esm_compatible_path}`);
 
-            // required to ensure that the file is reloaded each time
-            delete require.cache[require.resolve(client_interaction_file_path)];
+            // required to ensure that the file is reloaded each time (ESM cache busting)
+            const cacheBustedPath = `${esm_compatible_path}?update=${Date.now()}`;
 
-            const { default: client_interaction } = await import(esm_compatible_path).then((imported_module) => {
+            const client_interaction = await import(cacheBustedPath).then((imported_module) => {
                 // handle esm and commonjs module exports
                 const imported_module_exports = imported_module.default ?? imported_module;
 
                 return imported_module_exports;
-            }) as {
-                default: CustomInteraction | unknown,
-            };
+            }) as CustomInteraction | unknown;
+                // console.log(client_interaction)
 
             if (!(client_interaction instanceof CustomInteraction)) {
                 console.trace(`Failed to load client interaction: ${client_interaction_file_path};`);

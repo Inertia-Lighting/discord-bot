@@ -2,7 +2,8 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 // ------------------------------------------------------------//
 
-import { SatisfactionLevel } from '../types';
+import { SatisfactionLevel } from '../types/index.js'
+;
 
 /**
  * Configuration for support ticket channels

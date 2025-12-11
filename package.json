@@ -7,21 +7,23 @@
   "license": "UNLICENSED",
   "main": "./dist/index.js",
   "_moduleAliases": {
-    "@root": "./dist"
+    "@/": "./dist"
   },
-  "engines": {
-    "node": ">=20.0.0",
-    "npm": ">=11.1.0"
-  },
+  "type": "module",
   "scripts": {
     "hook": "is-ci || husky install || true",
-    "lint": "npx eslint src",
+    "lint": "npx eslint --fix",
     "clean": "run-script-os",
-    "clean:windows": "if exist \".\\dist\" rmdir /s /q \".\\dist\"",
     "clean:linux": "rm -rf ./dist",
-    "clean:default": "rm -rf ./dist",
-    "build": "npm run clean ; prisma generate --no-hints ; tsc --build",
-    "start": "node --trace-warnings --enable-source-maps --require module-alias/register ."
+    "clean:default": "rm ./dist",
+    "build": "npx prisma generate --no-hints && npx tsc --build && npx tsc-alias",
+    "test": "npm run prepare && npx prisma generate --no-hints",
+    "prepare": "npm run lint",
+    "start": "node --trace-warnings --enable-source-maps ."
+  },
+  "engines": {
+    "node": ">=22.0.0",
+    "npm": ">=10.8.0"
   },
   "devDependencies": {
     "@stylistic/eslint-plugin": "^5.6.1",
@@ -41,7 +43,7 @@
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.1.0",
-    "@prisma/client": "^6.19.1",
+    "@prisma/client": "^7.1.0",
     "axios": "1.10.0",
     "bufferutil": "4.0.9",
     "discord-html-transcripts": "3.2.0",
@@ -53,9 +55,10 @@
     "module-alias": "2.2.3",
     "moment-timezone": "0.6.0",
     "node-gyp": "11.2.0",
-    "prisma": "^7.1.0",
+    "prisma": "^7.0.1",
     "recursive-read-directory": "github:MidSpike/recursive-read-directory",
     "string-similarity": "4.0.4",
+    "tsc-alias": "^1.8.16",
     "utf-8-validate": "6.0.5",
     "uuid": "11.1.0"
   },

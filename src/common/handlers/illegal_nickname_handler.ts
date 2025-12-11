@@ -4,10 +4,13 @@
 
 import * as Discord from 'discord.js';
 
-import { delay } from '@/utilities';
+import { delay } from '@/utilities/index.js'
+;
 
-import { CustomInteractionAccessLevel } from '../managers/custom_interactions_manager';
-import { fetchHighestAccessLevelForUser } from '../permissions';
+import { CustomInteractionAccessLevel } from '../managers/custom_interactions_manager.js'
+;
+import { fetchHighestAccessLevelForUser } from '../permissions.js'
+;
 
 // ------------------------------------------------------------//
 

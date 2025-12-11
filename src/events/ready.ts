@@ -2,18 +2,24 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 // ------------------------------------------------------------//
 
-// import { DbProductData } from '@/types';
+// import { DbProductData } from '@/types/index.js'
+;
 
 // import axios from 'axios';
 
 import * as Discord from 'discord.js';
 import moment from 'moment-timezone';
 
-import { illegalNicknameHandler } from '@/common/handlers';
-import { CustomInteractionsManager } from '@/common/managers/custom_interactions_manager';
-import prisma from '@/lib/prisma_client';
-import { delay } from '@/utilities';
-// import { go_mongo_db } from '@/common/mongo/mongo';
+import { illegalNicknameHandler } from '@/common/handlers/index.js'
+;
+import { CustomInteractionsManager } from '@/common/managers/custom_interactions_manager.js'
+;
+import prisma from '@/lib/prisma_client.js'
+;
+import { delay } from '@/utilities/index.js'
+;
+// import { go_mongo_db } from '@/common/mongo/mongo.js'
+;
 
 // ------------------------------------------------------------//
 

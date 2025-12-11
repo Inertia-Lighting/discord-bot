@@ -4,8 +4,10 @@
 
 import * as Discord from 'discord.js';
 
-import { addModerationActionToDatabase } from '@/common/handlers';
-import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager';
+import { addModerationActionToDatabase } from '@/common/handlers/index.js'
+;
+import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
+;
 
 // ------------------------------------------------------------//
 

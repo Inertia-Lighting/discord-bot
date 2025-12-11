@@ -4,10 +4,14 @@
 
 import * as Discord from 'discord.js';
 
-import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager';
-import { CustomEmbed } from '@/common/message';
-import { go_mongo_db } from '@/common/mongo/mongo';
-import { DbUserData } from '@/types';
+import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
+;
+import { CustomEmbed } from '@/common/message.js'
+;
+import { go_mongo_db } from '@/common/mongo/mongo.js'
+;
+import { DbUserData } from '@/types/index.js'
+;
 
 // ------------------------------------------------------------//
 

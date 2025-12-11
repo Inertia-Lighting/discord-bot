@@ -87,18 +87,15 @@ async function registerClientEvents(
 
         console.info(`Registering client event... ${esm_compatible_path}`);
 
-        const { default: bot_event } = await import(esm_compatible_path).then((imported_module) => {
+        const bot_event = await import(esm_compatible_path).then((imported_module) => {
             // handle esm and commonjs module exports
             const imported_module_exports = imported_module.default ?? imported_module;
 
             return imported_module_exports;
         }) as {
-            default: {
                 name: string;
                 handler: (client: Discord.Client, ...args: unknown[]) => void;
-            },
         };
-
         client.on(bot_event.name, (...args) => bot_event.handler(client, ...args));
     }
 

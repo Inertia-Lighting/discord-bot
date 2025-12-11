@@ -5,11 +5,14 @@
 // ------------------------------------------------------------//
 
 import * as Discord from 'discord.js';
-import * as DiscordTranscripts from 'discord-html-transcripts';
 
-import { CustomEmbed } from '@/common/message';
-import { delay, getMarkdownFriendlyTimestamp } from '@/utilities';
-import { bot_config } from '@/utilities/bot_config';
+// import * as DiscordTranscripts from 'discord-html-transcripts';
+import { CustomEmbed } from '@/common/message.js'
+;
+import { bot_config } from '@/utilities/bot_config.js'
+import { delay, getMarkdownFriendlyTimestamp } from '@/utilities/index.js'
+;
+;
 
 
 // ------------------------------------------------------------//
@@ -914,12 +917,12 @@ export async function closeSupportTicketChannel(
             `<t:${getMarkdownFriendlyTimestamp(support_channel.createdTimestamp)}:F>`
         ) : 'unknown';
 
-        const transcript = await DiscordTranscripts.createTranscript(support_channel, {
-            limit: -1,
-            filename: `transcript_${support_channel.name}.html`,
-            saveImages: true,
-            poweredBy: false,
-        });
+        // const transcript = await DiscordTranscripts.createTranscript(support_channel, {
+        //     limit: -1,
+        //     filename: `transcript_${support_channel.name}.html`,
+        //     saveImages: true,
+        //     poweredBy: false,
+        // });
 
         const channel_participant_ids = new Set(
             (
@@ -982,7 +985,7 @@ export async function closeSupportTicketChannel(
                 transcript_embed,
             ],
             files: [
-                transcript,
+                // transcript,
             ],
         }).catch(console.warn);
         if (!transcript_message) throw new Error('Unable to send the support ticket transcript!');
@@ -1004,7 +1007,7 @@ export async function closeSupportTicketChannel(
                         }),
                     ],
                     files: [
-                        transcript,
+                        // transcript,
                     ],
                 });
 

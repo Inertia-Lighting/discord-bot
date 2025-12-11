@@ -4,8 +4,10 @@
 
 import * as Discord from 'discord.js';
 
-import { CustomEmbed } from '@/common/message';
-import { getMarkdownFriendlyTimestamp } from '@/utilities';
+import { CustomEmbed } from '@/common/message.js'
+;
+import { getMarkdownFriendlyTimestamp } from '@/utilities/index.js'
+;
 
 // ------------------------------------------------------------//
 

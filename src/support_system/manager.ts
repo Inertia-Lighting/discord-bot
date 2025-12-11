@@ -5,23 +5,23 @@
 import * as Discord from 'discord.js';
 
 // Category handlers
-import { ProductIssuesConfig, ProductIssuesHandler } from './categories/issues';
-import { OtherQuestionsConfig, OtherQuestionsHandler } from './categories/other';
-import { PartnershipRequestsConfig, PartnershipRequestsHandler } from './categories/partnerships';
-import { AccountRecoveryConfig, AccountRecoveryHandler } from './categories/recovery';
-import { ProductTransactionsConfig, ProductTransactionsHandler } from './categories/transactions';
-import { ProductTransfersConfig, ProductTransfersHandler } from './categories/transfers';
-import { loadSupportSystemConfig } from './config';
-import { TicketPriorityServiceImpl } from './core/priority-service';
-import { SupportCategoryRegistryImpl } from './core/registry';
-import { SupportTicketServiceImpl } from './core/ticket-service';
+import { ProductIssuesConfig, ProductIssuesHandler } from './categories/issues.js';
+import { OtherQuestionsConfig, OtherQuestionsHandler } from './categories/other.js';
+import { PartnershipRequestsConfig, PartnershipRequestsHandler } from './categories/partnerships.js';
+import { AccountRecoveryConfig, AccountRecoveryHandler } from './categories/recovery.js';
+import { ProductTransactionsConfig, ProductTransactionsHandler } from './categories/transactions.js';
+import { ProductTransfersConfig, ProductTransfersHandler } from './categories/transfers.js';
+import { loadSupportSystemConfig } from './config/index.js';
+import { TicketPriorityServiceImpl } from './core/priority-service.js';
+import { SupportCategoryRegistryImpl } from './core/registry.js';
+import { SupportTicketServiceImpl } from './core/ticket-service.js';
 import { 
     SupportCategoryConfig,
     SupportCategoryId, 
     SupportCategoryRegistry, 
     SupportTicketContext, 
     SupportTicketService,
-    TicketPriorityService} from './types';
+    TicketPriorityService} from './types/index.js';
 
 /**
  * Main support system manager

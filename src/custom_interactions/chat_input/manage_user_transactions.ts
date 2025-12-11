@@ -8,10 +8,14 @@ import { randomUUID } from 'node:crypto';
 import * as Discord from 'discord.js';
 import { compareTwoStrings } from 'string-similarity';
 
-import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager';
-import { CustomEmbed } from '@/common/message';
-import prisma from '@/lib/prisma_client';
-import { PrismaProductData } from '@/types';
+import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
+;
+import { CustomEmbed } from '@/common/message.js'
+;
+import prisma from '@/lib/prisma_client.js'
+;
+import { PrismaProductData } from '@/types/index.js'
+;
 
 // ------------------------------------------------------------//
 
