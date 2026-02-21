@@ -5,16 +5,20 @@
 import * as Discord from 'discord.js';
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
-;
+    ;
 import { CustomEmbed } from '@/common/message.js'
-;
+    ;
 import prisma from '@/lib/prisma_client.js'
-; 
+    ;
 
 // ------------------------------------------------------------//
 
 const api_server = `${process.env.API_SERVER ?? ''}`;
 if (api_server.length < 1) throw new Error('Environment variable: API_SERVER; is not set correctly.');
+
+const bot_logging_products_manager_channel_id = `${process.env.BOT_LOGGING_PRODUCTS_MANAGER_CHANNEL_ID ?? ''}`;
+if (bot_logging_products_manager_channel_id.length < 1) throw new Error('Environment variable: BOT_LOGGING_PRODUCTS_MANAGER_CHANNEL_ID; is not set correctly.');
+
 
 // ------------------------------------------------------------//
 
@@ -89,18 +93,18 @@ export default new CustomInteraction({
             ]
         })
 
-        const user_a_db = await prisma.user.findUnique({ 
-            where: { 
-                discordId: user_a.id 
+        const user_a_db = await prisma.user.findUnique({
+            where: {
+                discordId: user_a.id
             },
             select: {
                 id: true
             }
         });
 
-        const user_b_db = await prisma.user.findUnique({ 
-            where: { 
-                discordId: user_b.id 
+        const user_b_db = await prisma.user.findUnique({
+            where: {
+                discordId: user_b.id
             },
             select: {
                 id: true
@@ -145,7 +149,7 @@ export default new CustomInteraction({
             },
         });
 
-        if (!user_a_transaction) { 
+        if (!user_a_transaction) {
             await interaction.editReply({
                 embeds: [
                     CustomEmbed.from({
@@ -193,15 +197,15 @@ export default new CustomInteraction({
         });
 
         if (clicked.customId === 'transfer_cancel') {
-            await clicked.update({ 
-                components: [], 
+            await clicked.update({
+                components: [],
                 embeds: [
-                    CustomEmbed.from({ 
-                        color: CustomEmbed.Color.Red, 
+                    CustomEmbed.from({
+                        color: CustomEmbed.Color.Red,
                         title: 'Transfer',
                         description: 'Transfer cancelled.',
                     })
-                ] 
+                ]
             });
             return;
         }
@@ -209,8 +213,8 @@ export default new CustomInteraction({
         try {
             await prisma.$transaction(async (tx) => {
                 await tx.transactions.update({
-                    where: { 
-                        id: user_a_transaction.id 
+                    where: {
+                        id: user_a_transaction.id
                     },
                     data: {
                         oneTimeTransferUsed: true,
@@ -226,6 +230,47 @@ export default new CustomInteraction({
                     },
                 });
             });
+
+            try {
+                const logging_channel = await interaction.client.channels.fetch(bot_logging_products_manager_channel_id);
+                if (!logging_channel) throw new Error('Unable to find the transactions manager logging channel!');
+                if (!logging_channel.isTextBased()) throw new Error('The transactions manager logging channel is not text-based!');
+                if (!logging_channel.isSendable()) throw new Error('The identity manager logging channel is not sendable!');
+
+                await logging_channel.send({
+                    embeds: [
+                        CustomEmbed.from({
+                            color: CustomEmbed.Color.Yellow,
+                            title: 'Inertia Lighting | Transactions Manager',
+                            description: [
+                                `${interaction.user} transferred product(s) from ${user_a.globalName} (${user_a.id}) to ${user_b.globalName} (${user_b.id}): `,
+                                `\`${user_a_transaction.productCode}\``
+
+                            ].join('\n'),
+                            fields: [
+                                {
+                                    name: 'Reason',
+                                    value: Discord.escapeMarkdown(reason),
+                                },
+                            ],
+                        }),
+                    ],
+                });
+            } catch (error) {
+                console.trace(error);
+
+                await interaction.editReply({
+                    embeds: [
+                        CustomEmbed.from({
+                            color: CustomEmbed.Color.Red,
+                            title: 'Inertia Lighting | Transactions Manager',
+                            description: 'An error occurred while logging to the transactions manager logging channel!',
+                        }),
+                    ],
+                }).catch(console.warn);
+
+                return;
+            }
 
             await clicked.update({
                 components: [],
