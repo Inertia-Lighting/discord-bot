@@ -71,7 +71,7 @@ export default new CustomInteraction({
         if (!interaction.inCachedGuild()) return;
         if (!interaction.channel) return;
 
-        await interaction.deferReply({ flags: ['Ephemeral'] });
+        await interaction.deferReply();
 
         const staff_member = await interaction.guild.members.fetch(interaction.user.id);
         if (!staff_member) return; // this should never happen

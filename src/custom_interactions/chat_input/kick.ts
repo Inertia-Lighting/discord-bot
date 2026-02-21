@@ -42,8 +42,6 @@ export default new CustomInteraction({
         if (!interaction.inCachedGuild()) return;
         if (!interaction.channel) return;
 
-        await interaction.deferReply({ flags: ['Ephemeral'] });
-
         const staff_member = interaction.member;
         const member_to_kick = interaction.options.getMember('member');
         const kick_reason = interaction.options.getString('reason', true);
