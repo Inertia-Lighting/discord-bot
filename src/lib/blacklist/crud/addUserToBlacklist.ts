@@ -17,30 +17,23 @@ export async function addUserToBlacklistedUsersDatabase(
     try {
         const blacklist_date = new Date();
         blacklist_date.setFullYear(blacklist_date.getFullYear() + 10);
-        await prisma.user.updateMany({
-            where: {
-                OR: [
-                    {
-                        discordId
-                    },
-                    {
-                        robloxId
-                    }
-                ]
-            },
+        await prisma.punishments.create({
             data: {
-                receivedPunishments: {
-                    create: {
-                        punishmentType: 'blacklist',
-                        punishmentReason: reason,
-                        staffUser: {
-                            connect: {
-                                discordId: staff_member_id
-                            },
-                        },
-                        duration: blacklist_date
+                punishmentType: 'blacklist',
+                punishmentReason: reason,
+                staffUser: {
+                    connect: {
+                        discordId: staff_member_id
+                    },
+                },
+                duration: blacklist_date,
+                punishedUser: {
+                    connect: {
+                        robloxId,
+                        discordId
                     }
                 }
+
             }
         })
     } catch (error) {

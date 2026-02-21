@@ -11,23 +11,19 @@ export async function removeUserFromBlacklistedUsersDatabase(
 ): Promise<boolean> {
     try {
 
-        await prisma.user.updateMany({
+        await prisma.punishments.deleteMany({
             where: {
-                OR: [
-                    {
-                        discordId
-                    },
-                    {
-                        robloxId
-                    }
-                ]
-            },
-            data: {
-                receivedPunishments: {
-                    deleteMany: {
-                        punishmentType: 'blacklist'
-                    }
-                }
+                punishedUser: {
+                    OR: [
+                        {
+                            discordId,
+                        },
+                        {
+                            robloxId
+                        }
+                    ],
+                },
+                punishmentType: 'blacklist'
             }
         })
     } catch (error) {
