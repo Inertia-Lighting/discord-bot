@@ -4,14 +4,11 @@
 
 import * as Discord from 'discord.js';
 
-import { createNoteForUser, lookupNoteForUser, lookupNotesForUser, purgeNotesFromUser, removeNoteFromUser, updateNoteForUser,UserNote } from '@/common/handlers/index.js'
-;
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
-;
 import { CustomEmbed } from '@/common/message.js'
-;
+import { createNoteForUser, lookupNoteForUser, lookupNotesForUser, purgeNotesFromUser, removeNoteFromUser, updateNoteForUser } from '@/lib/notes/index.js';
 import { chunkArray, delay, ellipseString, getMarkdownFriendlyTimestamp } from '@/utilities/index.js'
-;
+
 
 // ------------------------------------------------------------//
 
@@ -52,13 +49,13 @@ async function manageNotesLookupSubCommandHandler(
                     name: 'Inertia Lighting | User Notes',
                 },
                 description: [
-                    `**Id** \`${user_note.record.id}\``,
-                    `**Staff** ${Discord.userMention(user_note.record.staff_member_id)}`,
-                    `**Member** ${Discord.userMention(user_note.identity.discord_user_id)}`,
-                    `**Date** <t:${getMarkdownFriendlyTimestamp(user_note.record.epoch)}:f>`,
+                    `**Id** \`${user_note.id}\``,
+                    `**Staff** ${Discord.userMention(user_note.staffUserId)}`,
+                    `**Member** ${Discord.userMention(user_note.notedUserId)}`,
+                    `**Date** <t:${getMarkdownFriendlyTimestamp(user_note.createdAt.getUTCMilliseconds())}:f>`,
                     '**Content**',
                     '```',
-                    `${ellipseString(Discord.escapeMarkdown(user_note.record.note), 512)}`,
+                    `${ellipseString(Discord.escapeMarkdown(user_note.note), 512)}`,
                     '```',
                 ].join('\n'),
             }),
@@ -86,8 +83,8 @@ async function manageNotesForSubCommandHandler(
     await delay(500);
 
     const user_notes = await lookupNotesForUser({
-        discord_user_id: user.id,
-    }) as UserNote[];
+        discordId: user.id,
+    })
 
     if (user_notes.length === 0) {
         await bot_message.edit({
@@ -106,7 +103,7 @@ async function manageNotesForSubCommandHandler(
         return;
     }
 
-    const sorted_user_notes = user_notes.sort((a, b) => b.record.epoch - a.record.epoch);
+    const sorted_user_notes = user_notes.sort((a, b) => b.createdAt.getUTCMilliseconds() - a.createdAt.getUTCMilliseconds());
     const user_notes_chunks = chunkArray(sorted_user_notes, 5);
 
     if (user_notes_chunks.length > 1) {
@@ -151,13 +148,13 @@ async function manageNotesForSubCommandHandler(
                     },
                     description: user_notes_chunk.map(user_note =>
                         [
-                            `**Id** \`${user_note.record.id}\``,
-                            `**Staff** ${Discord.userMention(user_note.record.staff_member_id)}`,
-                            `**Member** ${Discord.userMention(user_note.identity.discord_user_id)}`,
-                            `**Date** <t:${`${user_note.record.epoch}`.slice(0, -3)}:f>`,
+                            `**Id** \`${user_note.id}\``,
+                            `**Staff** ${Discord.userMention(user_note.staffUser.discordId)}`,
+                            `**Member** ${Discord.userMention(user_note.notedUser.discordId)}`,
+                            `**Date** <t:${`${user_note.createdAt}`.slice(0, -3)}:f>`,
                             '**Content**',
                             '```',
-                            `${ellipseString(Discord.escapeMarkdown(user_note.record.note), 250)}`,
+                            `${ellipseString(Discord.escapeMarkdown(user_note.note), 250)}`,
                             '```',
                         ].join('\n')
                     ).join('\n'),
@@ -223,11 +220,11 @@ async function manageNotesAddSubCommandHandler(
     const note = interaction.options.getString('note', true);
 
     const note_was_created_successfully = await createNoteForUser({
-        discord_user_id: user.id,
+        discordId: user.id,
     }, {
         epoch: Date.now(),
         note: note,
-        staff_member_id: interaction.user.id,
+        staffId: interaction.user.id,
     });
 
     if (!note_was_created_successfully) {
@@ -292,7 +289,7 @@ async function manageNotesEditSubCommandHandler(
     }
 
     const successfully_updated_note = await updateNoteForUser({
-        id: note_in_database.record.id,
+        id: note_in_database.id,
         epoch: Date.now(),
         note: note,
         staff_member_id: interaction.user.id,
@@ -359,7 +356,7 @@ async function manageNotesRemoveSubCommandHandler(
     }
 
     const successfully_removed_note = await removeNoteFromUser({
-        id: note_in_database.record.id,
+        id: note_in_database.id,
     });
 
     if (!successfully_removed_note) {
@@ -401,7 +398,7 @@ async function manageNotesPurgeSubCommandHandler(
 
     const user = interaction.options.getUser('user', true);
 
-    const successfully_purged_notes = await purgeNotesFromUser({ discord_user_id: user.id });
+    const successfully_purged_notes = await purgeNotesFromUser({ discordId: user.id });
 
     if (!successfully_purged_notes) {
         await interaction.editReply({

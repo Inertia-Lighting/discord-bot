@@ -63,12 +63,28 @@ model User {
 
     issuedPunishments   Punishments[]  @relation("StaffIssuedPunishments")
     receivedPunishments Punishments[]  @relation("UserPunishments")
+    publishedNotes      Notes[]        @relation("StaffIssuedNotes")
+    notes               Notes[]        @relation("UserNotes")
     transactions        Transactions[]
     reviews             Reviews[]
     giftcards           Giftcards[]
     Transfers           Transfers[]
     // ProductHashInfoId      String                 @unique
     // ProductHashInformation ProductHashInformation? @relation("UserProductHashInfo", fields: [ProductHashInfoId], references: [id])
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Notes {
+    id String @id @default(cuid()) @map("_id")
+
+    note        String
+    staffUserId String
+    notedUserId String
+
+    notedUser User @relation("UserNotes", fields: [notedUserId], references: [id])
+    staffUser User @relation("StaffIssuedNotes", fields: [staffUserId], references: [id])
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -224,13 +240,13 @@ model Verification {
 model TicketPriorities {
     id String @id @default(cuid()) @map("_id")
 
-    channelId           String        @unique
-    priority            TicketPriority @default(low)
-    slaDeadline         DateTime
-    lastStaffResponse   DateTime?
-    escalationStarted   DateTime?
-    escalationCount     Int           @default(0)
-    
+    channelId         String         @unique
+    priority          TicketPriority @default(low)
+    slaDeadline       DateTime
+    lastStaffResponse DateTime?
+    escalationStarted DateTime?
+    escalationCount   Int            @default(0)
+
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 }
