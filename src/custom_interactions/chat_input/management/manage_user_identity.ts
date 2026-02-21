@@ -254,7 +254,6 @@ export default new CustomInteraction({
                     [new_id_type]: new_id,
                 },
             });
-            // await go_mongo_db.update(db_database_name, db_users_collection_name, user_update_filter, db_user_data_update_document);
         } catch (error: unknown) {
             console.trace('Failed to update the user\'s identity:', error);
 

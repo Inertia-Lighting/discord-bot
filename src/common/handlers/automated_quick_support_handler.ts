@@ -6,7 +6,6 @@ import * as Discord from 'discord.js';
 import { compareTwoStrings } from 'string-similarity';
 
 import { CustomEmbed } from '@/common/message.js'
-import { go_mongo_db } from '@/common/mongo/mongo.js'
 import { clampNumber } from '@/utilities/index.js'
 
 // ------------------------------------------------------------//
@@ -23,22 +22,6 @@ type QuickSupportTopic = {
 const quick_support_topics: QuickSupportTopic[] = [];
 
 const confidence_threshold = 0.75; // on a scale from <0, 1> (inclusive), how similar the two strings should be to match
-
-// ------------------------------------------------------------//
-
-async function updateQuickSupportTopics() {
-    quick_support_topics.length = 0; // empty the array
-
-    const db_quick_support_topics_find_cursor = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME as string, process.env.MONGO_QUICK_SUPPORT_TOPICS_COLLECTION_NAME as string, {});
-
-    const db_quick_support_topics = await db_quick_support_topics_find_cursor.toArray() as unknown as QuickSupportTopic[];
-
-    for (const db_quick_support_topic of db_quick_support_topics) {
-        quick_support_topics.push(db_quick_support_topic);
-    }
-}
-setImmediate(() => updateQuickSupportTopics());
-setInterval(() => updateQuickSupportTopics(), 5 * 60_000); // every 5 minutes
 
 // ------------------------------------------------------------//
 
