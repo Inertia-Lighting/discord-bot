@@ -5,21 +5,8 @@
 import * as Discord from 'discord.js';
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
-;
 import { CustomEmbed } from '@/common/message.js'
-;
-import { go_mongo_db } from '@/common/mongo/mongo.js'
-;
-import { DbUserData } from '@/types/index.js'
-;
-
-// ------------------------------------------------------------//
-
-const db_database_name = `${process.env.MONGO_DATABASE_NAME ?? ''}`;
-if (db_database_name.length < 1) throw new Error('Environment variable: MONGO_DATABASE_NAME; is not set correctly.');
-
-const db_users_collection_name = `${process.env.MONGO_USERS_COLLECTION_NAME ?? ''}`;
-if (db_users_collection_name.length < 1) throw new Error('Environment variable: MONGO_USERS_COLLECTION_NAME; is not set correctly.');
+import prisma from '@/lib/prisma_client.js';
 
 // ------------------------------------------------------------//
 
@@ -106,19 +93,14 @@ export default new CustomInteraction({
             return;
         }
 
-        /* find the user in the database */
-        const db_user_data_find_cursor = await go_mongo_db.find(db_database_name, db_users_collection_name, {
-            'identity.discord_user_id': user_to_modify.id,
-        }, {
-            projection: {
-                '_id': false,
-            },
-        });
-
-        const db_user_data = await db_user_data_find_cursor.next() as unknown as DbUserData | null;
+        const db_user = await prisma.user.findFirst({
+            where: {
+                discordId: user_to_modify.id
+            }
+        })
 
         /* check if the user exists */
-        if (!db_user_data) {
+        if (!db_user) {
             await interaction.editReply({
                 embeds: [
                     CustomEmbed.from({
@@ -131,106 +113,76 @@ export default new CustomInteraction({
             return;
         }
 
-        const initial_amount: number = db_user_data.lumens ?? 0;
 
-        let updated_amount: number;
-        switch (action_to_perform) {
-            case 'add': {
-                updated_amount = initial_amount + amount_to_modify_by;
-                break;
-            }
-
-            case 'remove': {
-                updated_amount = initial_amount - amount_to_modify_by;
-                break;
-            }
-
-            case 'set': {
-                updated_amount = amount_to_modify_by;
-                break;
-            }
-
-            default: {
-                await interaction.editReply({
-                    embeds: [
-                        CustomEmbed.from({
-                            color: CustomEmbed.Color.Red,
-                            description: `Invalid action: \`${action_to_perform}\``,
-                        }),
-                    ],
-                }).catch(console.warn);
-
-                return;
-            }
-        }
-
-        /* prevent decimals */
-        updated_amount = Math.floor(updated_amount);
-
-        const amount_too_small = updated_amount <= Number.MIN_SAFE_INTEGER;
-        if (amount_too_small) {
-            await interaction.editReply({
-                embeds: [
-                    CustomEmbed.from({
-                        color: CustomEmbed.Color.Yellow,
-                        description: 'New amount is too small!',
-                    }),
-                ],
-            }).catch(console.warn);
-
-            return;
-        }
-
-        const amount_too_large = updated_amount >= Number.MAX_SAFE_INTEGER;
-        if (amount_too_large) {
-            await interaction.editReply({
-                embeds: [
-                    CustomEmbed.from({
-                        color: CustomEmbed.Color.Yellow,
-                        description: 'New amount is too large!',
-                    }),
-                ],
-            }).catch(console.warn);
-
-            return;
-        }
-
-        const amount_is_not_a_number = Number.isNaN(updated_amount);
-        if (amount_is_not_a_number) {
-            await interaction.editReply({
-                embeds: [
-                    CustomEmbed.from({
-                        color: CustomEmbed.Color.Yellow,
-                        description: 'New amount is not a valid number!',
-                    }),
-                ],
-            }).catch(console.warn);
-
-            return;
-        }
-
-        /* update the user */
+        let updated_user;
         try {
-            await go_mongo_db.update(db_database_name, db_users_collection_name, {
-                'identity.discord_user_id': db_user_data.identity.discord_user_id,
-                'identity.roblox_user_id': db_user_data.identity.roblox_user_id,
-            }, {
-                $set: {
-                    'lumens': updated_amount,
-                },
-            });
-        } catch (error) {
-            console.trace(error);
+            switch (action_to_perform) {
+                case 'add': {
+                    updated_user = await prisma.user.update({
+                        where: {
+                            id: db_user.id
+                        },
+                        data: {
+                            lumens: {
+                                increment: amount_to_modify_by
+                            }
+                        }
+                    })
+                    break;
+                }
 
+                case 'remove': {
+                    updated_user = await prisma.user.update({
+                        where: {
+                            id: db_user.id
+                        },
+                        data: {
+                            lumens: {
+                                decrement: amount_to_modify_by
+                            }
+                        }
+                    })
+                    break;
+                }
+
+                case 'set': {
+                    updated_user = await prisma.user.update({
+                        where: {
+                            id: db_user.id
+                        },
+                        data: {
+                            lumens: {
+                                set: amount_to_modify_by
+                            }
+                        }
+                    })
+                    break;
+                }
+
+                default: {
+                    await interaction.editReply({
+                        embeds: [
+                            CustomEmbed.from({
+                                color: CustomEmbed.Color.Red,
+                                description: `Invalid action: \`${action_to_perform}\``,
+                            }),
+                        ],
+                    }).catch(console.warn);
+
+                    return;
+                }
+            }
+        } catch (err) {
+            console.trace(err)
             await interaction.editReply({
                 embeds: [
                     CustomEmbed.from({
                         color: CustomEmbed.Color.Red,
-                        description: 'An error occurred while attempting to update the user!',
+                        title: 'Error',
+                        description: `Could not ${action_to_perform} lumens on user.`,
                     }),
                 ],
             }).catch(console.warn);
-
             return;
         }
 
@@ -256,7 +208,7 @@ export default new CustomInteraction({
                         ) : (
                             `Set ${user_to_modify}'s lumens to a new amount.`
                         ),
-                        `New amount of lumens: \`${updated_amount}\``,
+                        `New amount of lumens: \`${updated_user.lumens}\``,
                     ].join('\n'),
                     fields: [
                         {
