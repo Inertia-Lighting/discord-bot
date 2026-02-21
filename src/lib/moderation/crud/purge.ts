@@ -14,11 +14,6 @@ export async function purgeModerationActions(
     /* remove the member's moderation actions from the database */
     let db_delete_operation_count = 0;
     try {
-        // const db_deletion_result = await go_mongo_db.remove(db_database_name, db_moderation_action_records_collection_name, {
-        //     'identity.discord_user_id': user.id,
-        // });
-
-        // db_delete_operation_count = db_deletion_result.deletedCount ?? 0;
         const delete_records = await prisma.punishments.deleteMany({
             where: {
                 punishedUser: {

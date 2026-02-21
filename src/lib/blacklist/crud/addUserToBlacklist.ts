@@ -17,7 +17,6 @@ export async function addUserToBlacklistedUsersDatabase(
     try {
         const blacklist_date = new Date();
         blacklist_date.setFullYear(blacklist_date.getFullYear() + 10);
-        // await go_mongo_db.add(db_database_name, db_blacklisted_users_collection_name, [user_blacklist_data]);
         await prisma.user.updateMany({
             where: {
                 OR: [

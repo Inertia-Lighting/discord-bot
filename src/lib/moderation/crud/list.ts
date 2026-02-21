@@ -83,17 +83,6 @@ export async function listModerationActions(
             staffUser: true
         }
     })
-    
-
-    // const db_moderation_actions_find_cursor = await go_mongo_db.find(db_database_name, db_moderation_action_records_collection_name, db_moderation_actions_find_filter, {
-    //     projection: {
-    //         _id: false,
-    //     },
-    // });
-
-    // const db_moderation_actions = await db_moderation_actions_find_cursor.toArray() as unknown as DbModerationAction[];
-
-    
 
     /* check if the member has any records */
     if (punishments.length === 0) {

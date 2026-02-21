@@ -4,14 +4,13 @@
 
 import type MongoDB from 'mongodb';
 
-import { AccountType, Prisma, Verification } from '@//lib/prisma.js'
-;
+import { AccountType, Prisma, Verification } from '@/lib/prisma.js'
 
 // ------------------------------------------------------------//
 //                        Helper Types                         //
 // ------------------------------------------------------------//
 
-export type DistributiveOmit<T, K extends keyof T> = T extends unknown ? Omit<T, K> : never;
+type DistributiveOmit<T, K extends keyof T> = T extends unknown ? Omit<T, K> : never;
 
 // ------------------------------------------------------------//
 //                      Prisma Database Schemas                //
@@ -36,43 +35,21 @@ type PrismaProductData = Prisma.ProductsGetPayload<{
 //                      Database Schemas                       //
 // ------------------------------------------------------------//
 
-export interface DbProductData {
-    _id: MongoDB.ObjectId;
-    roblox_product_id: string;
-    viewable: boolean;
-    purchasable: boolean;
-    downloadable: boolean;
-    code: string;
-    name: string;
-    description: string;
-    price_in_usd: string;
-    price_in_robux: number;
-    price_in_lumens: number;
-    roblox_assets: {
-        product_preview_image?: string;
-    };
-    sorting_priority: number;
-    tags: string[];
-    supporter_perk: boolean;
-}
-
-// ------------------------------------------------------------//
-
-export interface DbUserIdentity {
+interface DbUserIdentity {
     discord_user_id: string;
     roblox_user_id: string;
 }
 
-export interface DbUserProducts {
+interface DbUserProducts {
     [product_code: string]: boolean;
 }
 
-export interface DbUserTicketBlacklist {
+interface DbUserTicketBlacklist {
     blacklisted: boolean;
     reason: string;
 }
 
-export interface DbUserData {
+interface DbUserData {
     _id: MongoDB.ObjectId;
     identity: DbUserIdentity;
     lumens: number;
@@ -80,17 +57,9 @@ export interface DbUserData {
     ticket_blacklist?: DbUserTicketBlacklist
 }
 
-export interface DbUserDataArray {
-    _id: MongoDB.ObjectId;
-    identity: DbUserIdentity;
-    lumens: number;
-    products: string[];
-    ticket_blacklist?: DbUserTicketBlacklist
-}
-
 // ------------------------------------------------------------//
 
-export interface DbBlacklistedUserRecord {
+interface DbBlacklistedUserRecord {
     _id: MongoDB.ObjectId;
     identity: DbUserIdentity;
     reason: string;
@@ -100,9 +69,9 @@ export interface DbBlacklistedUserRecord {
 
 // ------------------------------------------------------------//
 
-export type DbModerationActionType = 'WARN' | 'TIMEOUT' | 'MUTE' | 'KICK' | 'BAN';
+type DbModerationActionType = 'WARN' | 'TIMEOUT' | 'MUTE' | 'KICK' | 'BAN';
 
-export interface DbModerationActionRecord {
+interface DbModerationActionRecord {
     id: string, // a UUIDv4 string
     type: DbModerationActionType;
     epoch: number;
@@ -110,12 +79,12 @@ export interface DbModerationActionRecord {
     staff_member_id: string;
 }
 
-export interface DbModerationAction {
+interface DbModerationAction {
     identity: DbModerationActionUserIdentity;
     record: DbModerationActionRecord;
 }
 
-export interface QSTopic {
+interface QSTopic {
   id: string;
   title: string;
   searchable_queries: string[],

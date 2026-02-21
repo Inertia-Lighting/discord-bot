@@ -5,19 +5,9 @@
 import * as Discord from 'discord.js';
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
-
-import { listModerationActions, purgeModerationActions,removeModerationAction, updateModerationAction } from '../../../lib/moderation/index.js';
-
-// ------------------------------------------------------------//
-
-const db_database_name = `${process.env.MONGO_DATABASE_NAME ?? ''}`;
-if (db_database_name.length < 1) throw new Error('Environment variable: MONGO_DATABASE_NAME; is not set correctly.');
-
-const db_moderation_action_records_collection_name = `${process.env.MONGO_MODERATION_ACTION_RECORDS_COLLECTION_NAME ?? ''}`;
-if (db_moderation_action_records_collection_name.length < 1) throw new Error('Environment variable: MONGO_MODERATION_ACTION_RECORDS_COLLECTION_NAME; is not set correctly.');
+import { listModerationActions, purgeModerationActions,removeModerationAction, updateModerationAction } from '@/lib/moderation/index.js';
 
 // ------------------------------------------------------------//
-
 
 export default new CustomInteraction({
     identifier: 'manage_moderation_actions',

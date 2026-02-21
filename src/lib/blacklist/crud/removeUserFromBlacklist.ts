@@ -10,9 +10,7 @@ export async function removeUserFromBlacklistedUsersDatabase(
     },
 ): Promise<boolean> {
     try {
-        // await go_mongo_db.remove(db_database_name, db_blacklisted_users_collection_name, {
-        //     'identity': identity,
-        // });
+
         await prisma.user.updateMany({
             where: {
                 OR: [

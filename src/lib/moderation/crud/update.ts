@@ -36,13 +36,6 @@ export async function updateModerationAction(
     }
 
     try {
-        // await go_mongo_db.update(db_database_name, db_moderation_action_records_collection_name, {
-        //     'record.id': db_moderation_action.record.id,
-        // }, {
-        //     $set: {
-        //         'record.reason': `${new_moderation_action_reason} <edited by @${interaction.user.username} (${interaction.user.id}) on ${moment().tz('America/New_York').format('YYYY[-]MM[-]DD | hh:mm A | [GMT]ZZ')}>`,
-        //     },
-        // });
         await prisma.punishments.update({
             where: {
                 id: punishment_id
