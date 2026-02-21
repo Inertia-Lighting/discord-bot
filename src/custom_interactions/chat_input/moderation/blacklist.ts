@@ -6,139 +6,11 @@ import * as Discord from 'discord.js';
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
 import { CustomEmbed } from '@/common/message.js'
-import { go_mongo_db } from '@/common/mongo/mongo.js'
-import { DbBlacklistedUserRecord, DbUserData } from '@/types/index.js'
+import { addUserToBlacklistedUsersDatabase } from '@/lib/blacklist/crud/addUserToBlacklist.js';
+import { findUserInBlacklistedUsersDatabase } from '@/lib/blacklist/crud/findUserInBlacklist.js';
+import { removeUserFromBlacklistedUsersDatabase } from '@/lib/blacklist/crud/removeUserFromBlacklist.js';
+import prisma from '@/lib/prisma_client.js';
 import { getMarkdownFriendlyTimestamp } from '@/utilities/index.js'
-
-// ------------------------------------------------------------//
-
-const db_database_name = `${process.env.MONGO_DATABASE_NAME ?? ''}`;
-if (db_database_name.length < 1) throw new Error('Environment variable: MONGO_DATABASE_NAME; is not set correctly.');
-
-const db_users_collection_name = `${process.env.MONGO_USERS_COLLECTION_NAME ?? ''}`;
-if (db_users_collection_name.length < 1) throw new Error('Environment variable: MONGO_USERS_COLLECTION_NAME; is not set correctly.');
-
-const db_blacklisted_users_collection_name = `${process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME ?? ''}`;
-if (db_blacklisted_users_collection_name.length < 1) throw new Error('Environment variable: MONGO_BLACKLISTED_USERS_COLLECTION_NAME; is not set correctly.');
-
-// ------------------------------------------------------------//
-
-/**
- * Fetches a user in the users database
- */
-async function findUserInUsersDatabase(
-    user_lookup_type: 'discord' | 'roblox',
-    user_lookup_query: string,
-): Promise<Omit<DbUserData, '_id'> | null> {
-    if (typeof user_lookup_query !== 'string') throw new TypeError('`user_lookup_query` must be a string');
-
-    const find_query = {
-        ...(user_lookup_type === 'discord' ? {
-            'identity.discord_user_id': user_lookup_query,
-        } : {
-            'identity.roblox_user_id': user_lookup_query,
-        }),
-    };
-
-    const db_user_data_find_cursor = await go_mongo_db.find(db_database_name, db_users_collection_name, find_query, {
-        projection: {
-            '_id': false,
-        },
-    });
-
-    const db_user_data = await db_user_data_find_cursor.next() as unknown as Omit<DbUserData, '_id'> | null;
-
-    return db_user_data;
-}
-
-/**
- * Fetches a user in the blacklisted-users database
- */
-async function findUserInBlacklistedUsersDatabase(
-    user_lookup_type: 'discord' | 'roblox',
-    user_lookup_query: string,
-): Promise<Omit<DbBlacklistedUserRecord, '_id'> | null> {
-    if (typeof user_lookup_query !== 'string') throw new TypeError('`user_lookup_query` must be a string');
-
-    const find_query = {
-        ...(user_lookup_type === 'discord' ? {
-            'identity.discord_user_id': user_lookup_query,
-        } : {
-            'identity.roblox_user_id': user_lookup_query,
-        }),
-    };
-
-    const db_blacklisted_user_data_find_cursor = await go_mongo_db.find(db_database_name, db_blacklisted_users_collection_name, find_query, {
-        projection: {
-            '_id': false,
-        },
-    });
-
-    const db_blacklisted_user_data = await db_blacklisted_user_data_find_cursor.next() as unknown as Omit<DbBlacklistedUserRecord, '_id'> | null;
-
-    return db_blacklisted_user_data;
-}
-
-/**
- * Adds a user to the blacklisted-users database
- */
-async function addUserToBlacklistedUsersDatabase(
-    identity: {
-        discord_user_id: string,
-        roblox_user_id: string,
-    },
-    { epoch, reason, staff_member_id }: {
-        epoch: number,
-        reason: string,
-        staff_member_id: string,
-    },
-): Promise<boolean> {
-    if (typeof identity.discord_user_id !== 'string') throw new TypeError('`identity.discord_user_id` must be a string');
-    if (typeof identity.roblox_user_id !== 'string') throw new TypeError('`identity.roblox_user_id` must be a string');
-    if (typeof epoch !== 'number') throw new TypeError('`epoch` must be a number');
-    if (typeof reason !== 'string') throw new TypeError('`reason` must be a string');
-    if (typeof staff_member_id !== 'string') throw new TypeError('`staff_member_id` must be a string');
-
-    const user_blacklist_data: Omit<DbBlacklistedUserRecord, '_id'> = {
-        'identity': identity,
-        'epoch': epoch,
-        'reason': reason,
-        'staff_member_id': staff_member_id,
-    };
-
-    try {
-        await go_mongo_db.add(db_database_name, db_blacklisted_users_collection_name, [user_blacklist_data]);
-    } catch (error) {
-        console.trace(error);
-        return false; // user was not added to blacklist
-    }
-
-    return true; // user was added to blacklist
-}
-
-/**
- * Removes a user from the blacklisted-users database
- */
-async function removeUserFromBlacklistedUsersDatabase(
-    identity: {
-        discord_user_id: string,
-        roblox_user_id: string,
-    },
-): Promise<boolean> {
-    if (typeof identity.discord_user_id !== 'string') throw new TypeError('`identity.discord_user_id` must be a string');
-    if (typeof identity.roblox_user_id !== 'string') throw new TypeError('`identity.roblox_user_id` must be a string');
-
-    try {
-        await go_mongo_db.remove(db_database_name, db_blacklisted_users_collection_name, {
-            'identity': identity,
-        });
-    } catch (error) {
-        console.trace(error);
-        return false; // user was not removed from blacklist
-    }
-
-    return true; // user was removed from blacklist
-}
 
 // ------------------------------------------------------------//
 
@@ -179,8 +51,12 @@ async function blacklistAddSubcommand(
 ): Promise<void> {
     if (!interaction.inCachedGuild()) return; // if the interaction did not originate from a cached guild, ignore it
 
-    const db_user_data = await findUserInUsersDatabase('discord', user_id_to_add);
-    if (!db_user_data) {
+    const db_user = await prisma.user.findFirst({
+        where: {
+            discordId: user_id_to_add
+        }
+    })
+    if (!db_user) {
         await interaction.editReply({
             embeds: [
                 CustomEmbed.from({
@@ -233,8 +109,7 @@ async function blacklistAddSubcommand(
         return;
     }
 
-    const was_user_added_to_blacklist = await addUserToBlacklistedUsersDatabase(db_user_data.identity, {
-        epoch: Date.now(),
+    const was_user_added_to_blacklist = await addUserToBlacklistedUsersDatabase(db_user, {
         reason: reason,
         staff_member_id: interaction.user.id,
     });
@@ -265,7 +140,7 @@ async function blacklistAddSubcommand(
                 },
                 title: 'Added User to Blacklist',
                 description: [
-                    `Discord User: ${Discord.userMention(db_user_data.identity.discord_user_id)}; was added to the blacklist by ${Discord.userMention(interaction.user.id)}.`,
+                    `Discord User: ${Discord.userMention(db_user.discordId)}; was added to the blacklist by ${Discord.userMention(interaction.user.id)}.`,
                 ].join('\n'),
             }),
         ],
@@ -278,8 +153,12 @@ async function blacklistRemoveSubcommand(
 ): Promise<void> {
     if (!interaction.inCachedGuild()) return; // if the interaction did not originate from a cached guild, ignore it
 
-    const db_user_data = await findUserInUsersDatabase('discord', user_id_to_remove);
-    if (!db_user_data) {
+        const db_user = await prisma.user.findFirst({
+        where: {
+            discordId: user_id_to_remove
+        }
+    })
+    if (!db_user) {
         await interaction.editReply({
             embeds: [
                 CustomEmbed.from({
@@ -332,7 +211,7 @@ async function blacklistRemoveSubcommand(
         return;
     }
 
-    const was_user_removed_from_blacklist = await removeUserFromBlacklistedUsersDatabase(db_user_data.identity);
+    const was_user_removed_from_blacklist = await removeUserFromBlacklistedUsersDatabase(db_user);
     if (!was_user_removed_from_blacklist) {
         await interaction.editReply({
             embeds: [
@@ -355,7 +234,7 @@ async function blacklistRemoveSubcommand(
             CustomEmbed.from({
                 title: 'Removed User From Blacklist',
                 description: [
-                    `Discord User: ${Discord.userMention(db_user_data.identity.discord_user_id)}; was removed from the blacklist by ${Discord.userMention(interaction.user.id)}.`,
+                    `Discord User: ${Discord.userMention(db_user.discordId)}; was removed from the blacklist by ${Discord.userMention(interaction.user.id)}.`,
                 ].join('\n'),
             }),
         ],
@@ -378,20 +257,20 @@ async function blacklistLookupSubcommand(
         return;
     }
 
-    const discord_friendly_timestamp = getMarkdownFriendlyTimestamp(db_user_blacklist_data.epoch);
+    const discord_friendly_timestamp = getMarkdownFriendlyTimestamp(db_user_blacklist_data.createdAt.getUTCMilliseconds());
 
     await interaction.editReply({
         embeds: [
             CustomEmbed.from({
                 title: 'Blacklist Lookup',
                 description: [
-                    `**Discord:** \`${db_user_blacklist_data.identity.discord_user_id}\``,
-                    `**Roblox:** \`${db_user_blacklist_data.identity.roblox_user_id}\``,
-                    `**Staff Member:** \`${db_user_blacklist_data.staff_member_id}\``,
+                    `**Discord:** \`${db_user_blacklist_data.punishedUser.discordId}\``,
+                    `**Roblox:** \`${db_user_blacklist_data.punishedUser.robloxId}\``,
+                    `**Staff Member:** \`${db_user_blacklist_data.staffUser.discordId}\``,
                     `**Epoch:** <t:${discord_friendly_timestamp}:R>`,
                     '**Reason:**',
                     '```',
-                    Discord.escapeMarkdown(db_user_blacklist_data.reason),
+                    Discord.escapeMarkdown(db_user_blacklist_data.punishmentReason),
                     '```',
                 ].join('\n'),
             }),
