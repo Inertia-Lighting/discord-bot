@@ -5,7 +5,6 @@
 import * as Discord from 'discord.js';
 
 import { guildMemberMessageUpdateLogger } from '@/common/handlers/index.js'
-;
 
 // ------------------------------------------------------------//
 

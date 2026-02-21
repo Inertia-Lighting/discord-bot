@@ -6,9 +6,7 @@ import { Message } from 'discord.js'
 import { findBestMatch, Rating } from 'string-similarity';
 
 import { CustomEmbed } from '@/common/message.js'
-;
 import { delay, ellipseString } from '@/utilities/index.js'
-;
 
 // ------------------------------------------------------------//
 

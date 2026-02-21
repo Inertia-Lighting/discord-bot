@@ -6,11 +6,8 @@ import * as Discord from 'discord.js';
 import got from 'got';
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
-;
 import { CustomEmbed } from '@/common/message.js'
-;
 import { v3VerificationFetch } from '@/types/index.js'
-;
 
 // ------------------------------------------------------------//
 

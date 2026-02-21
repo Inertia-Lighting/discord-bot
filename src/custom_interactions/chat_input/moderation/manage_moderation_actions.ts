@@ -6,15 +6,10 @@ import * as Discord from 'discord.js';
 import moment from 'moment-timezone';
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
-;
 import { CustomEmbed } from '@/common/message.js'
-;
 import { go_mongo_db } from '@/common/mongo/mongo.js'
-;
 import { DbModerationAction } from '@/types/index.js'
-;
 import { chunkArray, delay, ellipseString } from '@/utilities/index.js'
-;
 
 // ------------------------------------------------------------//
 

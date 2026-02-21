@@ -5,11 +5,8 @@
 import * as Discord from 'discord.js';
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext, CustomInteractionsManager } from '@/common/managers/custom_interactions_manager.js'
-;
 import { CustomEmbed } from '@/common/message.js'
-;
 import { fetchHighestAccessLevelForUser } from '@/common/permissions.js'
-;
 
 // ------------------------------------------------------------//
 

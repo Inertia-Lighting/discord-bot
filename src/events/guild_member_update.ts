@@ -5,7 +5,6 @@
 import * as Discord from 'discord.js';
 
 import { guildMemberRolesAddedLogger, guildMemberRolesRemovedLogger, illegalNicknameHandler } from '@/common/handlers/index.js'
-;
 
 // ------------------------------------------------------------//
 

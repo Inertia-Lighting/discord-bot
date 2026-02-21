@@ -2,24 +2,13 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 // ------------------------------------------------------------//
 
-// import { DbProductData } from '@/types/index.js'
-;
-
-// import axios from 'axios';
-
 import * as Discord from 'discord.js';
 import moment from 'moment-timezone';
 
 import { illegalNicknameHandler } from '@/common/handlers/index.js'
-;
 import { CustomInteractionsManager } from '@/common/managers/custom_interactions_manager.js'
-;
 import prisma from '@/lib/prisma_client.js'
-;
 import { delay } from '@/utilities/index.js'
-;
-// import { go_mongo_db } from '@/common/mongo/mongo.js'
-;
 
 // ------------------------------------------------------------//
 
@@ -28,53 +17,6 @@ if (bot_guild_id.length < 1) throw new Error('environment variable: BOT_GUILD_ID
 
 // ------------------------------------------------------------//
 
-// async function setProductPricesInDB(
-//     client: Discord.Client,
-// ) {
-//     /* fetch all products from the database */
-//     const db_roblox_products_find_cursor = await go_mongo_db.find(process.env.MONGO_DATABASE_NAME as string, process.env.MONGO_PRODUCTS_COLLECTION_NAME as string, {});
-
-//     const db_roblox_products = await db_roblox_products_find_cursor.toArray() as unknown as DbProductData[];
-
-//     /* fetch the product prices from roblox and apply it to the database */
-//     for (const db_roblox_product of db_roblox_products) {
-//         let product_price_in_robux;
-//         try {
-//             const response = await axios({
-//                 method: 'get',
-//                 url: `https://api.roblox.com/marketplace/productDetails?productId=${encodeURIComponent(db_roblox_product.roblox_product_id)}`,
-//                 headers: {
-//                     'Content-Type': 'application/json',
-//                 },
-//                 validateStatus: (status) => status === 200,
-//             });
-
-//             product_price_in_robux = response?.data?.PriceInRobux ?? null;
-
-//             if (!product_price_in_robux) throw new Error('Failed to fetch product price from Roblox!');
-//         } catch {
-//             console.warn(`Unable to fetch price for product: ${db_roblox_product.code}; skipping product!`);
-//             continue; // skip this product since the price cannot be fetched
-//         }
-
-//         const parsed_product_price_in_robux = Number.parseInt(product_price_in_robux, 10); // Robux can only be an integer
-
-//         if (Number.isNaN(parsed_product_price_in_robux)) {
-//             console.warn(`Unable to parse price for product: ${db_roblox_product.code}; skipping product!`);
-//             continue; // skip this product since the price cannot be parsed
-//         }
-
-//         await go_mongo_db.update(process.env.MONGO_DATABASE_NAME as string, process.env.MONGO_PRODUCTS_COLLECTION_NAME as string, {
-//             roblox_product_id: db_roblox_product.roblox_product_id,
-//         }, {
-//             $set: {
-//                 'price_in_robux': parsed_product_price_in_robux,
-//             },
-//         });
-
-//         await delay(250); // prevent api abuse
-//     }
-// }
 
 async function updateBotNickname(
     client: Discord.Client<true>,

@@ -8,12 +8,8 @@ import * as Discord from 'discord.js';
 
 // import * as DiscordTranscripts from 'discord-html-transcripts';
 import { CustomEmbed } from '@/common/message.js'
-;
 import { bot_config } from '@/utilities/bot_config.js'
 import { delay, getMarkdownFriendlyTimestamp } from '@/utilities/index.js'
-;
-;
-
 
 // ------------------------------------------------------------//
 

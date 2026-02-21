@@ -6,11 +6,8 @@ import * as Discord from 'discord.js';
 import { compareTwoStrings } from 'string-similarity';
 
 import { CustomEmbed } from '@/common/message.js'
-;
 import { go_mongo_db } from '@/common/mongo/mongo.js'
-;
 import { clampNumber } from '@/utilities/index.js'
-;
 
 // ------------------------------------------------------------//
 

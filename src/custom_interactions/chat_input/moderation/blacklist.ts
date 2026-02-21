@@ -5,15 +5,10 @@
 import * as Discord from 'discord.js';
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
-;
 import { CustomEmbed } from '@/common/message.js'
-;
 import { go_mongo_db } from '@/common/mongo/mongo.js'
-;
 import { DbBlacklistedUserRecord, DbUserData } from '@/types/index.js'
-;
 import { getMarkdownFriendlyTimestamp } from '@/utilities/index.js'
-;
 
 // ------------------------------------------------------------//
 

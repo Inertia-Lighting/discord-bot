@@ -8,13 +8,9 @@ import * as Discord from 'discord.js';
 import recursiveReadDirectory from 'recursive-read-directory';
 
 import { CustomEmbed } from '@/common/message.js'
-;
 import { fetchHighestAccessLevelForUser } from '@/common/permissions.js'
-;
 import { DistributiveOmit } from '@/types/index.js'
-;
 import { delay } from '@/utilities/index.js'
-;
 
 // ------------------------------------------------------------//
 
