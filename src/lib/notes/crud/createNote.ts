@@ -16,24 +16,21 @@ export async function createNoteForUser(
     }
 ): Promise<boolean> {
     try {
-        const user = await prisma.user.findFirst({
+        await prisma.user.update({
             where: {
                 discordId,
-            }
-        })
-        const staffUser = await prisma.user.findFirst({
-            where: {
-                discordId: staffId,
-            }
-        })
-        if (!user || !staffUser) {
-            return false;
-        }
-        await prisma.notes.create({
+            },
             data: {
-                notedUserId: user.id,
-                staffUserId: staffUser.id,
-                note
+                notes: {
+                    create: {
+                        staffUser: {
+                            connect: {
+                                discordId: staffId
+                            }
+                        },
+                        note
+                    }
+                }
             }
         })
         return true
