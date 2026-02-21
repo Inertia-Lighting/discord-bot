@@ -6,61 +6,22 @@ import * as Discord from 'discord.js';
 import { compareTwoStrings } from 'string-similarity';
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
-;
 import { CustomEmbed } from '@/common/message.js'
-;
-import { go_mongo_db } from '@/common/mongo/mongo.js'
-;
+import { topics as qs_topics } from '@/lib/quick_support/index.js'
+import { QSTopic } from '@/types/index.js';
 import { randomArrayItem } from '@/utilities/index.js'
-;
 
 // ------------------------------------------------------------//
-
-const db_database_name = `${process.env.MONGO_DATABASE_NAME ?? ''}`;
-if (db_database_name.length < 1) throw new Error('Environment variable: MONGO_DATABASE_NAME; is not set correctly.');
-
-const db_quick_support_topics_collection_name = `${process.env.MONGO_QUICK_SUPPORT_TOPICS_COLLECTION_NAME ?? ''}`;
-if (db_quick_support_topics_collection_name.length < 1) throw new Error('Environment variable: MONGO_QUICK_SUPPORT_TOPICS_COLLECTION_NAME; is not set correctly.');
-
-// ------------------------------------------------------------//
-
-type QuickSupportTopic = {
-    id: string,
-    title: string,
-    searchable_queries: string[],
-    support_contents: string,
-};
-
-type QuickSupportTopics = QuickSupportTopic[];
-
-// ------------------------------------------------------------//
-
-async function fetchQuickSupportTopics(): Promise<QuickSupportTopics> {
-    const qs_topics_find_cursor = await go_mongo_db.find(db_database_name, db_quick_support_topics_collection_name, {}, {
-        projection: {
-            _id: false,
-        },
-    });
-
-    const qs_topics = await qs_topics_find_cursor.toArray() as unknown as QuickSupportTopics;
-
-    return qs_topics;
-}
 
 async function fetchQuickSupportTopicById(
     qs_topic_id: string,
-): Promise<QuickSupportTopic> {
-    const qs_topic_find_cursor = await go_mongo_db.find(db_database_name, db_quick_support_topics_collection_name, {
-        id: qs_topic_id,
-    }, {
-        projection: {
-            _id: false,
-        },
-    });
+): Promise<QSTopic | undefined> {
+    
+    const findTopic = qs_topics.find((topic) => topic.id === qs_topic_id)
 
-    const qs_topic = await qs_topic_find_cursor.next() as unknown as QuickSupportTopic;
 
-    return qs_topic;
+    return findTopic;
+
 }
 
 // ------------------------------------------------------------//
@@ -69,8 +30,6 @@ async function quickSupportAutoCompleteHandler(
     interaction: Discord.AutocompleteInteraction,
 ): Promise<void> {
     const search_query = interaction.options.getFocused();
-
-    const qs_topics = await fetchQuickSupportTopics();
 
     const mapped_qs_topics = [];
     for (const qs_topic of qs_topics) {
@@ -96,7 +55,7 @@ async function quickSupportAutoCompleteHandler(
     );
 
      
-    function generateRandomQuickSupportTopic(): QuickSupportTopic {
+    function generateRandomQuickSupportTopic(): QSTopic {
         const random_qs_topic = randomArrayItem(qs_topics);
 
         const already_matched_qs_topic = matching_qs_topics.find(

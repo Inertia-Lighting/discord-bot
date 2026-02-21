@@ -115,6 +115,12 @@ export interface DbModerationAction {
     record: DbModerationActionRecord;
 }
 
+export interface QSTopic {
+  id: string;
+  title: string;
+  searchable_queries: string[],
+  support_contents: string;
+}
 
 interface UserVerificationContextFetch {
     verification_code: Verification['code'];
