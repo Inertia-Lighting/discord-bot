@@ -18,11 +18,11 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
 
-    - name: Install Yarn with Corepack
+    - name: Install PNPM with Corepack
       run: corepack enable
     
     - name: Install Dependencies
-      run: yarn
+      run: pnpm install
 
     - name: Run ESLint
-      run: yarn lint
+      run: pnpm run lint
