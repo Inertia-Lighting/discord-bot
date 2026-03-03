@@ -1,14 +1,16 @@
-generator client {
-  provider = "prisma-client"
-  output   = "../src/lib/prisma"
-  // compilerBuild = "fast"
+datasource db {
+    provider = "postgres"
 }
 
-datasource postgres {
-  provider = "postgresql"
+generator SrcClient {
+    provider = "prisma-client"
+    output   = "../src/lib/prisma"
 }
 
-
+// generator DistClient {
+//     provider = "prisma-client"
+//     output   = "../dist/lib/prisma"
+// }
 
 //* -------------------------------------------------------------------------- */
 //*                                 Schema Data                                */
@@ -54,19 +56,35 @@ enum TicketPriority {
 model User {
     id String @id @default(cuid()) @map("_id")
 
-    discordId        String  @unique
-    robloxId         String  @unique
-    lumens           Int     @default(0)
-    stripeCustomerID String?
+    discordId String @unique
+    robloxId  String @unique
+    lumens    Int    @default(0)
+    // productHash String? @unique
 
     issuedPunishments   Punishments[]  @relation("StaffIssuedPunishments")
     receivedPunishments Punishments[]  @relation("UserPunishments")
+    publishedNotes      Notes[]        @relation("StaffIssuedNotes")
+    notes               Notes[]        @relation("UserNotes")
     transactions        Transactions[]
     reviews             Reviews[]
     giftcards           Giftcards[]
     Transfers           Transfers[]
     // ProductHashInfoId      String                 @unique
     // ProductHashInformation ProductHashInformation? @relation("UserProductHashInfo", fields: [ProductHashInfoId], references: [id])
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Notes {
+    id String @id @default(cuid()) @map("_id")
+
+    note        String
+    staffUserId String
+    notedUserId String
+
+    notedUser User @relation("UserNotes", fields: [notedUserId], references: [id])
+    staffUser User @relation("StaffIssuedNotes", fields: [staffUserId], references: [id])
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -154,6 +172,19 @@ model Reviews {
     updatedAt DateTime @updatedAt
 }
 
+// model ProductHashInformation {
+//     id String @id @default(cuid()) @map("_id")
+
+//     timeBinary           String @unique
+//     sequenceNumberBinary String
+//     machineIdBinary      String
+
+//     createdAt DateTime @default(now())
+//     updatedAt DateTime @updatedAt
+
+//     User User? @relation("UserProductHashInfo")
+// }
+
 //* -------------------------------------------------------------------------- */
 //*                                Product Data                                */
 //* -------------------------------------------------------------------------- */
@@ -165,9 +196,6 @@ model Products {
     description     String
     code            String @unique
     robloxProductId String
-    stripeProductId String @default("")
-
-    robloxImageId String @default("")
 
     price_in_usd    String
     price_in_robux  Int
