@@ -1,4 +1,4 @@
-name: ESLint
+name: Build
 on: [ push, pull_request, workflow_dispatch ]
 jobs:
   lint:
@@ -7,7 +7,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [ 23.x ]
+        node-version: [ 24.x ]
 
     steps:
     - name: Checkout repository
@@ -25,4 +25,4 @@ jobs:
       run: pnpm install
 
     - name: Run ESLint
-      run: pnpm run lint
+      run: pnpm run build
