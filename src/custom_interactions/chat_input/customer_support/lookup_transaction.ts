@@ -16,7 +16,7 @@ if (bot_customer_service_role_id.length < 1) throw new Error('Environment variab
 // ------------------------------------------------------------//
 
 export default new CustomInteraction({
-    identifier: 'begin_recovery_process',
+    identifier: 'lookup_transaction',
     type: Discord.InteractionType.ApplicationCommand,
     data: {
         type: Discord.ApplicationCommandType.ChatInput,
