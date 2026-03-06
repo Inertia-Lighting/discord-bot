@@ -22,7 +22,7 @@ jobs:
       run: corepack enable
     
     - name: Install Dependencies
-      run: yarn
+      run: pnpm i --ignore-scripts
 
     - name: Run ESLint
-      run: yarn lint
+      run: pnpm run lint
