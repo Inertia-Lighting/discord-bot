@@ -12,6 +12,7 @@ import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunCo
 import { CustomEmbed } from '@/common/message.js'
 import prisma from '@/lib/prisma_client.js'
 import { PrismaProductData } from '@/types/index.js'
+import { Prisma } from '../../../lib/prisma/client.js';
 
 
 // ------------------------------------------------------------//
@@ -84,7 +85,7 @@ async function manageProductsAutocompleteHandler(
     interaction: Discord.AutocompleteInteraction,
 ): Promise<void> {
     const db_roblox_products = await DbProductsCache.fetch(false);
-  
+
     const user_id_to_modify = interaction.options.get('for')?.value; // required to be like this because of a weird discord.js bug
     const action_to_perform = interaction.options.getString('action') as ManageTransactionsAction;
     const focused_option = interaction.options.getFocused(true);
@@ -121,7 +122,7 @@ async function manageProductsAutocompleteHandler(
             discordId: true,
             transactions: true,
         },
-    }) 
+    })
 
     if (!db_user_data) {
         await interaction.respond([]);
@@ -393,58 +394,105 @@ async function manageProductsChatInputCommandHandler(
         return;
     }
 
-    /* manage the user's transactions */
-    for (const product_code_to_manage of product_codes_to_manage) {
-        try {
-            /* modify the user's transactions */
-            prisma.$transaction(async (tx) => {
-                if (action_to_perform === ManageTransactionsAction.Add) {
-                    await tx.transactions.create({
-                        data: {
-                            transactionType: 'system',
-                            productCode: product_code,
-                            purchaseId: `SYSTEM_MANUAL_${interaction.user.id}_${randomUUID()}`,
-                            transactionAmount: '0',
-                            User: {
-                                connect: {
-                                    discordId: db_user_data.discordId,
-                                },
-                            },
-                        },
-                    });
-                }
-                else if (action_to_perform === ManageTransactionsAction.Remove) {
-                    await tx.transactions.deleteMany({
-                        where: {
-                            AND: [
-                                {
-                                    User: {
-                                        discordId: db_user_data.discordId,
-                                    },
-                                },
-                                {
-                                    productCode: product_code,
-                                },
-                            ]
-                        }
-                    });
-                }
-            });
-        } catch (error) {
-            console.trace(error);
+    if (action_to_perform === ManageTransactionsAction.Add) {
+        const transactions: Prisma.TransactionsCreateManyUserInputEnvelope[] = []
+        for (const product_code_to_manage of product_codes_to_manage) {
 
-            await interaction.editReply({
-                embeds: [
-                    CustomEmbed.from({
-                        color: CustomEmbed.Color.Red,
-                        title: 'Inertia Lighting | Transactions Manager',
-                        description: `An error occurred while modifying: \`${product_code_to_manage}\` for ${user_to_modify}!`,
-                    }),
-                ],
-            }).catch(console.warn);
+            transactions.push({
+                data: {
+                    transactionType: 'system',
+                    productCode: product_code_to_manage,
+                    purchaseId: `SYSTEM_MANUAL_${interaction.user.id}_${randomUUID()}`,
+                    transactionAmount: '0',
+                },
+            }
+            )
 
-            return;
         }
+    }
+
+    /* manage the user's transactions */
+
+
+    try {
+        /* modify the user's transactions */
+        prisma.$transaction(async (tx) => {
+            if (action_to_perform === ManageTransactionsAction.Add) {
+                // await tx.transactions.create({
+                //     data: {
+                //         transactionType: 'system',
+                //         productCode: product_code,
+                //         purchaseId: `SYSTEM_MANUAL_${interaction.user.id}_${randomUUID()}`,
+                //         transactionAmount: '0',
+                //         User: {
+                //             connect: {
+                //                 discordId: db_user_data.discordId,
+                //             },
+                //         },
+                //     },
+                // });
+                await tx.user.update({
+                    where: {
+                        discordId: user_to_modify.id
+                    },
+                    data: {
+                        transactions: {
+                            createMany: {
+                                data: {
+                                    transactionType: 'system',
+                                    productCode: product_code,
+                                    purchaseId: `SYSTEM_MANUAL_${interaction.user.id}_${randomUUID()}`,
+                                    transactionAmount: '0',
+                                },
+                                skipDuplicates: false,
+                            }
+                        }
+                    }
+                })
+            }
+            else if (action_to_perform === ManageTransactionsAction.Remove) {
+                // await tx.transactions.deleteMany({
+                //     where: {
+                //         AND: [
+                //             {
+                //                 User: {
+                //                     discordId: db_user_data.discordId,
+                //                 },
+                //             },
+                //             {
+                //                 productCode: product_code,
+                //             },
+                //         ]
+                //     }
+                // });
+                await tx.user.update({
+                    where: {
+                        discordId: user_to_modify.id
+                    },
+                    data: {
+                        transactions: {
+                            deleteMany: {
+                                productCode: product_code,
+                            }
+                        }
+                    }
+                })
+            }
+        });
+    } catch (error) {
+        console.trace(error);
+
+        await interaction.editReply({
+            embeds: [
+                CustomEmbed.from({
+                    color: CustomEmbed.Color.Red,
+                    title: 'Inertia Lighting | Transactions Manager',
+                    description: `An error occurred while modifying: \`${product_codes_to_manage.join(', ')}\` for ${user_to_modify}!`,
+                }),
+            ],
+        }).catch(console.warn);
+
+        return;
     }
 
     /* log to the transactions manager logging channel */
@@ -452,8 +500,8 @@ async function manageProductsChatInputCommandHandler(
         const logging_channel = await interaction.client.channels.fetch(bot_logging_products_manager_channel_id);
         if (!logging_channel) throw new Error('Unable to find the transactions manager logging channel!');
         if (!logging_channel.isTextBased()) throw new Error('The transactions manager logging channel is not text-based!');
-        if(!logging_channel.isSendable()) throw new Error('The identity manager logging channel is not sendable!');
-        
+        if (!logging_channel.isSendable()) throw new Error('The identity manager logging channel is not sendable!');
+
         await logging_channel.send({
             embeds: [
                 CustomEmbed.from({

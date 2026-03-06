@@ -151,7 +151,7 @@ async function manageNotesForSubCommandHandler(
                             `**Id** \`${user_note.id}\``,
                             `**Staff** ${Discord.userMention(user_note.staffUser.discordId)}`,
                             `**Member** ${Discord.userMention(user_note.notedUser.discordId)}`,
-                            `**Date** <t:${`${user_note.createdAt}`.slice(0, -3)}:f>`,
+                            `**Date** <t:${`${getMarkdownFriendlyTimestamp(user_note.createdAt.getUTCMilliseconds())}`.slice(0, -3)}:f>`,
                             '**Content**',
                             '```',
                             `${ellipseString(Discord.escapeMarkdown(user_note.note), 250)}`,
