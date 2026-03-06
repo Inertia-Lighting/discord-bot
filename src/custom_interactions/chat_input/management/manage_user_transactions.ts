@@ -10,6 +10,7 @@ import { compareTwoStrings } from 'string-similarity';
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
 import { CustomEmbed } from '@/common/message.js'
+import { TransactionsCreateManyUserInput } from '@/lib/prisma/models.js';
 import prisma from '@/lib/prisma_client.js'
 import { PrismaProductData } from '@/types/index.js'
 import { Prisma } from '../../../lib/prisma/client.js';
@@ -45,7 +46,7 @@ const ALL_VIEWABLE_PRODUCTS_CODE = 'ALL_VIEWABLE';
 // ------------------------------------------------------------//
 
 class DbProductsCache {
-    public static readonly cache_lifetime_ms = 1 * 60_000; // 1 minute
+    public static readonly cache_lifetime_ms = 1 * 600_000; // 10 minutes
 
     public static cache_expiration_epoch_ms = 0; // default to expired so it will be fetched on first call
 
@@ -412,88 +413,125 @@ async function manageProductsChatInputCommandHandler(
     }
 
     /* manage the user's transactions */
-
-
-    try {
-        /* modify the user's transactions */
-        prisma.$transaction(async (tx) => {
-            if (action_to_perform === ManageTransactionsAction.Add) {
-                // await tx.transactions.create({
-                //     data: {
-                //         transactionType: 'system',
-                //         productCode: product_code,
-                //         purchaseId: `SYSTEM_MANUAL_${interaction.user.id}_${randomUUID()}`,
-                //         transactionAmount: '0',
-                //         User: {
-                //             connect: {
-                //                 discordId: db_user_data.discordId,
-                //             },
-                //         },
-                //     },
-                // });
-                await tx.user.update({
-                    where: {
-                        discordId: user_to_modify.id
-                    },
-                    data: {
-                        transactions: {
-                            createMany: {
-                                data: {
-                                    transactionType: 'system',
-                                    productCode: product_code,
-                                    purchaseId: `SYSTEM_MANUAL_${interaction.user.id}_${randomUUID()}`,
-                                    transactionAmount: '0',
-                                },
-                                skipDuplicates: false,
-                            }
-                        }
-                    }
+    switch (action_to_perform) {
+        case ManageTransactionsAction.Add: {
+            const transactions: TransactionsCreateManyUserInput[] = []
+            for (const product_code_to_manage of product_codes_to_manage) {
+                transactions.push({
+                    transactionType: 'system',
+                    productCode: product_code_to_manage,
+                    purchaseId: `SYSTEM_MANUAL_${interaction.user.id}_${randomUUID()}`,
+                    transactionAmount: '0',
                 })
             }
-            else if (action_to_perform === ManageTransactionsAction.Remove) {
-                // await tx.transactions.deleteMany({
-                //     where: {
-                //         AND: [
-                //             {
-                //                 User: {
-                //                     discordId: db_user_data.discordId,
-                //                 },
-                //             },
-                //             {
-                //                 productCode: product_code,
-                //             },
-                //         ]
-                //     }
-                // });
+            try {
+                await prisma.$transaction(async (tx) => {
+                    await tx.user.update({
+                        where: {
+                            discordId: db_user_data.discordId
+                        },
+                        data: {
+                            transactions: {
+                                createMany: {
+                                    data: transactions
+                                }
+                            }
+                        }
+                    })
+                })
+            } catch (error) {
+                console.trace(error);
+
+                await interaction.editReply({
+                    embeds: [
+                        CustomEmbed.from({
+                            color: CustomEmbed.Color.Red,
+                            title: 'Inertia Lighting | Transactions Manager',
+                            description: `An error occurred while managing transactions for ${user_to_modify}!`,
+                        }),
+                    ],
+                }).catch(console.warn);
+
+                break;
+            }
+            break;
+        }
+        case ManageTransactionsAction.Remove: {
+            await prisma.$transaction(async (tx) => {
                 await tx.user.update({
                     where: {
-                        discordId: user_to_modify.id
+                        discordId: db_user_data.discordId
                     },
                     data: {
                         transactions: {
                             deleteMany: {
-                                productCode: product_code,
+                                productCode: {
+                                    in: product_codes_to_manage
+                                }
                             }
                         }
                     }
                 })
-            }
-        });
-    } catch (error) {
-        console.trace(error);
-
-        await interaction.editReply({
-            embeds: [
-                CustomEmbed.from({
-                    color: CustomEmbed.Color.Red,
-                    title: 'Inertia Lighting | Transactions Manager',
-                    description: `An error occurred while modifying: \`${product_codes_to_manage.join(', ')}\` for ${user_to_modify}!`,
-                }),
-            ],
-        }).catch(console.warn);
-
-        return;
+            })
+            break;
+        }
+        default: {
+            break;
+        }
     }
+    // for (const product_code_to_manage of product_codes_to_manage) {
+    //     console.log(product_code_to_manage)
+    //     try {
+    //         /* modify the user's transactions */
+    //         await prisma.$transaction(async (tx) => {
+    //             if (action_to_perform === ManageTransactionsAction.Add) {
+    //                 await tx.transactions.create({
+    //                     data: {
+    //                         transactionType: 'system',
+    //                         productCode: product_code,
+    //                         purchaseId: `SYSTEM_MANUAL_${interaction.user.id}_${randomUUID()}`,
+    //                         transactionAmount: '0',
+    //                         User: {
+    //                             connect: {
+    //                                 discordId: db_user_data.discordId,
+    //                             },
+    //                         },
+    //                     },
+    //                 });
+    //             }
+    //             else if (action_to_perform === ManageTransactionsAction.Remove) {
+    //                 await tx.transactions.deleteMany({
+    //                     where: {
+    //                         AND: [
+    //                             {
+    //                                 User: {
+    //                                     discordId: db_user_data.discordId,
+    //                                 },
+    //                             },
+    //                             {
+    //                                 productCode: product_code,
+    //                             },
+    //                         ]
+    //                     }
+    //                 });
+    //             }
+    //         });
+    //     } catch (error) {
+    //         console.trace(error);
+
+    //         await interaction.editReply({
+    //             embeds: [
+    //                 CustomEmbed.from({
+    //                     color: CustomEmbed.Color.Red,
+    //                     title: 'Inertia Lighting | Transactions Manager',
+    //                     description: `An error occurred while modifying: \`${product_code_to_manage}\` for ${user_to_modify}!`,
+    //                 }),
+    //             ],
+    //         }).catch(console.warn);
+
+    //         return;
+    //     }
+    // }
 
     /* log to the transactions manager logging channel */
     try {
