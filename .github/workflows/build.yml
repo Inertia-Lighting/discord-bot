@@ -32,7 +32,7 @@ jobs:
             pnpm --version
         - name: Install Dependencies
           run: pnpm install
-        - name: Generate Prisma client
+        - name: Build Project
           run: pnpm build
           env: 
             DATABASE_URL: ${{ secrets.DATABASE_URL }}
