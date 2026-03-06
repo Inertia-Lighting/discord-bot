@@ -13,6 +13,7 @@ import { CustomEmbed } from '@/common/message.js'
 import { TransactionsCreateManyUserInput } from '@/lib/prisma/models.js';
 import prisma from '@/lib/prisma_client.js'
 import { PrismaProductData } from '@/types/index.js'
+import { Prisma } from '../../../lib/prisma/client.js';
 
 
 // ------------------------------------------------------------//
@@ -392,6 +393,23 @@ async function manageProductsChatInputCommandHandler(
         }).catch(console.warn);
 
         return;
+    }
+
+    if (action_to_perform === ManageTransactionsAction.Add) {
+        const transactions: Prisma.TransactionsCreateManyUserInputEnvelope[] = []
+        for (const product_code_to_manage of product_codes_to_manage) {
+
+            transactions.push({
+                data: {
+                    transactionType: 'system',
+                    productCode: product_code_to_manage,
+                    purchaseId: `SYSTEM_MANUAL_${interaction.user.id}_${randomUUID()}`,
+                    transactionAmount: '0',
+                },
+            }
+            )
+
+        }
     }
 
     /* manage the user's transactions */
