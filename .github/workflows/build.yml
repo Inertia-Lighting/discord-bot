@@ -31,7 +31,7 @@ jobs:
             corepack enable
             pnpm --version
         - name: Install Dependencies
-          run: pnpm install --ignore-scripts
+          run: pnpm install
         - name: Generate Prisma client
           run: pnpm build
           env: 
