@@ -7,14 +7,14 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [ 23.x ]
+        node-version: [ 24.11.x ]
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v6
 
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v6
       with:
         node-version: ${{ matrix.node-version }}
 
@@ -22,7 +22,7 @@ jobs:
       run: corepack enable
     
     - name: Install Dependencies
-      run: yarn
+      run: pnpm i --ignore-scripts
 
     - name: Run ESLint
-      run: yarn lint
+      run: pnpm run lint
