@@ -16,6 +16,7 @@ jobs:
         - name: Checkout repository
           uses: actions/checkout@v6
           with:
+            token: ${{ secrets.INERTIA_TOEKN }}
             submodules: recursive
         - name: Use Node.js ${{ matrix.node-version }}
           uses: actions/setup-node@v6
