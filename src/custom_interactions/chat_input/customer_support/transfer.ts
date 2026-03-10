@@ -6,6 +6,7 @@ import * as Discord from 'discord.js';
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
 import { CustomEmbed } from '@/common/message.js'
+import { createNoteForUser } from '@/lib/notes/index.js';
 import prisma from '@/lib/prisma_client.js'
 
 // ------------------------------------------------------------//
@@ -95,7 +96,8 @@ export default new CustomInteraction({
                 discordId: user_a.id
             },
             select: {
-                id: true
+                id: true,
+                discordId: true,
             }
         });
 
@@ -104,7 +106,8 @@ export default new CustomInteraction({
                 discordId: user_b.id
             },
             select: {
-                id: true
+                id: true,
+                discordId: true
             }
         });
 
@@ -227,7 +230,10 @@ export default new CustomInteraction({
                     },
                 });
             });
-
+            await createNoteForUser(user_a_db, {
+                note: `[SYSTEM]: Transferred ${product_code} from ${user_a_db.discordId} to ${user_b_db.discordId}.`,
+                staffId: '735556164749885450',
+            })
             try {
                 const logging_channel = await interaction.client.channels.fetch(bot_logging_products_manager_channel_id);
                 if (!logging_channel) throw new Error('Unable to find the transactions manager logging channel!');

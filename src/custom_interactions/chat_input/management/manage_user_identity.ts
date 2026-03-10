@@ -6,6 +6,7 @@ import * as Discord from 'discord.js';
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
 import { CustomEmbed } from '@/common/message.js'
+import { createNoteForUser } from '@/lib/notes/index.js';
 import prisma from '@/lib/prisma_client.js'
 
 
@@ -248,12 +249,16 @@ export default new CustomInteraction({
 
         // attempt to update the user's identity
         try {
-            await prisma.user.update({
+            const newUser = await prisma.user.update({
                 where: current_id_type === 'discordId' ? { discordId: current_id } : { robloxId: current_id },
                 data: {
                     [new_id_type]: new_id,
                 },
             });
+            await createNoteForUser(newUser, {
+                note: `[SYSTEM]: Updated ${new_id_type} ID from ${db_user_data[`${new_id_type}`]} to ${newUser[`${new_id_type}`]}.`,
+                staffId: '735556164749885450',
+            })
         } catch (error: unknown) {
             console.trace('Failed to update the user\'s identity:', error);
 
