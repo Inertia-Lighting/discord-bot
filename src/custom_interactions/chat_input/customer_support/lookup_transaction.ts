@@ -77,7 +77,7 @@ export default new CustomInteraction({
                     description: [
                         '```json',
                         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                        `${Discord.cleanCodeBlockContent(JSON.stringify(lookup ? (({ id, ...rest }) => rest)(lookup) : 'user not found in database', null, 2))}`,
+                        `${Discord.cleanCodeBlockContent(JSON.stringify(lookup ? (({ id, ...rest }) => rest)(lookup) : 'transaction not found in database', null, 2))}`,
                         '```',
                     ].join('\n'),
                 })
