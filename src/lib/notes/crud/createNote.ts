@@ -10,7 +10,7 @@ export async function createNoteForUser(
         note,
         staffId
     }: {
-        epoch: number,
+        epoch?: number,
         note: string,
         staffId: string,
     }
