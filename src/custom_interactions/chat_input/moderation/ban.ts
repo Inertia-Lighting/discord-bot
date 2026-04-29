@@ -64,7 +64,7 @@ export default new CustomInteraction({
         const staff_member = interaction.member;
         const user_to_ban = interaction.options.getUser('user', true);
         const ban_reason = interaction.options.getString('reason', true);
-        const clear_messages = interaction.options.getNumber('clear_messages', false)
+        const clear_messages = interaction.options.getNumber('clear_messages', false);
 
         /* handle when a reason is not specified */
         if (typeof ban_reason !== 'string' || ban_reason.length < 1) {
@@ -162,7 +162,7 @@ export default new CustomInteraction({
         }
 
         /* add the moderation action to the database */
-        // Calculate one year ahead from now
+        // Calculate ten years ahead from now
         const banDate = new Date();
         banDate.setFullYear(banDate.getFullYear() + 10);
 
