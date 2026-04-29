@@ -9,6 +9,20 @@ import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunCo
 
 // ------------------------------------------------------------//
 
+function generateChoices(): Discord.ApplicationCommandOptionChoiceData<number>[] {
+    const data: Discord.ApplicationCommandOptionChoiceData<number>[] = []
+    for (let index = 0; index < 8; index++) {
+        data.push(
+            {
+            name: index === 0 ? 'No Messages' : `${index} Day${index > 1 ? 's' : ''}`,
+            value: 86400 * index
+            }
+        )
+
+    }
+    return data;
+}
+
 export default new CustomInteraction({
     identifier: 'ban',
     type: Discord.InteractionType.ApplicationCommand,
@@ -27,6 +41,13 @@ export default new CustomInteraction({
                 description: 'The reason why you want to ban.',
                 required: true,
             },
+            {
+                name: 'clear_messages',
+                type: Discord.ApplicationCommandOptionType.Number,
+                description: 'Days of messages you want to clear',
+                required: false,
+                choices: generateChoices()
+            }
         ],
     },
     metadata: {
@@ -43,6 +64,7 @@ export default new CustomInteraction({
         const staff_member = interaction.member;
         const user_to_ban = interaction.options.getUser('user', true);
         const ban_reason = interaction.options.getString('reason', true);
+        const clear_messages = interaction.options.getNumber('clear_messages', false)
 
         /* handle when a reason is not specified */
         if (typeof ban_reason !== 'string' || ban_reason.length < 1) {
@@ -126,7 +148,7 @@ export default new CustomInteraction({
         /* perform the moderation action on the member */
         try {
             await interaction.guild.members.ban(user_to_ban, {
-                deleteMessageSeconds: 0,
+                deleteMessageSeconds: clear_messages ?? 0,
                 reason: ban_reason,
             });
         } catch (error) {
@@ -148,9 +170,9 @@ export default new CustomInteraction({
             user_to_ban.id,
             interaction.user.id,
             {
-            duration: banDate.toISOString(),
-            punishmentType: 'ban',
-            punishmentReason: ban_reason,
+                duration: banDate.toISOString(),
+                punishmentType: 'ban',
+                punishmentReason: ban_reason,
             }
         )
 
