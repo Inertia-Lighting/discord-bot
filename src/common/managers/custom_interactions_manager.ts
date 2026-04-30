@@ -133,7 +133,7 @@ export class CustomInteractionsManager {
 
     public static cached_interactions = new Discord.Collection<CustomInteractionIdentifier, CustomInteraction>();
 
-    public static async registerInteractions(): Promise<void> {
+    public static async registerClientInteractions(): Promise<void> {
         CustomInteractionsManager.cached_interactions.clear();
         const interactions_path = path.join(process.cwd(), 'dist', 'interactions');
         const interactions: string[] = findJSFiles(interactions_path);
