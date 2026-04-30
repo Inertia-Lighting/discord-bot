@@ -5,12 +5,13 @@
 import path from 'node:path';
 
 import * as Discord from 'discord.js';
-import recursiveReadDirectory from 'recursive-read-directory';
 
 import { CustomEmbed } from '@/common/message.js'
 import { fetchHighestAccessLevelForUser } from '@/common/permissions.js'
 import { DistributiveOmit } from '@/types/index.js'
 import { delay } from '@/utilities/index.js'
+
+import { findJSFiles } from '../utils.js';
 
 // ------------------------------------------------------------//
 
@@ -130,43 +131,35 @@ export class CustomInteraction {
 export class CustomInteractionsManager {
     public static interactions = new Discord.Collection<CustomInteractionIdentifier, CustomInteraction>();
 
-    public static async registerClientInteractions(): Promise<void> {
-        CustomInteractionsManager.interactions.clear();
+    public static cached_interactions = new Discord.Collection<CustomInteractionIdentifier, CustomInteraction>();
 
-        const path_to_interaction_files = path.join(process.cwd(), 'dist', 'custom_interactions');
-        const client_interaction_file_names: string[] = recursiveReadDirectory(path_to_interaction_files);
+    public static async registerInteractions(): Promise<void> {
+        CustomInteractionsManager.cached_interactions.clear();
+        const interactions_path = path.join(process.cwd(), 'dist', 'interactions');
+        const interactions: string[] = findJSFiles(interactions_path);
 
-        for (const client_interaction_file_name of client_interaction_file_names) {
-            if (!client_interaction_file_name.endsWith('.js')) continue;
+        for (const interaction of interactions) {
+            const interaction_path = path.resolve(interaction);
 
-            const client_interaction_file_path = path.join(path_to_interaction_files, client_interaction_file_name);
+            const relative_path = path.relative(__dirname, interaction_path);
+            const esm_path = `./${relative_path.replace(/\\/g, '/')}`;
 
-            // required b/c esm imports are quirky
-            const relative_path = path.relative(path.join(process.cwd(), 'dist', 'common', 'managers'), client_interaction_file_path);
-            const esm_compatible_path = `./${relative_path.replace(/\\/g, '/')}`;
+            console.log(`Registering: ${esm_path}`);
 
-            console.info(`Registering client interaction... ${esm_compatible_path}`);
+            delete require.cache[require.resolve(interaction_path)];
 
-            // required to ensure that the file is reloaded each time (ESM cache busting)
-            const cacheBustedPath = `${esm_compatible_path}?update=${Date.now()}`;
-
-            const client_interaction = await import(cacheBustedPath).then((imported_module) => {
-                // handle esm and commonjs module exports
+            const client_interaction = await import(esm_path).then((imported_module) => {
                 const imported_module_exports = imported_module.default ?? imported_module;
-
+                // console.log(imported_module_exports)
                 return imported_module_exports;
-            }) as CustomInteraction | unknown;
-                // console.log(client_interaction)
 
-            if (!(client_interaction instanceof CustomInteraction)) {
-                console.trace(`Failed to load client interaction: ${client_interaction_file_path};`);
-                continue;
-            }
-
-            CustomInteractionsManager.interactions.set(client_interaction.identifier, client_interaction);
+            }) as {
+                default: CustomInteraction,
+            };
+            CustomInteractionsManager.cached_interactions.set(client_interaction.default.identifier, client_interaction.default);
         }
 
-        console.info('Registered client interactions.');
+        console.info('Registered interactions.');
     }
 
     public static async syncInteractionsToDiscord(
@@ -179,7 +172,7 @@ export class CustomInteractionsManager {
         if (!discord_client.application) throw new Error('CustomInteractionsManager.syncInteractionsToDiscord(): Application is missing?');
 
         /** remove all non-existent interactions */
-        for (const [ application_command_id, application_command ] of await discord_client.application.commands.fetch()) {
+        for (const [application_command_id, application_command] of await discord_client.application.commands.fetch()) {
             const command_exists = this.interactions.find(
                 (interaction) => interaction.identifier === application_command.name
             );
@@ -258,7 +251,7 @@ export class CustomInteractionsManager {
         /* if the interaction is from a guild, ensure it is from an allowed guild */
         if (
             interaction.inGuild() &&
-            ![ bot_guild_id, bot_staff_guild_id ].includes(interaction.guildId)
+            ![bot_guild_id, bot_staff_guild_id].includes(interaction.guildId)
         ) return; // ignore the interaction
 
         /* ensure the interaction is from a guild if the interaction requires it */
