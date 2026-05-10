@@ -56,7 +56,6 @@
     "moment-timezone": "0.6.0",
     "node-gyp": "12.2.0",
     "prisma": "^7.4.1",
-    "recursive-read-directory": "github:MidSpike/recursive-read-directory",
     "string-similarity": "4.0.4",
     "tsc-alias": "^1.8.16",
     "utf-8-validate": "6.0.6",

@@ -4,10 +4,10 @@
 
 import 'dotenv/config'
 
+import fs from 'node:fs'
 import path from 'node:path';
 
 import * as Discord from 'discord.js';
-import recursiveReadDirectory from 'recursive-read-directory';
 
 // ------------------------------------------------------------//
 
@@ -68,48 +68,28 @@ const client = new Discord.Client({
 });
 
 // ------------------------------------------------------------//
-
-async function registerClientEvents(
-    // eslint-disable-next-line no-shadow
-    client: Discord.Client
-) {
-    const event_files_path = path.join(process.cwd(), 'dist', 'events');
-    const event_files = recursiveReadDirectory(event_files_path);
-
-    for (const event_file of event_files) {
-        if (!event_file.endsWith('.js')) continue;
-
-        const event_file_path = path.join(event_files_path, event_file);
-
-        // required b/c esm imports are quirky
-        const relative_path = path.relative(path.join(process.cwd(), 'dist'), event_file_path);
-        const esm_compatible_path = `./${relative_path.replace(/\\/g, '/')}`;
-
-        console.info(`Registering client event... ${esm_compatible_path}`);
-
-        const bot_event = await import(esm_compatible_path).then((imported_module) => {
-            // handle esm and commonjs module exports
-            const imported_module_exports = imported_module.default ?? imported_module;
-
-            return imported_module_exports;
-        }) as {
-                name: string;
-                handler: (client: Discord.Client, ...args: unknown[]) => void;
-        };
-        client.on(bot_event.name, (...args) => bot_event.handler(client, ...args));
+function registerEvents(): void {
+  try {
+    const event_path = path.join(process.cwd(), 'dist', 'events')
+    const resolved_path = path.resolve(process.cwd(), 'dist', 'events')
+    console.log(event_path, resolved_path)
+    const events: string[] = fs.readdirSync(event_path)
+    for (const event_file of events) {
+      if (event_file.endsWith('.map.js') || !event_file.endsWith('.js')) continue;
+      const relative_path = path.relative(__dirname, path.join(event_path, event_file))
+      import(`./${relative_path.replace(/\\/g, '/')}`).then(({ handler }): void => {
+        console.log(event_file.slice(0,-3))
+        client.on(event_file.slice(0,-3), (...args) => handler(client, ...args));
+      }).catch(console.error);
     }
-
-    console.info('Registered client events.');
+  } catch (error) {
+    console.trace(error)
+  }
 }
 
-// ------------------------------------------------------------//
+registerEvents()
 
-async function main() {
-    /* register events */
-    await registerClientEvents(client);
 
-    /* login the discord bot */
-    await client.login(bot_token);
-}
+client.login(bot_token).catch(console.error)
 
-main();
+export default client;

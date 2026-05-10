@@ -57,7 +57,7 @@ export default {
         console.log('----------------------------------------------------------------------------------------------------------------');
         /* register interactions to CustomInteractionsManager */
         console.info('Registering interactions')
-        CustomInteractionsManager.registerClientInteractions();
+        CustomInteractionsManager.registerInteractions();
 
         /* register interactions to discord */
         setTimeout(() => CustomInteractionsManager.syncInteractionsToDiscord(client), 1 * 30_000);

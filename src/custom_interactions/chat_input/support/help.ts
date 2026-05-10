@@ -30,7 +30,7 @@ export default new CustomInteraction({
         await interaction.deferReply({ flags: ['Ephemeral'] });
 
         const highest_access_level_for_user = await fetchHighestAccessLevelForUser(discord_client, interaction.user);
-        const chat_input_custom_interactions = CustomInteractionsManager.interactions.filter(
+        const chat_input_custom_interactions = CustomInteractionsManager.cached_interactions.filter(
             (custom_interaction) =>
                 custom_interaction.type === Discord.InteractionType.ApplicationCommand &&
                 'type' in custom_interaction.data &&
