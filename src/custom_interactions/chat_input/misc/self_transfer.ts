@@ -18,8 +18,8 @@ if (api_server.length < 1) throw new Error('Environment variable: API_SERVER; is
 const bot_logging_products_manager_channel_id = `${process.env.BOT_LOGGING_PRODUCTS_MANAGER_CHANNEL_ID ?? ''}`;
 if (bot_logging_products_manager_channel_id.length < 1) throw new Error('Environment variable: BOT_LOGGING_PRODUCTS_MANAGER_CHANNEL_ID; is not set correctly.');
 
-const ALL_PRODUCTS_CODE = 'ALL';
-const ALL_VIEWABLE_PRODUCTS_CODE = 'ALL_VIEWABLE';
+// const ALL_PRODUCTS_CODE = 'ALL';
+// const ALL_VIEWABLE_PRODUCTS_CODE = 'ALL_VIEWABLE';
 
 // ------------------------------------------------------------//
 
@@ -109,16 +109,16 @@ async function selfTransferAutocompleteHandler(
         })
     );
 
-        autocomplete_results.push({
-        name: 'All Products',
-        value: ALL_PRODUCTS_CODE,
-    });
+    // autocomplete_results.push({
+    //     name: 'All Products',
+    //     value: ALL_PRODUCTS_CODE,
+    // });
 
-    // always add the all viewable products option
-    autocomplete_results.push({
-        name: 'All Viewable Products',
-        value: ALL_VIEWABLE_PRODUCTS_CODE,
-    });
+    // // always add the all viewable products option
+    // autocomplete_results.push({
+    //     name: 'All Viewable Products',
+    //     value: ALL_VIEWABLE_PRODUCTS_CODE,
+    // });
 
     interaction.respond(autocomplete_results);
 }
@@ -159,7 +159,7 @@ export default new CustomInteraction({
     handler: async (discord_client, interaction) => {
         if (!interaction.inCachedGuild()) return;
 
-        if(interaction.isAutocomplete()) {
+        if (interaction.isAutocomplete()) {
             selfTransferAutocompleteHandler(interaction)
             return;
         }
@@ -179,7 +179,7 @@ export default new CustomInteraction({
                     CustomEmbed.from({
                         color: CustomEmbed.Color.Red,
                         title: 'Transfer',
-                        description: 'USER_A and target cannot be the same user.',
+                        description: 'You cannot transfer products to yourself.',
                     }),
                 ],
             });
@@ -191,7 +191,7 @@ export default new CustomInteraction({
             embeds: [
                 CustomEmbed.from({
                     title: 'Transfer',
-                    description: 'Checking if users exists'
+                    description: 'Checking if users exists in the database...'
                 })
             ]
         })
@@ -258,7 +258,7 @@ export default new CustomInteraction({
                     CustomEmbed.from({
                         color: CustomEmbed.Color.Red,
                         title: 'Transfer',
-                        description: `No valid transaction for <@${user_a.id}>, transaction not exists.`,
+                        description: `No valid transaction for <@${user_a.id}>, transaction does not exists.`,
                     }),
                 ],
             });
@@ -296,7 +296,7 @@ export default new CustomInteraction({
 
         const clicked = await (confirm_msg as Discord.Message).awaitMessageComponent<Discord.ComponentType.Button>({
             time: 60_000,
-            filter: (i: Discord.MessageComponentInteraction<Discord.CacheType>) => i.user.id === interaction.user.id && ['transfer_confirm', 'transfer_cancel'].includes(i.customId),
+            filter: (i: Discord.MessageComponentInteraction<Discord.CacheType>) => i.user.id === target.id && ['transfer_confirm', 'transfer_cancel'].includes(i.customId),
         });
 
         if (clicked.customId === 'transfer_cancel') {
