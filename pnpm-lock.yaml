@@ -55,9 +55,6 @@ importers:
       prisma:
         specifier: ^7.4.1
         version: 7.4.1(@types/react@19.2.14)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.9.3)
-      recursive-read-directory:
-        specifier: github:MidSpike/recursive-read-directory
-        version: https://codeload.github.com/MidSpike/recursive-read-directory/tar.gz/ed5f85eb764b6f3b6d9adb71271213727fa8d8d0
       string-similarity:
         specifier: 4.0.4
         version: 4.0.4
@@ -1632,10 +1629,6 @@ packages:
     resolution: {integrity: sha512-GDhwkLfywWL2s6vEjyhri+eXmfH6j1L7JE27WhqLeYzoh/A3DBaYGEj2H/HFZCn/kMfim73FXxEJTw06WtxQwg==}
     engines: {node: '>= 14.18.0'}
 
-  recursive-read-directory@https://codeload.github.com/MidSpike/recursive-read-directory/tar.gz/ed5f85eb764b6f3b6d9adb71271213727fa8d8d0:
-    resolution: {tarball: https://codeload.github.com/MidSpike/recursive-read-directory/tar.gz/ed5f85eb764b6f3b6d9adb71271213727fa8d8d0}
-    version: 0.4.0
-
   regexp-to-ast@0.5.0:
     resolution: {integrity: sha512-tlbJqcMHnPKI9zSrystikWKwHkBqu2a/Sgw01h3zFjvYrMxEDYHzzoMZnUrbIfpTFEsoRnnviOXNCzFiSc54Qw==}
 
@@ -2719,7 +2712,6 @@ snapshots:
       moment-timezone: 0.6.0
       node-gyp: 11.2.0
       prisma: 7.4.1(@types/react@19.2.14)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.9.3)
-      recursive-read-directory: https://codeload.github.com/MidSpike/recursive-read-directory/tar.gz/ed5f85eb764b6f3b6d9adb71271213727fa8d8d0
       string-similarity: 4.0.4
       tsc-alias: 1.8.16
       utf-8-validate: 6.0.5
@@ -3694,8 +3686,6 @@ snapshots:
       picomatch: 2.3.1
 
   readdirp@4.1.2: {}
-
-  recursive-read-directory@https://codeload.github.com/MidSpike/recursive-read-directory/tar.gz/ed5f85eb764b6f3b6d9adb71271213727fa8d8d0: {}
 
   regexp-to-ast@0.5.0: {}
 

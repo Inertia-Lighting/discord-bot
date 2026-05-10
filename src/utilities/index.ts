@@ -2,6 +2,8 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 // ------------------------------------------------------------//
 
+import fs from 'fs';
+
 type ObjectWithKeys = {
     [key: string]: unknown;
 };
@@ -131,4 +133,15 @@ export function millisecondsToRoundedSeconds(
     if (typeof milliseconds !== 'number') throw new TypeError('millisecondsToSecondsRounded(): milliseconds is not a number');
 
     return Math.round(milliseconds / 1000);
+}
+
+export function findJSFiles(dirPath: string): string[] {
+  const direntFiles = fs.readdirSync(dirPath, { withFileTypes: true, recursive: true });
+  const files = direntFiles
+    .filter(dirent => dirent.isFile())
+    .map(dirent => dirent.parentPath+'/'+dirent.name);
+  // console.log(files)
+  const filteredFiles = files.filter(file => file.endsWith('.js') && !file.endsWith('.map.js'));
+  // console.log(filteredFiles);
+  return filteredFiles;
 }

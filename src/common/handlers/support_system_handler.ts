@@ -8,7 +8,7 @@ import * as Discord from 'discord.js';
 
 // import * as DiscordTranscripts from 'discord-html-transcripts';
 import { CustomEmbed } from '@/common/message.js'
-import { bot_config } from '@/utilities/bot_config.js'
+import bot_config from '@/utilities/bot_config.js';
 import { delay, getMarkdownFriendlyTimestamp } from '@/utilities/index.js'
 
 // ------------------------------------------------------------//
@@ -696,7 +696,7 @@ export const support_categories: SupportCategory[] = [
         description: 'For all other forms of support.',
         staff_role_ids: [
             bot_config.support_staff_other_role_id,
-            bot_config.customer_service_role_id,
+            bot_config.customer_service_role_id.id,
         ],
         modal_data: {
             title: 'Other Questions',
@@ -746,7 +746,7 @@ export const support_categories: SupportCategory[] = [
         name: 'Development Application',
         description: 'Apply for a development position with Inertia!',
         staff_role_ids: [
-            bot_config.lead_developer_role_id,
+            bot_config.lead_developer_role_id.id,
         ],
         modal_data: {
             title: 'Developer Application',
