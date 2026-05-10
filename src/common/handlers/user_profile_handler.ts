@@ -7,7 +7,7 @@ import * as Discord from 'discord.js';
 
 import { CustomEmbed } from '@/common/message.js'
 import prisma from '@/lib/prisma_client.js'
-import { bot_config } from '@/utilities/bot_config.js'
+import bot_config from '@/utilities/bot_config.js';
 
 // ------------------------------------------------------------//
 

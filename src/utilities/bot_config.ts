@@ -1,4 +1,4 @@
-export const bot_config = {
+const config = {
     guild_id: '601889649601806336',
     staff_guild_id: '1137873524208439326',
 
@@ -16,14 +16,14 @@ export const bot_config = {
     general_channel_id: '601890659439476766',
 
     // Bot Staff Roles
-    staff_role_id: '789342326978772992',
-    customer_service_role_id: '1111047755746521253',
-    lead_developer_role_id: '805565232537534464',
-    developer_role_id: '601890527276957726',
-    moderator_role_id: '601891791624470557',
-    admin_role_id: '601890116344217651',
-    team_leaders_role_id: '844606847469748224',
-    company_management_role_id: '875543659624407100',
+    staff_role_id: { id: '1351680286584213625', access_level: PermissionLevel.Staff },
+    customer_service_role_id: { id: '1351680314820263967', access_level: PermissionLevel.CustomerService },
+    developer_role_id: { id: '1351680364766302238', access_level: PermissionLevel.Dev },
+    lead_developer_role_id: { id: '1351680340477087804', access_level: PermissionLevel.SeniorDev },
+    moderator_role_id: { id: '1351680381522546770', access_level: PermissionLevel.Moderators },
+    admin_role_id: { id: '1351680401361600523', access_level: PermissionLevel.Admins },
+    team_leaders_role_id: { id: '1351680419711549522', access_level: PermissionLevel.TeamLeaders },
+    company_management_role_id: { id: '1351680451999305778', access_level: PermissionLevel.CompanyManagement },
 
     // Bot Support Staff Roles
     support_staff_database_role_id: '807385028568154113',
@@ -37,3 +37,15 @@ export const bot_config = {
     subscriptions_tier_1_role_id: '1044113688187129978',
     partners_role_id: '641609935326543892',
 };
+
+export const staff_roles: StaffRole[] = [
+    config.staff_role_id,
+    config.customer_service_role_id,
+    config.developer_role_id,
+    config.moderator_role_id,
+    config.admin_role_id,
+    config.team_leaders_role_id,
+    config.company_management_role_id
+]
+
+export default config;
