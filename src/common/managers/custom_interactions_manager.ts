@@ -266,8 +266,6 @@ export class CustomInteractionsManager {
     // eslint-disable-next-line complexity
     public static async handleInteractionFromDiscord(client: Discord.Client<true>, interaction: Discord.Interaction): Promise<void> {
 
-        console.log(interaction)
-
         let interaction_name: string;
 
         switch (interaction.type) {
@@ -297,8 +295,6 @@ export class CustomInteractionsManager {
                 break;
             }
         }
-
-        console.log(CustomInteractionsManager.cached_interactions.toJSON())
 
         const client_interaction = CustomInteractionsManager.cached_interactions.get(interaction_name);
 
