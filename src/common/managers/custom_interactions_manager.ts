@@ -22,7 +22,6 @@ import * as Discord from 'discord.js';
 
 import { CustomEmbed } from '@/common/message.js'
 import { DistributiveOmit } from '@/types/index.js'
-import config from '@/utilities/bot_config.js'
 import { delay, findJSFiles } from '@/utilities/index.js'
 import { fetchPermissions, isDeveloper } from '@/utilities/permissions.js';
 
@@ -263,7 +262,6 @@ export class CustomInteractionsManager {
         }
     }
 
-    // eslint-disable-next-line complexity
     public static async handleInteractionFromDiscord(client: Discord.Client<true>, interaction: Discord.Interaction): Promise<void> {
 
         let interaction_name: string;
@@ -301,10 +299,7 @@ export class CustomInteractionsManager {
         // If we don't have a registered interaction, ignore it quietly.
         if (!client_interaction) {
             throw new Error(`Could not find interaction (${interaction_name}) in cache`, );
-            return;
         }
-
-        if (interaction.inGuild() && [config.guild_id, config.staff_guild_id].includes(interaction.guildId)) return;
 
         if (client_interaction.metadata.guild_only && !interaction.inCachedGuild()) throw new Error('Expected guild for this interaction');
 
