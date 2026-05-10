@@ -221,7 +221,7 @@ export class CustomInteractionsManager {
                 continue;
             }
 
-            CustomInteractionsManager.cached_interactions.set(interaction_instance.identifier, interaction_instance);
+            CustomInteractionsManager.cached_interactions.set(interaction_instance.identifier.toLowerCase(), interaction_instance);
         }
 
         console.info('Registered interactions.');
