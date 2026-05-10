@@ -298,10 +298,15 @@ export class CustomInteractionsManager {
             }
         }
 
+        console.log(CustomInteractionsManager.cached_interactions.toJSON())
+
         const client_interaction = CustomInteractionsManager.cached_interactions.get(interaction_name);
 
         // If we don't have a registered interaction, ignore it quietly.
-        if (!client_interaction) return;
+        if (!client_interaction) {
+            throw new Error(`Could not find interaction (${interaction_name}) in cache`, );
+            return;
+        }
 
         if (interaction.inGuild() && [config.guild_id, config.staff_guild_id].includes(interaction.guildId)) return;
 
