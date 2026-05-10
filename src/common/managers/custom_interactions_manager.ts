@@ -265,6 +265,9 @@ export class CustomInteractionsManager {
 
     // eslint-disable-next-line complexity
     public static async handleInteractionFromDiscord(client: Discord.Client<true>, interaction: Discord.Interaction): Promise<void> {
+
+        console.log(interaction)
+
         let interaction_name: string;
 
         switch (interaction.type) {
