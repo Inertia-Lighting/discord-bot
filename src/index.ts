@@ -5,7 +5,8 @@
 import 'dotenv/config'
 
 import fs from 'node:fs'
-import path from 'node:path';
+import path, { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import * as Discord from 'discord.js';
 
@@ -29,6 +30,9 @@ process.on('uncaughtException', (error) => {
 
 const bot_token = `${process.env.BOT_TOKEN ?? ''}`;
 if (bot_token.length < 1) throw new Error('Environment variable: BOT_TOKEN; is not set correctly.');
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename)
 
 // ------------------------------------------------------------//
 
@@ -77,9 +81,9 @@ function registerEvents(): void {
     for (const event_file of events) {
       if (event_file.endsWith('.map.js') || !event_file.endsWith('.js')) continue;
       const relative_path = path.relative(__dirname, path.join(event_path, event_file))
-      import(`./${relative_path.replace(/\\/g, '/')}`).then(({ handler }): void => {
+      import(`./${relative_path.replace(/\\/g, '/')}`).then((module): void => {
         console.log(event_file.slice(0,-3))
-        client.on(event_file.slice(0,-3), (...args) => handler(client, ...args));
+        client.on(module.default.name, (...args) => module.default.handler(client, ...args));
       }).catch(console.error);
     }
   } catch (error) {
