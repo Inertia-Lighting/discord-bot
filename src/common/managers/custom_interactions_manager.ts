@@ -22,7 +22,6 @@ import * as Discord from 'discord.js';
 
 import { CustomEmbed } from '@/common/message.js'
 import { DistributiveOmit } from '@/types/index.js'
-import config from '@/utilities/bot_config.js'
 import { delay, findJSFiles } from '@/utilities/index.js'
 import { fetchPermissions, isDeveloper } from '@/utilities/permissions.js';
 
@@ -221,7 +220,7 @@ export class CustomInteractionsManager {
                 continue;
             }
 
-            CustomInteractionsManager.cached_interactions.set(interaction_instance.identifier, interaction_instance);
+            CustomInteractionsManager.cached_interactions.set(interaction_instance.identifier.toLowerCase(), interaction_instance);
         }
 
         console.info('Registered interactions.');
@@ -263,8 +262,8 @@ export class CustomInteractionsManager {
         }
     }
 
-    // eslint-disable-next-line complexity
     public static async handleInteractionFromDiscord(client: Discord.Client<true>, interaction: Discord.Interaction): Promise<void> {
+
         let interaction_name: string;
 
         switch (interaction.type) {
@@ -298,9 +297,9 @@ export class CustomInteractionsManager {
         const client_interaction = CustomInteractionsManager.cached_interactions.get(interaction_name);
 
         // If we don't have a registered interaction, ignore it quietly.
-        if (!client_interaction) return;
-
-        if (interaction.inGuild() && [config.guild_id, config.staff_guild_id].includes(interaction.guildId)) return;
+        if (!client_interaction) {
+            throw new Error(`Could not find interaction (${interaction_name}) in cache`, );
+        }
 
         if (client_interaction.metadata.guild_only && !interaction.inCachedGuild()) throw new Error('Expected guild for this interaction');
 
