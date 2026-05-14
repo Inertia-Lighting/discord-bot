@@ -8,20 +8,12 @@ import { randomUUID } from 'node:crypto';
 import * as Discord from 'discord.js';
 import { compareTwoStrings } from 'string-similarity';
 
-import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
-import { CustomEmbed } from '@/common/message.js'
 import { TransactionsCreateManyUserInput } from '@/common/lib/prisma/models.js';
 import prisma from '@/common/lib/prisma_client.js'
+import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
+import { CustomEmbed } from '@/common/message.js'
+import config from '@/utilities/bot_config.js';
 import { DbProductsCache } from '@/utilities/productCache.js';
-
-
-// ------------------------------------------------------------//
-
-const db_database_support_staff_role_id = `${process.env.BOT_SUPPORT_STAFF_DATABASE_ROLE_ID ?? ''}`;
-if (db_database_support_staff_role_id.length < 1) throw new Error('Environment variable: BOT_SUPPORT_STAFF_DATABASE_ROLE_ID; is not set correctly.');
-
-const bot_logging_products_manager_channel_id = `${process.env.BOT_LOGGING_PRODUCTS_MANAGER_CHANNEL_ID ?? ''}`;
-if (bot_logging_products_manager_channel_id.length < 1) throw new Error('Environment variable: BOT_LOGGING_PRODUCTS_MANAGER_CHANNEL_ID; is not set correctly.');
 
 // ------------------------------------------------------------//
 
@@ -191,7 +183,7 @@ async function manageProductsChatInputCommandHandler(
     const interaction_guild_member = await interaction.guild.members.fetch(interaction.user.id);
 
     /* check if the user is allowed to use this command */
-    const staff_member_is_permitted = interaction_guild_member.roles.cache.has(db_database_support_staff_role_id);
+    const staff_member_is_permitted = interaction_guild_member.roles.cache.has(config.support_staff_database_role_id);
     if (!staff_member_is_permitted) {
         interaction.editReply({
             embeds: [
@@ -480,7 +472,7 @@ async function manageProductsChatInputCommandHandler(
 
     /* log to the transactions manager logging channel */
     try {
-        const logging_channel = await interaction.client.channels.fetch(bot_logging_products_manager_channel_id);
+        const logging_channel = await interaction.client.channels.fetch(config.logging_products_manager_channel_id);
         if (!logging_channel) throw new Error('Unable to find the transactions manager logging channel!');
         if (!logging_channel.isTextBased()) throw new Error('The transactions manager logging channel is not text-based!');
         if (!logging_channel.isSendable()) throw new Error('The identity manager logging channel is not sendable!');

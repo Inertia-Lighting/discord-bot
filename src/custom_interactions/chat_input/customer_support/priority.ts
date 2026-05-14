@@ -14,9 +14,6 @@ import { TicketPriority } from '@/support_system/types/index.js'
 const config = loadSupportSystemConfig();
 const priorityService = new TicketPriorityServiceImpl();
 
-const bot_customer_service_role_id = `${process.env.BOT_CUSTOMER_SERVICE_ROLE_ID ?? ''}`;
-if (bot_customer_service_role_id.length < 1) throw new Error('Environment variable: BOT_CUSTOMER_SERVICE_ROLE_ID; is not set correctly.');
-
 // ------------------------------------------------------------//
 
 export default new CustomInteraction({

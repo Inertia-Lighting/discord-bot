@@ -5,9 +5,9 @@
 import * as Discord from 'discord.js';
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
-import { fetchHighestAccessLevelForUser } from '@/common/permissions.js'
 import { loadSupportSystemConfig } from '@/support_system/config/index.js'
 import { supportSystemManager } from '@/support_system/index.js'
+import { fetchPermissions } from '@/utilities/permissions.js';
 
 // ------------------------------------------------------------//
 
@@ -52,10 +52,10 @@ export default new CustomInteraction({
         const request_feedback = interaction.options.getBoolean('request_feedback', false) ?? true; // ask for feedback by default
 
         // Ensure that only Team Leaders and above can close tickets without asking for feedback.
-        const highest_permission = await fetchHighestAccessLevelForUser(discord_client, interaction.user);
+        const userPermission = fetchPermissions(interaction.member)
         if (
             request_feedback === false &&
-            highest_permission < CustomInteractionAccessLevel.TeamLeaders
+            userPermission < PermissionLevel.TeamLeaders
         ) {
             await interaction.editReply({
                 content: 'You lack permission to close tickets without asking for feedback.',

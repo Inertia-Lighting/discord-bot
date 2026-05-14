@@ -2,6 +2,8 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 // ------------------------------------------------------------//
 
+import config from '@/utilities/bot_config.js';
+
 import { SatisfactionLevel } from '../types/index.js'
 ;
 
@@ -38,40 +40,21 @@ export interface SupportSystemConfig {
  * Loads configuration from environment variables
  */
 export function loadSupportSystemConfig(): SupportSystemConfig {
-    const requiredEnvVars = [
-        'BOT_SUPPORT_TICKETS_CATEGORY_ID',
-        'BOT_SUPPORT_TICKETS_TRANSCRIPTS_CHANNEL_ID',
-        'BOT_STAFF_ROLE_ID',
-        'BOT_CUSTOMER_SERVICE_ROLE_ID',
-        'BOT_SUPPORT_STAFF_DATABASE_ROLE_ID',
-        'BOT_SUPPORT_STAFF_OTHER_ROLE_ID',
-        'BOT_SUPPORT_STAFF_PRODUCT_ISSUES_ROLE_ID',
-        'BOT_SUPPORT_STAFF_PRODUCT_PURCHASES_ROLE_ID',
-        'BOT_SUPPORT_STAFF_PARTNERSHIP_REQUESTS_ROLE_ID',
-    ];
-
-    // Validate environment variables
-    for (const envVar of requiredEnvVars) {
-        if (!process.env[envVar]) {
-            throw new Error(`Environment variable ${envVar} is not set correctly.`);
-        }
-    }
-
     return {
         channels: {
-            ticketsCategoryId: process.env.BOT_SUPPORT_TICKETS_CATEGORY_ID!,
-            transcriptsChannelId: process.env.BOT_SUPPORT_TICKETS_TRANSCRIPTS_CHANNEL_ID!,
-            supportChannelId: process.env.BOT_SUPPORT_CHANNEL_ID,
+            ticketsCategoryId: config.support_tickets_category_id!,
+            transcriptsChannelId: config.support_tickets_transcripts_channel_id!,
+            supportChannelId: config.support_information_channel_id,
         },
         roles: {
-            staffRoleId: process.env.BOT_STAFF_ROLE_ID!,
-            customerServiceRoleId: process.env.BOT_CUSTOMER_SERVICE_ROLE_ID!,
+            staffRoleId: config.staff_role_id.id!,
+            customerServiceRoleId: config.customer_service_role_id.id!,
             supportStaff: {
-                databaseRoleId: process.env.BOT_SUPPORT_STAFF_DATABASE_ROLE_ID!,
-                otherRoleId: process.env.BOT_SUPPORT_STAFF_OTHER_ROLE_ID!,
-                productIssuesRoleId: process.env.BOT_SUPPORT_STAFF_PRODUCT_ISSUES_ROLE_ID!,
-                productPurchasesRoleId: process.env.BOT_SUPPORT_STAFF_PRODUCT_PURCHASES_ROLE_ID!,
-                partnershipRequestsRoleId: process.env.BOT_SUPPORT_STAFF_PARTNERSHIP_REQUESTS_ROLE_ID!,
+                databaseRoleId: config.support_staff_database_role_id!,
+                otherRoleId: config.support_staff_other_role_id!,
+                productIssuesRoleId: config.support_staff_product_issues_role_id!,
+                productPurchasesRoleId: config.support_staff_product_purchases_role_id!,
+                partnershipRequestsRoleId: config.partners_role_id!,
             },
         },
         timeouts: {

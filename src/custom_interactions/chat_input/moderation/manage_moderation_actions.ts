@@ -4,8 +4,8 @@
 
 import * as Discord from 'discord.js';
 
-import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
 import { listModerationActions, purgeModerationActions,removeModerationAction, updateModerationAction } from '@/common/lib/moderation/index.js';
+import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
 
 // ------------------------------------------------------------//
 

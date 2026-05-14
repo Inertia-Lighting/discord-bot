@@ -5,14 +5,8 @@
 import * as Discord from 'discord.js';
 
 import { CustomEmbed } from '@/common/message.js'
-;
+import config from '@/utilities/bot_config.js'
 import { getMarkdownFriendlyTimestamp } from '@/utilities/index.js'
-;
-
-// ------------------------------------------------------------//
-
-const member_retention_logging_channel_id = process.env.BOT_LOGGING_USER_RETENTION_CHANNEL_ID as string;
-if (typeof member_retention_logging_channel_id !== 'string') throw new TypeError('member_retention_logging_channel_id is not a string');
 
 // ------------------------------------------------------------//
 
@@ -41,7 +35,7 @@ async function guildMemberAddLogger(
 
     const client = member.guild.client;
 
-    const member_retention_logging_channel = await client.channels.fetch(member_retention_logging_channel_id);
+    const member_retention_logging_channel = await client.channels.fetch(config.logging_user_retention_channel_id);
     if (!member_retention_logging_channel) throw new Error('Failed to fetch logging channel');
     if (!member_retention_logging_channel.isTextBased()) throw new TypeError('member_retention_logging_channel is not a text channel');
     if(!member_retention_logging_channel.isSendable()) throw new Error('member_retention_logging_channel is not sendable!');
@@ -79,7 +73,7 @@ async function guildMemberRemoveLogger(
 
     const client = member.guild.client;
 
-    const member_retention_logging_channel = await client.channels.fetch(member_retention_logging_channel_id);
+    const member_retention_logging_channel = await client.channels.fetch(config.logging_user_retention_channel_id);
     if (!member_retention_logging_channel) throw new Error('Failed to fetch logging channel');
     if (!member_retention_logging_channel.isTextBased()) throw new TypeError('member_retention_logging_channel is not a text channel');
     if(!member_retention_logging_channel.isSendable()) throw new Error('member_retention_logging_channel is not sendable!');
@@ -124,7 +118,7 @@ async function guildMemberBannedLogger(
 
     const client = guild_ban.guild.client;
 
-    const member_retention_logging_channel = await client.channels.fetch(member_retention_logging_channel_id);
+    const member_retention_logging_channel = await client.channels.fetch(config.logging_user_retention_channel_id);
     if (!member_retention_logging_channel) throw new Error('Failed to fetch logging channel');
     if (!member_retention_logging_channel.isTextBased()) throw new TypeError('member_retention_logging_channel is not a text channel');
     if(!member_retention_logging_channel.isSendable()) throw new Error('member_retention_logging_channel is not sendable!');

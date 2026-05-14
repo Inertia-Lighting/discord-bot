@@ -8,41 +8,8 @@ import * as Discord from 'discord.js';
 
 // import * as DiscordTranscripts from 'discord-html-transcripts';
 import { CustomEmbed } from '@/common/message.js'
-import bot_config from '@/utilities/bot_config.js';
+import config from '@/utilities/bot_config.js';
 import { delay, getMarkdownFriendlyTimestamp } from '@/utilities/index.js'
-
-// ------------------------------------------------------------//
-
-const support_tickets_category_id = `${process.env.BOT_SUPPORT_TICKETS_CATEGORY_ID ?? ''}`;
-if (support_tickets_category_id.length < 1) throw new Error('Environment variable: BOT_SUPPORT_TICKETS_CATEGORY_ID; is not set correctly.');
-
-const support_tickets_transcripts_channel_id = `${process.env.BOT_SUPPORT_TICKETS_TRANSCRIPTS_CHANNEL_ID ?? ''}`;
-if (support_tickets_transcripts_channel_id.length < 1) throw new Error('Environment variable: BOT_SUPPORT_TICKETS_TRANSCRIPTS_CHANNEL_ID; is not set correctly.');
-
-// ------------------------------------------------------------//
-
-const bot_staff_role_id = `${process.env.BOT_STAFF_ROLE_ID ?? ''}`;
-if (bot_staff_role_id.length < 1) throw new Error('Environment variable: BOT_STAFF_ROLE_ID; is not set correctly.');
-
-const bot_customer_service_role_id = `${process.env.BOT_CUSTOMER_SERVICE_ROLE_ID ?? ''}`;
-if (bot_customer_service_role_id.length < 1) throw new Error('Environment variable: BOT_CUSTOMER_SERVICE_ROLE_ID; is not set correctly.');
-
-// ------------------------------------------------------------//
-
-const bot_database_support_staff_role_id = `${process.env.BOT_SUPPORT_STAFF_DATABASE_ROLE_ID ?? ''}`;
-if (bot_database_support_staff_role_id.length < 1) throw new Error('Environment variable: BOT_SUPPORT_STAFF_DATABASE_ROLE_ID; is not set correctly.');
-
-const bot_other_support_staff_role_id = `${process.env.BOT_SUPPORT_STAFF_OTHER_ROLE_ID ?? ''}`;
-if (bot_other_support_staff_role_id.length < 1) throw new Error('Environment variable: BOT_SUPPORT_STAFF_OTHER_ROLE_ID; is not set correctly.');
-
-const bot_product_issues_support_staff_role_id = `${process.env.BOT_SUPPORT_STAFF_PRODUCT_ISSUES_ROLE_ID ?? ''}`;
-if (bot_product_issues_support_staff_role_id.length < 1) throw new Error('Environment variable: BOT_SUPPORT_STAFF_PRODUCT_ISSUES_ROLE_ID; is not set correctly.');
-
-const bot_product_purchases_support_staff_role_id = `${process.env.BOT_SUPPORT_STAFF_PRODUCT_PURCHASES_ROLE_ID ?? ''}`;
-if (bot_product_purchases_support_staff_role_id.length < 1) throw new Error('Environment variable: BOT_SUPPORT_STAFF_PRODUCT_PURCHASES_ROLE_ID; is not set correctly.');
-
-const bot_partnership_requests_support_staff_role_id = `${process.env.BOT_SUPPORT_STAFF_PARTNERSHIP_REQUESTS_ROLE_ID ?? ''}`;
-if (bot_partnership_requests_support_staff_role_id.length < 1) throw new Error('Environment variable: BOT_SUPPORT_STAFF_PARTNERSHIP_REQUESTS_ROLE_ID; is not set correctly.');
 
 // ------------------------------------------------------------//
 
@@ -92,7 +59,7 @@ export enum SupportCategoryId {
     Transactions = 'TRANSACTIONS',
     PartnershipRequests = 'PARTNERS',
     Other = 'OTHER',
-    DevlopmentApplication = 'DEVAPP'
+    DevelopmentApplication = 'DEVAPP'
 }
 
 export type SupportCategory = {
@@ -115,7 +82,7 @@ export const support_categories: SupportCategory[] = [
         name: 'Product Tech Support',
         description: 'Product technical support can be found here.',
         staff_role_ids: [
-            bot_product_issues_support_staff_role_id,
+            config.support_staff_product_issues_role_id,
         ],
         modal_data: {
             title: 'Tech Support Questions',
@@ -250,7 +217,7 @@ export const support_categories: SupportCategory[] = [
         name: 'Account Recovery',
         description: 'Recover products from an inaccessible account.',
         staff_role_ids: [
-            bot_database_support_staff_role_id,
+            config.support_staff_database_role_id,
         ],
         modal_data: {
             title: 'Account Recovery Questions',
@@ -372,7 +339,7 @@ export const support_categories: SupportCategory[] = [
         name: 'Transfer Products',
         description: 'Transfer or gift products to a different account.',
         staff_role_ids: [
-            bot_database_support_staff_role_id,
+            config.support_staff_database_role_id,
         ],
         modal_data: {
             title: 'Product Transfer Questions',
@@ -475,7 +442,7 @@ export const support_categories: SupportCategory[] = [
         name: 'Transactions',
         description: 'Failed transactions or monetary issues with purchases.',
         staff_role_ids: [
-            bot_config.support_staff_product_purchases_role_id,
+            config.support_staff_product_purchases_role_id,
         ],
         modal_data: {
             title: 'Transaction Questions',
@@ -560,7 +527,7 @@ export const support_categories: SupportCategory[] = [
          name: 'Partnership Requests',
          description: 'Interested in partnering with us?',
          staff_role_ids: [
-            bot_config.support_staff_partnership_requests_role_id,
+            config.support_staff_partnership_requests_role_id,
          ],
          modal_data: {
              title: 'Partnership Request Questions',
@@ -695,8 +662,8 @@ export const support_categories: SupportCategory[] = [
         name: 'Other & Quick Questions',
         description: 'For all other forms of support.',
         staff_role_ids: [
-            bot_config.support_staff_other_role_id,
-            bot_config.customer_service_role_id.id,
+            config.support_staff_other_role_id,
+            config.customer_service_role_id.id,
         ],
         modal_data: {
             title: 'Other Questions',
@@ -742,11 +709,11 @@ export const support_categories: SupportCategory[] = [
             });
         },
     }, {
-        id: SupportCategoryId.DevlopmentApplication,
+        id: SupportCategoryId.DevelopmentApplication,
         name: 'Development Application',
         description: 'Apply for a development position with Inertia!',
         staff_role_ids: [
-            bot_config.lead_developer_role_id.id,
+            config.lead_developer_role_id.id,
         ],
         modal_data: {
             title: 'Developer Application',
@@ -836,7 +803,7 @@ export async function createSupportTicketChannel(
     support_ticket_owner: Discord.GuildMember,
     support_ticket_category: SupportCategory
 ): Promise<Discord.TextChannel> {
-    const support_tickets_category = await guild.channels.fetch(support_tickets_category_id);
+    const support_tickets_category = await guild.channels.fetch(config.support_tickets_category_id);
     if (!support_tickets_category) throw new Error('Can\'t find the support ticket category!');
     if (support_tickets_category.type !== Discord.ChannelType.GuildCategory) throw new Error('Support ticket category is not a category!');
 
@@ -857,10 +824,10 @@ export async function createSupportTicketChannel(
         permissionOverwrites: [
             ...support_tickets_category.permissionOverwrites.cache.values(), // clone the parent channel permissions
             {
-                id: bot_customer_service_role_id,
+                id: config.customer_service_role_id.id,
                 allow: [ Discord.PermissionFlagsBits.ViewChannel, Discord.PermissionFlagsBits.SendMessages ],
             }, {
-                id: bot_staff_role_id,
+                id: config.staff_role_id.id,
                 allow: [ Discord.PermissionFlagsBits.ViewChannel ],
                 deny: [ Discord.PermissionFlagsBits.SendMessages ],
             }, {
@@ -971,7 +938,7 @@ export async function closeSupportTicketChannel(
         });
 
         /* send the transcript to transcripts channel */
-        const support_ticket_transcripts_channel = await client.channels.fetch(support_tickets_transcripts_channel_id);
+        const support_ticket_transcripts_channel = await client.channels.fetch(config.support_tickets_transcripts_channel_id);
         if (!support_ticket_transcripts_channel) throw new Error('Unable to find the support ticket transcripts channel!');
         if (!support_ticket_transcripts_channel.isTextBased()) throw new Error('The support ticket transcripts channel is not a text channel!');
         if(!support_ticket_transcripts_channel.isSendable()) throw new Error('The identity manager logging channel is not sendable!');

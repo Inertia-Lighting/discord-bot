@@ -4,9 +4,9 @@
 
 import * as Discord from 'discord.js';
 
+import { BlacklistModel, UserModel } from '@/common/lib/mongoose/models/index.js';
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
 import { CustomEmbed } from '@/common/message.js'
-import { BlacklistModel, UserModel } from '@/common/lib/mongoose/models/index.js';
 import { DbBlacklistedUserRecord, DbUserData } from '@/types/index.js'
 
 

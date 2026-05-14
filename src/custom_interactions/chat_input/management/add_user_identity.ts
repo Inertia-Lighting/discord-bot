@@ -4,17 +4,10 @@
 
 import * as Discord from 'discord.js';
 
+import prisma from '@/common/lib/prisma_client.js'
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
 import { CustomEmbed } from '@/common/message.js'
-import prisma from '@/common/lib/prisma_client.js'
-
-// ------------------------------------------------------------//
-
-const bot_support_staff_database_role_id = `${process.env.BOT_SUPPORT_STAFF_DATABASE_ROLE_ID ?? ''}`;
-if (bot_support_staff_database_role_id.length < 1) throw new Error('Environment variable: BOT_SUPPORT_STAFF_DATABASE_ROLE_ID; is not set correctly.');
-
-const bot_logging_identity_manager_channel_id = `${process.env.BOT_LOGGING_IDENTITY_MANAGER_CHANNEL_ID ?? ''}`;
-if (bot_logging_identity_manager_channel_id.length < 1) throw new Error('Environment variable: BOT_LOGGING_IDENTITY_MANAGER_CHANNEL_ID; is not set correctly.');
+import config from '@/utilities/bot_config.js';
 
 // ------------------------------------------------------------//
 
@@ -61,7 +54,7 @@ export default new CustomInteraction({
 
         // ensure the user running this command is authorized to do so
         const staff_member = interaction.member;
-        const staff_member_is_permitted = staff_member.roles.cache.has(bot_support_staff_database_role_id);
+        const staff_member_is_permitted = staff_member.roles.cache.has(config.support_staff_database_role_id);
         if (!staff_member_is_permitted) {
             await interaction.editReply({
                 embeds: [
@@ -77,7 +70,7 @@ export default new CustomInteraction({
         }
 
         // ensure the logging channel exists and is text-based
-        const logging_channel = await interaction.client.channels.fetch(bot_logging_identity_manager_channel_id);
+        const logging_channel = await interaction.client.channels.fetch(config.logging_identity_manager_channel_id);
         if (!logging_channel) throw new Error('Unable to find the identity manager logging channel!');
         if (!logging_channel.isTextBased()) throw new Error('The identity manager logging channel is not text-based!');
         if(!logging_channel.isSendable()) throw new Error('The identity manager logging channel is not sendable!');

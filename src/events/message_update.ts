@@ -5,11 +5,7 @@
 import * as Discord from 'discord.js';
 
 import { guildMemberMessageUpdateLogger } from '@/common/handlers/index.js'
-
-// ------------------------------------------------------------//
-
-const bot_guild_id = `${process.env.BOT_GUILD_ID ?? ''}`;
-if (bot_guild_id.length < 1) throw new Error('environment variable: BOT_GUILD_ID; was not properly set or is empty');
+import config from '@/utilities/bot_config.js';
 
 // ------------------------------------------------------------//
 
@@ -25,7 +21,7 @@ export default {
 
         if (!old_message.inGuild()) return; // only operate on messages sent in guilds
 
-        if (old_message.guild.id !== bot_guild_id) return; // only operate on messages sent in the bot guild
+        if (old_message.guild.id !== config.guild_id) return; // only operate on messages sent in the bot guild
 
         /* log message edits */
         guildMemberMessageUpdateLogger(old_message, new_message).catch(console.trace);

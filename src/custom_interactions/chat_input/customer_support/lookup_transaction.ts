@@ -4,14 +4,10 @@
 
 import * as Discord from 'discord.js';
 
+import prisma from '@/common/lib/prisma_client.js';
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
 import { CustomEmbed } from '@/common/message.js'
-import prisma from '@/common/lib/prisma_client.js';
-
-// ------------------------------------------------------------//
-
-const bot_customer_service_role_id = `${process.env.BOT_CUSTOMER_SERVICE_ROLE_ID ?? ''}`;
-if (bot_customer_service_role_id.length < 1) throw new Error('Environment variable: BOT_CUSTOMER_SERVICE_ROLE_ID; is not set correctly.');
+import config from '@/utilities/bot_config.js';
 
 // ------------------------------------------------------------//
 
@@ -41,7 +37,7 @@ export default new CustomInteraction({
 
         await interaction.deferReply();
         const staff_member = interaction.member;
-        const staff_member_is_permitted = staff_member.roles.cache.has(bot_customer_service_role_id);
+        const staff_member_is_permitted = staff_member.roles.cache.has(config.customer_service_role_id.id);
         if (!staff_member_is_permitted) {
             await interaction.editReply({
                 embeds: [

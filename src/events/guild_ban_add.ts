@@ -5,11 +5,7 @@
 import * as Discord from 'discord.js';
 
 import { guildMemberBannedLogger } from '@/common/handlers/index.js'
-
-// ------------------------------------------------------------//
-
-const bot_guild_id = `${process.env.BOT_GUILD_ID ?? ''}`;
-if (bot_guild_id.length < 1) throw new Error('environment variable: BOT_GUILD_ID; was not properly set or is empty');
+import config from '@/utilities/bot_config.js';
 
 // ------------------------------------------------------------//
 
@@ -19,7 +15,7 @@ export default {
         client: Discord.Client,
         ban: Discord.GuildBan,
     ) {
-        if (ban.guild.id !== bot_guild_id) return; // don't operate on other guilds
+        if (ban.guild.id !== config.guild_id) return; // don't operate on other guilds
 
         try {
             await ban.fetch(true);

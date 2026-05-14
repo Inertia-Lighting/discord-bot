@@ -5,21 +5,16 @@
 import * as Discord from 'discord.js';
 import { compareTwoStrings } from 'string-similarity';
 
+import prisma from '@/common/lib/prisma_client.js'
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
 import { CustomEmbed } from '@/common/message.js'
-import prisma from '@/common/lib/prisma_client.js'
+import config from '@/utilities/bot_config.js';
 import { DbProductsCache } from '@/utilities/productCache.js';
 
 // ------------------------------------------------------------//
 
 const api_server = `${process.env.API_SERVER ?? ''}`;
 if (api_server.length < 1) throw new Error('Environment variable: API_SERVER; is not set correctly.');
-
-const bot_logging_products_manager_channel_id = `${process.env.BOT_LOGGING_PRODUCTS_MANAGER_CHANNEL_ID ?? ''}`;
-if (bot_logging_products_manager_channel_id.length < 1) throw new Error('Environment variable: BOT_LOGGING_PRODUCTS_MANAGER_CHANNEL_ID; is not set correctly.');
-
-// const ALL_PRODUCTS_CODE = 'ALL';
-// const ALL_VIEWABLE_PRODUCTS_CODE = 'ALL_VIEWABLE';
 
 // ------------------------------------------------------------//
 
@@ -347,7 +342,7 @@ export default new CustomInteraction({
             });
 
             try {
-                const logging_channel = await interaction.client.channels.fetch(bot_logging_products_manager_channel_id);
+                const logging_channel = await interaction.client.channels.fetch(config.logging_products_manager_channel_id);
                 if (!logging_channel) throw new Error('Unable to find the transactions manager logging channel!');
                 if (!logging_channel.isTextBased()) throw new Error('The transactions manager logging channel is not text-based!');
                 if (!logging_channel.isSendable()) throw new Error('The identity manager logging channel is not sendable!');

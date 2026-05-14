@@ -1,7 +1,7 @@
 import * as Discord from 'discord.js'
 
-import { CustomEmbed } from '@/common/message.js';
 import prisma from '@/common/lib/prisma_client.js';
+import { CustomEmbed } from '@/common/message.js';
 
 export async function purgeModerationActions(
     interaction: Discord.ChatInputCommandInteraction,
