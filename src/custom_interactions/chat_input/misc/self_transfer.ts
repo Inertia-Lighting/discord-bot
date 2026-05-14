@@ -5,9 +5,9 @@
 import * as Discord from 'discord.js';
 import { compareTwoStrings } from 'string-similarity';
 
-import prisma from '@/common/lib/prisma_client.js'
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
 import { CustomEmbed } from '@/common/message.js'
+import prisma from '@/lib/prisma_client.js'
 import config from '@/utilities/bot_config.js';
 import { DbProductsCache } from '@/utilities/productCache.js';
 

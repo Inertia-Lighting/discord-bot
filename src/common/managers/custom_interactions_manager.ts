@@ -164,7 +164,6 @@ export class CustomInteractionsManager {
 
         for (const interaction of interactions) {
             const interaction_path = path.resolve(interaction);
-
             const relative_path = path.relative(__dirname, interaction_path);
             const esm_path = `./${relative_path.replace(/\\/g, '/')}`;
 

@@ -1,4 +1,4 @@
-import prisma from '@/common/lib/prisma_client.js';
+import prisma from '@/lib/prisma_client.js';
 
 import { FullPunishment } from '../types.js';
 

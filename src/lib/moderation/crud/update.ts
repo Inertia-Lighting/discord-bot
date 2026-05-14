@@ -1,36 +1,33 @@
 import * as Discord from 'discord.js'
 
-import prisma from '@/common/lib/prisma_client.js';
 import { CustomEmbed } from '@/common/message.js';
+import prisma from '@/lib/prisma_client.js';
 
-export async function removeModerationAction(
+export async function updateModerationAction(
     interaction: Discord.ChatInputCommandInteraction,
 ) {
     if (!interaction.inCachedGuild()) return;
     if (!interaction.isChatInputCommand()) return;
 
     const punishment_id = interaction.options.getString('moderation_action_id', true);
+    const new_punishment_reason = interaction.options.getString('reason', true);
 
-    /* remove the member's moderation actions from the database */
-    let db_delete_operation_count = 0;
-    try {
-        const delete_records = await prisma.punishments.deleteMany({
-            where: {
-                id: punishment_id
-            },
-        })
-        db_delete_operation_count = delete_records.count
-    } catch {
+    const punishment = prisma.punishments.findUnique({
+        where: {
+            id: punishment_id
+        }
+    })
+
+    if (!punishment) {
         await interaction.editReply({
             embeds: [
                 CustomEmbed.from({
-                    color: CustomEmbed.Color.Red,
+                    color: CustomEmbed.Color.Yellow,
                     author: {
                         icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | Moderation Actions',
                     },
-                    title: 'Something went wrong!',
-                    description: 'Please inform my developers that an error occurred while clearing moderation actions from the database!',
+                    description: 'Unable to find a moderation action with the specified id!',
                 }),
             ],
         }).catch(console.warn);
@@ -38,16 +35,25 @@ export async function removeModerationAction(
         return;
     }
 
-    if (db_delete_operation_count === 0) {
-        await interaction.editReply({
+    try {
+        await prisma.punishments.update({
+            where: {
+                id: punishment_id
+            },
+            data: {
+                punishmentReason: new_punishment_reason
+            }
+        })
+    } catch {
+        interaction.editReply({
             embeds: [
                 CustomEmbed.from({
-                    color: CustomEmbed.Color.Red,
+                    color: CustomEmbed.Color.Yellow,
                     author: {
                         icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | Moderation Actions',
                     },
-                    description: 'No moderation actions were removed for the specified query.',
+                    description: 'Unable to update the moderation action with the specified id!',
                 }),
             ],
         }).catch(console.warn);
@@ -58,13 +64,15 @@ export async function removeModerationAction(
     await interaction.editReply({
         embeds: [
             CustomEmbed.from({
-                color: 0x00FF00,
+                color: CustomEmbed.Color.Green,
                 author: {
                     icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
                     name: 'Inertia Lighting | Moderation Actions',
                 },
-                description: `Successfully cleared ${db_delete_operation_count} moderation action(s)!`,
+                description: 'Successfully updated the specified moderation action!',
             }),
         ],
     }).catch(console.warn);
+
+    return; // complete async
 }

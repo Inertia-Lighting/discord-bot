@@ -1,27 +1,25 @@
 import * as Discord from 'discord.js'
 
-import prisma from '@/common/lib/prisma_client.js';
 import { CustomEmbed } from '@/common/message.js';
+import prisma from '@/lib/prisma_client.js';
 
-export async function purgeModerationActions(
+export async function removeModerationAction(
     interaction: Discord.ChatInputCommandInteraction,
 ) {
     if (!interaction.inCachedGuild()) return;
     if (!interaction.isChatInputCommand()) return;
 
-    const user = interaction.options.getUser('user', true);
+    const punishment_id = interaction.options.getString('moderation_action_id', true);
 
     /* remove the member's moderation actions from the database */
     let db_delete_operation_count = 0;
     try {
         const delete_records = await prisma.punishments.deleteMany({
             where: {
-                punishedUser: {
-                    discordId: user.id
-                }
-            }
+                id: punishment_id
+            },
         })
-        db_delete_operation_count = delete_records.count;
+        db_delete_operation_count = delete_records.count
     } catch {
         await interaction.editReply({
             embeds: [

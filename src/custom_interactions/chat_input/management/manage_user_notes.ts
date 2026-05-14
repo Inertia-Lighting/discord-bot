@@ -4,9 +4,9 @@
 
 import * as Discord from 'discord.js';
 
-import { createNoteForUser, lookupNoteForUser, lookupNotesForUser, purgeNotesFromUser, removeNoteFromUser, updateNoteForUser } from '@/common/lib/notes/index.js';
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
 import { CustomEmbed } from '@/common/message.js'
+import { createNoteForUser, lookupNoteForUser, lookupNotesForUser, purgeNotesFromUser, removeNoteFromUser, updateNoteForUser } from '@/lib/notes/index.js';
 import { chunkArray, delay, ellipseString, getMarkdownFriendlyTimestamp } from '@/utilities/index.js'
 
 
