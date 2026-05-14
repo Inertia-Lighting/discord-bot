@@ -6,8 +6,8 @@ import * as Discord from 'discord.js';
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
 import { CustomEmbed } from '@/common/message.js'
-import { addUserToBlacklistedUsersDatabase, findUserInBlacklistedUsersDatabase, removeUserFromBlacklistedUsersDatabase } from '@/lib/blacklist/index.js';
-import prisma from '@/lib/prisma_client.js';
+import { addUserToBlacklistedUsersDatabase, findUserInBlacklistedUsersDatabase, removeUserFromBlacklistedUsersDatabase } from '@/common/lib/blacklist/index.js';
+import prisma from '@/common/lib/prisma_client.js';
 import { getMarkdownFriendlyTimestamp } from '@/utilities/index.js'
 
 // ------------------------------------------------------------//

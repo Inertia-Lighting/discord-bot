@@ -7,7 +7,7 @@ import { compareTwoStrings } from 'string-similarity';
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
 import { CustomEmbed } from '@/common/message.js'
-import { topics as qs_topics } from '@/lib/quick_support/index.js'
+import { topics as qs_topics } from '@/common/lib/quick_support/index.js'
 import { QSTopic } from '@/types/index.js';
 import { randomArrayItem } from '@/utilities/index.js'
 

@@ -7,7 +7,7 @@ import moment from 'moment-timezone';
 
 import { illegalNicknameHandler } from '@/common/handlers/index.js'
 import { CustomInteractionsManager } from '@/common/managers/custom_interactions_manager.js'
-import prisma from '@/lib/prisma_client.js'
+import prisma from '@/common/lib/prisma_client.js'
 import { delay } from '@/utilities/index.js'
 
 // ------------------------------------------------------------//
