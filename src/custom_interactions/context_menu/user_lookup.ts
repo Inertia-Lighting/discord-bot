@@ -6,20 +6,10 @@ import * as Discord from 'discord.js';
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
 import { CustomEmbed } from '@/common/message.js'
-import { go_mongo_db } from '@/common/mongo/mongo.js'
+import { BlacklistModel, UserModel } from '@/lib/mongoose/models/index.js';
 import { DbBlacklistedUserRecord, DbUserData } from '@/types/index.js'
 
 
-// ------------------------------------------------------------//
-
-const db_database_name = `${process.env.MONGO_DATABASE_NAME ?? ''}`;
-if (db_database_name.length < 1) throw new Error('Environment variable: MONGO_DATABASE_NAME; is not set correctly.');
-
-const db_users_collection_name = `${process.env.MONGO_USERS_COLLECTION_NAME ?? ''}`;
-if (db_users_collection_name.length < 1) throw new Error('Environment variable: MONGO_USERS_COLLECTION_NAME; is not set correctly.');
-
-const db_blacklisted_users_collection_name = `${process.env.MONGO_BLACKLISTED_USERS_COLLECTION_NAME ?? ''}`;
-if (db_blacklisted_users_collection_name.length < 1) throw new Error('Environment variable: MONGO_BLACKLISTED_USERS_COLLECTION_NAME; is not set correctly.');
 // ------------------------------------------------------------//
 
 export default new CustomInteraction({
@@ -38,17 +28,14 @@ export default new CustomInteraction({
 
         await interaction.deferReply({ flags: ['Ephemeral'] });
 
-        const db_user_data_find_cursor = await go_mongo_db.find(db_database_name, db_users_collection_name, {
+        const findUser = await UserModel.findOne<DbUserData>({
             'identity.discord_user_id': interaction.targetUser.id,
         }, {
-            projection: {
-                '_id': false,
-            },
-        });
+            '_id': false
+        })
 
-        const db_user_data = await db_user_data_find_cursor.next() as unknown as DbUserData | null;
 
-        if (!db_user_data) {
+        if (!findUser) {
             await interaction.editReply({
                 embeds: [
                     CustomEmbed.from({
@@ -67,22 +54,19 @@ export default new CustomInteraction({
 
             return;
         }
-        const db_blacklisted_user_data_find_cursor = await go_mongo_db.find(db_database_name, db_blacklisted_users_collection_name, {
+        const findBlacklistedUser = await BlacklistModel.findOne<DbBlacklistedUserRecord>({
             $or: [
-                { 'identity.discord_user_id': db_user_data.identity.discord_user_id },
-                { 'identity.roblox_user_id': db_user_data.identity.roblox_user_id },
+                { 'identity.discord_user_id': findUser.identity.discord_user_id },
+                { 'identity.roblox_user_id': findUser.identity.roblox_user_id },
             ],
         }, {
-            projection: {
-                '_id': false,
-            },
-        });
+            '_id': false
+        })
 
-        const db_blacklisted_user_data = await db_blacklisted_user_data_find_cursor.next() as unknown as DbBlacklistedUserRecord | null;
 
         await interaction.editReply({
             embeds: [
-                ...(db_blacklisted_user_data ? [
+                ...(findBlacklistedUser ? [
                     CustomEmbed.from({
                         color: CustomEmbed.Color.Red,
                         author: {
@@ -93,9 +77,9 @@ export default new CustomInteraction({
                             '',
                             'User is blacklisted from using products!',
                             '',
-                            'json',
-                            `${Discord.cleanCodeBlockContent(JSON.stringify(db_blacklisted_user_data, null, 2))}`,
-                            '',
+                            '```json',
+                            `${Discord.cleanCodeBlockContent(JSON.stringify(findBlacklistedUser, null, 2))}`,
+                            '```',
                         ].join('\n'),
                     }),
                 ] : []),
@@ -105,9 +89,9 @@ export default new CustomInteraction({
                         name: 'Inertia Lighting | User Lookup System',
                     },
                     description: [
-                        'json',
-                        `${Discord.cleanCodeBlockContent(JSON.stringify(db_user_data ?? 'user not found in database', null, 2))}`,
-                        '',
+                        '```json',
+                        `${Discord.cleanCodeBlockContent(JSON.stringify(findUser ?? 'user not found in database', null, 2))}`,
+                        '```',
                     ].join('\n'),
                 }),
             ],

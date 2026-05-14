@@ -29,8 +29,8 @@
     "@stylistic/eslint-plugin": "^5.10.0",
     "@types/string-similarity": "4.0.2",
     "@types/uuid": "11.0.0",
-    "@typescript-eslint/eslint-plugin": "8.59.2",
-    "@typescript-eslint/parser": "8.59.2",
+    "@typescript-eslint/eslint-plugin": "8.59.3",
+    "@typescript-eslint/parser": "8.59.3",
     "eslint": "10.3.0",
     "eslint-plugin-deprecation": "3.0.0",
     "eslint-plugin-simple-import-sort": "^13.0.0",
@@ -39,7 +39,7 @@
     "is-ci": "4.1.0",
     "run-script-os": "1.1.6",
     "typescript": "6.0.3",
-    "typescript-eslint": "^8.59.2"
+    "typescript-eslint": "^8.59.3"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.8.0",
@@ -49,11 +49,11 @@
     "discord-html-transcripts": "3.3.0",
     "discord.js": "14.26.4",
     "dotenv": "17.4.2",
-    "go-mongo-db": "github:MidSpike/go-mongo-db",
     "got": "^15.0.5",
     "lowdb": "^7.0.1",
     "module-alias": "2.3.4",
     "moment-timezone": "0.6.2",
+    "mongoose": "^9.6.2",
     "node-gyp": "12.3.0",
     "prisma": "^7.8.0",
     "string-similarity": "4.0.4",
@@ -66,5 +66,5 @@
     "string-width": "4.2.2",
     "wrap-ansi": "7.0.0"
   },
-  "packageManager": "pnpm@10.18.1+sha512.77a884a165cbba2d8d1c19e3b4880eee6d2fcabd0d879121e282196b80042351d5eb3ca0935fa599da1dc51265cc68816ad2bddd2a2de5ea9fdf92adbec7cd34"
+  "packageManager": "pnpm@11.1.1+sha512.d1fdf5f73c617b64fa1a56a81c3c8dfe0e966e33a6010aa256b517ae77be21d93e05affc0de1a83b0e4f29d569f68b446ae8f068cd7247c0bb3df0fb4d7bdf9a"
 }
