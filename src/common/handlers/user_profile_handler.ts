@@ -139,7 +139,7 @@ export async function userProfileHandler(
                 fields: [
                     {
                         name: 'Discord',
-                        value: `${Discord.userMention(deferred_interaction.user.id)}`,
+                        value: `${Discord.userMention(db_user.discordId)}`,
                     }, {
                         name: 'Roblox',
                         value: `[${`@${roblox_user_data.name}`}](https://roblox.com/users/${db_user.robloxId}/profile) (${roblox_user_data.displayName ?? 'n/a'})`,
