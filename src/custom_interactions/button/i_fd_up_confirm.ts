@@ -36,7 +36,8 @@ export default new CustomInteraction({
                     {
                         type: Discord.ComponentType.TextDisplay,
                         content: 'Clearing account from database...'
-                    }]
+                    }
+                ]
             }]
         });
 

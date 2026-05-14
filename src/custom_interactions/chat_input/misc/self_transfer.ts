@@ -154,7 +154,7 @@ export default new CustomInteraction({
     },
     metadata: {
         required_run_context: CustomInteractionRunContext.Guild,
-        required_access_level: CustomInteractionAccessLevel.CustomerService,
+        required_access_level: CustomInteractionAccessLevel.Public,
     },
     handler: async (discord_client, interaction) => {
         if (!interaction.inCachedGuild()) return;
@@ -174,7 +174,7 @@ export default new CustomInteraction({
 
         if (user_a.id === target.id) {
             await interaction.reply({
-                ephemeral: true,
+                flags: ['Ephemeral'],
                 embeds: [
                     CustomEmbed.from({
                         color: CustomEmbed.Color.Red,
@@ -278,11 +278,6 @@ export default new CustomInteraction({
             return;
         }
 
-        const confirm_row = new Discord.ActionRowBuilder<Discord.ButtonBuilder>().addComponents(
-            new Discord.ButtonBuilder().setCustomId('transfer_confirm').setLabel('Confirm').setStyle(Discord.ButtonStyle.Success),
-            new Discord.ButtonBuilder().setCustomId('transfer_cancel').setLabel('Cancel').setStyle(Discord.ButtonStyle.Secondary),
-        );
-
         const confirm_msg = await interaction.editReply({
             embeds: [
                 CustomEmbed.from({
@@ -291,15 +286,32 @@ export default new CustomInteraction({
                     description: `Confirm transfer for product: **${product_code}** from <@${user_a.id}> to <@${target.id}>`,
                 }),
             ],
-            components: [confirm_row]
+            components: [
+            {
+                type: Discord.ComponentType.ActionRow,
+                components: [
+                    {
+                        type: Discord.ComponentType.Button,
+                        style: Discord.ButtonStyle.Success,
+                        label: 'Transfer',
+                        custom_id: 'self_transfer_confirm'
+                    },
+                    {
+                        type: Discord.ComponentType.Button,
+                        style: Discord.ButtonStyle.Danger,
+                        label: 'Cancel',
+                        custom_id: 'self_transfer_cancel'
+                    }
+                ]
+            }]
         });
 
-        const clicked = await (confirm_msg as Discord.Message).awaitMessageComponent<Discord.ComponentType.Button>({
+        const clicked = await confirm_msg.awaitMessageComponent<Discord.ComponentType.Button>({
             time: 60_000,
-            filter: (i: Discord.MessageComponentInteraction<Discord.CacheType>) => i.user.id === target.id && ['transfer_confirm', 'transfer_cancel'].includes(i.customId),
+            filter: (i: Discord.MessageComponentInteraction<Discord.CacheType>) => i.user.id === target.id && ['self_transfer_confirm', 'self_transfer_cancel'].includes(i.customId),
         });
 
-        if (clicked.customId === 'transfer_cancel') {
+        if (clicked.customId === 'self_transfer_cancel') {
             await clicked.update({
                 components: [],
                 embeds: [
