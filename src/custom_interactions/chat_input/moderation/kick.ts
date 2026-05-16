@@ -4,8 +4,12 @@
 
 import * as Discord from 'discord.js';
 
-import { addModerationActionToDatabase } from '@/common/handlers/index.js'
-import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
+import { addModerationActionToDatabase } from '@/common/handlers/index.js';
+import {
+    CustomInteraction,
+    CustomInteractionAccessLevel,
+    CustomInteractionRunContext,
+} from '@/common/managers/custom_interactions_manager.js';
 
 // ------------------------------------------------------------//
 
@@ -21,7 +25,8 @@ export default new CustomInteraction({
                 type: Discord.ApplicationCommandOptionType.User,
                 description: 'The member who you want to kick.',
                 required: true,
-            }, {
+            },
+            {
                 name: 'reason',
                 type: Discord.ApplicationCommandOptionType.String,
                 description: 'The reason why you want to kick.',
@@ -46,53 +51,65 @@ export default new CustomInteraction({
 
         /* handle when a reason is not specified */
         if (typeof kick_reason !== 'string' || kick_reason.length < 1) {
-            await interaction.editReply({
-                content: 'You must specify a reason for the kick!',
-            }).catch(console.warn);
+            await interaction
+                .editReply({
+                    content: 'You must specify a reason for the kick!',
+                })
+                .catch(console.warn);
 
             return;
         }
 
         /* handle when a member is not specified */
         if (!member_to_kick) {
-            await interaction.editReply({
-                content: 'The user you specified is not a member of this server!',
-            }).catch(console.warn);
+            await interaction
+                .editReply({
+                    content: 'The user you specified is not a member of this server!',
+                })
+                .catch(console.warn);
 
             return;
         }
 
         /* handle when a staff member specifies themself */
         if (staff_member.id === member_to_kick.id) {
-            await interaction.editReply({
-                content: 'You aren\'t allowed to kick yourself!',
-            }).catch(console.warn);
+            await interaction
+                .editReply({
+                    content: "You aren't allowed to kick yourself!",
+                })
+                .catch(console.warn);
 
             return;
         }
 
         /* handle when a staff member specifies this bot */
         if (member_to_kick.id === discord_client.user?.id) {
-            await interaction.editReply({
-                content: 'You aren\'t allowed to kick me!',
-            }).catch(console.warn);
+            await interaction
+                .editReply({
+                    content: "You aren't allowed to kick me!",
+                })
+                .catch(console.warn);
             return;
         }
 
         /* handle when a staff member specifies the guild owner */
         if (member_to_kick.id === interaction.guild.ownerId) {
-            await interaction.editReply({
-                content: 'You aren\'t allowed to kick the owner of this server!',
-            }).catch(console.warn);
+            await interaction
+                .editReply({
+                    content: "You aren't allowed to kick the owner of this server!",
+                })
+                .catch(console.warn);
 
             return;
         }
 
         /* handle when a staff member tries to moderate someone with an equal/higher role */
         if (staff_member.roles.highest.comparePositionTo(member_to_kick.roles.highest) <= 0) {
-            await interaction.editReply({
-                content: 'You aren\'t allowed to kick someone with an equal/higher role!',
-            }).catch(console.warn);
+            await interaction
+                .editReply({
+                    content: "You aren't allowed to kick someone with an equal/higher role!",
+                })
+                .catch(console.warn);
 
             return;
         }
@@ -125,14 +142,16 @@ export default new CustomInteraction({
         } catch (error) {
             console.trace(error);
 
-            await interaction.editReply({
-                content: 'Failed to kick that member!',
-            }).catch(console.warn);
+            await interaction
+                .editReply({
+                    content: 'Failed to kick that member!',
+                })
+                .catch(console.warn);
 
             return;
         }
 
-         /* log to the database */
+        /* log to the database */
         const warnDate = new Date();
         warnDate.setFullYear(warnDate.getFullYear() + 1);
 
@@ -140,11 +159,11 @@ export default new CustomInteraction({
             member_to_kick.id,
             interaction.user.id,
             {
-            duration: warnDate.toISOString(),
-            punishmentType: 'kick',
-            punishmentReason: kick_reason,
-            }
-        )
+                duration: warnDate.toISOString(),
+                punishmentType: 'kick',
+                punishmentReason: kick_reason,
+            },
+        );
 
         /* if logging to the database failed, dm the staff member */
         if (!successfully_logged_to_database) {

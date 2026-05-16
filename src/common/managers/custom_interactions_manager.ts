@@ -20,9 +20,9 @@ import path from 'node:path';
 
 import * as Discord from 'discord.js';
 
-import { CustomEmbed } from '@/common/message.js'
-import { DistributiveOmit } from '@/types/index.js'
-import { delay, findJSFiles } from '@/utilities/index.js'
+import { CustomEmbed } from '@/common/message.js';
+import { DistributiveOmit } from '@/types/index.js';
+import { delay, findJSFiles } from '@/utilities/index.js';
 import { fetchPermissions, isDeveloper } from '@/utilities/permissions.js';
 
 // ------------------------------------------------------------//
@@ -36,12 +36,15 @@ type CustomInteractionType = Discord.InteractionType;
 type CustomInteractionData = DistributiveOmit<Discord.ApplicationCommandData, 'name'> | undefined;
 
 type CustomInteractionMetadata = {
-    [key: string]: unknown,
-    required_run_context: CustomInteractionRunContext,
-    required_access_level: CustomInteractionAccessLevel,
+    [key: string]: unknown;
+    required_run_context: CustomInteractionRunContext;
+    required_access_level: CustomInteractionAccessLevel;
 };
 
-type CustomInteractionHandler = (discord_client: Discord.Client<true>, interaction: Discord.Interaction) => Promise<void>;
+type CustomInteractionHandler = (
+    discord_client: Discord.Client<true>,
+    interaction: Discord.Interaction,
+) => Promise<void>;
 
 // ------------------------------------------------------------//
 
@@ -61,7 +64,7 @@ export enum CustomInteractionAccessLevel {
     Admins = 7,
     TeamLeaders = 8,
     CompanyManagement = 9,
-    BotAdmin = 10
+    BotAdmin = 10,
 }
 
 // ------------------------------------------------------------//
@@ -80,15 +83,13 @@ export class CustomInteraction {
     private _metadata: CustomInteractionMetadata;
     private _handler: CustomInteractionHandler;
 
-    public constructor(
-        opts: {
-            identifier: CustomInteractionIdentifier,
-            type: CustomInteractionType,
-            data: CustomInteractionData,
-            metadata: CustomInteractionMetadata,
-            handler: CustomInteractionHandler,
-        },
-    ) {
+    public constructor(opts: {
+        identifier: CustomInteractionIdentifier;
+        type: CustomInteractionType;
+        data: CustomInteractionData;
+        metadata: CustomInteractionMetadata;
+        handler: CustomInteractionHandler;
+    }) {
         this._identifier = opts.identifier;
         this._type = opts.type;
         this._data = opts.data;
@@ -134,10 +135,7 @@ export class CustomInteraction {
      * @param discord_client - Logged-in Discord client
      * @param interaction - The raw Discord interaction object
      */
-    public async handler(
-        discord_client: Discord.Client<true>,
-        interaction: Discord.Interaction,
-    ) {
+    public async handler(discord_client: Discord.Client<true>, interaction: Discord.Interaction) {
         await this._handler(discord_client, interaction);
     }
 }
@@ -184,7 +182,13 @@ export class CustomInteractionsManager {
 
             if (exported_value && typeof exported_value === 'object' && 'identifier' in exported_value) {
                 interaction_instance = exported_value as CustomInteraction;
-            } else if (exported_value && typeof exported_value === 'object' && 'default' in exported_value && exported_value.default && 'identifier' in exported_value.default) {
+            } else if (
+                exported_value &&
+                typeof exported_value === 'object' &&
+                'default' in exported_value &&
+                exported_value.default &&
+                'identifier' in exported_value.default
+            ) {
                 interaction_instance = exported_value.default as CustomInteraction;
             }
 
@@ -193,7 +197,10 @@ export class CustomInteractionsManager {
                 continue;
             }
 
-            CustomInteractionsManager.cached_interactions.set(interaction_instance.identifier.toLowerCase(), interaction_instance);
+            CustomInteractionsManager.cached_interactions.set(
+                interaction_instance.identifier.toLowerCase(),
+                interaction_instance,
+            );
         }
 
         console.info('Registered interactions.');
@@ -207,7 +214,7 @@ export class CustomInteractionsManager {
         // Remove commands that no longer exist in our cache
         for (const [application_command_id, application_command] of await client.application.commands.fetch()) {
             const command_exists = CustomInteractionsManager.cached_interactions.find(
-                (interaction) => interaction.identifier === application_command.name
+                (interaction) => interaction.identifier === application_command.name,
             );
 
             if (!command_exists) {
@@ -235,8 +242,10 @@ export class CustomInteractionsManager {
         }
     }
 
-    public static async handleInteractionFromDiscord(client: Discord.Client<true>, interaction: Discord.Interaction): Promise<void> {
-
+    public static async handleInteractionFromDiscord(
+        client: Discord.Client<true>,
+        interaction: Discord.Interaction,
+    ): Promise<void> {
         let interaction_name: string;
 
         switch (interaction.type) {
@@ -271,17 +280,20 @@ export class CustomInteractionsManager {
 
         // If we don't have a registered interaction, ignore it quietly.
         if (!client_interaction) {
-            throw new Error(`Could not find interaction (${interaction_name}) in cache`, );
+            throw new Error(`Could not find interaction (${interaction_name}) in cache`);
         }
 
-        if (client_interaction.metadata.guild_only && !interaction.inCachedGuild()) throw new Error('Expected guild for this interaction');
+        if (client_interaction.metadata.guild_only && !interaction.inCachedGuild())
+            throw new Error('Expected guild for this interaction');
 
         const access_level = client_interaction.metadata.required_access_level;
 
-        if (typeof access_level !== 'number' && interaction.isChatInputCommand()) throw new Error('Access level was not found for this interaction');
+        if (typeof access_level !== 'number' && interaction.isChatInputCommand())
+            throw new Error('Access level was not found for this interaction');
 
         if (typeof access_level === 'number') {
-            if (!interaction.inCachedGuild()) throw new Error('Access Level was supplied but interaction was not from a cached guild');
+            if (!interaction.inCachedGuild())
+                throw new Error('Access Level was supplied but interaction was not from a cached guild');
 
             const highest_access = fetchPermissions(interaction.member);
 
@@ -299,7 +311,7 @@ export class CustomInteractionsManager {
                 }
                 return;
             }
-            const is_dev = isDeveloper(interaction.member)
+            const is_dev = isDeveloper(interaction.member);
             if (client_interaction.metadata.dev_only && !is_dev) {
                 if (interaction.isRepliable()) {
                     await interaction.reply({
@@ -318,7 +330,9 @@ export class CustomInteractionsManager {
 
         try {
             if (interaction.isChatInputCommand()) {
-                console.info(`CustomInteractionsManager.handleInteractionFromDiscord(): running handler for chat input command interaction: ${client_interaction.identifier}`);
+                console.info(
+                    `CustomInteractionsManager.handleInteractionFromDiscord(): running handler for chat input command interaction: ${client_interaction.identifier}`,
+                );
             }
 
             await client_interaction.handler(client, interaction);
@@ -326,15 +340,17 @@ export class CustomInteractionsManager {
             console.trace(error);
 
             if (interaction.isRepliable()) {
-                await interaction.followUp({
-                    embeds: [
-                        CustomEmbed.from({
-                            color: CustomEmbed.Color.Violet,
-                            title: 'Command Unavailable',
-                            description: 'This command is currently unavailable right now. Try again later.'
-                        })
-                    ]
-                }).catch(console.warn);
+                await interaction
+                    .followUp({
+                        embeds: [
+                            CustomEmbed.from({
+                                color: CustomEmbed.Color.Violet,
+                                title: 'Command Unavailable',
+                                description: 'This command is currently unavailable right now. Try again later.',
+                            }),
+                        ],
+                    })
+                    .catch(console.warn);
             }
         }
     }

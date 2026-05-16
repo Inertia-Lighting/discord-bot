@@ -1,0 +1,12 @@
+dist/
+node_modules/
+.pnpm-store/
+src/lib/prisma/
+coverage/
+temporary/
+private/
+database/
+logging/
+*.log
+*.env
+pnpm-lock.yaml

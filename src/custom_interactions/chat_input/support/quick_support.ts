@@ -5,30 +5,27 @@
 import * as Discord from 'discord.js';
 import { compareTwoStrings } from 'string-similarity';
 
-import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
-import { CustomEmbed } from '@/common/message.js'
-import { topics as qs_topics } from '@/lib/quick_support/index.js'
+import {
+    CustomInteraction,
+    CustomInteractionAccessLevel,
+    CustomInteractionRunContext,
+} from '@/common/managers/custom_interactions_manager.js';
+import { CustomEmbed } from '@/common/message.js';
+import { topics as qs_topics } from '@/lib/quick_support/index.js';
 import { QSTopic } from '@/types/index.js';
-import { randomArrayItem } from '@/utilities/index.js'
+import { randomArrayItem } from '@/utilities/index.js';
 
 // ------------------------------------------------------------//
 
-async function fetchQuickSupportTopicById(
-    qs_topic_id: string,
-): Promise<QSTopic | undefined> {
-    
-    const findTopic = qs_topics.find((topic) => topic.id === qs_topic_id)
-
+async function fetchQuickSupportTopicById(qs_topic_id: string): Promise<QSTopic | undefined> {
+    const findTopic = qs_topics.find((topic) => topic.id === qs_topic_id);
 
     return findTopic;
-
 }
 
 // ------------------------------------------------------------//
 
-async function quickSupportAutoCompleteHandler(
-    interaction: Discord.AutocompleteInteraction,
-): Promise<void> {
+async function quickSupportAutoCompleteHandler(interaction: Discord.AutocompleteInteraction): Promise<void> {
     const search_query = interaction.options.getFocused();
 
     const mapped_qs_topics = [];
@@ -38,7 +35,7 @@ async function quickSupportAutoCompleteHandler(
             similarity_score_total += compareTwoStrings(search_query, searchable_query);
         }
 
-        similarity_score_total += compareTwoStrings(search_query, qs_topic.title) * 1.20; // multiplied for weighted value
+        similarity_score_total += compareTwoStrings(search_query, qs_topic.title) * 1.2; // multiplied for weighted value
 
         const similarity_score_average = similarity_score_total / qs_topic.searchable_queries.length;
 
@@ -48,18 +45,15 @@ async function quickSupportAutoCompleteHandler(
         });
     }
 
-    const matching_qs_topics = mapped_qs_topics.filter(
-        (qs_topic) => qs_topic.similarity_score > 0.20
-    ).sort(
-        (a, b) => b.similarity_score - a.similarity_score
-    );
+    const matching_qs_topics = mapped_qs_topics
+        .filter((qs_topic) => qs_topic.similarity_score > 0.2)
+        .sort((a, b) => b.similarity_score - a.similarity_score);
 
-     
     function generateRandomQuickSupportTopic(): QSTopic {
         const random_qs_topic = randomArrayItem(qs_topics);
 
         const already_matched_qs_topic = matching_qs_topics.find(
-            (matching_qs_topic) => matching_qs_topic.id === random_qs_topic?.id
+            (matching_qs_topic) => matching_qs_topic.id === random_qs_topic?.id,
         );
 
         if (!already_matched_qs_topic) return random_qs_topic;
@@ -69,22 +63,17 @@ async function quickSupportAutoCompleteHandler(
 
     const random_qs_topics = Array.from({ length: 3 }, generateRandomQuickSupportTopic);
 
-    await interaction.respond(
-        [
-            ...matching_qs_topics,
-            ...random_qs_topics,
-        ].slice(0, 5).map(
-            (qs_topic) => ({
+    await interaction
+        .respond(
+            [...matching_qs_topics, ...random_qs_topics].slice(0, 5).map((qs_topic) => ({
                 name: qs_topic.title,
                 value: qs_topic.id,
-            })
+            })),
         )
-    ).catch(console.warn);
+        .catch(console.warn);
 }
 
-async function quickSupportChatInputHandler(
-    interaction: Discord.ChatInputCommandInteraction,
-): Promise<void> {
+async function quickSupportChatInputHandler(interaction: Discord.ChatInputCommandInteraction): Promise<void> {
     if (!interaction.inCachedGuild()) return;
     if (!interaction.channel) return;
 
@@ -96,13 +85,15 @@ async function quickSupportChatInputHandler(
     if (typeof quick_support_topic_id !== 'string') {
         console.trace('quickSupportChatInputHandler(): quick_support_topic_id was not a string.');
 
-        await interaction.editReply({
-            embeds: [
-                CustomEmbed.from({
-                    description: 'Something went wrong while fetching the quick support topic.',
-                }),
-            ],
-        }).catch(console.warn);
+        await interaction
+            .editReply({
+                embeds: [
+                    CustomEmbed.from({
+                        description: 'Something went wrong while fetching the quick support topic.',
+                    }),
+                ],
+            })
+            .catch(console.warn);
 
         return;
     }
@@ -110,29 +101,33 @@ async function quickSupportChatInputHandler(
     const quick_support_topic = await fetchQuickSupportTopicById(quick_support_topic_id);
 
     if (!quick_support_topic) {
-        await interaction.editReply({
-            embeds: [
-                CustomEmbed.from({
-                    description: 'Unable to find a matching quick support topic.',
-                }),
-            ],
-        }).catch(console.warn);
+        await interaction
+            .editReply({
+                embeds: [
+                    CustomEmbed.from({
+                        description: 'Unable to find a matching quick support topic.',
+                    }),
+                ],
+            })
+            .catch(console.warn);
 
         return;
     }
 
-    await interaction.editReply({
-        embeds: [
-            CustomEmbed.from({
-                author: {
-                    icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
-                    name: 'Inertia Lighting | Quick Support System',
-                },
-                title: `${quick_support_topic.title}`,
-                description: `${quick_support_topic.support_contents}`,
-            }),
-        ],
-    }).catch(console.warn);
+    await interaction
+        .editReply({
+            embeds: [
+                CustomEmbed.from({
+                    author: {
+                        icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
+                        name: 'Inertia Lighting | Quick Support System',
+                    },
+                    title: `${quick_support_topic.title}`,
+                    description: `${quick_support_topic.support_contents}`,
+                }),
+            ],
+        })
+        .catch(console.warn);
 }
 
 // ------------------------------------------------------------//

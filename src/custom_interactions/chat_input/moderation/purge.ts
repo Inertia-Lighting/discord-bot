@@ -4,7 +4,11 @@
 
 import * as Discord from 'discord.js';
 
-import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
+import {
+    CustomInteraction,
+    CustomInteractionAccessLevel,
+    CustomInteractionRunContext,
+} from '@/common/managers/custom_interactions_manager.js';
 
 // ------------------------------------------------------------//
 
@@ -41,10 +45,7 @@ export default new CustomInteraction({
 
         const amount_to_purge = interaction.options.getInteger('amount', true);
 
-        if (
-            amount_to_purge < 1 ||
-            amount_to_purge > 100
-        ) {
+        if (amount_to_purge < 1 || amount_to_purge > 100) {
             await interaction.editReply({
                 content: 'You must specify an amount between 1 and 100.',
             });

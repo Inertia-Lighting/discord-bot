@@ -4,8 +4,13 @@
 
 import * as Discord from 'discord.js';
 
-import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext, CustomInteractionsManager } from '@/common/managers/custom_interactions_manager.js'
-import { CustomEmbed } from '@/common/message.js'
+import {
+    CustomInteraction,
+    CustomInteractionAccessLevel,
+    CustomInteractionRunContext,
+    CustomInteractionsManager,
+} from '@/common/managers/custom_interactions_manager.js';
+import { CustomEmbed } from '@/common/message.js';
 import { fetchPermissions } from '@/utilities/permissions.js';
 
 // ------------------------------------------------------------//
@@ -35,7 +40,7 @@ export default new CustomInteraction({
                 custom_interaction.type === Discord.InteractionType.ApplicationCommand &&
                 'type' in custom_interaction.data &&
                 custom_interaction.data.type === Discord.ApplicationCommandType.ChatInput &&
-                custom_interaction.metadata.required_access_level <= highest_access_level_for_user
+                custom_interaction.metadata.required_access_level <= highest_access_level_for_user,
         );
 
         await interaction.editReply({
@@ -45,7 +50,7 @@ export default new CustomInteraction({
                     description: [
                         '```',
                         ...chat_input_custom_interactions.map(
-                            (custom_interaction) => `/${custom_interaction.data.name}`
+                            (custom_interaction) => `/${custom_interaction.data.name}`,
                         ),
                         '```',
                     ].join('\n'),

@@ -4,17 +4,14 @@
 
 import * as Discord from 'discord.js';
 
-import { guildMemberAddLogger, illegalNicknameHandler } from '@/common/handlers/index.js'
+import { guildMemberAddLogger, illegalNicknameHandler } from '@/common/handlers/index.js';
 import config from '@/utilities/bot_config.js';
 
 // ------------------------------------------------------------//
 
 export default {
     name: Discord.Events.GuildMemberAdd,
-    async handler(
-        client: Discord.Client<true>,
-        member: Discord.GuildMember,
-    ) {
+    async handler(client: Discord.Client<true>, member: Discord.GuildMember) {
         if (member.user.system) return; // don't operate on system accounts
         if (member.user.bot) return; // don't operate on bots to prevent feedback-loops
         if (member.guild.id !== config.guild_id) return; // don't operate on other guilds

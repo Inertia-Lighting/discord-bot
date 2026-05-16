@@ -4,10 +4,8 @@
 
 import * as Discord from 'discord.js';
 
-import { BaseSupportCategoryHandler } from '../core/base-handler.js'
-;
-import { SupportCategoryId } from '../types/index.js'
-;
+import { BaseSupportCategoryHandler } from '../core/base-handler.js';
+import { SupportCategoryId } from '../types/index.js';
 
 /**
  * Handler for product transactions support category
@@ -32,7 +30,7 @@ export class ProductTransactionsHandler extends BaseSupportCategoryHandler {
                 answer: interaction.fields.getTextInputValue('time'),
             },
             {
-                question: 'Fully describe the issue you\'re encountering.',
+                question: "Fully describe the issue you're encountering.",
                 answer: interaction.fields.getTextInputValue('issue'),
             },
         ];
@@ -104,7 +102,7 @@ export const ProductTransactionsConfig = {
                         type: Discord.ComponentType.TextInput,
                         customId: 'issue',
                         style: Discord.TextInputStyle.Paragraph,
-                        label: 'Fully describe the issue you\'re encountering.',
+                        label: "Fully describe the issue you're encountering.",
                         minLength: 1,
                         maxLength: 1024,
                         required: true,

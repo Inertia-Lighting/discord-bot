@@ -2,22 +2,24 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 // ------------------------------------------------------------//
 
-import { 
-    SupportCategoryConfig, 
-    SupportCategoryHandler, 
-    SupportCategoryId, 
-    SupportCategoryRegistry 
-} from '../types/index.js'
-;
+import {
+    SupportCategoryConfig,
+    SupportCategoryHandler,
+    SupportCategoryId,
+    SupportCategoryRegistry,
+} from '../types/index.js';
 
 /**
  * Implementation of the support category registry
  */
 export class SupportCategoryRegistryImpl implements SupportCategoryRegistry {
-    private categories = new Map<SupportCategoryId, {
-        config: SupportCategoryConfig;
-        handler: SupportCategoryHandler;
-    }>();
+    private categories = new Map<
+        SupportCategoryId,
+        {
+            config: SupportCategoryConfig;
+            handler: SupportCategoryHandler;
+        }
+    >();
 
     /**
      * Registers a support category handler

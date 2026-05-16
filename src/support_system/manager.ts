@@ -15,13 +15,14 @@ import { loadSupportSystemConfig } from './config/index.js';
 import { TicketPriorityServiceImpl } from './core/priority-service.js';
 import { SupportCategoryRegistryImpl } from './core/registry.js';
 import { SupportTicketServiceImpl } from './core/ticket-service.js';
-import { 
+import {
     SupportCategoryConfig,
-    SupportCategoryId, 
-    SupportCategoryRegistry, 
-    SupportTicketContext, 
+    SupportCategoryId,
+    SupportCategoryRegistry,
+    SupportTicketContext,
     SupportTicketService,
-    TicketPriorityService} from './types/index.js';
+    TicketPriorityService,
+} from './types/index.js';
 
 /**
  * Main support system manager
@@ -37,7 +38,7 @@ export class SupportSystemManager {
         this.registry = new SupportCategoryRegistryImpl();
         this.ticketService = new SupportTicketServiceImpl(this.config);
         this.priorityService = new TicketPriorityServiceImpl();
-        
+
         this.initializeCategories();
     }
 
@@ -83,10 +84,7 @@ export class SupportSystemManager {
         // Other Questions
         const otherQuestionsConfig = {
             ...OtherQuestionsConfig,
-            staffRoleIds: [
-                this.config.roles.supportStaff.otherRoleId,
-                this.config.roles.customerServiceRoleId,
-            ],
+            staffRoleIds: [this.config.roles.supportStaff.otherRoleId, this.config.roles.customerServiceRoleId],
         };
         this.registry.registerCategory(otherQuestionsConfig, new OtherQuestionsHandler());
     }
@@ -119,7 +117,7 @@ export class SupportSystemManager {
      */
     async handleModalSubmission(
         interaction: Discord.ModalSubmitInteraction<'cached'>,
-        categoryId: SupportCategoryId
+        categoryId: SupportCategoryId,
     ): Promise<void> {
         const handler = this.registry.getHandler(categoryId);
         if (!handler) {
@@ -155,7 +153,7 @@ export class SupportSystemManager {
         options?: {
             saveTranscript?: boolean;
             sendFeedback?: boolean;
-        }
+        },
     ): Promise<void> {
         await this.ticketService.closeTicketChannel(channel, closedBy, reason, options);
     }
@@ -166,7 +164,7 @@ export class SupportSystemManager {
     async findExistingTicket(
         guild: Discord.Guild,
         userId: string,
-        categoryId: SupportCategoryId
+        categoryId: SupportCategoryId,
     ): Promise<Discord.TextChannel | null> {
         return this.ticketService.findExistingTicket(guild, userId, categoryId);
     }
@@ -177,7 +175,7 @@ export class SupportSystemManager {
     async changeTicketType(
         channel: Discord.TextChannel,
         newCategoryId: SupportCategoryId,
-        changedBy: Discord.GuildMember
+        changedBy: Discord.GuildMember,
     ): Promise<void> {
         // Validate that the new category exists and is enabled
         const newConfig = this.registry.getConfig(newCategoryId);
@@ -187,7 +185,7 @@ export class SupportSystemManager {
 
         // Extract current ticket information from channel name
         let channelNameParts = channel.name.split('-');
-        
+
         // Handle priority emoji prefix - remove it first
         const priorityEmojis = ['🟢', '🟡', '🔴', '⏸️'];
         let nameWithoutEmoji = channel.name;
@@ -197,11 +195,15 @@ export class SupportSystemManager {
                 break;
             }
         }
-        
+
         // Now split the name without emoji
         channelNameParts = nameWithoutEmoji.split('-');
-        
-        if (channelNameParts.length < 2 || channelNameParts[0] === '' || channelNameParts[channelNameParts.length - 1] === '') {
+
+        if (
+            channelNameParts.length < 2 ||
+            channelNameParts[0] === '' ||
+            channelNameParts[channelNameParts.length - 1] === ''
+        ) {
             throw new Error('Invalid ticket channel name format');
         }
 
@@ -216,10 +218,10 @@ export class SupportSystemManager {
         // Update channel name (preserving priority emoji)
         const currentPriority = await this.priorityService.getPriority(channel.id);
         const newChannelName = `${newCategoryId}-${userId}`.toLowerCase();
-        
+
         // First update the channel name to the new format
         await channel.setName(newChannelName);
-        
+
         // Then if there's a priority, update the channel name with the priority emoji
         if (currentPriority) {
             await this.priorityService.updateChannelName(channel, currentPriority.priority);
@@ -265,23 +267,24 @@ export class SupportSystemManager {
      */
     private async updateChannelPermissions(
         channel: Discord.TextChannel,
-        categoryConfig: SupportCategoryConfig
+        categoryConfig: SupportCategoryConfig,
     ): Promise<void> {
         // Get the current permission overwrites
         const currentOverwrites = Array.from(channel.permissionOverwrites.cache.values());
-        
+
         // Update staff role permissions for the new category
-        const staffRoleOverwrites = categoryConfig.staffRoleIds.map(roleId => ({
+        const staffRoleOverwrites = categoryConfig.staffRoleIds.map((roleId) => ({
             id: roleId,
             allow: [Discord.PermissionFlagsBits.ViewChannel, Discord.PermissionFlagsBits.SendMessages],
         }));
 
         // Keep existing overwrites for non-staff roles and add new staff role permissions
         const newOverwrites = [
-            ...currentOverwrites.filter(overwrite => 
-                !categoryConfig.staffRoleIds.includes(overwrite.id) &&
-                overwrite.id !== this.config.roles.customerServiceRoleId &&
-                overwrite.id !== this.config.roles.staffRoleId
+            ...currentOverwrites.filter(
+                (overwrite) =>
+                    !categoryConfig.staffRoleIds.includes(overwrite.id) &&
+                    overwrite.id !== this.config.roles.customerServiceRoleId &&
+                    overwrite.id !== this.config.roles.staffRoleId,
             ),
             ...staffRoleOverwrites,
             {

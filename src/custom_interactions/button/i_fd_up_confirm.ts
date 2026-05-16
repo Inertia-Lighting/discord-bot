@@ -4,9 +4,13 @@
 
 import * as Discord from 'discord.js';
 
-import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
-import { CustomEmbed } from '@/common/message.js'
-import prisma from '@/lib/prisma_client.js'
+import {
+    CustomInteraction,
+    CustomInteractionAccessLevel,
+    CustomInteractionRunContext,
+} from '@/common/managers/custom_interactions_manager.js';
+import { CustomEmbed } from '@/common/message.js';
+import prisma from '@/lib/prisma_client.js';
 
 // ------------------------------------------------------------//
 
@@ -25,71 +29,80 @@ export default new CustomInteraction({
         /* send the support category selection menu */
         const sendMessage = await interaction.channel.send({
             flags: 'IsComponentsV2',
-            components: [{
-                type: Discord.ComponentType.Container,
-                accent_color: CustomEmbed.Color.Blue,
-                components: [
-                    {
-                        type: Discord.ComponentType.TextDisplay,
-                        content: '# Account Reset'
-                    },
-                    {
-                        type: Discord.ComponentType.TextDisplay,
-                        content: 'Clearing account from database...'
-                    }
-                ]
-            }]
+            components: [
+                {
+                    type: Discord.ComponentType.Container,
+                    accent_color: CustomEmbed.Color.Blue,
+                    components: [
+                        {
+                            type: Discord.ComponentType.TextDisplay,
+                            content: '# Account Reset',
+                        },
+                        {
+                            type: Discord.ComponentType.TextDisplay,
+                            content: 'Clearing account from database...',
+                        },
+                    ],
+                },
+            ],
         });
 
-        await prisma.$transaction([
-            prisma.transactions.deleteMany({
-                where: {
-                    User: {
-                        discordId: interaction.user.id
-                    }
-                }
-            }),
-            prisma.user.delete({
-                where: {
-                    discordId: interaction.user.id
-                }
-            })
-        ]).catch(async (err) => {
-            // throw new Error('Failed to delete user data', {cause: err})
-            console.trace(err)
-            await sendMessage.edit({
-                flags: 'IsComponentsV2',
-                components: [{
-                    type: Discord.ComponentType.Container,
-                    accent_color: CustomEmbed.Color.Red,
-                    components: [{
-                        type: Discord.ComponentType.TextDisplay,
-                        content: '# Account Reset'
+        await prisma
+            .$transaction([
+                prisma.transactions.deleteMany({
+                    where: {
+                        User: {
+                            discordId: interaction.user.id,
+                        },
                     },
-                    {
-                        type: Discord.ComponentType.TextDisplay,
-                        content: 'Failed to reset account'
-                    }
-                    ]
-                }]
+                }),
+                prisma.user.delete({
+                    where: {
+                        discordId: interaction.user.id,
+                    },
+                }),
+            ])
+            .catch(async (err) => {
+                // throw new Error('Failed to delete user data', {cause: err})
+                console.trace(err);
+                await sendMessage.edit({
+                    flags: 'IsComponentsV2',
+                    components: [
+                        {
+                            type: Discord.ComponentType.Container,
+                            accent_color: CustomEmbed.Color.Red,
+                            components: [
+                                {
+                                    type: Discord.ComponentType.TextDisplay,
+                                    content: '# Account Reset',
+                                },
+                                {
+                                    type: Discord.ComponentType.TextDisplay,
+                                    content: 'Failed to reset account',
+                                },
+                            ],
+                        },
+                    ],
+                });
             });
-        })
         await sendMessage.edit({
             flags: 'IsComponentsV2',
-            components: [{
-                type: Discord.ComponentType.Container,
-                accent_color: CustomEmbed.Color.Green,
-                components: [{
-                    type: Discord.ComponentType.TextDisplay,
-                    content: '# Account Reset'
-                },
+            components: [
                 {
-                    type: Discord.ComponentType.TextDisplay,
-                    content: 'Account reset successfully'
-                }
-                ]
-            }]
+                    type: Discord.ComponentType.Container,
+                    accent_color: CustomEmbed.Color.Green,
+                    components: [
+                        {
+                            type: Discord.ComponentType.TextDisplay,
+                            content: '# Account Reset',
+                        },
+                        {
+                            type: Discord.ComponentType.TextDisplay,
+                            content: 'Account reset successfully',
+                        },
+                    ],
+                },
+            ],
         });
-
     },
 });

@@ -5,9 +5,13 @@
 import * as Discord from 'discord.js';
 import { compareTwoStrings } from 'string-similarity';
 
-import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
-import { CustomEmbed } from '@/common/message.js'
-import prisma from '@/lib/prisma_client.js'
+import {
+    CustomInteraction,
+    CustomInteractionAccessLevel,
+    CustomInteractionRunContext,
+} from '@/common/managers/custom_interactions_manager.js';
+import { CustomEmbed } from '@/common/message.js';
+import prisma from '@/lib/prisma_client.js';
 import config from '@/utilities/bot_config.js';
 import { DbProductsCache } from '@/utilities/productCache.js';
 
@@ -18,10 +22,8 @@ if (api_server.length < 1) throw new Error('Environment variable: API_SERVER; is
 
 // ------------------------------------------------------------//
 
-async function selfTransferAutocompleteHandler(
-    interaction: Discord.AutocompleteInteraction
-): Promise<void> {
-    const db_products = await DbProductsCache.fetch(false)
+async function selfTransferAutocompleteHandler(interaction: Discord.AutocompleteInteraction): Promise<void> {
+    const db_products = await DbProductsCache.fetch(false);
 
     const focused_option = interaction.options.getFocused(true);
 
@@ -42,7 +44,7 @@ async function selfTransferAutocompleteHandler(
             discordId: true,
             transactions: true,
         },
-    })
+    });
 
     if (!db_user_data) {
         await interaction.respond([]);
@@ -50,13 +52,10 @@ async function selfTransferAutocompleteHandler(
         return;
     }
 
+    const filtered_db_products = db_products.filter((db_product) => {
+        const user_owns_product = db_user_data.transactions.some((t) => t.productCode === db_product.code);
 
-    const filtered_db_products = db_products.filter(db_product => {
-        const user_owns_product = db_user_data.transactions.some(
-            t => t.productCode === db_product.code
-        );
-
-        return (user_owns_product);
+        return user_owns_product;
     });
 
     if (filtered_db_products.length < 1) {
@@ -73,23 +72,23 @@ async function selfTransferAutocompleteHandler(
         });
     }
 
-    const matching_db_products = mapped_db_products.sort(
-        (a, b) => b.similarity_score - a.similarity_score
-    ).sort(
-        (a, b) => {
+    const matching_db_products = mapped_db_products
+        .sort((a, b) => b.similarity_score - a.similarity_score)
+        .sort((a, b) => {
             const first_char_of_query: string = product_code_search_query.at(0)!;
 
-            if (a.code.startsWith(first_char_of_query) === b.code.startsWith(first_char_of_query)) return a.code.localeCompare(b.code);
+            if (a.code.startsWith(first_char_of_query) === b.code.startsWith(first_char_of_query))
+                return a.code.localeCompare(b.code);
             if (a.code.startsWith(first_char_of_query)) return -1;
             if (b.code.startsWith(first_char_of_query)) return 1;
 
             return 0;
-        }
-    ).filter(
-        ({ similarity_score }, index) => product_code_search_query.length > 0 ? (
-            similarity_score >= 0.25 || (similarity_score < 0.25 && index < 10)
-        ) : true
-    );
+        })
+        .filter(({ similarity_score }, index) =>
+            product_code_search_query.length > 0
+                ? similarity_score >= 0.25 || (similarity_score < 0.25 && index < 10)
+                : true,
+        );
 
     if (matching_db_products.length === 0) {
         await interaction.respond([]);
@@ -97,12 +96,10 @@ async function selfTransferAutocompleteHandler(
         return;
     }
 
-    const autocomplete_results = matching_db_products.slice(0, 5).map(
-        (db_product) => ({
-            name: `${db_product.name}: ${db_product.code}`,
-            value: db_product.code,
-        })
-    );
+    const autocomplete_results = matching_db_products.slice(0, 5).map((db_product) => ({
+        name: `${db_product.name}: ${db_product.code}`,
+        value: db_product.code,
+    }));
 
     // autocomplete_results.push({
     //     name: 'All Products',
@@ -117,7 +114,6 @@ async function selfTransferAutocompleteHandler(
 
     interaction.respond(autocomplete_results);
 }
-
 
 export default new CustomInteraction({
     identifier: 'self_transfer',
@@ -144,7 +140,7 @@ export default new CustomInteraction({
                 description: 'Reason',
                 type: Discord.ApplicationCommandOptionType.String,
                 required: true,
-            }
+            },
         ],
     },
     metadata: {
@@ -155,14 +151,14 @@ export default new CustomInteraction({
         if (!interaction.inCachedGuild()) return;
 
         if (interaction.isAutocomplete()) {
-            selfTransferAutocompleteHandler(interaction)
+            selfTransferAutocompleteHandler(interaction);
             return;
         }
 
         if (!interaction.isChatInputCommand()) return;
         if (!interaction.channel) return;
 
-        const user_a = interaction.user
+        const user_a = interaction.user;
         const target = interaction.options.getUser('target', true);
         const product_code = interaction.options.getString('product_code', true);
         const reason = interaction.options.getString('reason', true);
@@ -181,32 +177,32 @@ export default new CustomInteraction({
             return;
         }
 
-        await interaction.deferReply()
+        await interaction.deferReply();
         await interaction.editReply({
             embeds: [
                 CustomEmbed.from({
                     title: 'Transfer',
-                    description: 'Checking if users exists in the database...'
-                })
-            ]
-        })
+                    description: 'Checking if users exists in the database...',
+                }),
+            ],
+        });
 
         const user_a_db = await prisma.user.findUnique({
             where: {
-                discordId: user_a.id
+                discordId: user_a.id,
             },
             select: {
-                id: true
-            }
+                id: true,
+            },
         });
 
         const target_db = await prisma.user.findUnique({
             where: {
-                discordId: target.id
+                discordId: target.id,
             },
             select: {
-                id: true
-            }
+                id: true,
+            },
         });
 
         if (!user_a_db) {
@@ -282,28 +278,30 @@ export default new CustomInteraction({
                 }),
             ],
             components: [
-            {
-                type: Discord.ComponentType.ActionRow,
-                components: [
-                    {
-                        type: Discord.ComponentType.Button,
-                        style: Discord.ButtonStyle.Success,
-                        label: 'Transfer',
-                        custom_id: 'self_transfer_confirm'
-                    },
-                    {
-                        type: Discord.ComponentType.Button,
-                        style: Discord.ButtonStyle.Danger,
-                        label: 'Cancel',
-                        custom_id: 'self_transfer_cancel'
-                    }
-                ]
-            }]
+                {
+                    type: Discord.ComponentType.ActionRow,
+                    components: [
+                        {
+                            type: Discord.ComponentType.Button,
+                            style: Discord.ButtonStyle.Success,
+                            label: 'Transfer',
+                            custom_id: 'self_transfer_confirm',
+                        },
+                        {
+                            type: Discord.ComponentType.Button,
+                            style: Discord.ButtonStyle.Danger,
+                            label: 'Cancel',
+                            custom_id: 'self_transfer_cancel',
+                        },
+                    ],
+                },
+            ],
         });
 
         const clicked = await confirm_msg.awaitMessageComponent<Discord.ComponentType.Button>({
             time: 60_000,
-            filter: (i: Discord.MessageComponentInteraction<Discord.CacheType>) => i.user.id === target.id && ['self_transfer_confirm', 'self_transfer_cancel'].includes(i.customId),
+            filter: (i: Discord.MessageComponentInteraction<Discord.CacheType>) =>
+                i.user.id === target.id && ['self_transfer_confirm', 'self_transfer_cancel'].includes(i.customId),
         });
 
         if (clicked.customId === 'self_transfer_cancel') {
@@ -314,8 +312,8 @@ export default new CustomInteraction({
                         color: CustomEmbed.Color.Red,
                         title: 'Transfer',
                         description: 'Transfer cancelled.',
-                    })
-                ]
+                    }),
+                ],
             });
             return;
         }
@@ -324,7 +322,7 @@ export default new CustomInteraction({
             await prisma.$transaction(async (tx) => {
                 await tx.transactions.update({
                     where: {
-                        id: user_a_transaction.id
+                        id: user_a_transaction.id,
                     },
                     data: {
                         oneTimeTransferUsed: true,
@@ -342,10 +340,14 @@ export default new CustomInteraction({
             });
 
             try {
-                const logging_channel = await interaction.client.channels.fetch(config.logging_products_manager_channel_id);
+                const logging_channel = await interaction.client.channels.fetch(
+                    config.logging_products_manager_channel_id,
+                );
                 if (!logging_channel) throw new Error('Unable to find the transactions manager logging channel!');
-                if (!logging_channel.isTextBased()) throw new Error('The transactions manager logging channel is not text-based!');
-                if (!logging_channel.isSendable()) throw new Error('The identity manager logging channel is not sendable!');
+                if (!logging_channel.isTextBased())
+                    throw new Error('The transactions manager logging channel is not text-based!');
+                if (!logging_channel.isSendable())
+                    throw new Error('The identity manager logging channel is not sendable!');
 
                 await logging_channel.send({
                     embeds: [
@@ -354,8 +356,7 @@ export default new CustomInteraction({
                             title: 'Inertia Lighting | Transactions Manager',
                             description: [
                                 `${interaction.user} transferred product(s) from ${user_a.globalName} (${user_a.id}) to ${target.globalName} (${target.id}): `,
-                                `\`${user_a_transaction.productCode}\``
-
+                                `\`${user_a_transaction.productCode}\``,
                             ].join('\n'),
                             fields: [
                                 {
@@ -369,15 +370,18 @@ export default new CustomInteraction({
             } catch (error) {
                 console.trace(error);
 
-                await interaction.editReply({
-                    embeds: [
-                        CustomEmbed.from({
-                            color: CustomEmbed.Color.Red,
-                            title: 'Inertia Lighting | Transactions Manager',
-                            description: 'An error occurred while logging to the transactions manager logging channel!',
-                        }),
-                    ],
-                }).catch(console.warn);
+                await interaction
+                    .editReply({
+                        embeds: [
+                            CustomEmbed.from({
+                                color: CustomEmbed.Color.Red,
+                                title: 'Inertia Lighting | Transactions Manager',
+                                description:
+                                    'An error occurred while logging to the transactions manager logging channel!',
+                            }),
+                        ],
+                    })
+                    .catch(console.warn);
 
                 return;
             }

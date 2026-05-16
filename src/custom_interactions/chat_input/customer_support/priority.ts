@@ -4,10 +4,14 @@
 
 import * as Discord from 'discord.js';
 
-import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
-import { loadSupportSystemConfig } from '@/support_system/config/index.js'
-import { TicketPriorityServiceImpl } from '@/support_system/core/priority-service.js'
-import { TicketPriority } from '@/support_system/types/index.js'
+import {
+    CustomInteraction,
+    CustomInteractionAccessLevel,
+    CustomInteractionRunContext,
+} from '@/common/managers/custom_interactions_manager.js';
+import { loadSupportSystemConfig } from '@/support_system/config/index.js';
+import { TicketPriorityServiceImpl } from '@/support_system/core/priority-service.js';
+import { TicketPriority } from '@/support_system/types/index.js';
 
 // ------------------------------------------------------------//
 
@@ -63,9 +67,10 @@ export default new CustomInteraction({
         const priorityLevel = interaction.options.getString('level', true) as TicketPriority;
 
         // Validate that the command is being used in a support ticket channel
-        const channel_exists_in_support_tickets_category = interaction.channel?.parentId === config.channels.ticketsCategoryId;
+        const channel_exists_in_support_tickets_category =
+            interaction.channel?.parentId === config.channels.ticketsCategoryId;
         const channel_is_not_transcripts_channel = interaction.channel?.id !== config.channels.transcriptsChannelId;
-        
+
         if (!(channel_exists_in_support_tickets_category && channel_is_not_transcripts_channel)) {
             await interaction.editReply({
                 content: 'This command can only be used in an active support ticket channel.',
@@ -93,7 +98,7 @@ export default new CustomInteraction({
         try {
             // Get current priority for comparison
             const currentPriority = await priorityService.getPriority(support_channel.id);
-            
+
             if (currentPriority?.priority === priorityLevel) {
                 const priorityConfig = priorityService.getPriorityConfig(priorityLevel);
                 await interaction.editReply({
@@ -104,22 +109,29 @@ export default new CustomInteraction({
 
             // Set the new priority
             await priorityService.setPriority(support_channel.id, priorityLevel, interaction.member);
-            
+
             const newConfig = priorityService.getPriorityConfig(priorityLevel);
             await interaction.editReply({
                 content: `✅ Successfully set ticket priority to **${newConfig.label}**.`,
             });
-            
+
             // Log successful priority change for debugging
-            console.log('Priority changed for channel', support_channel.id, 'to', priorityLevel, 'by', interaction.member.displayName);
+            console.log(
+                'Priority changed for channel',
+                support_channel.id,
+                'to',
+                priorityLevel,
+                'by',
+                interaction.member.displayName,
+            );
         } catch (error) {
             console.error('Error setting ticket priority:', error);
-            
+
             let errorMessage = 'An error occurred while setting the ticket priority.';
             if (error instanceof Error) {
                 errorMessage = `${error.message}`;
             }
-            
+
             await interaction.editReply({
                 content: `❌ ${errorMessage}`,
             });
@@ -132,7 +144,7 @@ export default new CustomInteraction({
  */
 // async function isUserTicketOwner(channel: Discord.TextChannel, member: Discord.GuildMember): Promise<boolean> {
 //     const channelName = channel.name;
-    
+
 //     // Remove priority emoji if present
 //     const priorityEmojis = ['🟢', '🟡', '🔴', '⏸️'];
 //     let nameWithoutEmoji = channelName;
@@ -142,13 +154,13 @@ export default new CustomInteraction({
 //             break;
 //         }
 //     }
-    
+
 //     // Extract user ID from channel name (format: categoryId-userId)
 //     const parts = nameWithoutEmoji.split('-');
 //     if (parts.length >= 2 && parts[0] !== '' && parts[parts.length - 1] !== '') {
 //         const ticketOwnerId = parts[parts.length - 1]; // Last part should be user ID
 //         return member.id === ticketOwnerId;
 //     }
-    
+
 //     return false;
 // }

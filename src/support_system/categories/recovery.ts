@@ -4,10 +4,8 @@
 
 import * as Discord from 'discord.js';
 
-import { BaseSupportCategoryHandler } from '../core/base-handler.js'
-;
-import { SupportCategoryId } from '../types/index.js'
-;
+import { BaseSupportCategoryHandler } from '../core/base-handler.js';
+import { SupportCategoryId } from '../types/index.js';
 
 /**
  * Handler for account recovery support category
@@ -62,22 +60,22 @@ export class AccountRecoveryHandler extends BaseSupportCategoryHandler {
                 console.error(`Old Roblox ID validation failed: "${oldRoblox}"`);
                 return false;
             }
-            
+
             if (!newRoblox || newRoblox.trim().length < 5 || !/^\d+$/.test(newRoblox.trim())) {
                 console.error(`New Roblox ID validation failed: "${newRoblox}"`);
                 return false;
             }
-            
+
             if (!oldDiscord || oldDiscord.trim().length < 10 || !/^\d+$/.test(oldDiscord.trim())) {
                 console.error(`Old Discord ID validation failed: "${oldDiscord}"`);
                 return false;
             }
-            
+
             if (!newDiscord || newDiscord.trim().length < 10 || !/^\d+$/.test(newDiscord.trim())) {
                 console.error(`New Discord ID validation failed: "${newDiscord}"`);
                 return false;
             }
-            
+
             if (!reason || reason.trim().length < 1) {
                 console.error(`Recovery reason validation failed: "${reason}"`);
                 return false;

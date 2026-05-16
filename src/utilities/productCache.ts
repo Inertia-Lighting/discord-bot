@@ -10,15 +10,10 @@ export class DbProductsCache {
 
     public static cache: PrismaProductData[] = [];
 
-    public static async fetch(
-        bypass_cache: boolean = false,
-    ): Promise<PrismaProductData[]> {
+    public static async fetch(bypass_cache: boolean = false): Promise<PrismaProductData[]> {
         const now_epoch_ms = Date.now();
 
-        if (
-            bypass_cache ||
-            this.cache_expiration_epoch_ms < now_epoch_ms
-        ) {
+        if (bypass_cache || this.cache_expiration_epoch_ms < now_epoch_ms) {
             const db_roblox_products = await prisma.products.findMany({
                 select: {
                     code: true,
@@ -35,5 +30,4 @@ export class DbProductsCache {
 
         return this.cache;
     }
-
 }

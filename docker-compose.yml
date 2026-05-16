@@ -1,12 +1,12 @@
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-      - .:/app
-    env_file:
-      - .env
-    restart: unless-stopped
-    entrypoint: >
-      sh -c "exec pnpm start"
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        volumes:
+            - .:/app
+        env_file:
+            - .env
+        restart: unless-stopped
+        entrypoint: >
+            sh -c "exec pnpm start"

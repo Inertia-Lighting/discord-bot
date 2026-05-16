@@ -4,32 +4,20 @@
 
 import * as Discord from 'discord.js';
 
-import { CustomEmbed } from '@/common/message.js'
-;
-import { delay, getMarkdownFriendlyTimestamp } from '@/utilities/index.js'
-;
+import { CustomEmbed } from '@/common/message.js';
+import { delay, getMarkdownFriendlyTimestamp } from '@/utilities/index.js';
 
-import { SupportSystemConfig } from '../config/index.js'
-;
-import { 
-    SupportCategoryId, 
-    SupportTicketContext, 
-    SupportTicketService,
-    TicketPriority 
-} from '../types/index.js'
-;
-import { TicketPriorityServiceImpl } from './priority-service.js'
-;
+import { SupportSystemConfig } from '../config/index.js';
+import { SupportCategoryId, SupportTicketContext, SupportTicketService, TicketPriority } from '../types/index.js';
+import { TicketPriorityServiceImpl } from './priority-service.js';
 
 /**
  * Implementation of the support ticket service
  */
 export class SupportTicketServiceImpl implements SupportTicketService {
     private priorityService: TicketPriorityServiceImpl;
-    
-    constructor(
-        private config: SupportSystemConfig
-    ) {
+
+    constructor(private config: SupportSystemConfig) {
         this.priorityService = new TicketPriorityServiceImpl();
     }
 
@@ -38,7 +26,7 @@ export class SupportTicketServiceImpl implements SupportTicketService {
      */
     async createTicketChannel(context: SupportTicketContext): Promise<Discord.TextChannel> {
         const { guild, owner, categoryId } = context;
-        
+
         // Check if ticket already exists
         const existingTicket = await this.findExistingTicket(guild, owner.id, categoryId);
         if (existingTicket) {
@@ -47,7 +35,7 @@ export class SupportTicketServiceImpl implements SupportTicketService {
 
         const supportTicketsCategory = await guild.channels.fetch(this.config.channels.ticketsCategoryId);
         if (!supportTicketsCategory) {
-            throw new Error('Can\'t find the support ticket category!');
+            throw new Error("Can't find the support ticket category!");
         }
         if (supportTicketsCategory.type !== Discord.ChannelType.GuildCategory) {
             throw new Error('Support ticket category is not a category!');
@@ -102,7 +90,7 @@ export class SupportTicketServiceImpl implements SupportTicketService {
         options: {
             saveTranscript?: boolean;
             sendFeedback?: boolean;
-        } = {}
+        } = {},
     ): Promise<void> {
         const { saveTranscript = true, sendFeedback = true } = options;
 
@@ -128,46 +116,41 @@ export class SupportTicketServiceImpl implements SupportTicketService {
     async findExistingTicket(
         guild: Discord.Guild,
         userId: string,
-        categoryId: SupportCategoryId
+        categoryId: SupportCategoryId,
     ): Promise<Discord.TextChannel | null> {
         const supportTicketsCategory = await guild.channels.fetch(this.config.channels.ticketsCategoryId);
         if (!supportTicketsCategory) return null;
 
         const channelName = `${categoryId}-${userId}`.toLowerCase();
-        const existingChannel = guild.channels.cache.find(
-            (channel) => {
-                if (channel.parentId !== supportTicketsCategory.id) return false;
-                
-                // Check if channel name matches with or without priority emoji
-                const channelNameLower = channel.name.toLowerCase();
-                
-                // Direct match
-                if (channelNameLower === channelName) return true;
-                
-                // Check if it matches with priority emoji prefix
-                const priorityEmojis = ['🟢', '🟡', '🔴', '⏸️'];
-                for (const emoji of priorityEmojis) {
-                    if (channelNameLower === `${emoji}-${channelName}`) return true;
-                }
-                
-                return false;
-            }
-        );
+        const existingChannel = guild.channels.cache.find((channel) => {
+            if (channel.parentId !== supportTicketsCategory.id) return false;
 
-        return existingChannel as Discord.TextChannel || null;
+            // Check if channel name matches with or without priority emoji
+            const channelNameLower = channel.name.toLowerCase();
+
+            // Direct match
+            if (channelNameLower === channelName) return true;
+
+            // Check if it matches with priority emoji prefix
+            const priorityEmojis = ['🟢', '🟡', '🔴', '⏸️'];
+            for (const emoji of priorityEmojis) {
+                if (channelNameLower === `${emoji}-${channelName}`) return true;
+            }
+
+            return false;
+        });
+
+        return (existingChannel as Discord.TextChannel) || null;
     }
 
     /**
      * Sends initial information to the support ticket channel
      */
-    private async sendInitialInformation(
-        channel: Discord.TextChannel,
-        context: SupportTicketContext
-    ): Promise<void> {
+    private async sendInitialInformation(channel: Discord.TextChannel, context: SupportTicketContext): Promise<void> {
         // Get priority context for SLA information
         const priorityContext = await this.priorityService.getPriority(channel.id);
         const priorityConfig = this.priorityService.getPriorityConfig(TicketPriority.Low);
-        
+
         // Create initial embed with priority and SLA information
         const initialEmbed = CustomEmbed.from({
             color: priorityConfig.color,
@@ -205,7 +188,7 @@ export class SupportTicketServiceImpl implements SupportTicketService {
             content: `${context.owner} Your support ticket has been created! Please provide details about your issue below.`,
             embeds: [initialEmbed],
         });
-        
+
         await initialMessage.pin();
 
         // Post ticket link in main support channel
@@ -217,7 +200,7 @@ export class SupportTicketServiceImpl implements SupportTicketService {
      */
     private async postTicketLinkToSupportChannel(
         channel: Discord.TextChannel,
-        context: SupportTicketContext
+        context: SupportTicketContext,
     ): Promise<void> {
         try {
             // Check if support channel is configured
@@ -257,17 +240,18 @@ export class SupportTicketServiceImpl implements SupportTicketService {
      */
     private async checkAndSendDelayWarning(
         channel: Discord.TextChannel,
-        category: Discord.CategoryChannel
+        category: Discord.CategoryChannel,
     ): Promise<void> {
         const ticketCount = category.children.cache.size;
-        
+
         if (ticketCount > 7) {
             await channel.send({
                 embeds: [
                     CustomEmbed.from({
                         color: CustomEmbed.Color.Red,
                         title: 'Support Delays',
-                        description: 'Please be patient as there are some delays due to the amount of tickets. \nYou may have to wait a while for a response.',
+                        description:
+                            'Please be patient as there are some delays due to the amount of tickets. \nYou may have to wait a while for a response.',
                     }),
                 ],
             });
@@ -281,21 +265,21 @@ export class SupportTicketServiceImpl implements SupportTicketService {
         channel: Discord.GuildTextBasedChannel,
         closedBy: Discord.GuildMember,
         reason: string,
-        sendFeedback: boolean
+        sendFeedback: boolean,
     ): Promise<void> {
         // Extract ticket information from channel name
         const filtered_ticket_name = channel.name.slice(3);
         const ticketCategoryId = filtered_ticket_name.split('-')[0];
         const ticketOwnerId = filtered_ticket_name.split('-')[1];
-        
+
         if (!ticketCategoryId || !ticketOwnerId) {
             throw new Error('Unable to extract ticket information from channel name!');
         }
 
         const ticketOwner = await channel.client.users.fetch(ticketOwnerId);
-        const creationTimestamp = channel.createdTimestamp ? 
-            `<t:${getMarkdownFriendlyTimestamp(channel.createdTimestamp)}:F>` : 
-            'unknown';
+        const creationTimestamp = channel.createdTimestamp
+            ? `<t:${getMarkdownFriendlyTimestamp(channel.createdTimestamp)}:F>`
+            : 'unknown';
 
         // Generate transcript
         // const transcript = await DiscordTranscripts.createTranscript(channel, {
@@ -307,7 +291,7 @@ export class SupportTicketServiceImpl implements SupportTicketService {
 
         // Get channel participants
         const messages = await channel.messages.fetch();
-        const participantIds = new Set(messages.map(msg => msg.author.id));
+        const participantIds = new Set(messages.map((msg) => msg.author.id));
 
         // Create transcript embed
         const transcriptEmbed = CustomEmbed.from({
@@ -349,7 +333,9 @@ export class SupportTicketServiceImpl implements SupportTicketService {
                 },
                 {
                     name: 'Participants',
-                    value: Array.from(participantIds).map(id => Discord.userMention(id)).join(' - '),
+                    value: Array.from(participantIds)
+                        .map((id) => Discord.userMention(id))
+                        .join(' - '),
                     inline: false,
                 },
             ],
@@ -386,7 +372,7 @@ export class SupportTicketServiceImpl implements SupportTicketService {
         transcriptMessageData: {
             message: Discord.Message;
             embed: Discord.EmbedBuilder;
-        }
+        },
     ): Promise<void> {
         try {
             const dmChannel = await ticketOwner.createDM();
@@ -456,28 +442,35 @@ export class SupportTicketServiceImpl implements SupportTicketService {
                         description: satisfactionLevel.description,
                     });
 
-                    await transcriptMessageData.message.edit({
-                        embeds: [
-                            // transcriptMessageData.embed,
-                             customerReviewEmbed],
-                    }).catch(console.warn);
+                    await transcriptMessageData.message
+                        .edit({
+                            embeds: [
+                                // transcriptMessageData.embed,
+                                customerReviewEmbed,
+                            ],
+                        })
+                        .catch(console.warn);
                 }
 
-                await feedbackMessage.edit({
-                    embeds: [
-                        CustomEmbed.from({
-                            title: 'Thank you!',
-                            description: 'Your feedback has been recorded.',
-                        }),
-                    ],
-                    components: [],
-                }).catch(console.warn);
+                await feedbackMessage
+                    .edit({
+                        embeds: [
+                            CustomEmbed.from({
+                                title: 'Thank you!',
+                                description: 'Your feedback has been recorded.',
+                            }),
+                        ],
+                        components: [],
+                    })
+                    .catch(console.warn);
             });
 
             collector.on('end', async () => {
-                await feedbackMessage.edit({
-                    components: [],
-                }).catch(console.warn);
+                await feedbackMessage
+                    .edit({
+                        components: [],
+                    })
+                    .catch(console.warn);
             });
         } catch {
             // Ignore errors (user might have DMs disabled)

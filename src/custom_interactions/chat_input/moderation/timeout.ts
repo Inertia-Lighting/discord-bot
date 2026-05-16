@@ -4,8 +4,12 @@
 
 import * as Discord from 'discord.js';
 
-import { addModerationActionToDatabase } from '@/common/handlers/index.js'
-import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
+import { addModerationActionToDatabase } from '@/common/handlers/index.js';
+import {
+    CustomInteraction,
+    CustomInteractionAccessLevel,
+    CustomInteractionRunContext,
+} from '@/common/managers/custom_interactions_manager.js';
 
 // ------------------------------------------------------------//
 
@@ -21,7 +25,8 @@ export default new CustomInteraction({
                 type: Discord.ApplicationCommandOptionType.User,
                 description: 'The member to timeout.',
                 required: true,
-            }, {
+            },
+            {
                 name: 'duration',
                 type: Discord.ApplicationCommandOptionType.Integer,
                 description: 'The duration of the timeout.',
@@ -29,28 +34,35 @@ export default new CustomInteraction({
                     {
                         name: '5 Minutes',
                         value: 5 * 60_000,
-                    }, {
+                    },
+                    {
                         name: '15 Minutes',
                         value: 15 * 60_000,
-                    }, {
+                    },
+                    {
                         name: '30 Minutes',
                         value: 10 * 60_000,
-                    }, {
+                    },
+                    {
                         name: '1 Hour',
                         value: 60 * 60_000,
-                    }, {
+                    },
+                    {
                         name: '5 Hours',
                         value: 5 * 60 * 60_000,
-                    }, {
+                    },
+                    {
                         name: '24 Hours',
                         value: 24 * 60 * 60_000,
-                    }, {
+                    },
+                    {
                         name: '1 Week',
                         value: 7 * 24 * 60 * 60_000,
                     },
                 ],
                 required: true,
-            }, {
+            },
+            {
                 name: 'reason',
                 type: Discord.ApplicationCommandOptionType.String,
                 description: 'The reason for the timeout.',
@@ -82,27 +94,31 @@ export default new CustomInteraction({
 
         /* handle when a staff member specifies themself */
         if (interaction.user.id === member_to_timeout.id) {
-            await interaction.editReply({
-                embeds: [
-                    {
-                        color: 0xFFFF00,
-                        description: 'You aren\'t allowed to timeout yourself!',
-                    },
-                ],
-            }).catch(console.warn);
+            await interaction
+                .editReply({
+                    embeds: [
+                        {
+                            color: 0xffff00,
+                            description: "You aren't allowed to timeout yourself!",
+                        },
+                    ],
+                })
+                .catch(console.warn);
             return;
         }
 
         /* handle when a staff member specifies this bot */
         if (member_to_timeout.id === interaction.client.user?.id) {
-            await interaction.editReply({
-                embeds: [
-                    {
-                        color: 0xFFFF00,
-                        description: 'You aren\'t allowed to timeout me!',
-                    },
-                ],
-            }).catch(console.warn);
+            await interaction
+                .editReply({
+                    embeds: [
+                        {
+                            color: 0xffff00,
+                            description: "You aren't allowed to timeout me!",
+                        },
+                    ],
+                })
+                .catch(console.warn);
             return;
         }
 
@@ -111,8 +127,8 @@ export default new CustomInteraction({
             await interaction.editReply({
                 embeds: [
                     {
-                        color: 0xFFFF00,
-                        description: 'You aren\'t allowed to timeout the owner of this server!',
+                        color: 0xffff00,
+                        description: "You aren't allowed to timeout the owner of this server!",
                     },
                 ],
             });
@@ -121,14 +137,16 @@ export default new CustomInteraction({
 
         /* handle when a staff member tries to moderate someone with an equal/higher role */
         if (staff_member.roles.highest.comparePositionTo(member_to_timeout.roles.highest) <= 0) {
-            await interaction.editReply({
-                embeds: [
-                    {
-                        color: 0xFFFF00,
-                        description: 'You aren\'t allowed to timeout someone with an equal/higher role!',
-                    },
-                ],
-            }).catch(console.warn);
+            await interaction
+                .editReply({
+                    embeds: [
+                        {
+                            color: 0xffff00,
+                            description: "You aren't allowed to timeout someone with an equal/higher role!",
+                        },
+                    ],
+                })
+                .catch(console.warn);
             return;
         }
 
@@ -137,14 +155,16 @@ export default new CustomInteraction({
         } catch (error) {
             console.trace(error);
 
-            await interaction.editReply({
-                embeds: [
-                    {
-                        color: 0xFF0000,
-                        description: 'An error occurred while trying to timeout this user!',
-                    },
-                ],
-            }).catch(console.warn);
+            await interaction
+                .editReply({
+                    embeds: [
+                        {
+                            color: 0xff0000,
+                            description: 'An error occurred while trying to timeout this user!',
+                        },
+                    ],
+                })
+                .catch(console.warn);
 
             return;
         }
@@ -179,17 +199,13 @@ export default new CustomInteraction({
         //     reason: `${reason} (duration: ${duration / 60_000} minutes)`,
         //     staff_member_id: staff_member.id,
         // });
-                const timeoutDate = new Date();
+        const timeoutDate = new Date();
         timeoutDate.setTime(timeoutDate.getTime() + duration);
 
-        await addModerationActionToDatabase(
-            member_to_timeout.id,
-            interaction.user.id,
-            {
+        await addModerationActionToDatabase(member_to_timeout.id, interaction.user.id, {
             duration: timeoutDate.toISOString(),
             punishmentType: 'timeout',
             punishmentReason: `${reason} (duration: ${duration / 60_000} minutes)`,
-            }
-        )
+        });
     },
 });

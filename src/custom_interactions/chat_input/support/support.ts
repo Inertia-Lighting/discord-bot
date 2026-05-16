@@ -4,8 +4,12 @@
 
 import * as Discord from 'discord.js';
 
-import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
-import { CustomEmbed } from '@/common/message.js'
+import {
+    CustomInteraction,
+    CustomInteractionAccessLevel,
+    CustomInteractionRunContext,
+} from '@/common/managers/custom_interactions_manager.js';
+import { CustomEmbed } from '@/common/message.js';
 
 // ------------------------------------------------------------//
 
@@ -28,12 +32,14 @@ export default new CustomInteraction({
 
         await interaction.deferReply();
 
-        await interaction.editReply({
-            embeds: [
-                CustomEmbed.from({
-                    description: 'Go to <#814197612491833354> to open a support ticket!',
-                }),
-            ],
-        }).catch(console.warn);
+        await interaction
+            .editReply({
+                embeds: [
+                    CustomEmbed.from({
+                        description: 'Go to <#814197612491833354> to open a support ticket!',
+                    }),
+                ],
+            })
+            .catch(console.warn);
     },
 });

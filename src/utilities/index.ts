@@ -13,9 +13,7 @@ type ObjectWithKeys = {
 /**
  * Asynchronous setTimeout
  */
-export function delay(
-    time_in_milliseconds: number,
-): Promise<void> {
+export function delay(time_in_milliseconds: number): Promise<void> {
     if (typeof time_in_milliseconds !== 'number') throw new TypeError('time_in_milliseconds must be a number');
 
     return new Promise((resolve) => setTimeout(() => resolve(), time_in_milliseconds));
@@ -52,10 +50,9 @@ export function ellipseString(
 /**
  * Sorts an object based on it's keys (using Array.sort()) and returns the new sorted object
  */
-export function sortObject(
-    object_of_things: ObjectWithKeys,
-): ObjectWithKeys {
-    if (typeof object_of_things !== 'object' || !object_of_things) throw new TypeError('object_of_things must be an object');
+export function sortObject(object_of_things: ObjectWithKeys): ObjectWithKeys {
+    if (typeof object_of_things !== 'object' || !object_of_things)
+        throw new TypeError('object_of_things must be an object');
 
     const sorted_object_keys = Object.keys(object_of_things).sort();
 
@@ -70,14 +67,12 @@ export function sortObject(
 /**
  * Splits an array into a new chunked array
  */
-export function chunkArray<T>(
-    array_of_things: T[],
-    chunk_size: number,
-): T[][] {
+export function chunkArray<T>(array_of_things: T[], chunk_size: number): T[][] {
     if (!Array.isArray(array_of_things)) throw new TypeError('array_of_things must be an array');
-    if (typeof chunk_size !== 'number' || chunk_size !== Math.floor(chunk_size)) throw new TypeError('chunk_size must be a (whole) number');
+    if (typeof chunk_size !== 'number' || chunk_size !== Math.floor(chunk_size))
+        throw new TypeError('chunk_size must be a (whole) number');
 
-    const array_of_things_clone = [ ...array_of_things ]; // prevent mutation of the original array
+    const array_of_things_clone = [...array_of_things]; // prevent mutation of the original array
 
     const chunks = [];
     while (array_of_things_clone.length) {
@@ -90,9 +85,7 @@ export function chunkArray<T>(
 /**
  * Fetches a random item from the specified array
  */
-export function randomArrayItem<T>(
-    array_of_things: T[],
-): T {
+export function randomArrayItem<T>(array_of_things: T[]): T {
     if (!Array.isArray(array_of_things)) throw new TypeError('array_of_things must be an array!');
 
     return array_of_things[randomRangeInclusive(0, array_of_things.length - 1)];
@@ -101,11 +94,7 @@ export function randomArrayItem<T>(
 /**
  * Clamps a number between a minimum and maximum value
  */
-export function clampNumber(
-    value: number,
-    min: number,
-    max: number,
-): number {
+export function clampNumber(value: number, min: number, max: number): number {
     if (typeof value !== 'number') throw new TypeError('value must be a number');
     if (typeof min !== 'number') throw new TypeError('min must be a number');
     if (typeof max !== 'number') throw new TypeError('max must be a number');
@@ -116,10 +105,9 @@ export function clampNumber(
 /**
  * Returns a valid discord timestamp from a unix epoch (in milliseconds)
  */
-export function getMarkdownFriendlyTimestamp(
-    unix_epoch_ms: number,
-): string {
-    if (typeof unix_epoch_ms !== 'number') throw new TypeError('getMarkdownFriendlyTimestamp(): unix_epoch_ms is not a number');
+export function getMarkdownFriendlyTimestamp(unix_epoch_ms: number): string {
+    if (typeof unix_epoch_ms !== 'number')
+        throw new TypeError('getMarkdownFriendlyTimestamp(): unix_epoch_ms is not a number');
 
     return Math.floor(unix_epoch_ms / 1000).toString(10);
 }
@@ -127,21 +115,20 @@ export function getMarkdownFriendlyTimestamp(
 /**
  * Converts milliseconds into rounded seconds
  */
-export function millisecondsToRoundedSeconds(
-    milliseconds: number,
-): number {
-    if (typeof milliseconds !== 'number') throw new TypeError('millisecondsToSecondsRounded(): milliseconds is not a number');
+export function millisecondsToRoundedSeconds(milliseconds: number): number {
+    if (typeof milliseconds !== 'number')
+        throw new TypeError('millisecondsToSecondsRounded(): milliseconds is not a number');
 
     return Math.round(milliseconds / 1000);
 }
 
 export function findJSFiles(dirPath: string): string[] {
-  const direntFiles = fs.readdirSync(dirPath, { withFileTypes: true, recursive: true });
-  const files = direntFiles
-    .filter(dirent => dirent.isFile())
-    .map(dirent => dirent.parentPath+'/'+dirent.name);
-  // console.log(files)
-  const filteredFiles = files.filter(file => file.endsWith('.js') && !file.endsWith('.map.js'));
-  // console.log(filteredFiles);
-  return filteredFiles;
+    const direntFiles = fs.readdirSync(dirPath, { withFileTypes: true, recursive: true });
+    const files = direntFiles
+        .filter((dirent) => dirent.isFile())
+        .map((dirent) => dirent.parentPath + '/' + dirent.name);
+    // console.log(files)
+    const filteredFiles = files.filter((file) => file.endsWith('.js') && !file.endsWith('.map.js'));
+    // console.log(filteredFiles);
+    return filteredFiles;
 }

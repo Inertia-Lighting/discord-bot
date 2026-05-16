@@ -4,8 +4,12 @@
 
 import * as Discord from 'discord.js';
 
-import { addModerationActionToDatabase } from '@/common/handlers/index.js'
-import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
+import { addModerationActionToDatabase } from '@/common/handlers/index.js';
+import {
+    CustomInteraction,
+    CustomInteractionAccessLevel,
+    CustomInteractionRunContext,
+} from '@/common/managers/custom_interactions_manager.js';
 
 // ------------------------------------------------------------//
 
@@ -21,7 +25,8 @@ export default new CustomInteraction({
                 type: Discord.ApplicationCommandOptionType.User,
                 description: 'The user who you want to ban.',
                 required: true,
-            }, {
+            },
+            {
                 name: 'reason',
                 type: Discord.ApplicationCommandOptionType.String,
                 description: 'The reason why you want to ban.',
@@ -46,45 +51,55 @@ export default new CustomInteraction({
 
         /* handle when a reason is not specified */
         if (typeof ban_reason !== 'string' || ban_reason.length < 1) {
-            await interaction.editReply({
-                content: 'You must specify a reason for the ban!',
-            }).catch(console.trace);
+            await interaction
+                .editReply({
+                    content: 'You must specify a reason for the ban!',
+                })
+                .catch(console.trace);
 
             return;
         }
 
         /* handle when a member is not specified */
         if (!user_to_ban) {
-            await interaction.editReply({
-                content: 'You must specify a user to ban!',
-            }).catch(console.trace);
+            await interaction
+                .editReply({
+                    content: 'You must specify a user to ban!',
+                })
+                .catch(console.trace);
 
             return;
         }
 
         /* handle when a staff member specifies themself */
         if (staff_member.id === user_to_ban.id) {
-            await interaction.editReply({
-                content: 'You aren\'t allowed to ban yourself!',
-            }).catch(console.trace);
+            await interaction
+                .editReply({
+                    content: "You aren't allowed to ban yourself!",
+                })
+                .catch(console.trace);
 
             return;
         }
 
         /* handle when a staff member specifies this bot */
         if (user_to_ban.id === discord_client.user.id) {
-            await interaction.editReply({
-                content: 'You aren\'t allowed to ban me!',
-            }).catch(console.trace);
+            await interaction
+                .editReply({
+                    content: "You aren't allowed to ban me!",
+                })
+                .catch(console.trace);
 
             return;
         }
 
         /* handle when a staff member specifies the guild owner */
         if (user_to_ban.id === interaction.guild.ownerId) {
-            await interaction.editReply({
-                content: 'You aren\'t allowed to ban the owner of this server!',
-            }).catch(console.trace);
+            await interaction
+                .editReply({
+                    content: "You aren't allowed to ban the owner of this server!",
+                })
+                .catch(console.trace);
 
             return;
         }
@@ -93,9 +108,11 @@ export default new CustomInteraction({
         if (member_to_ban) {
             /* handle when a staff member tries to moderate someone with an equal/higher role */
             if (staff_member.roles.highest.comparePositionTo(member_to_ban.roles.highest) <= 0) {
-                await interaction.editReply({
-                    content: 'You aren\'t allowed to ban someone with an equal/higher role!',
-                }).catch(console.trace);
+                await interaction
+                    .editReply({
+                        content: "You aren't allowed to ban someone with an equal/higher role!",
+                    })
+                    .catch(console.trace);
 
                 return;
             }
@@ -132,9 +149,11 @@ export default new CustomInteraction({
         } catch (error) {
             console.trace(error);
 
-            await interaction.editReply({
-                content: 'Failed to ban the specified user!',
-            }).catch(console.warn);
+            await interaction
+                .editReply({
+                    content: 'Failed to ban the specified user!',
+                })
+                .catch(console.warn);
 
             return;
         }
@@ -148,11 +167,11 @@ export default new CustomInteraction({
             user_to_ban.id,
             interaction.user.id,
             {
-            duration: banDate.toISOString(),
-            punishmentType: 'ban',
-            punishmentReason: ban_reason,
-            }
-        )
+                duration: banDate.toISOString(),
+                punishmentType: 'ban',
+                punishmentReason: ban_reason,
+            },
+        );
 
         /* if logging to the database failed, dm the staff member */
         if (!successfully_logged_to_database) {

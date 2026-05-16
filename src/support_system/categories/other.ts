@@ -4,10 +4,8 @@
 
 import * as Discord from 'discord.js';
 
-import { BaseSupportCategoryHandler } from '../core/base-handler.js'
-;
-import { SupportCategoryId } from '../types/index.js'
-;
+import { BaseSupportCategoryHandler } from '../core/base-handler.js';
+import { SupportCategoryId } from '../types/index.js';
 
 /**
  * Handler for other questions support category

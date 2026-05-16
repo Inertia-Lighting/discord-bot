@@ -4,8 +4,17 @@
 
 import * as Discord from 'discord.js';
 
-import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
-import { listModerationActions, purgeModerationActions,removeModerationAction, updateModerationAction } from '@/lib/moderation/index.js';
+import {
+    CustomInteraction,
+    CustomInteractionAccessLevel,
+    CustomInteractionRunContext,
+} from '@/common/managers/custom_interactions_manager.js';
+import {
+    listModerationActions,
+    purgeModerationActions,
+    removeModerationAction,
+    updateModerationAction,
+} from '@/lib/moderation/index.js';
 
 // ------------------------------------------------------------//
 
@@ -21,7 +30,8 @@ export default new CustomInteraction({
                 type: Discord.ApplicationCommandOptionType.Subcommand,
                 description: 'Used by staff to list all moderation actions.',
                 options: [],
-            }, {
+            },
+            {
                 name: 'lookup',
                 type: Discord.ApplicationCommandOptionType.Subcommand,
                 description: 'Lookup a moderation action id.',
@@ -35,7 +45,8 @@ export default new CustomInteraction({
                         required: true,
                     },
                 ],
-            }, {
+            },
+            {
                 name: 'for',
                 type: Discord.ApplicationCommandOptionType.Subcommand,
                 description: 'Find all moderation actions for a user.',
@@ -47,7 +58,8 @@ export default new CustomInteraction({
                         required: true,
                     },
                 ],
-            }, {
+            },
+            {
                 name: 'from',
                 type: Discord.ApplicationCommandOptionType.Subcommand,
                 description: 'Show all moderation actions performed by a staff member.',
@@ -59,7 +71,8 @@ export default new CustomInteraction({
                         required: true,
                     },
                 ],
-            }, {
+            },
+            {
                 name: 'update',
                 type: Discord.ApplicationCommandOptionType.Subcommand,
                 description: 'Update the reason for a moderation action.',
@@ -71,7 +84,8 @@ export default new CustomInteraction({
                         minLength: 1,
                         maxLength: 64,
                         required: true,
-                    }, {
+                    },
+                    {
                         name: 'reason',
                         type: Discord.ApplicationCommandOptionType.String,
                         description: 'The new reason for the moderation action.',
@@ -80,7 +94,8 @@ export default new CustomInteraction({
                         required: true,
                     },
                 ],
-            }, {
+            },
+            {
                 name: 'remove',
                 type: Discord.ApplicationCommandOptionType.Subcommand,
                 description: 'Removes a moderation action from the database.',
@@ -94,7 +109,8 @@ export default new CustomInteraction({
                         required: true,
                     },
                 ],
-            }, {
+            },
+            {
                 name: 'purge',
                 type: Discord.ApplicationCommandOptionType.Subcommand,
                 description: 'Removes all moderation actions for a specified user.',

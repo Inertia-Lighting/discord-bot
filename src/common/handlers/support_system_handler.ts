@@ -7,9 +7,9 @@
 import * as Discord from 'discord.js';
 
 // import * as DiscordTranscripts from 'discord-html-transcripts';
-import { CustomEmbed } from '@/common/message.js'
+import { CustomEmbed } from '@/common/message.js';
 import config from '@/utilities/bot_config.js';
-import { delay, getMarkdownFriendlyTimestamp } from '@/utilities/index.js'
+import { delay, getMarkdownFriendlyTimestamp } from '@/utilities/index.js';
 
 // ------------------------------------------------------------//
 
@@ -23,7 +23,7 @@ export const satisfaction_levels = {
     highest_satisfaction: {
         label: 'Excellent',
         description: 'Support went above and beyond expectations!',
-        color: 0x00FF00,
+        color: 0x00ff00,
     },
     high_satisfaction: {
         label: 'Good',
@@ -33,17 +33,17 @@ export const satisfaction_levels = {
     medium_satisfaction: {
         label: 'Decent',
         description: 'Support was able to help me with little issues!',
-        color: 0xFFFF00,
+        color: 0xffff00,
     },
     low_satisfaction: {
         label: 'Bad',
-        description: 'Support wasn\'t able to help me properly!',
+        description: "Support wasn't able to help me properly!",
         color: 0xff7700,
     },
     lowest_satisfaction: {
         label: 'Horrible',
         description: 'Support staff need better training!',
-        color: 0xFF0000,
+        color: 0xff0000,
     },
 };
 
@@ -59,21 +59,21 @@ export enum SupportCategoryId {
     Transactions = 'TRANSACTIONS',
     PartnershipRequests = 'PARTNERS',
     Other = 'OTHER',
-    DevelopmentApplication = 'DEVAPP'
+    DevelopmentApplication = 'DEVAPP',
 }
 
 export type SupportCategory = {
-    id: SupportCategoryId,
-    name: string,
-    description: string,
-    staff_role_ids: string[],
-    modal_data: Discord.ModalComponentData,
+    id: SupportCategoryId;
+    name: string;
+    description: string;
+    staff_role_ids: string[];
+    modal_data: Discord.ModalComponentData;
     modal_handler: (
         interaction: Discord.ModalSubmitInteraction<'cached'>,
         support_category: SupportCategory,
         support_ticket_channel: Discord.TextChannel,
         support_ticket_owner: Discord.GuildMember,
-    ) => Promise<void>,
+    ) => Promise<void>;
 };
 
 export const support_categories: SupportCategory[] = [
@@ -81,9 +81,7 @@ export const support_categories: SupportCategory[] = [
         id: SupportCategoryId.Issues,
         name: 'Product Tech Support',
         description: 'Product technical support can be found here.',
-        staff_role_ids: [
-            config.support_staff_product_issues_role_id,
-        ],
+        staff_role_ids: [config.support_staff_product_issues_role_id],
         modal_data: {
             title: 'Tech Support Questions',
             customId: 'support_issues_modal',
@@ -101,7 +99,8 @@ export const support_categories: SupportCategory[] = [
                             required: true,
                         },
                     ],
-                }, {
+                },
+                {
                     type: Discord.ComponentType.ActionRow,
                     components: [
                         {
@@ -114,7 +113,8 @@ export const support_categories: SupportCategory[] = [
                             required: true,
                         },
                     ],
-                }, {
+                },
+                {
                     type: Discord.ComponentType.ActionRow,
                     components: [
                         {
@@ -127,7 +127,8 @@ export const support_categories: SupportCategory[] = [
                             required: true,
                         },
                     ],
-                }, {
+                },
+                {
                     type: Discord.ComponentType.ActionRow,
                     components: [
                         {
@@ -141,7 +142,8 @@ export const support_categories: SupportCategory[] = [
                             required: true,
                         },
                     ],
-                }, {
+                },
+                {
                     type: Discord.ComponentType.ActionRow,
                     components: [
                         {
@@ -157,12 +159,7 @@ export const support_categories: SupportCategory[] = [
                 },
             ],
         },
-        modal_handler: async (
-            interaction,
-            _support_category,
-            support_ticket_channel,
-            support_ticket_owner,
-        ) => {
+        modal_handler: async (interaction, _support_category, support_ticket_channel, support_ticket_owner) => {
             const answer_for_product = interaction.fields.getTextInputValue('product');
             const answer_for_read_me = interaction.fields.getTextInputValue('read_me');
             const answer_for_http = interaction.fields.getTextInputValue('http');
@@ -212,13 +209,12 @@ export const support_categories: SupportCategory[] = [
                 ],
             });
         },
-    }, {
+    },
+    {
         id: SupportCategoryId.Recovery,
         name: 'Account Recovery',
         description: 'Recover products from an inaccessible account.',
-        staff_role_ids: [
-            config.support_staff_database_role_id,
-        ],
+        staff_role_ids: [config.support_staff_database_role_id],
         modal_data: {
             title: 'Account Recovery Questions',
             customId: 'account_recovery_modal',
@@ -237,7 +233,8 @@ export const support_categories: SupportCategory[] = [
                             required: true,
                         },
                     ],
-                }, {
+                },
+                {
                     type: Discord.ComponentType.ActionRow,
                     components: [
                         {
@@ -251,7 +248,8 @@ export const support_categories: SupportCategory[] = [
                             required: true,
                         },
                     ],
-                }, {
+                },
+                {
                     type: Discord.ComponentType.ActionRow,
                     components: [
                         {
@@ -265,7 +263,8 @@ export const support_categories: SupportCategory[] = [
                             required: true,
                         },
                     ],
-                }, {
+                },
+                {
                     type: Discord.ComponentType.ActionRow,
                     components: [
                         {
@@ -279,7 +278,8 @@ export const support_categories: SupportCategory[] = [
                             required: true,
                         },
                     ],
-                }, {
+                },
+                {
                     type: Discord.ComponentType.ActionRow,
                     components: [
                         {
@@ -295,12 +295,7 @@ export const support_categories: SupportCategory[] = [
                 },
             ],
         },
-        modal_handler: async (
-            interaction,
-            _support_category,
-            support_ticket_channel,
-            _support_ticket_owner
-        ) => {
+        modal_handler: async (interaction, _support_category, support_ticket_channel, _support_ticket_owner) => {
             const old_roblox_account_id = interaction.fields.getTextInputValue('old_roblox');
             const new_roblox_account_id = interaction.fields.getTextInputValue('new_roblox');
             const old_discord_user_id = interaction.fields.getTextInputValue('old_discord');
@@ -334,13 +329,12 @@ export const support_categories: SupportCategory[] = [
                 ],
             });
         },
-    }, {
+    },
+    {
         id: SupportCategoryId.Transfers,
         name: 'Transfer Products',
         description: 'Transfer or gift products to a different account.',
-        staff_role_ids: [
-            config.support_staff_database_role_id,
-        ],
+        staff_role_ids: [config.support_staff_database_role_id],
         modal_data: {
             title: 'Product Transfer Questions',
             customId: 'product_transfer_modal',
@@ -358,35 +352,38 @@ export const support_categories: SupportCategory[] = [
                             required: true,
                         },
                     ],
-                }, {
+                },
+                {
                     type: Discord.ComponentType.ActionRow,
                     components: [
                         {
                             type: Discord.ComponentType.TextInput,
                             customId: 'discord_transfer_to',
                             style: Discord.TextInputStyle.Short,
-                            label: 'Discord user id that you\'re transferring to?',
+                            label: "Discord user id that you're transferring to?",
                             placeholder: '735556164749885450',
                             minLength: 10,
                             maxLength: 75,
                             required: true,
                         },
                     ],
-                }, {
+                },
+                {
                     type: Discord.ComponentType.ActionRow,
                     components: [
                         {
                             type: Discord.ComponentType.TextInput,
                             customId: 'roblox_transfer_to',
                             style: Discord.TextInputStyle.Short,
-                            label: 'Roblox user id that you\'re transferring to?',
+                            label: "Roblox user id that you're transferring to?",
                             placeholder: '998796',
                             minLength: 5,
                             maxLength: 20,
                             required: true,
                         },
                     ],
-                }, {
+                },
+                {
                     type: Discord.ComponentType.ActionRow,
                     components: [
                         {
@@ -402,12 +399,7 @@ export const support_categories: SupportCategory[] = [
                 },
             ],
         },
-        modal_handler: async (
-            interaction,
-            _support_category,
-            support_ticket_channel,
-            _support_ticket_owner
-        ) => {
+        modal_handler: async (interaction, _support_category, support_ticket_channel, _support_ticket_owner) => {
             const products = interaction.fields.getTextInputValue('products');
             const discord_transfer_to = interaction.fields.getTextInputValue('discord_transfer_to');
             const roblox_transfer_to = interaction.fields.getTextInputValue('roblox_transfer_to');
@@ -424,10 +416,10 @@ export const support_categories: SupportCategory[] = [
                             '**What product(s) do you want to transfer?**',
                             `${products}`,
                             '',
-                            '**Discord user id that you\'re transferring to?**',
+                            "**Discord user id that you're transferring to?**",
                             `${discord_transfer_to}`,
                             '',
-                            '**Roblox user id that you\'re transferring to?**',
+                            "**Roblox user id that you're transferring to?**",
                             `${roblox_transfer_to}`,
                             '',
                             '**Why are you transferring your product(s)?**',
@@ -437,13 +429,12 @@ export const support_categories: SupportCategory[] = [
                 ],
             });
         },
-    }, {
+    },
+    {
         id: SupportCategoryId.Transactions,
         name: 'Transactions',
         description: 'Failed transactions or monetary issues with purchases.',
-        staff_role_ids: [
-            config.support_staff_product_purchases_role_id,
-        ],
+        staff_role_ids: [config.support_staff_product_purchases_role_id],
         modal_data: {
             title: 'Transaction Questions',
             customId: 'transaction_modal',
@@ -461,7 +452,8 @@ export const support_categories: SupportCategory[] = [
                             required: true,
                         },
                     ],
-                }, {
+                },
+                {
                     type: Discord.ComponentType.ActionRow,
                     components: [
                         {
@@ -475,14 +467,15 @@ export const support_categories: SupportCategory[] = [
                             required: true,
                         },
                     ],
-                }, {
+                },
+                {
                     type: Discord.ComponentType.ActionRow,
                     components: [
                         {
                             type: Discord.ComponentType.TextInput,
                             customId: 'issue',
                             style: Discord.TextInputStyle.Paragraph,
-                            label: 'Fully describe the issue you\'re encountering.',
+                            label: "Fully describe the issue you're encountering.",
                             minLength: 1,
                             maxLength: 1024,
                             required: true,
@@ -491,12 +484,7 @@ export const support_categories: SupportCategory[] = [
                 },
             ],
         },
-        modal_handler: async (
-            interaction,
-            _support_category,
-            support_ticket_channel,
-            _support_ticket_owner
-        ) => {
+        modal_handler: async (interaction, _support_category, support_ticket_channel, _support_ticket_owner) => {
             const answer_for_products = interaction.fields.getTextInputValue('products');
             const answer_for_time = interaction.fields.getTextInputValue('time');
             const answer_for_issue = interaction.fields.getTextInputValue('issue');
@@ -515,156 +503,153 @@ export const support_categories: SupportCategory[] = [
                             '**When did you attempt your purchase?**',
                             `${answer_for_time}`,
                             '',
-                            '**Fully describe the issue you\'re encountering.**',
+                            "**Fully describe the issue you're encountering.**",
                             `${answer_for_issue}`,
                         ].join('\n'),
                     }),
                 ],
             });
         },
-    }, {
-         id: SupportCategoryId.PartnershipRequests,
-         name: 'Partnership Requests',
-         description: 'Interested in partnering with us?',
-         staff_role_ids: [
-            config.support_staff_partnership_requests_role_id,
-         ],
-         modal_data: {
-             title: 'Partnership Request Questions',
-             customId: 'support_system_partnership_request_modal',
-             components: [
-                 {
-                     type: Discord.ComponentType.ActionRow,
-                     components: [
-                         {
-                             type: Discord.ComponentType.TextInput,
-                             customId: 'group_name',
-                             style: Discord.TextInputStyle.Short,
-                             label: 'What is the name of your group?',
-                             minLength: 1,
-                             maxLength: 64,
-                             required: true,
-                         },
-                     ],
-                 }, {
-                     type: Discord.ComponentType.ActionRow,
-                     components: [
-                         {
-                             type: Discord.ComponentType.TextInput,
-                             customId: 'group_owner_age',
-                             style: Discord.TextInputStyle.Short,
-                             label: 'How old are you?',
-                             minLength: 1,
-                             maxLength: 4,
-                             required: true,
-                         },
-                     ],
-                 }, {
-                     type: Discord.ComponentType.ActionRow,
-                     components: [
-                         {
-                             type: Discord.ComponentType.TextInput,
-                             customId: 'group_member_count',
-                             style: Discord.TextInputStyle.Short,
-                             label: 'How many members are in your group?',
-                             minLength: 1,
-                             maxLength: 10,
-                             required: true,
-                         },
-                     ],
-                 }, {
-                     type: Discord.ComponentType.ActionRow,
-                     components: [
-                         {
-                             type: Discord.ComponentType.TextInput,
-                             customId: 'group_description',
-                             style: Discord.TextInputStyle.Paragraph,
-                             label: 'Describe your group, be detailed.',
-                             minLength: 128,
-                             maxLength: 1024,
-                             required: true,
-                         },
-                     ],
-                 }, {
-                     type: Discord.ComponentType.ActionRow,
-                     components: [
-                         {
-                             type: Discord.ComponentType.TextInput,
-                             customId: 'group_reason',
-                             style: Discord.TextInputStyle.Paragraph,
-                             label: 'Why do you want to partner with us?',
-                             minLength: 128,
-                             maxLength: 1024,
-                             required: true,
-                         },
-                     ],
-                 }, {
-                     type: Discord.ComponentType.ActionRow,
-                     components: [
-                         {
-                             type: Discord.ComponentType.TextInput,
-                             customId: 'group_social_links',
-                             style: Discord.TextInputStyle.Paragraph,
-                             label: 'Link your socials: Discord, Roblox, etc.',
-                             minLength: 32,
-                             maxLength: 1024,
-                             required: true,
-                         },
-                     ],
-                 },
-             ],
-         },
-        modal_handler: async (
-            interaction,
-            _support_category,
-            support_ticket_channel,
-            _support_ticket_owner
-        ) => {
-             const group_name = interaction.fields.getTextInputValue('group_name');
-             const group_owner_age = interaction.fields.getTextInputValue('group_owner_age');
-             const group_member_count = interaction.fields.getTextInputValue('group_member_count');
-             const group_description = interaction.fields.getTextInputValue('group_description');
-             const group_reason = interaction.fields.getTextInputValue('group_reason');
-             const group_social_links = interaction.fields.getTextInputValue('group_social_links');
+    },
+    {
+        id: SupportCategoryId.PartnershipRequests,
+        name: 'Partnership Requests',
+        description: 'Interested in partnering with us?',
+        staff_role_ids: [config.support_staff_partnership_requests_role_id],
+        modal_data: {
+            title: 'Partnership Request Questions',
+            customId: 'support_system_partnership_request_modal',
+            components: [
+                {
+                    type: Discord.ComponentType.ActionRow,
+                    components: [
+                        {
+                            type: Discord.ComponentType.TextInput,
+                            customId: 'group_name',
+                            style: Discord.TextInputStyle.Short,
+                            label: 'What is the name of your group?',
+                            minLength: 1,
+                            maxLength: 64,
+                            required: true,
+                        },
+                    ],
+                },
+                {
+                    type: Discord.ComponentType.ActionRow,
+                    components: [
+                        {
+                            type: Discord.ComponentType.TextInput,
+                            customId: 'group_owner_age',
+                            style: Discord.TextInputStyle.Short,
+                            label: 'How old are you?',
+                            minLength: 1,
+                            maxLength: 4,
+                            required: true,
+                        },
+                    ],
+                },
+                {
+                    type: Discord.ComponentType.ActionRow,
+                    components: [
+                        {
+                            type: Discord.ComponentType.TextInput,
+                            customId: 'group_member_count',
+                            style: Discord.TextInputStyle.Short,
+                            label: 'How many members are in your group?',
+                            minLength: 1,
+                            maxLength: 10,
+                            required: true,
+                        },
+                    ],
+                },
+                {
+                    type: Discord.ComponentType.ActionRow,
+                    components: [
+                        {
+                            type: Discord.ComponentType.TextInput,
+                            customId: 'group_description',
+                            style: Discord.TextInputStyle.Paragraph,
+                            label: 'Describe your group, be detailed.',
+                            minLength: 128,
+                            maxLength: 1024,
+                            required: true,
+                        },
+                    ],
+                },
+                {
+                    type: Discord.ComponentType.ActionRow,
+                    components: [
+                        {
+                            type: Discord.ComponentType.TextInput,
+                            customId: 'group_reason',
+                            style: Discord.TextInputStyle.Paragraph,
+                            label: 'Why do you want to partner with us?',
+                            minLength: 128,
+                            maxLength: 1024,
+                            required: true,
+                        },
+                    ],
+                },
+                {
+                    type: Discord.ComponentType.ActionRow,
+                    components: [
+                        {
+                            type: Discord.ComponentType.TextInput,
+                            customId: 'group_social_links',
+                            style: Discord.TextInputStyle.Paragraph,
+                            label: 'Link your socials: Discord, Roblox, etc.',
+                            minLength: 32,
+                            maxLength: 1024,
+                            required: true,
+                        },
+                    ],
+                },
+            ],
+        },
+        modal_handler: async (interaction, _support_category, support_ticket_channel, _support_ticket_owner) => {
+            const group_name = interaction.fields.getTextInputValue('group_name');
+            const group_owner_age = interaction.fields.getTextInputValue('group_owner_age');
+            const group_member_count = interaction.fields.getTextInputValue('group_member_count');
+            const group_description = interaction.fields.getTextInputValue('group_description');
+            const group_reason = interaction.fields.getTextInputValue('group_reason');
+            const group_social_links = interaction.fields.getTextInputValue('group_social_links');
 
-             await support_ticket_channel.send({
-                 embeds: [
-                     CustomEmbed.from({
-                         author: {
-                             icon_url: interaction.client.user.displayAvatarURL({ forceStatic: false }),
-                             name: 'Inertia Lighting | Support System',
-                         },
-                         description: [
-                             '**What is the name of your group?**',
-                             `${group_name}`,
-                             '',
-                             '**How old are you?**',
-                             `${group_owner_age}`,
-                             '',
-                             '**How many members are in your group?**',
-                             `${group_member_count}`,
-                             '',
-                             '**Describe your group.**',
-                             `${group_description}`,
-                             '',
-                             '**Why do you want to partner with us?**',
-                             `${group_reason}`,
-                             '',
-                             '**What are your group\'s social links?**',
-                             `${group_social_links}`,
-                         ].join('\n'),
-                     }),
-                 ],
-             });
-         },
-    }, {
+            await support_ticket_channel.send({
+                embeds: [
+                    CustomEmbed.from({
+                        author: {
+                            icon_url: interaction.client.user.displayAvatarURL({ forceStatic: false }),
+                            name: 'Inertia Lighting | Support System',
+                        },
+                        description: [
+                            '**What is the name of your group?**',
+                            `${group_name}`,
+                            '',
+                            '**How old are you?**',
+                            `${group_owner_age}`,
+                            '',
+                            '**How many members are in your group?**',
+                            `${group_member_count}`,
+                            '',
+                            '**Describe your group.**',
+                            `${group_description}`,
+                            '',
+                            '**Why do you want to partner with us?**',
+                            `${group_reason}`,
+                            '',
+                            "**What are your group's social links?**",
+                            `${group_social_links}`,
+                        ].join('\n'),
+                    }),
+                ],
+            });
+        },
+    },
+    {
         id: SupportCategoryId.Other,
         name: 'Other & Quick Questions',
         description: 'For all other forms of support.',
-        staff_role_ids: [
-            config.support_staff_other_role_id,
-            config.customer_service_role_id.id,
-        ],
+        staff_role_ids: [config.support_staff_other_role_id, config.customer_service_role_id.id],
         modal_data: {
             title: 'Other Questions',
             customId: 'other_questions_modal',
@@ -685,12 +670,7 @@ export const support_categories: SupportCategory[] = [
                 },
             ],
         },
-        modal_handler: async (
-            interaction,
-            _support_category,
-            support_ticket_channel,
-            _support_ticket_owner
-        ) => {
+        modal_handler: async (interaction, _support_category, support_ticket_channel, _support_ticket_owner) => {
             const question = interaction.fields.getTextInputValue('question');
 
             await support_ticket_channel.send({
@@ -700,21 +680,17 @@ export const support_categories: SupportCategory[] = [
                             icon_url: interaction.client.user.displayAvatarURL({ forceStatic: false }),
                             name: 'Inertia Lighting | Support System',
                         },
-                        description: [
-                            '**What can we help you with?**',
-                            `${question}`,
-                        ].join('\n'),
+                        description: ['**What can we help you with?**', `${question}`].join('\n'),
                     }),
                 ],
             });
         },
-    }, {
+    },
+    {
         id: SupportCategoryId.DevelopmentApplication,
         name: 'Development Application',
         description: 'Apply for a development position with Inertia!',
-        staff_role_ids: [
-            config.lead_developer_role_id.id,
-        ],
+        staff_role_ids: [config.lead_developer_role_id.id],
         modal_data: {
             title: 'Developer Application',
             customId: 'developer_application_modal',
@@ -764,9 +740,14 @@ export const support_categories: SupportCategory[] = [
                 },
             ],
         },
-        modal_handler: function (_interaction: Discord.ModalSubmitInteraction<'cached'>, _support_category: SupportCategory, _support_ticket_channel: Discord.TextChannel, _support_ticket_owner: Discord.GuildMember): Promise<void> {
+        modal_handler: function (
+            _interaction: Discord.ModalSubmitInteraction<'cached'>,
+            _support_category: SupportCategory,
+            _support_ticket_channel: Discord.TextChannel,
+            _support_ticket_owner: Discord.GuildMember,
+        ): Promise<void> {
             throw new Error('Function not implemented.');
-        }
+        },
     },
 ];
 
@@ -777,9 +758,9 @@ async function sendInitialInformationToSupportTicketChannel(
     support_ticket_category: SupportCategory,
     support_ticket_owner: Discord.GuildMember,
 ): Promise<void> {
-    const support_ticket_staff_role_mentions = support_ticket_category.staff_role_ids.map(
-        (role_id) => Discord.roleMention(role_id)
-    ).join(', ');
+    const support_ticket_staff_role_mentions = support_ticket_category.staff_role_ids
+        .map((role_id) => Discord.roleMention(role_id))
+        .join(', ');
 
     const initial_message = await support_ticket_channel.send({
         content: [
@@ -801,18 +782,17 @@ async function sendInitialInformationToSupportTicketChannel(
 export async function createSupportTicketChannel(
     guild: Discord.Guild,
     support_ticket_owner: Discord.GuildMember,
-    support_ticket_category: SupportCategory
+    support_ticket_category: SupportCategory,
 ): Promise<Discord.TextChannel> {
     const support_tickets_category = await guild.channels.fetch(config.support_tickets_category_id);
-    if (!support_tickets_category) throw new Error('Can\'t find the support ticket category!');
-    if (support_tickets_category.type !== Discord.ChannelType.GuildCategory) throw new Error('Support ticket category is not a category!');
+    if (!support_tickets_category) throw new Error("Can't find the support ticket category!");
+    if (support_tickets_category.type !== Discord.ChannelType.GuildCategory)
+        throw new Error('Support ticket category is not a category!');
 
     const support_channel_name = `${support_ticket_category.id}-${support_ticket_owner.id}`.toLowerCase();
 
     const potential_open_ticket_channel = guild.channels.cache.find(
-        (channel) =>
-            channel.parentId === support_tickets_category.id &&
-            channel.name === support_channel_name
+        (channel) => channel.parentId === support_tickets_category.id && channel.name === support_channel_name,
     );
     if (potential_open_ticket_channel) return potential_open_ticket_channel as Discord.TextChannel;
 
@@ -825,31 +805,37 @@ export async function createSupportTicketChannel(
             ...support_tickets_category.permissionOverwrites.cache.values(), // clone the parent channel permissions
             {
                 id: config.customer_service_role_id.id,
-                allow: [ Discord.PermissionFlagsBits.ViewChannel, Discord.PermissionFlagsBits.SendMessages ],
-            }, {
+                allow: [Discord.PermissionFlagsBits.ViewChannel, Discord.PermissionFlagsBits.SendMessages],
+            },
+            {
                 id: config.staff_role_id.id,
-                allow: [ Discord.PermissionFlagsBits.ViewChannel ],
-                deny: [ Discord.PermissionFlagsBits.SendMessages ],
-            }, {
+                allow: [Discord.PermissionFlagsBits.ViewChannel],
+                deny: [Discord.PermissionFlagsBits.SendMessages],
+            },
+            {
                 id: support_ticket_owner.id,
                 allow: [Discord.PermissionFlagsBits.ViewChannel, Discord.PermissionFlagsBits.SendMessages],
             },
         ],
     });
 
-    const SupportCategory = (await guild.channels.fetch('805191315947913236') as Discord.CategoryChannel);
+    const SupportCategory = (await guild.channels.fetch('805191315947913236')) as Discord.CategoryChannel;
 
     const SupportCategorySize = SupportCategory.children.cache.size;
 
-
-    await sendInitialInformationToSupportTicketChannel(support_ticket_channel, support_ticket_category, support_ticket_owner);
+    await sendInitialInformationToSupportTicketChannel(
+        support_ticket_channel,
+        support_ticket_category,
+        support_ticket_owner,
+    );
     if (SupportCategorySize > 7) {
         support_ticket_channel.send({
             embeds: [
                 CustomEmbed.from({
                     color: CustomEmbed.Color.Red,
                     title: 'Support Delays',
-                    description: 'Please be patient as there are some delays due to the amount of tickets. \n You may have to wait a while for a response.',
+                    description:
+                        'Please be patient as there are some delays due to the amount of tickets. \n You may have to wait a while for a response.',
                 }),
             ],
         });
@@ -876,9 +862,9 @@ export async function closeSupportTicketChannel(
         const support_category = support_categories.find(({ id }) => id === support_ticket_category_id?.toUpperCase());
         const support_ticket_owner = await client.users.fetch(support_ticket_owner_id);
 
-        const support_ticket_creation_timestamp = support_channel.createdTimestamp ? (
-            `<t:${getMarkdownFriendlyTimestamp(support_channel.createdTimestamp)}:F>`
-        ) : 'unknown';
+        const support_ticket_creation_timestamp = support_channel.createdTimestamp
+            ? `<t:${getMarkdownFriendlyTimestamp(support_channel.createdTimestamp)}:F>`
+            : 'unknown';
 
         // const transcript = await DiscordTranscripts.createTranscript(support_channel, {
         //     limit: -1,
@@ -888,15 +874,9 @@ export async function closeSupportTicketChannel(
         // });
 
         const channel_participant_ids = new Set(
-            (
-                await support_channel.messages.fetch().then(
-                    msgs => msgs.filter(
-                        (member) => member.author.id
-                    )
-                )
-            ).map(
-                (member) => member.author.id
-            )
+            (await support_channel.messages.fetch().then((msgs) => msgs.filter((member) => member.author.id))).map(
+                (member) => member.author.id,
+            ),
         );
 
         const transcript_embed = CustomEmbed.from({
@@ -905,52 +885,66 @@ export async function closeSupportTicketChannel(
                     name: 'Ticket Id',
                     value: `${'```'}\n${support_channel.name}\n${'```'}`,
                     inline: false,
-                }, {
+                },
+                {
                     name: 'Category',
                     value: `${'```'}\n${support_category?.name}\n${'```'}`,
                     inline: false,
-                }, {
+                },
+                {
                     name: 'Creation Timestamp',
                     value: `${support_ticket_creation_timestamp}`,
                     inline: false,
-                }, {
+                },
+                {
                     name: 'Closure Timestamp',
                     value: `<t:${Math.floor(Date.now() / 1000)}:F>`,
                     inline: false,
-                }, {
+                },
+                {
                     name: 'Opened By',
                     value: Discord.userMention(support_ticket_owner.id),
                     inline: true,
-                }, {
+                },
+                {
                     name: 'Closed By',
                     value: Discord.userMention(member_that_closed_ticket.id),
                     inline: true,
-                }, {
+                },
+                {
                     name: 'Reason for Closure',
                     value: `${'```'}\n${reason_for_closing_ticket}\n${'```'}`,
                     inline: false,
-                }, {
+                },
+                {
                     name: 'Participants',
-                    value: `${Array.from(channel_participant_ids).map(user_id => Discord.userMention(user_id)).join(' - ')}`,
+                    value: `${Array.from(channel_participant_ids)
+                        .map((user_id) => Discord.userMention(user_id))
+                        .join(' - ')}`,
                     inline: false,
                 },
             ],
         });
 
         /* send the transcript to transcripts channel */
-        const support_ticket_transcripts_channel = await client.channels.fetch(config.support_tickets_transcripts_channel_id);
-        if (!support_ticket_transcripts_channel) throw new Error('Unable to find the support ticket transcripts channel!');
-        if (!support_ticket_transcripts_channel.isTextBased()) throw new Error('The support ticket transcripts channel is not a text channel!');
-        if(!support_ticket_transcripts_channel.isSendable()) throw new Error('The identity manager logging channel is not sendable!');
+        const support_ticket_transcripts_channel = await client.channels.fetch(
+            config.support_tickets_transcripts_channel_id,
+        );
+        if (!support_ticket_transcripts_channel)
+            throw new Error('Unable to find the support ticket transcripts channel!');
+        if (!support_ticket_transcripts_channel.isTextBased())
+            throw new Error('The support ticket transcripts channel is not a text channel!');
+        if (!support_ticket_transcripts_channel.isSendable())
+            throw new Error('The identity manager logging channel is not sendable!');
 
-        const transcript_message = await support_ticket_transcripts_channel.send({
-            embeds: [
-                transcript_embed,
-            ],
-            files: [
-                // transcript,
-            ],
-        }).catch(console.warn);
+        const transcript_message = await support_ticket_transcripts_channel
+            .send({
+                embeds: [transcript_embed],
+                files: [
+                    // transcript,
+                ],
+            })
+            .catch(console.warn);
         if (!transcript_message) throw new Error('Unable to send the support ticket transcript!');
 
         /* send the feedback survey to the user */
@@ -1001,11 +995,12 @@ export async function closeSupportTicketChannel(
                     ],
                 });
 
-                const user_feedback_survey_components_collector = user_feedback_survey_message.createMessageComponentCollector({
-                    filter: (component_interaction) => component_interaction.user.id === support_ticket_owner.id,
-                    time: user_feedback_survey_collector_timeout_in_ms,
-                    max: 1,
-                });
+                const user_feedback_survey_components_collector =
+                    user_feedback_survey_message.createMessageComponentCollector({
+                        filter: (component_interaction) => component_interaction.user.id === support_ticket_owner.id,
+                        time: user_feedback_survey_collector_timeout_in_ms,
+                        max: 1,
+                    });
 
                 user_feedback_survey_components_collector.on('collect', async (component_interaction) => {
                     await component_interaction.deferUpdate();
@@ -1014,7 +1009,9 @@ export async function closeSupportTicketChannel(
 
                     switch (component_interaction.customId) {
                         case 'support_user_feedback_survey_color': {
-                            const satisfaction_level_key = component_interaction.values.at(0) as keyof typeof satisfaction_levels;
+                            const satisfaction_level_key = component_interaction.values.at(
+                                0,
+                            ) as keyof typeof satisfaction_levels;
                             const satisfaction_level = satisfaction_levels[satisfaction_level_key];
 
                             const customer_review_embed = CustomEmbed.from({
@@ -1023,21 +1020,22 @@ export async function closeSupportTicketChannel(
                                 description: `${satisfaction_level.description}`,
                             });
 
-                            await transcript_message.edit({
-                                embeds: [
-                                    transcript_embed,
-                                    customer_review_embed,
-                                ],
-                            }).catch(console.warn);
+                            await transcript_message
+                                .edit({
+                                    embeds: [transcript_embed, customer_review_embed],
+                                })
+                                .catch(console.warn);
 
-                            await user_feedback_survey_message.edit({
-                                embeds: [
-                                    CustomEmbed.from({
-                                        title: 'Thank you!',
-                                        description: 'Your feedback has been recorded.',
-                                    }),
-                                ],
-                            }).catch(console.warn);
+                            await user_feedback_survey_message
+                                .edit({
+                                    embeds: [
+                                        CustomEmbed.from({
+                                            title: 'Thank you!',
+                                            description: 'Your feedback has been recorded.',
+                                        }),
+                                    ],
+                                })
+                                .catch(console.warn);
 
                             break;
                         }
@@ -1049,9 +1047,11 @@ export async function closeSupportTicketChannel(
                 });
 
                 user_feedback_survey_components_collector.on('end', async () => {
-                    await user_feedback_survey_message.edit({
-                        components: [],
-                    }).catch(console.warn);
+                    await user_feedback_survey_message
+                        .edit({
+                            components: [],
+                        })
+                        .catch(console.warn);
                 });
             } catch {
                 // ignore any errors since the user might have their DMs closed
@@ -1082,7 +1082,11 @@ export async function handleSupportTicketCategoryModalSubmit(
     const support_category = support_categories.find(({ id }) => id === support_category_id);
     if (!support_category) throw new Error('Unable to find the support ticket category!');
 
-    const support_ticket_channel = await createSupportTicketChannel(interaction.guild, interaction.member, support_category);
+    const support_ticket_channel = await createSupportTicketChannel(
+        interaction.guild,
+        interaction.member,
+        support_category,
+    );
 
     const modal_reply_message = await interaction.editReply({
         content: [
@@ -1099,10 +1103,5 @@ export async function handleSupportTicketCategoryModalSubmit(
         }
     }, 30_000); // wait a bit to delete the replies
 
-    await support_category.modal_handler(
-        interaction,
-        support_category,
-        support_ticket_channel,
-        support_ticket_owner,
-    );
+    await support_category.modal_handler(interaction, support_category, support_ticket_channel, support_ticket_owner);
 }

@@ -4,16 +4,55 @@
 
 import { ButtonStyle, CommandInteraction, ComponentType } from 'discord.js';
 
-import { getMarkdownFriendlyTimestamp } from '@/utilities/index.js'
-;
+import { getMarkdownFriendlyTimestamp } from '@/utilities/index.js';
 
 import { CustomEmbed } from '../../message.js';
 import create_db_handler from './create_db_handler.js';
-import { event_map, getUserUpdates,RobloxUsersApiUser, UserDataClient } from './user_update.js';
+import { event_map, getUserUpdates, RobloxUsersApiUser, UserDataClient } from './user_update.js';
 
 // ------------------------------------------------------------//
 
-const word_array = ['white', 'black', 'source', 'copy', 'possible', 'new', 'native', 'rocks', 'apple', 'pear', 'tree', 'quackers', 'aiden', 'cole', 'cheese', 'pizza', 'man', 'transfer', 'ticket', 'products', 'alpha', 'bravo', 'charlie', 'delta', 'echo', 'foxtrot', 'golf', 'hotel', 'india', 'lima', 'mike', 'november', 'oscar', 'papa', 'romeo', 'tango', 'uniform', 'victor', 'zulu'];
+const word_array = [
+    'white',
+    'black',
+    'source',
+    'copy',
+    'possible',
+    'new',
+    'native',
+    'rocks',
+    'apple',
+    'pear',
+    'tree',
+    'quackers',
+    'aiden',
+    'cole',
+    'cheese',
+    'pizza',
+    'man',
+    'transfer',
+    'ticket',
+    'products',
+    'alpha',
+    'bravo',
+    'charlie',
+    'delta',
+    'echo',
+    'foxtrot',
+    'golf',
+    'hotel',
+    'india',
+    'lima',
+    'mike',
+    'november',
+    'oscar',
+    'papa',
+    'romeo',
+    'tango',
+    'uniform',
+    'victor',
+    'zulu',
+];
 
 const special_word_array = ['inertia', 'recovery', 'lighting'];
 
@@ -34,7 +73,6 @@ const { getUserData } = new UserDataClient<true>();
  */
 
 async function checkUser(user_id: string, interaction: CommandInteraction): Promise<boolean> {
-
     // console.log('Checking user...');
     const user_data = await getUserData(user_id);
     // console.log(user_data);
@@ -42,32 +80,34 @@ async function checkUser(user_id: string, interaction: CommandInteraction): Prom
 
     const { code_db } = await create_db_handler();
 
-   // ------------------------------------------------------------//
+    // ------------------------------------------------------------//
 
-    code_db.data.codes.filter((data: verification_code_data) => data.roblox_id === user_id).forEach((data) => {
-        interaction.editReply({
-            embeds: [
-                CustomEmbed.from({
-                    title: 'CODE ALREADY PENDING',
-                    description: `**${user_data.name}** already has a pending code...`,
-                }),
-            ],
-            components: [
-                {
-                    type: ComponentType.ActionRow,
-                    components: [
-                        {
-                            type: ComponentType.Button,
-                            url: `${data.message_object.url}`,
-                            style: ButtonStyle.Link,
-                            label: 'Code',
-                        },
-                    ],
-                },
-            ],
+    code_db.data.codes
+        .filter((data: verification_code_data) => data.roblox_id === user_id)
+        .forEach((data) => {
+            interaction.editReply({
+                embeds: [
+                    CustomEmbed.from({
+                        title: 'CODE ALREADY PENDING',
+                        description: `**${user_data.name}** already has a pending code...`,
+                    }),
+                ],
+                components: [
+                    {
+                        type: ComponentType.ActionRow,
+                        components: [
+                            {
+                                type: ComponentType.Button,
+                                url: `${data.message_object.url}`,
+                                style: ButtonStyle.Link,
+                                label: 'Code',
+                            },
+                        ],
+                    },
+                ],
+            });
+            return false;
         });
-        return false;
-    });
     return true;
 }
 
@@ -82,7 +122,7 @@ async function checkUser(user_id: string, interaction: CommandInteraction): Prom
  */
 
 export async function generateVerificationCode(user_id: string, interaction: CommandInteraction): Promise<undefined> {
-    if (await checkUser(user_id, interaction) === false) return;
+    if ((await checkUser(user_id, interaction)) === false) return;
 
     // ------------------------------------------------------------//
 
@@ -113,7 +153,6 @@ export async function generateVerificationCode(user_id: string, interaction: Com
         if (find_query) {
             code += `${find_query[1]} `;
         } else {
-
             code += `${word_array[Math.floor(Math.random() * word_array.length)]} `;
         }
         code.trim();
@@ -121,7 +160,7 @@ export async function generateVerificationCode(user_id: string, interaction: Com
     // Generic typing because noblox.js doesn't have typings for "onBlurbChange"
     const user_data = await getUserData(user_id);
     const event = await getUserUpdates(user_id);
-    const message_object = (await interaction.fetchReply());
+    const message_object = await interaction.fetchReply();
     const push_data: verification_code_data = {
         interaction: interaction,
         roblox_id: user_id,
@@ -168,8 +207,6 @@ export async function generateVerificationCode(user_id: string, interaction: Com
     });
 
     try {
-
-
         event.on('Update', (data: RobloxUsersApiUser) => {
             // console.log('event fired');
             const regexFilter = `\\b${push_data.code.trim()}\\b`;
@@ -187,8 +224,9 @@ export async function generateVerificationCode(user_id: string, interaction: Com
                     ],
                 });
                 event_map.delete(push_data.roblox_id);
-                // eslint-disable-next-line no-shadow
-                code_db.data.codes.filter((data) => data.roblox_id === user_id).forEach((_Object, index) => code_db.data.codes.splice(index));
+                code_db.data.codes
+                    .filter((codeEntry) => codeEntry.roblox_id === user_id)
+                    .forEach((_Object, index) => code_db.data.codes.splice(index));
                 // console.log('The recovery code is part of the user\'s blurb.');
                 return;
             } else {
@@ -212,17 +250,18 @@ setInterval(async () => {
 
     // ------------------------------------------------------------//
 
-    code_db.data.codes.filter((element) => element.expiration <= Date.now()).forEach((data, index) => {
-        data.interaction?.editReply({
-            embeds: [
-                CustomEmbed.from({
-                    color: CustomEmbed.Color.Red,
-                    title: 'COULD NOT VERIFY',
-                    description: 'We could not verify your account in time.',
-                }),
-            ],
+    code_db.data.codes
+        .filter((element) => element.expiration <= Date.now())
+        .forEach((data, index) => {
+            data.interaction?.editReply({
+                embeds: [
+                    CustomEmbed.from({
+                        color: CustomEmbed.Color.Red,
+                        title: 'COULD NOT VERIFY',
+                        description: 'We could not verify your account in time.',
+                    }),
+                ],
+            });
+            code_db.data.codes.splice(index);
         });
-        code_db.data.codes.splice(index);
-
-    });
 }, 60000);

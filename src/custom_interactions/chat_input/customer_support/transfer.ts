@@ -4,9 +4,13 @@
 
 import * as Discord from 'discord.js';
 
-import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
-import { CustomEmbed } from '@/common/message.js'
-import prisma from '@/lib/prisma_client.js'
+import {
+    CustomInteraction,
+    CustomInteractionAccessLevel,
+    CustomInteractionRunContext,
+} from '@/common/managers/custom_interactions_manager.js';
+import { CustomEmbed } from '@/common/message.js';
+import prisma from '@/lib/prisma_client.js';
 import config from '@/utilities/bot_config.js';
 
 // ------------------------------------------------------------//
@@ -46,7 +50,7 @@ export default new CustomInteraction({
                 description: 'Reason',
                 type: Discord.ApplicationCommandOptionType.String,
                 required: true,
-            }
+            },
         ],
     },
     metadata: {
@@ -77,32 +81,32 @@ export default new CustomInteraction({
             return;
         }
 
-        await interaction.deferReply()
+        await interaction.deferReply();
         await interaction.editReply({
             embeds: [
                 CustomEmbed.from({
                     title: 'Transfer',
-                    description: 'Checking if users exists'
-                })
-            ]
-        })
+                    description: 'Checking if users exists',
+                }),
+            ],
+        });
 
         const user_a_db = await prisma.user.findUnique({
             where: {
-                discordId: user_a.id
+                discordId: user_a.id,
             },
             select: {
-                id: true
-            }
+                id: true,
+            },
         });
 
         const user_b_db = await prisma.user.findUnique({
             where: {
-                discordId: user_b.id
+                discordId: user_b.id,
             },
             select: {
-                id: true
-            }
+                id: true,
+            },
         });
 
         if (!user_a_db) {
@@ -170,8 +174,14 @@ export default new CustomInteraction({
         }
 
         const confirm_row = new Discord.ActionRowBuilder<Discord.ButtonBuilder>().addComponents(
-            new Discord.ButtonBuilder().setCustomId('transfer_confirm').setLabel('Confirm').setStyle(Discord.ButtonStyle.Success),
-            new Discord.ButtonBuilder().setCustomId('transfer_cancel').setLabel('Cancel').setStyle(Discord.ButtonStyle.Secondary),
+            new Discord.ButtonBuilder()
+                .setCustomId('transfer_confirm')
+                .setLabel('Confirm')
+                .setStyle(Discord.ButtonStyle.Success),
+            new Discord.ButtonBuilder()
+                .setCustomId('transfer_cancel')
+                .setLabel('Cancel')
+                .setStyle(Discord.ButtonStyle.Secondary),
         );
 
         const confirm_msg = await interaction.editReply({
@@ -182,12 +192,13 @@ export default new CustomInteraction({
                     description: `Confirm transfer for product: **${product_code}** from <@${user_a.id}> to <@${user_b.id}>`,
                 }),
             ],
-            components: [confirm_row]
+            components: [confirm_row],
         });
 
         const clicked = await (confirm_msg as Discord.Message).awaitMessageComponent<Discord.ComponentType.Button>({
             time: 60_000,
-            filter: (i: Discord.MessageComponentInteraction<Discord.CacheType>) => i.user.id === interaction.user.id && ['transfer_confirm', 'transfer_cancel'].includes(i.customId),
+            filter: (i: Discord.MessageComponentInteraction<Discord.CacheType>) =>
+                i.user.id === interaction.user.id && ['transfer_confirm', 'transfer_cancel'].includes(i.customId),
         });
 
         if (clicked.customId === 'transfer_cancel') {
@@ -198,8 +209,8 @@ export default new CustomInteraction({
                         color: CustomEmbed.Color.Red,
                         title: 'Transfer',
                         description: 'Transfer cancelled.',
-                    })
-                ]
+                    }),
+                ],
             });
             return;
         }
@@ -208,7 +219,7 @@ export default new CustomInteraction({
             await prisma.$transaction(async (tx) => {
                 await tx.transactions.update({
                     where: {
-                        id: user_a_transaction.id
+                        id: user_a_transaction.id,
                     },
                     data: {
                         oneTimeTransferUsed: true,
@@ -226,10 +237,14 @@ export default new CustomInteraction({
             });
 
             try {
-                const logging_channel = await interaction.client.channels.fetch(config.logging_products_manager_channel_id);
+                const logging_channel = await interaction.client.channels.fetch(
+                    config.logging_products_manager_channel_id,
+                );
                 if (!logging_channel) throw new Error('Unable to find the transactions manager logging channel!');
-                if (!logging_channel.isTextBased()) throw new Error('The transactions manager logging channel is not text-based!');
-                if (!logging_channel.isSendable()) throw new Error('The identity manager logging channel is not sendable!');
+                if (!logging_channel.isTextBased())
+                    throw new Error('The transactions manager logging channel is not text-based!');
+                if (!logging_channel.isSendable())
+                    throw new Error('The identity manager logging channel is not sendable!');
 
                 await logging_channel.send({
                     embeds: [
@@ -238,8 +253,7 @@ export default new CustomInteraction({
                             title: 'Inertia Lighting | Transactions Manager',
                             description: [
                                 `${interaction.user} transferred product(s) from ${user_a.globalName} (${user_a.id}) to ${user_b.globalName} (${user_b.id}): `,
-                                `\`${user_a_transaction.productCode}\``
-
+                                `\`${user_a_transaction.productCode}\``,
                             ].join('\n'),
                             fields: [
                                 {
@@ -253,15 +267,18 @@ export default new CustomInteraction({
             } catch (error) {
                 console.trace(error);
 
-                await interaction.editReply({
-                    embeds: [
-                        CustomEmbed.from({
-                            color: CustomEmbed.Color.Red,
-                            title: 'Inertia Lighting | Transactions Manager',
-                            description: 'An error occurred while logging to the transactions manager logging channel!',
-                        }),
-                    ],
-                }).catch(console.warn);
+                await interaction
+                    .editReply({
+                        embeds: [
+                            CustomEmbed.from({
+                                color: CustomEmbed.Color.Red,
+                                title: 'Inertia Lighting | Transactions Manager',
+                                description:
+                                    'An error occurred while logging to the transactions manager logging channel!',
+                            }),
+                        ],
+                    })
+                    .catch(console.warn);
 
                 return;
             }

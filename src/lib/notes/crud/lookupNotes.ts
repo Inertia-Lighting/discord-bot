@@ -2,12 +2,7 @@ import prisma from '@/lib/prisma_client.js';
 
 import { FullNote } from '../types.js';
 
-export async function lookupNotesForUser(
-    { discordId }: {
-        discordId: string,
-    }
-): Promise<FullNote[]> {
-
+export async function lookupNotesForUser({ discordId }: { discordId: string }): Promise<FullNote[]> {
     const user = await prisma.user.findFirst({
         where: {
             discordId,
@@ -17,13 +12,13 @@ export async function lookupNotesForUser(
                 include: {
                     notedUser: true,
                     staffUser: true,
-                }
-            }
-        }
-    })
+                },
+            },
+        },
+    });
 
     if (!user) {
-        return []
+        return [];
     }
 
     const user_notes = user.notes;

@@ -4,9 +4,13 @@
 
 import * as Discord from 'discord.js';
 
-import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
-import { loadSupportSystemConfig } from '@/support_system/config/index.js'
-import { supportSystemManager } from '@/support_system/index.js'
+import {
+    CustomInteraction,
+    CustomInteractionAccessLevel,
+    CustomInteractionRunContext,
+} from '@/common/managers/custom_interactions_manager.js';
+import { loadSupportSystemConfig } from '@/support_system/config/index.js';
+import { supportSystemManager } from '@/support_system/index.js';
 import { fetchPermissions } from '@/utilities/permissions.js';
 
 // ------------------------------------------------------------//
@@ -29,7 +33,8 @@ export default new CustomInteraction({
                 minLength: 1,
                 maxLength: 1024,
                 required: true,
-            }, {
+            },
+            {
                 name: 'request_feedback',
                 type: Discord.ApplicationCommandOptionType.Boolean,
                 description: 'Request user feedback? (only for team leaders and above)',
@@ -52,51 +57,51 @@ export default new CustomInteraction({
         const request_feedback = interaction.options.getBoolean('request_feedback', false) ?? true; // ask for feedback by default
 
         // Ensure that only Team Leaders and above can close tickets without asking for feedback.
-        const userPermission = fetchPermissions(interaction.member)
-        if (
-            request_feedback === false &&
-            userPermission < PermissionLevel.TeamLeaders
-        ) {
-            await interaction.editReply({
-                content: 'You lack permission to close tickets without asking for feedback.',
-            }).catch(console.warn);
+        const userPermission = fetchPermissions(interaction.member);
+        if (request_feedback === false && userPermission < PermissionLevel.TeamLeaders) {
+            await interaction
+                .editReply({
+                    content: 'You lack permission to close tickets without asking for feedback.',
+                })
+                .catch(console.warn);
 
             return;
         }
 
-        const channel_exists_in_support_tickets_category = interaction.channel?.parentId === config.channels.ticketsCategoryId;
+        const channel_exists_in_support_tickets_category =
+            interaction.channel?.parentId === config.channels.ticketsCategoryId;
         const channel_is_not_transcripts_channel = interaction.channel?.id !== config.channels.transcriptsChannelId;
         if (!(channel_exists_in_support_tickets_category && channel_is_not_transcripts_channel)) {
-            interaction.editReply({
-                content: 'This channel is not an active support ticket.',
-            }).catch(console.warn);
+            interaction
+                .editReply({
+                    content: 'This channel is not an active support ticket.',
+                })
+                .catch(console.warn);
             return;
         }
 
         const support_channel = interaction.channel;
-        if (!(support_channel instanceof Discord.TextChannel)) throw new Error('Expected support_channel to be a text channel');
+        if (!(support_channel instanceof Discord.TextChannel))
+            throw new Error('Expected support_channel to be a text channel');
 
         const filtered_support_channel_name = support_channel.name.slice(3);
         const support_ticket_topic_name = filtered_support_channel_name.match(/([a-zA-Z\-_])+(?![-_])\D/i)?.[0];
         if (!support_ticket_topic_name) throw new Error('Expected support_ticket_topic_name to be a string');
 
-        await interaction.editReply({
-            content: [
-                `${interaction.user}, closed this ticket for:`,
-                '```',
-                Discord.escapeCodeBlock(reason),
-                '```',
-            ].join('\n'),
-        }).catch(console.warn);
+        await interaction
+            .editReply({
+                content: [
+                    `${interaction.user}, closed this ticket for:`,
+                    '```',
+                    Discord.escapeCodeBlock(reason),
+                    '```',
+                ].join('\n'),
+            })
+            .catch(console.warn);
 
-        await supportSystemManager.closeTicket(
-            interaction.channel, 
-            interaction.member, 
-            reason, 
-            {
-                saveTranscript: true,
-                sendFeedback: request_feedback,
-            }
-        );
+        await supportSystemManager.closeTicket(interaction.channel, interaction.member, reason, {
+            saveTranscript: true,
+            sendFeedback: request_feedback,
+        });
     },
 });

@@ -1,14 +1,14 @@
 allowBuilds:
-  '@prisma/engines': true
-  bufferutil: true
-  prisma: true
-  utf-8-validate: true
+    '@prisma/engines': true
+    bufferutil: true
+    prisma: true
+    utf-8-validate: true
 
 ignoredBuiltDependencies:
-  - bufferutil
-  - utf-8-validate
+    - bufferutil
+    - utf-8-validate
 
 onlyBuiltDependencies:
-  - '@prisma/client'
-  - '@prisma/engines'
-  - prisma
+    - '@prisma/client'
+    - '@prisma/engines'
+    - prisma

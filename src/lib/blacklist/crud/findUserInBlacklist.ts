@@ -14,23 +14,23 @@ export async function findUserInBlacklistedUsersDatabase(
                 },
                 {
                     punishedUser: {
-                     OR: [
-                        {
-                            discordId: user_lookup_query
-                        },
-                        {
-                            robloxId: user_lookup_query
-                        }
-                     ]   
-                    }
-                }
-            ]
+                        OR: [
+                            {
+                                discordId: user_lookup_query,
+                            },
+                            {
+                                robloxId: user_lookup_query,
+                            },
+                        ],
+                    },
+                },
+            ],
         },
         include: {
             punishedUser: true,
             staffUser: true,
-        }
-    })
+        },
+    });
 
     return blacklistData;
 }

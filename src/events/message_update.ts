@@ -4,18 +4,14 @@
 
 import * as Discord from 'discord.js';
 
-import { guildMemberMessageUpdateLogger } from '@/common/handlers/index.js'
+import { guildMemberMessageUpdateLogger } from '@/common/handlers/index.js';
 import config from '@/utilities/bot_config.js';
 
 // ------------------------------------------------------------//
 
 export default {
     name: Discord.Events.MessageUpdate,
-    async handler(
-        client: Discord.Client,
-        old_message: Discord.Message,
-        new_message: Discord.Message,
-    ) {
+    async handler(client: Discord.Client, old_message: Discord.Message, new_message: Discord.Message) {
         if (old_message.author.system) return; // don't operate on system accounts
         if (old_message.author.bot) return; // don't operate on bots to prevent feedback-loops
 

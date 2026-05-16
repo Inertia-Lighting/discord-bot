@@ -4,15 +4,9 @@
 
 import * as Discord from 'discord.js';
 
-import { CustomEmbed } from '@/common/message.js'
-;
+import { CustomEmbed } from '@/common/message.js';
 
-import { 
-    SupportCategoryHandler, 
-    SupportCategoryId, 
-    SupportTicketContext 
-} from '../types/index.js'
-;
+import { SupportCategoryHandler, SupportCategoryId, SupportTicketContext } from '../types/index.js';
 
 /**
  * Base implementation for support category handlers
@@ -25,7 +19,7 @@ export abstract class BaseSupportCategoryHandler implements SupportCategoryHandl
      */
     async handleModalSubmission(
         interaction: Discord.ModalSubmitInteraction<'cached'>,
-        context: SupportTicketContext
+        context: SupportTicketContext,
     ): Promise<void> {
         try {
             // Validate input first
@@ -43,7 +37,7 @@ export abstract class BaseSupportCategoryHandler implements SupportCategoryHandl
 
             // Send the responses to the channel
             await this.sendResponsesToChannel(context.channel!, responses, interaction);
-            
+
             // Send any additional messages
             await this.sendAdditionalMessages(context, interaction);
         } catch (error) {
@@ -64,10 +58,10 @@ export abstract class BaseSupportCategoryHandler implements SupportCategoryHandl
     /**
      * Gets the initial message content for the support ticket
      */
-     
+
     async getInitialMessage(_context: SupportTicketContext): Promise<Discord.MessageCreateOptions> {
         const staffRoleMentions = await this.getStaffRoleMentions(_context);
-        
+
         return {
             content: [
                 `${_context.owner}, welcome to your support ticket.`,
@@ -98,13 +92,11 @@ export abstract class BaseSupportCategoryHandler implements SupportCategoryHandl
     protected async sendResponsesToChannel(
         channel: Discord.TextChannel,
         responses: Array<{ question: string; answer: string }>,
-        interaction: Discord.ModalSubmitInteraction<'cached'>
+        interaction: Discord.ModalSubmitInteraction<'cached'>,
     ): Promise<void> {
-        const description = responses.map(({ question, answer }) => [
-            `**${question}**`,
-            answer,
-            '',
-        ].join('\n')).join('\n');
+        const description = responses
+            .map(({ question, answer }) => [`**${question}**`, answer, ''].join('\n'))
+            .join('\n');
 
         await channel.send({
             embeds: [
@@ -122,12 +114,12 @@ export abstract class BaseSupportCategoryHandler implements SupportCategoryHandl
     /**
      * Sends additional messages specific to this support category
      */
-     
+
     protected async sendAdditionalMessages(
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         _context: SupportTicketContext,
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        _interaction: Discord.ModalSubmitInteraction<'cached'>
+        _interaction: Discord.ModalSubmitInteraction<'cached'>,
     ): Promise<void> {
         // Default implementation - can be overridden by subclasses
     }

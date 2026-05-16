@@ -8,12 +8,12 @@ The ticket priority system adds comprehensive priority management to Discord sup
 
 ### Priority Levels
 
-| Priority | Emoji | SLA Time | Color | Use Case |
-|----------|-------|----------|-------|----------|
-| Low      | 🟢    | 24 hours | Green | General questions and non-urgent issues |
-| Medium   | 🟡    | 8 hours  | Yellow | Issues affecting functionality |
-| High     | 🔴    | 1 hour   | Red | Critical issues needing immediate attention |
-| On Hold  | ⏸️    | No SLA   | Gray | Tickets paused pending user response or external dependencies |
+| Priority | Emoji | SLA Time | Color  | Use Case                                                      |
+| -------- | ----- | -------- | ------ | ------------------------------------------------------------- |
+| Low      | 🟢    | 24 hours | Green  | General questions and non-urgent issues                       |
+| Medium   | 🟡    | 8 hours  | Yellow | Issues affecting functionality                                |
+| High     | 🔴    | 1 hour   | Red    | Critical issues needing immediate attention                   |
+| On Hold  | ⏸️    | No SLA   | Gray   | Tickets paused pending user response or external dependencies |
 
 ### Key Functionality
 
@@ -33,26 +33,30 @@ The ticket priority system adds comprehensive priority management to Discord sup
 **Access**: Available to both ticket owners and staff members
 
 **Examples**:
+
 - `/priority level:medium` - Sets ticket to medium priority (8 hours SLA)
-- `/priority level:high` - Sets ticket to high priority (1 hour SLA)  
+- `/priority level:high` - Sets ticket to high priority (1 hour SLA)
 - `/priority level:onhold` - Sets ticket to on hold (no SLA, no escalation)
 - `/priority level:low` - Sets ticket to low priority (24 hours SLA)
 
 ## How It Works
 
 ### Ticket Creation
+
 1. User creates a support ticket
 2. System automatically sets priority to Low (🟢)
 3. Channel name is updated with priority emoji
 4. Initial embed shows priority and SLA information
 
 ### Priority Changes
+
 1. User or staff uses `/priority` command
 2. System updates channel name with new emoji
 3. New SLA deadline is calculated
 4. Embed is sent showing the priority change
 
 ### SLA Monitoring
+
 1. Background service checks tickets every 30 minutes
 2. When SLA deadline passes, escalation begins
 3. Customer service role is pinged every 2 hours
@@ -60,6 +64,7 @@ The ticket priority system adds comprehensive priority management to Discord sup
 5. **On Hold tickets are excluded from SLA monitoring and escalation**
 
 ### Staff Response Detection
+
 1. System monitors messages in ticket channels
 2. When staff member sends message, response is recorded
 3. Escalation is automatically stopped
@@ -68,6 +73,7 @@ The ticket priority system adds comprehensive priority management to Discord sup
 ## Implementation Details
 
 ### Database Schema
+
 ```sql
 model TicketPriorities {
     id                  String        @id @default(cuid())
@@ -90,15 +96,17 @@ enum TicketPriority {
 ```
 
 ### Channel Naming Convention
+
 - **Without Priority**: `category-userid`
 - **With Priority**: `emoji-category-userid`
 - **Examples**:
-  - `🟢-issues-123456789` (Low priority)
-  - `🟡-recovery-987654321` (Medium priority)
-  - `🔴-transactions-555666777` (High priority)
-  - `⏸️-partners-444555666` (On Hold priority)
+    - `🟢-issues-123456789` (Low priority)
+    - `🟡-recovery-987654321` (Medium priority)
+    - `🔴-transactions-555666777` (High priority)
+    - `⏸️-partners-444555666` (On Hold priority)
 
 ### Escalation Timeline
+
 1. **SLA Exceeded**: First escalation ping sent immediately
 2. **2 Hours Later**: Second escalation ping (if no staff response)
 3. **4 Hours Later**: Third escalation ping (continues every 2 hours)
@@ -107,12 +115,14 @@ enum TicketPriority {
 ## Integration
 
 ### Existing Systems
+
 - **Ticket Creation**: Seamlessly integrates with existing ticket flow
 - **Ticket Closure**: Automatically cleans up priority data
 - **Ticket Type Changes**: Preserves priority when changing ticket types
 - **Permissions**: Respects existing permission system
 
 ### Monitoring
+
 - **Startup**: Escalation service starts 2 minutes after bot is ready
 - **Background**: Checks for escalations every 30 minutes
 - **Logging**: Console logs for escalation events and staff responses

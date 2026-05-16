@@ -45,7 +45,7 @@ export const staff_roles: StaffRole[] = [
     config.moderator_role_id,
     config.admin_role_id,
     config.team_leaders_role_id,
-    config.company_management_role_id
-]
+    config.company_management_role_id,
+];
 
 export default config;
