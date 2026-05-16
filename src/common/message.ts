@@ -7,16 +7,16 @@ import * as Discord from 'discord.js';
 // ------------------------------------------------------------//
 
 enum CustomEmbedColor {
-    Brand = 0x60A0FF,
-    White = 0xFFFFFF,
-    Red = 0xFF0000,
-    Orange = 0xFF5500,
-    Yellow = 0xFFFF00,
-    Green = 0x00FF00,
-    Blue = 0x0000FF,
+    Brand = 0x60a0ff,
+    White = 0xffffff,
+    Red = 0xff0000,
+    Orange = 0xff5500,
+    Yellow = 0xffff00,
+    Green = 0x00ff00,
+    Blue = 0x0000ff,
     Indigo = 0x550088,
-    Violet = 0xAA00FF,
-    Magenta = 0xFF00FF,
+    Violet = 0xaa00ff,
+    Magenta = 0xff00ff,
     Gray = 0x808080,
 }
 
@@ -25,7 +25,7 @@ export class CustomEmbed {
 
     static from(
         options: Discord.APIEmbed & {
-            color?: CustomEmbedColor,
+            color?: CustomEmbedColor;
         },
     ): Discord.EmbedBuilder {
         options.color ??= this.Color.Brand;

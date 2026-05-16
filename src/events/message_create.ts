@@ -4,17 +4,14 @@
 
 import * as Discord from 'discord.js';
 
-import { automatedQuickSupportHandler, suggestionsCategoryHandler } from '@/common/handlers/index.js'
+import { automatedQuickSupportHandler, suggestionsCategoryHandler } from '@/common/handlers/index.js';
 import config from '@/utilities/bot_config.js';
 
 // ------------------------------------------------------------//
 
 export default {
     name: Discord.Events.MessageCreate,
-    async handler(
-        client: Discord.Client,
-        message: Discord.Message,
-    ) {
+    async handler(client: Discord.Client, message: Discord.Message) {
         /* don't allow bots */
         if (message.author.bot) return;
 
@@ -37,16 +34,12 @@ export default {
         }
 
         /* respond to mentions of this bot */
-        if (
-            message.content.startsWith(
-                Discord.userMention(message.client.user.id)
-            )
-        ) {
-            await message.reply({
-                content: [
-                    'To see a list of commands do /help!',
-                ].join('\n'),
-            }).catch(console.warn);
+        if (message.content.startsWith(Discord.userMention(message.client.user.id))) {
+            await message
+                .reply({
+                    content: ['To see a list of commands do /help!'].join('\n'),
+                })
+                .catch(console.warn);
 
             return;
         }

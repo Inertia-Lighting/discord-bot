@@ -1,7 +1,6 @@
-import { Prisma } from '../prisma/client.ts'
-
+import { Prisma } from '../prisma/client.ts';
 
 interface FullPunishment extends Prisma.PunishmentsModel {
-    punishedUser: Prisma.UserModel
-    staffUser: Prisma.UserModel
+    punishedUser: Prisma.UserModel;
+    staffUser: Prisma.UserModel;
 }

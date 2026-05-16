@@ -1,4 +1,4 @@
-import * as Discord from 'discord.js'
+import * as Discord from 'discord.js';
 import moment from 'moment-timezone';
 
 import { CustomEmbed } from '@/common/message.js';
@@ -8,9 +8,12 @@ import { chunkArray, delay, ellipseString } from '@/utilities/index.js';
 
 export async function listModerationActions(
     interaction: Discord.ChatInputCommandInteraction,
-    { lookup_mode, lookup_query }: {
-        lookup_mode: ModerationActionLookupMode,
-        lookup_query: string,
+    {
+        lookup_mode,
+        lookup_query,
+    }: {
+        lookup_mode: ModerationActionLookupMode;
+        lookup_query: string;
     },
 ): Promise<void> {
     if (!interaction.inCachedGuild()) return;
@@ -41,10 +44,10 @@ export async function listModerationActions(
             db_moderation_actions_find_filter = {
                 where: {
                     punishedUser: {
-                        discordId: lookup_query
-                    }
-                }
-            }
+                        discordId: lookup_query,
+                    },
+                },
+            };
 
             break;
         }
@@ -53,10 +56,10 @@ export async function listModerationActions(
             db_moderation_actions_find_filter = {
                 where: {
                     staffUser: {
-                        discordId: lookup_query
-                    }
-                }
-            }
+                        discordId: lookup_query,
+                    },
+                },
+            };
 
             break;
         }
@@ -64,9 +67,9 @@ export async function listModerationActions(
         case ModerationActionLookupMode.Id: {
             db_moderation_actions_find_filter = {
                 where: {
-                    id: lookup_query
-                }
-            }
+                    id: lookup_query,
+                },
+            };
 
             break;
         }
@@ -80,24 +83,26 @@ export async function listModerationActions(
         ...db_moderation_actions_find_filter,
         include: {
             punishedUser: true,
-            staffUser: true
-        }
-    })
+            staffUser: true,
+        },
+    });
 
     /* check if the member has any records */
     if (punishments.length === 0) {
-        await bot_message.edit({
-            embeds: [
-                CustomEmbed.from({
-                    color: CustomEmbed.Color.Yellow,
-                    author: {
-                        icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
-                        name: 'Inertia Lighting | Moderation Actions',
-                    },
-                    description: 'I wasn\'t able to find any moderation actions.',
-                }),
-            ],
-        }).catch(console.warn);
+        await bot_message
+            .edit({
+                embeds: [
+                    CustomEmbed.from({
+                        color: CustomEmbed.Color.Yellow,
+                        author: {
+                            icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
+                            name: 'Inertia Lighting | Moderation Actions',
+                        },
+                        description: "I wasn't able to find any moderation actions.",
+                    }),
+                ],
+            })
+            .catch(console.warn);
 
         return;
     }
@@ -112,12 +117,14 @@ export async function listModerationActions(
                         style: Discord.ButtonStyle.Secondary,
                         customId: 'previous',
                         label: 'Previous',
-                    }, {
+                    },
+                    {
                         type: Discord.ComponentType.Button,
                         style: Discord.ButtonStyle.Secondary,
                         customId: 'next',
                         label: 'Next',
-                    }, {
+                    },
+                    {
                         type: Discord.ComponentType.Button,
                         style: Discord.ButtonStyle.Danger,
                         customId: 'stop',
@@ -129,7 +136,9 @@ export async function listModerationActions(
     });
 
     /* sort the moderation actions by epoch (newest -> oldest) */
-    const sorted_moderation_actions = punishments.sort((a, b) => b.createdAt.getUTCMilliseconds() - a.createdAt.getUTCMilliseconds());
+    const sorted_moderation_actions = punishments.sort(
+        (a, b) => b.createdAt.getUTCMilliseconds() - a.createdAt.getUTCMilliseconds(),
+    );
 
     /* split the moderation actions into a 2-dimensional array of chunks */
     const moderation_actions_chunks = chunkArray(sorted_moderation_actions, 5);
@@ -140,36 +149,43 @@ export async function listModerationActions(
     async function editEmbedWithNextModerationActionsChunk() {
         const moderation_actions_chunk = moderation_actions_chunks[page_index];
 
-        await bot_message.edit({
-            embeds: [
-                CustomEmbed.from({
-                    author: {
-                        icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
-                        name: 'Inertia Lighting | Moderation Actions',
-                    },
-                    description: moderation_actions_chunk.map(moderation_action =>
-                        [
-                            `**Id** \`${moderation_action.id}\``,
-                            `**Staff** ${Discord.userMention(moderation_action.staffUser.discordId)}`,
-                            `**Member** ${Discord.userMention(moderation_action.punishedUser.discordId)}`,
-                            `**Date** \`${moment(moderation_action.createdAt.getUTCMilliseconds()).tz(process.env.TZ ?? 'America/New_York').format('YYYY[-]MM[-]DD | hh:mm A | [GMT]ZZ')}\``,
-                            `**Type** \`${moderation_action.punishmentType}\``,
-                            '**Reason**',
-                            '```',
-                            `${ellipseString(Discord.escapeMarkdown(moderation_action.punishmentReason), 250)}`,
-                            '```',
-                        ].join('\n')
-                    ).join('\n'),
-                }),
-            ],
-        }).catch(console.warn);
+        await bot_message
+            .edit({
+                embeds: [
+                    CustomEmbed.from({
+                        author: {
+                            icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
+                            name: 'Inertia Lighting | Moderation Actions',
+                        },
+                        description: moderation_actions_chunk
+                            .map((moderation_action) =>
+                                [
+                                    `**Id** \`${moderation_action.id}\``,
+                                    `**Staff** ${Discord.userMention(moderation_action.staffUser.discordId)}`,
+                                    `**Member** ${Discord.userMention(moderation_action.punishedUser.discordId)}`,
+                                    `**Date** \`${moment(moderation_action.createdAt.getUTCMilliseconds())
+                                        .tz(process.env.TZ ?? 'America/New_York')
+                                        .format('YYYY[-]MM[-]DD | hh:mm A | [GMT]ZZ')}\``,
+                                    `**Type** \`${moderation_action.punishmentType}\``,
+                                    '**Reason**',
+                                    '```',
+                                    `${ellipseString(Discord.escapeMarkdown(moderation_action.punishmentReason), 250)}`,
+                                    '```',
+                                ].join('\n'),
+                            )
+                            .join('\n'),
+                    }),
+                ],
+            })
+            .catch(console.warn);
 
         return; // complete async
     }
 
     await editEmbedWithNextModerationActionsChunk();
 
-    const message_button_collector_filter = (button_interaction: Discord.MessageComponentInteraction) => button_interaction.user.id === interaction.user.id;
+    const message_button_collector_filter = (button_interaction: Discord.MessageComponentInteraction) =>
+        button_interaction.user.id === interaction.user.id;
     const message_button_collector = bot_message.createMessageComponentCollector({
         filter: message_button_collector_filter,
         time: 5 * 60_000, // 5 minutes

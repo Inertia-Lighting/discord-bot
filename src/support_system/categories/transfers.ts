@@ -4,10 +4,8 @@
 
 import * as Discord from 'discord.js';
 
-import { BaseSupportCategoryHandler } from '../core/base-handler.js'
-;
-import { SupportCategoryId } from '../types/index.js'
-;
+import { BaseSupportCategoryHandler } from '../core/base-handler.js';
+import { SupportCategoryId } from '../types/index.js';
 
 /**
  * Handler for product transfers support category
@@ -28,11 +26,11 @@ export class ProductTransfersHandler extends BaseSupportCategoryHandler {
                 answer: interaction.fields.getTextInputValue('products'),
             },
             {
-                question: 'Discord user id that you\'re transferring to?',
+                question: "Discord user id that you're transferring to?",
                 answer: interaction.fields.getTextInputValue('discord_transfer_to'),
             },
             {
-                question: 'Roblox user id that you\'re transferring to?',
+                question: "Roblox user id that you're transferring to?",
                 answer: interaction.fields.getTextInputValue('roblox_transfer_to'),
             },
             {
@@ -95,7 +93,7 @@ export const ProductTransfersConfig = {
                         type: Discord.ComponentType.TextInput,
                         customId: 'discord_transfer_to',
                         style: Discord.TextInputStyle.Short,
-                        label: 'Discord user id that you\'re transferring to?',
+                        label: "Discord user id that you're transferring to?",
                         placeholder: '735556164749885450',
                         minLength: 10,
                         maxLength: 75,
@@ -110,7 +108,7 @@ export const ProductTransfersConfig = {
                         type: Discord.ComponentType.TextInput,
                         customId: 'roblox_transfer_to',
                         style: Discord.TextInputStyle.Short,
-                        label: 'Roblox user id that you\'re transferring to?',
+                        label: "Roblox user id that you're transferring to?",
                         placeholder: '998796',
                         minLength: 5,
                         maxLength: 20,

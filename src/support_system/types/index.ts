@@ -11,7 +11,7 @@ export enum TicketPriority {
     Low = 'low',
     Medium = 'medium',
     High = 'high',
-    OnHold = 'onhold'
+    OnHold = 'onhold',
 }
 
 /**
@@ -50,7 +50,7 @@ export enum SupportCategoryId {
     Transactions = 'TRANSACTIONS',
     PartnershipRequests = 'PARTNERS',
     Other = 'OTHER',
-    DevelopmentApplication = 'DEVAPP'
+    DevelopmentApplication = 'DEVAPP',
 }
 
 /**
@@ -82,20 +82,20 @@ export interface SupportCategoryConfig {
  */
 export interface SupportCategoryHandler {
     readonly categoryId: SupportCategoryId;
-    
+
     /**
      * Handles the modal submission for this support category
      */
     handleModalSubmission(
         interaction: Discord.ModalSubmitInteraction<'cached'>,
-        context: SupportTicketContext
+        context: SupportTicketContext,
     ): Promise<void>;
-    
+
     /**
      * Validates the modal input for this support category
      */
     validateInput(interaction: Discord.ModalSubmitInteraction<'cached'>): Promise<boolean>;
-    
+
     /**
      * Gets the initial message content for the support ticket
      */
@@ -122,7 +122,7 @@ export interface SupportTicketService {
      * Creates a new support ticket channel
      */
     createTicketChannel(context: SupportTicketContext): Promise<Discord.TextChannel>;
-    
+
     /**
      * Closes a support ticket channel
      */
@@ -133,16 +133,16 @@ export interface SupportTicketService {
         options?: {
             saveTranscript?: boolean;
             sendFeedback?: boolean;
-        }
+        },
     ): Promise<void>;
-    
+
     /**
      * Finds an existing ticket channel for a user and category
      */
     findExistingTicket(
         guild: Discord.Guild,
         userId: string,
-        categoryId: SupportCategoryId
+        categoryId: SupportCategoryId,
     ): Promise<Discord.TextChannel | null>;
 }
 
@@ -154,22 +154,22 @@ export interface SupportCategoryRegistry {
      * Registers a support category handler
      */
     registerCategory(config: SupportCategoryConfig, handler: SupportCategoryHandler): void;
-    
+
     /**
      * Gets a support category handler by ID
      */
     getHandler(categoryId: SupportCategoryId): SupportCategoryHandler | null;
-    
+
     /**
      * Gets a support category configuration by ID
      */
     getConfig(categoryId: SupportCategoryId): SupportCategoryConfig | null;
-    
+
     /**
      * Gets all registered support categories
      */
     getAllCategories(): Array<{ config: SupportCategoryConfig; handler: SupportCategoryHandler }>;
-    
+
     /**
      * Gets all enabled support categories
      */
@@ -194,7 +194,7 @@ export interface ValidationService {
      * Validates environment variables required for support system
      */
     validateEnvironment(): void;
-    
+
     /**
      * Validates user input for support categories
      */
@@ -209,52 +209,52 @@ export interface TicketPriorityService {
      * Sets the priority for a ticket channel
      */
     setPriority(channelId: string, priority: TicketPriority, setBy: Discord.GuildMember): Promise<void>;
-    
+
     /**
      * Gets the priority context for a ticket channel
      */
     getPriority(channelId: string): Promise<TicketPriorityContext | null>;
-    
+
     /**
      * Checks if SLA deadline has passed for a ticket
      */
     checkSLADeadline(channelId: string): Promise<boolean>;
-    
+
     /**
      * Records staff response to stop escalation
      */
     recordStaffResponse(channelId: string, staffMember: Discord.GuildMember): Promise<void>;
-    
+
     /**
      * Records user response to stop user pinging
      */
     recordUserResponse(channelId: string, user: Discord.GuildMember): Promise<void>;
-    
+
     /**
      * Starts escalation for a ticket
      */
     startEscalation(channelId: string): Promise<void>;
-    
+
     /**
      * Gets all tickets that need escalation
      */
     getTicketsNeedingEscalation(): Promise<TicketPriorityContext[]>;
-    
+
     /**
      * Gets all tickets that need user pinging
      */
     getTicketsNeedingUserPing(): Promise<TicketPriorityContext[]>;
-    
+
     /**
      * Updates channel name with priority emoji
      */
     updateChannelName(channel: Discord.TextChannel, priority: TicketPriority): Promise<void>;
-    
+
     /**
      * Gets priority configuration
      */
     getPriorityConfig(priority: TicketPriority): PriorityConfig;
-    
+
     /**
      * Restores priority states from database on bot startup
      */

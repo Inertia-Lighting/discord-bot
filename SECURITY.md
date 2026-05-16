@@ -9,9 +9,11 @@ Inertia Lighting allows you to report any security vulnerabilities via the offic
 1. Open a support ticket in [our discord](https://discord.inertia.lighting/) server.
 
 2. Please include the following message in your ticket:
+
     ```
     SECURITY - Inertia Lighting - discord-bot
     ```
+
     That way we will know that your support ticket is important!
 
 3. You will receive a response as soon as we acknowledge your report!

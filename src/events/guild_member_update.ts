@@ -4,18 +4,18 @@
 
 import * as Discord from 'discord.js';
 
-import { guildMemberRolesAddedLogger, guildMemberRolesRemovedLogger, illegalNicknameHandler } from '@/common/handlers/index.js'
+import {
+    guildMemberRolesAddedLogger,
+    guildMemberRolesRemovedLogger,
+    illegalNicknameHandler,
+} from '@/common/handlers/index.js';
 import config from '@/utilities/bot_config.js';
 
 // ------------------------------------------------------------//
 
 export default {
     name: Discord.Events.GuildMemberUpdate,
-    async handler(
-        client: Discord.Client<true>,
-        old_member: Discord.GuildMember,
-        new_member: Discord.GuildMember,
-    ) {
+    async handler(client: Discord.Client<true>, old_member: Discord.GuildMember, new_member: Discord.GuildMember) {
         if (!old_member || !new_member) return; // ensure both members are defined
 
         if (new_member.user.system) return; // don't operate on system accounts

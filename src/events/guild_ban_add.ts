@@ -4,17 +4,14 @@
 
 import * as Discord from 'discord.js';
 
-import { guildMemberBannedLogger } from '@/common/handlers/index.js'
+import { guildMemberBannedLogger } from '@/common/handlers/index.js';
 import config from '@/utilities/bot_config.js';
 
 // ------------------------------------------------------------//
 
 export default {
     name: Discord.Events.GuildBanAdd,
-    async handler(
-        client: Discord.Client,
-        ban: Discord.GuildBan,
-    ) {
+    async handler(client: Discord.Client, ban: Discord.GuildBan) {
         if (ban.guild.id !== config.guild_id) return; // don't operate on other guilds
 
         try {

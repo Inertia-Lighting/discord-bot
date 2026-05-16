@@ -5,27 +5,22 @@
 import * as Discord from 'discord.js';
 import moment from 'moment-timezone';
 
-import { illegalNicknameHandler } from '@/common/handlers/index.js'
-import { CustomInteractionsManager } from '@/common/managers/custom_interactions_manager.js'
-import prisma from '@/lib/prisma_client.js'
+import { illegalNicknameHandler } from '@/common/handlers/index.js';
+import { CustomInteractionsManager } from '@/common/managers/custom_interactions_manager.js';
+import prisma from '@/lib/prisma_client.js';
 import config from '@/utilities/bot_config.js';
-import { delay } from '@/utilities/index.js'
+import { delay } from '@/utilities/index.js';
 
 // ------------------------------------------------------------//
 
-
-async function updateBotNickname(
-    client: Discord.Client<true>,
-) {
+async function updateBotNickname(client: Discord.Client<true>) {
     const bot_guild = await client.guilds.fetch(config.guild_id);
 
     const bot_member = await bot_guild.members.fetchMe();
     bot_member.setNickname(`/ | ${client.user!.username}`, 'fixing my nickname').catch(console.trace);
 }
 
-async function removeIllegalNicknames(
-    client: Discord.Client<true>,
-) {
+async function removeIllegalNicknames(client: Discord.Client<true>) {
     const bot_guild = await client.guilds.fetch(config.guild_id);
 
     const bot_guild_members = await bot_guild.members.fetch();
@@ -40,19 +35,21 @@ async function removeIllegalNicknames(
 
 export default {
     name: Discord.Events.ClientReady,
-    async handler(
-        client: Discord.Client<true>,
-    ) {
+    async handler(client: Discord.Client<true>) {
         if (!client.isReady()) {
-            throw new Error('This shouldn\'t happen, but if it does, the client was not ready in the ready event!');
+            throw new Error("This shouldn't happen, but if it does, the client was not ready in the ready event!");
         }
-        prisma.$connect()
+        prisma.$connect();
         const ready_timestamp = `${moment()}`;
-        console.log('----------------------------------------------------------------------------------------------------------------');
+        console.log(
+            '----------------------------------------------------------------------------------------------------------------',
+        );
         console.log(`Discord Bot Logged in as @${client.user!.username} on ${ready_timestamp}`);
-        console.log('----------------------------------------------------------------------------------------------------------------');
+        console.log(
+            '----------------------------------------------------------------------------------------------------------------',
+        );
         /* register interactions to CustomInteractionsManager */
-        console.info('Registering interactions')
+        console.info('Registering interactions');
         CustomInteractionsManager.registerInteractions();
 
         /* register interactions to discord */

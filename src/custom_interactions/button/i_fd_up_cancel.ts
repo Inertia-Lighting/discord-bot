@@ -4,7 +4,11 @@
 
 import * as Discord from 'discord.js';
 
-import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
+import {
+    CustomInteraction,
+    CustomInteractionAccessLevel,
+    CustomInteractionRunContext,
+} from '@/common/managers/custom_interactions_manager.js';
 
 // ------------------------------------------------------------//
 
@@ -21,8 +25,8 @@ export default new CustomInteraction({
         if (!interaction.inCachedGuild()) return;
         if (!interaction.channel) return;
 
-        if(interaction.message.deletable) {
-            await interaction.message.delete()
+        if (interaction.message.deletable) {
+            await interaction.message.delete();
         }
     },
 });

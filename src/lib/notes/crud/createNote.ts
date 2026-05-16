@@ -2,18 +2,18 @@ import prisma from '@/lib/prisma_client.js';
 
 export async function createNoteForUser(
     {
-        discordId
+        discordId,
     }: {
-        discordId: string,
+        discordId: string;
     },
     {
         note,
-        staffId
+        staffId,
     }: {
-        epoch: number,
-        note: string,
-        staffId: string,
-    }
+        epoch: number;
+        note: string;
+        staffId: string;
+    },
 ): Promise<boolean> {
     try {
         await prisma.user.update({
@@ -25,17 +25,17 @@ export async function createNoteForUser(
                     create: {
                         staffUser: {
                             connect: {
-                                discordId: staffId
-                            }
+                                discordId: staffId,
+                            },
                         },
-                        note
-                    }
-                }
-            }
-        })
-        return true
+                        note,
+                    },
+                },
+            },
+        });
+        return true;
     } catch (err) {
-        console.trace(err)
+        console.trace(err);
         return false;
     }
 }

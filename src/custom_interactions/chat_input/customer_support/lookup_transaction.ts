@@ -4,8 +4,12 @@
 
 import * as Discord from 'discord.js';
 
-import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
-import { CustomEmbed } from '@/common/message.js'
+import {
+    CustomInteraction,
+    CustomInteractionAccessLevel,
+    CustomInteractionRunContext,
+} from '@/common/managers/custom_interactions_manager.js';
+import { CustomEmbed } from '@/common/message.js';
 import prisma from '@/lib/prisma_client.js';
 import config from '@/utilities/bot_config.js';
 
@@ -44,7 +48,7 @@ export default new CustomInteraction({
                     CustomEmbed.from({
                         color: CustomEmbed.Color.Violet,
                         title: 'Inertia Lighting | Identity Manager',
-                        description: 'You aren\'t allowed to use this command!',
+                        description: "You aren't allowed to use this command!",
                     }),
                 ],
             });
@@ -53,15 +57,17 @@ export default new CustomInteraction({
         }
         const transaction_id = interaction.options.getString('transaction_id', true);
 
-        const lookup = await prisma.transactions.findFirst({
-            where: {
-                purchaseId: transaction_id ?? ''
-            },
-            include: {
-                Transfers: true,
-                User: true,
-            }
-        }).catch(console.warn);
+        const lookup = await prisma.transactions
+            .findFirst({
+                where: {
+                    purchaseId: transaction_id ?? '',
+                },
+                include: {
+                    Transfers: true,
+                    User: true,
+                },
+            })
+            .catch(console.warn);
 
         interaction.editReply({
             embeds: [
@@ -76,8 +82,8 @@ export default new CustomInteraction({
                         `${Discord.cleanCodeBlockContent(JSON.stringify(lookup ? (({ id, ...rest }) => rest)(lookup) : 'transaction not found in database', null, 2))}`,
                         '```',
                     ].join('\n'),
-                })
-            ]
-        })
+                }),
+            ],
+        });
     },
 });

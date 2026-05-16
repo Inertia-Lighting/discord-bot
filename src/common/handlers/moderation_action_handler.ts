@@ -2,15 +2,19 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved    //
 // ------------------------------------------------------------//
 
-import { Prisma } from '@/lib/prisma/browser.js'
-import prisma from '@/lib/prisma_client.js'
+import { Prisma } from '@/lib/prisma/browser.js';
+import prisma from '@/lib/prisma_client.js';
 
 // ------------------------------------------------------------//
 
 /**
  * Adds a moderation action to the database
  */
-export async function addModerationActionToDatabase(punishedUserId: string, staffUserId: string, data: Omit<Prisma.PunishmentsCreateInput, 'punishedUser' | 'staffUser'>): Promise<boolean> {
+export async function addModerationActionToDatabase(
+    punishedUserId: string,
+    staffUserId: string,
+    data: Omit<Prisma.PunishmentsCreateInput, 'punishedUser' | 'staffUser'>,
+): Promise<boolean> {
     const moderation_action_data: Prisma.PunishmentsCreateInput = {
         // 'identity': {
         //     'discord_user_id': identity.discord_user_id,
@@ -24,22 +28,21 @@ export async function addModerationActionToDatabase(punishedUserId: string, staf
         // },
         punishedUser: {
             connect: {
-                discordId: punishedUserId
+                discordId: punishedUserId,
             },
         },
         staffUser: {
             connect: {
-                discordId: staffUserId
-            }
+                discordId: staffUserId,
+            },
         },
-        ...data
-
+        ...data,
     };
 
     try {
         await prisma.punishments.create({
             data: moderation_action_data,
-        })
+        });
     } catch (error) {
         console.trace('addModerationActionToDatabase():', error);
 

@@ -4,17 +4,14 @@
 
 import * as Discord from 'discord.js';
 
-import { guildMemberMessageDeleteLogger } from '@/common/handlers/index.js'
+import { guildMemberMessageDeleteLogger } from '@/common/handlers/index.js';
 import config from '@/utilities/bot_config.js';
 
 // ------------------------------------------------------------//
 
 export default {
     name: Discord.Events.MessageDelete,
-    async handler(
-        client: Discord.Client,
-        message: Discord.Message,
-    ) {
+    async handler(client: Discord.Client, message: Discord.Message) {
         if (message.author.system) return; // don't operate on system accounts
         if (message.author.bot) return; // don't operate on bots to prevent feedback-loops
 

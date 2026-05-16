@@ -2,9 +2,7 @@
 //    Copyright (c) Inertia Lighting, Some Rights Reserved     //
 // ------------------------------------------------------------//
 
-import type MongoDB from 'mongodb';
-
-import { AccountType, Prisma, Verification } from '@/lib/prisma.js'
+import { AccountType, Prisma, Verification } from '@/lib/prisma.js';
 
 // ------------------------------------------------------------//
 //                        Helper Types                         //
@@ -20,75 +18,22 @@ type PrismaUserData = Prisma.UserGetPayload<{
     select: {
         discordId: true;
         transactions: true;
-    }
-}>
+    };
+}>;
 
 type PrismaProductData = Prisma.ProductsGetPayload<{
     select: {
         code: true;
         name: true;
         viewable: true;
-    }
-}>
-
-// ------------------------------------------------------------//
-//                      Database Schemas                       //
-// ------------------------------------------------------------//
-
-interface DbUserIdentity {
-    discord_user_id: string;
-    roblox_user_id: string;
-}
-
-interface DbUserProducts {
-    [product_code: string]: boolean;
-}
-
-interface DbUserTicketBlacklist {
-    blacklisted: boolean;
-    reason: string;
-}
-
-interface DbUserData {
-    _id: MongoDB.ObjectId;
-    identity: DbUserIdentity;
-    lumens: number;
-    products: DbUserProducts;
-    ticket_blacklist?: DbUserTicketBlacklist
-}
-
-// ------------------------------------------------------------//
-
-interface DbBlacklistedUserRecord {
-    _id: MongoDB.ObjectId;
-    identity: DbUserIdentity;
-    reason: string;
-    epoch: number;
-    staff_member_id: string;
-}
-
-// ------------------------------------------------------------//
-
-type DbModerationActionType = 'WARN' | 'TIMEOUT' | 'MUTE' | 'KICK' | 'BAN';
-
-interface DbModerationActionRecord {
-    id: string, // a UUIDv4 string
-    type: DbModerationActionType;
-    epoch: number;
-    reason: string;
-    staff_member_id: string;
-}
-
-interface DbModerationAction {
-    identity: DbModerationActionUserIdentity;
-    record: DbModerationActionRecord;
-}
+    };
+}>;
 
 interface QSTopic {
-  id: string;
-  title: string;
-  searchable_queries: string[],
-  support_contents: string;
+    id: string;
+    title: string;
+    searchable_queries: string[];
+    support_contents: string;
 }
 
 interface UserVerificationContextFetch {
@@ -98,12 +43,12 @@ interface UserVerificationContextFetch {
 }
 
 interface FailedRequest {
-    success: false,
-    message: string,
-    errors: object, // Contains detailed error info
+    success: false;
+    message: string;
+    errors: object; // Contains detailed error info
 }
 
-type v3VerificationFetch = UserVerificationContextFetch | FailedRequest
+type v3VerificationFetch = UserVerificationContextFetch | FailedRequest;
 
 declare global {
     /* -------------------------------------------------------------------------- */
@@ -117,11 +62,11 @@ declare global {
     type InteractionData = DistributiveOmit<Discord.ApplicationCommandData, 'name'> | undefined;
 
     interface InteractionMetadata {
-        [key: string]: unknown,
-        required_run_context: InteractionRunContext,
-        required_access_level: InteractionAccessLevel,
-        dev_only?: boolean
-    };
+        [key: string]: unknown;
+        required_run_context: InteractionRunContext;
+        required_access_level: InteractionAccessLevel;
+        dev_only?: boolean;
+    }
 
     type InteractionHandler = (client: Discord.Client<true>, interaction: Discord.Interaction) => Promise<void>;
 
@@ -132,8 +77,8 @@ declare global {
     }
 
     interface StaffRole {
-        id: string | number,
-        access_level: PermissionLevel
+        id: string | number;
+        access_level: PermissionLevel;
     }
 
     const enum PermissionLevel {
@@ -146,7 +91,6 @@ declare global {
         Admins,
         TeamLeaders,
         CompanyManagement,
-        BotAdmin
+        BotAdmin,
     }
-
 }

@@ -1,28 +1,27 @@
 name: ESLint
-on: [ push, pull_request, workflow_dispatch ]
+on: [push, pull_request, workflow_dispatch]
 jobs:
-  lint:
+    lint:
+        runs-on: ubuntu-latest
 
-    runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                node-version: [24.11.x]
 
-    strategy:
-      matrix:
-        node-version: [ 24.11.x ]
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v6
 
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v6
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v6
+              with:
+                  node-version: ${{ matrix.node-version }}
 
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v6
-      with:
-        node-version: ${{ matrix.node-version }}
+            - name: Enable Corepack
+              run: corepack enable
 
-    - name: Install Yarn with Corepack
-      run: corepack enable
-    
-    - name: Install Dependencies
-      run: pnpm i --ignore-scripts
+            - name: Install Dependencies
+              run: pnpm i --ignore-scripts
 
-    - name: Run ESLint
-      run: pnpm run lint
+            - name: Run ESLint
+              run: pnpm run lint

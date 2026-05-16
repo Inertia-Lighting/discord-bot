@@ -22,6 +22,7 @@ dist/
 
 # node stuff
 node_modules
+.pnpm-store/
 npm
 
 # bot-related sensitive stuff and runtime generated content
@@ -38,8 +39,6 @@ __*
 !update.bat
 start_bot.bat
 
-# Yarn
-.yarn/install-state.gz
 src/lib/prisma
 tsconfig.tsbuildinfo
 

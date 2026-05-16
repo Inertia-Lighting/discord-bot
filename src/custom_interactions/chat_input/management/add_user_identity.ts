@@ -4,9 +4,13 @@
 
 import * as Discord from 'discord.js';
 
-import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
-import { CustomEmbed } from '@/common/message.js'
-import prisma from '@/lib/prisma_client.js'
+import {
+    CustomInteraction,
+    CustomInteractionAccessLevel,
+    CustomInteractionRunContext,
+} from '@/common/managers/custom_interactions_manager.js';
+import { CustomEmbed } from '@/common/message.js';
+import prisma from '@/lib/prisma_client.js';
 import config from '@/utilities/bot_config.js';
 
 // ------------------------------------------------------------//
@@ -61,7 +65,7 @@ export default new CustomInteraction({
                     CustomEmbed.from({
                         color: CustomEmbed.Color.Violet,
                         title: 'Inertia Lighting | Identity Manager',
-                        description: 'You aren\'t allowed to use this command!',
+                        description: "You aren't allowed to use this command!",
                     }),
                 ],
             });
@@ -73,7 +77,7 @@ export default new CustomInteraction({
         const logging_channel = await interaction.client.channels.fetch(config.logging_identity_manager_channel_id);
         if (!logging_channel) throw new Error('Unable to find the identity manager logging channel!');
         if (!logging_channel.isTextBased()) throw new Error('The identity manager logging channel is not text-based!');
-        if(!logging_channel.isSendable()) throw new Error('The identity manager logging channel is not sendable!');
+        if (!logging_channel.isSendable()) throw new Error('The identity manager logging channel is not sendable!');
 
         // get the specified command options
         const new_roblox_id = interaction.options.getString('new_roblox_id', true);
@@ -95,13 +99,10 @@ export default new CustomInteraction({
             return;
         }
 
-        // search for discord ID and roblox ID 
+        // search for discord ID and roblox ID
         const db_user_data_with_new_identity = await prisma.user.findFirst({
             where: {
-                OR: [
-                    { discordId: new_discord_id },
-                    { robloxId: new_roblox_id },
-                ]
+                OR: [{ discordId: new_discord_id }, { robloxId: new_roblox_id }],
             },
             select: {
                 id: true,
@@ -148,7 +149,7 @@ export default new CustomInteraction({
                         color: CustomEmbed.Color.Green,
                         title: 'Inertia Lighting | Identity Manager',
                         description: [
-                            'Successfully added the user\'s identity.',
+                            "Successfully added the user's identity.",
                             '',
                             '**Added Identity:**',
                             '```json',
@@ -182,7 +183,7 @@ export default new CustomInteraction({
                 ],
             });
         } catch (error: unknown) {
-            console.trace('Failed to add the user\'s identity:', error);
+            console.trace("Failed to add the user's identity:", error);
 
             await interaction.editReply({
                 embeds: [
@@ -190,7 +191,7 @@ export default new CustomInteraction({
                         color: CustomEmbed.Color.Red,
                         title: 'Inertia Lighting | Identity Manager',
                         description: [
-                            'Failed to add the user\'s identity.',
+                            "Failed to add the user's identity.",
                             '',
                             '```',
                             `${error}`.slice(0, 512), // limit the error message to 512 characters

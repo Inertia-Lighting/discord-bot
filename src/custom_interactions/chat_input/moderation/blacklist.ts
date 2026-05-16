@@ -4,11 +4,19 @@
 
 import * as Discord from 'discord.js';
 
-import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
-import { CustomEmbed } from '@/common/message.js'
-import { addUserToBlacklistedUsersDatabase, findUserInBlacklistedUsersDatabase, removeUserFromBlacklistedUsersDatabase } from '@/lib/blacklist/index.js';
+import {
+    CustomInteraction,
+    CustomInteractionAccessLevel,
+    CustomInteractionRunContext,
+} from '@/common/managers/custom_interactions_manager.js';
+import { CustomEmbed } from '@/common/message.js';
+import {
+    addUserToBlacklistedUsersDatabase,
+    findUserInBlacklistedUsersDatabase,
+    removeUserFromBlacklistedUsersDatabase,
+} from '@/lib/blacklist/index.js';
 import prisma from '@/lib/prisma_client.js';
-import { getMarkdownFriendlyTimestamp } from '@/utilities/index.js'
+import { getMarkdownFriendlyTimestamp } from '@/utilities/index.js';
 
 // ------------------------------------------------------------//
 
@@ -36,7 +44,8 @@ async function isStaffMemberAllowedToBlacklistUser(
     if (!member_being_blacklisted) return true; // assume that the user can be blacklisted since they don't exist in the guild
 
     /* check the role hierarchy since they exist in the guild */
-    const staff_member_role_hierarchy_is_greater = staff_member.roles.highest.comparePositionTo(member_being_blacklisted.roles.highest) > 0;
+    const staff_member_role_hierarchy_is_greater =
+        staff_member.roles.highest.comparePositionTo(member_being_blacklisted.roles.highest) > 0;
     return staff_member_role_hierarchy_is_greater;
 }
 
@@ -51,9 +60,9 @@ async function blacklistAddSubcommand(
 
     const db_user = await prisma.user.findFirst({
         where: {
-            discordId: user_id_to_add
-        }
-    })
+            discordId: user_id_to_add,
+        },
+    });
     if (!db_user) {
         await interaction.editReply({
             embeds: [
@@ -71,7 +80,11 @@ async function blacklistAddSubcommand(
         return;
     }
 
-    const is_staff_member_allowed_to_blacklist_user = await isStaffMemberAllowedToBlacklistUser(interaction.guild, interaction.user.id, user_id_to_add);
+    const is_staff_member_allowed_to_blacklist_user = await isStaffMemberAllowedToBlacklistUser(
+        interaction.guild,
+        interaction.user.id,
+        user_id_to_add,
+    );
     if (!is_staff_member_allowed_to_blacklist_user) {
         await interaction.editReply({
             embeds: [
@@ -151,11 +164,11 @@ async function blacklistRemoveSubcommand(
 ): Promise<void> {
     if (!interaction.inCachedGuild()) return; // if the interaction did not originate from a cached guild, ignore it
 
-        const db_user = await prisma.user.findFirst({
+    const db_user = await prisma.user.findFirst({
         where: {
-            discordId: user_id_to_remove
-        }
-    })
+            discordId: user_id_to_remove,
+        },
+    });
     if (!db_user) {
         await interaction.editReply({
             embeds: [
@@ -165,7 +178,8 @@ async function blacklistRemoveSubcommand(
                         icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
                         name: 'Inertia Lighting | User Blacklist System',
                     },
-                    description: 'That discord user is not in the database, so they cannot be removed from the blacklist.',
+                    description:
+                        'That discord user is not in the database, so they cannot be removed from the blacklist.',
                 }),
             ],
         });
@@ -173,7 +187,11 @@ async function blacklistRemoveSubcommand(
         return;
     }
 
-    const is_staff_member_allowed_to_blacklist_user = await isStaffMemberAllowedToBlacklistUser(interaction.guild, interaction.user.id, user_id_to_remove);
+    const is_staff_member_allowed_to_blacklist_user = await isStaffMemberAllowedToBlacklistUser(
+        interaction.guild,
+        interaction.user.id,
+        user_id_to_remove,
+    );
     if (!is_staff_member_allowed_to_blacklist_user) {
         await interaction.editReply({
             embeds: [
@@ -255,7 +273,9 @@ async function blacklistLookupSubcommand(
         return;
     }
 
-    const discord_friendly_timestamp = getMarkdownFriendlyTimestamp(db_user_blacklist_data.createdAt.getUTCMilliseconds());
+    const discord_friendly_timestamp = getMarkdownFriendlyTimestamp(
+        db_user_blacklist_data.createdAt.getUTCMilliseconds(),
+    );
 
     await interaction.editReply({
         embeds: [
@@ -295,7 +315,8 @@ export default new CustomInteraction({
                         type: Discord.ApplicationCommandOptionType.User,
                         description: 'Who is getting blacklisted?',
                         required: true,
-                    }, {
+                    },
+                    {
                         name: 'reason',
                         type: Discord.ApplicationCommandOptionType.String,
                         description: 'Why are they getting blacklisted',
@@ -304,7 +325,8 @@ export default new CustomInteraction({
                         required: true,
                     },
                 ],
-            }, {
+            },
+            {
                 name: 'remove',
                 description: 'Remove a user from the blacklist.',
                 type: Discord.ApplicationCommandOptionType.Subcommand,
@@ -314,7 +336,8 @@ export default new CustomInteraction({
                         type: Discord.ApplicationCommandOptionType.User,
                         description: 'Who is getting removed from the blacklist?',
                         required: true,
-                    }, {
+                    },
+                    {
                         name: 'reason',
                         type: Discord.ApplicationCommandOptionType.String,
                         description: 'Why are they getting removed from the blacklist?',
@@ -323,7 +346,8 @@ export default new CustomInteraction({
                         required: true,
                     },
                 ],
-            }, {
+            },
+            {
                 name: 'lookup',
                 description: 'Lookup a user to see if they are blacklisted.',
                 type: Discord.ApplicationCommandOptionType.SubcommandGroup,
@@ -340,7 +364,8 @@ export default new CustomInteraction({
                                 required: true,
                             },
                         ],
-                    }, {
+                    },
+                    {
                         name: 'roblox',
                         type: Discord.ApplicationCommandOptionType.Subcommand,
                         description: 'Lookup a Roblox user id.',
@@ -423,7 +448,8 @@ export default new CustomInteraction({
 
                     default: {
                         await interaction.editReply({
-                            content: 'Unrecognized subcommand was provided for the `/blacklist lookup` subcommand group.',
+                            content:
+                                'Unrecognized subcommand was provided for the `/blacklist lookup` subcommand group.',
                         });
 
                         break;

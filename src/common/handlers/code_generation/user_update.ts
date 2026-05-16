@@ -6,12 +6,11 @@ import EventEmitter from 'node:events';
 
 import axios from 'axios';
 
-import create_db_handler from './create_db_handler.js'
-;
+import create_db_handler from './create_db_handler.js';
 
 // ------------------------------------------------------------//
 
-export class UserUpdateEmitter extends EventEmitter { }
+export class UserUpdateEmitter extends EventEmitter {}
 
 export const event_map = new Map<string, UserUpdateEmitter>();
 
@@ -21,15 +20,15 @@ const users_api = axios.create({
 });
 
 export type RobloxUsersApiUser = {
-    description: string,
-    created: string,
-    isBanned: boolean,
-    externalAppDisplayName: string,
-    hasVerifiedBadge: boolean,
-    id: number,
-    name: string,
-    displayName: string
-}
+    description: string;
+    created: string;
+    isBanned: boolean;
+    externalAppDisplayName: string;
+    hasVerifiedBadge: boolean;
+    id: number;
+    name: string;
+    displayName: string;
+};
 
 /**
  * @async
@@ -59,8 +58,9 @@ export async function getUserUpdates(roblox_id: string | number): Promise<UserUp
  * @returns {Promise<RobloxUsersApiUser>}
  */
 export class UserDataClient<AlwaysReturn extends boolean = boolean> {
-     
-    async getUserData(roblox_id: string | number): Promise<AlwaysReturn extends true ? RobloxUsersApiUser : RobloxUsersApiUser | undefined> {
+    async getUserData(
+        roblox_id: string | number,
+    ): Promise<AlwaysReturn extends true ? RobloxUsersApiUser : RobloxUsersApiUser | undefined> {
         // console.log(`v1/users/${roblox_id}`);
         console.trace(roblox_id);
         const request = users_api.get<RobloxUsersApiUser>(`v1/users/${roblox_id}`);
@@ -83,7 +83,6 @@ export class UserDataClient<AlwaysReturn extends boolean = boolean> {
         }
     }
 }
-
 
 /* -------------------------------------------------------------------------- */
 

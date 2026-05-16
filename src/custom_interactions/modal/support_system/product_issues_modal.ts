@@ -4,9 +4,13 @@
 
 import * as Discord from 'discord.js';
 
-import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
-import { supportSystemManager } from '@/support_system/index.js'
-import { SupportCategoryId } from '@/support_system/types/index.js'
+import {
+    CustomInteraction,
+    CustomInteractionAccessLevel,
+    CustomInteractionRunContext,
+} from '@/common/managers/custom_interactions_manager.js';
+import { supportSystemManager } from '@/support_system/index.js';
+import { SupportCategoryId } from '@/support_system/types/index.js';
 
 // ------------------------------------------------------------//
 
@@ -31,10 +35,9 @@ export default new CustomInteraction({
             await supportSystemManager.handleModalSubmission(interaction, SupportCategoryId.Issues);
 
             const modalReplyMessage = await interaction.editReply({
-                content: [
-                    'You selected Product Tech Support.',
-                    'Go to your support ticket channel to continue.',
-                ].join('\n'),
+                content: ['You selected Product Tech Support.', 'Go to your support ticket channel to continue.'].join(
+                    '\n',
+                ),
             });
 
             setTimeout(async () => {

@@ -4,9 +4,13 @@
 
 import * as Discord from 'discord.js';
 
-import { generateVerificationCode } from '@/common/handlers/index.js'
-import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
-import { CustomEmbed } from '@/common/message.js'
+import { generateVerificationCode } from '@/common/handlers/index.js';
+import {
+    CustomInteraction,
+    CustomInteractionAccessLevel,
+    CustomInteractionRunContext,
+} from '@/common/managers/custom_interactions_manager.js';
+import { CustomEmbed } from '@/common/message.js';
 import config from '@/utilities/bot_config.js';
 
 // ------------------------------------------------------------//
@@ -44,7 +48,7 @@ export default new CustomInteraction({
                     CustomEmbed.from({
                         color: CustomEmbed.Color.Violet,
                         title: 'Inertia Lighting | Identity Manager',
-                        description: 'You aren\'t allowed to use this command!',
+                        description: "You aren't allowed to use this command!",
                     }),
                 ],
             });

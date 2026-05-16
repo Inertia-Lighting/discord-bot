@@ -5,16 +5,16 @@
 import * as Discord from 'discord.js';
 import { compareTwoStrings } from 'string-similarity';
 
-import { CustomEmbed } from '@/common/message.js'
-import { clampNumber } from '@/utilities/index.js'
+import { CustomEmbed } from '@/common/message.js';
+import { clampNumber } from '@/utilities/index.js';
 
 // ------------------------------------------------------------//
 
 type QuickSupportTopic = {
-    id: string,
-    title: string,
-    searchable_queries: string[],
-    support_contents: string,
+    id: string;
+    title: string;
+    searchable_queries: string[];
+    support_contents: string;
 };
 
 // ------------------------------------------------------------//
@@ -29,7 +29,10 @@ function getSimilarityScore(string_1: string, string_2: string): number {
     return compareTwoStrings(string_1.toLowerCase(), string_2.toLowerCase()); // returns a number between <0, 1> (inclusive)
 }
 
-function generateSimilarityScoreForQuickSupportTopic(user_input: string, quick_support_topic: QuickSupportTopic): number {
+function generateSimilarityScoreForQuickSupportTopic(
+    user_input: string,
+    quick_support_topic: QuickSupportTopic,
+): number {
     let similarity_score = 0;
 
     for (const searchable_query of quick_support_topic.searchable_queries) {
@@ -47,7 +50,9 @@ function generateSimilarityScoreForQuickSupportTopic(user_input: string, quick_s
     return similarity_score;
 }
 
-function findPotentialMatchingQuickSupportTopics(user_input: string): (QuickSupportTopic & { similarity_score: number; })[] {
+function findPotentialMatchingQuickSupportTopics(
+    user_input: string,
+): (QuickSupportTopic & { similarity_score: number })[] {
     const mapped_quick_support_topics = [];
     for (const quick_support_topic of quick_support_topics) {
         mapped_quick_support_topics.push({
@@ -57,45 +62,43 @@ function findPotentialMatchingQuickSupportTopics(user_input: string): (QuickSupp
         });
     }
 
-    const matching_qs_topics = mapped_quick_support_topics.filter(quick_support_topic =>
-        quick_support_topic.similarity_score >= confidence_threshold
-    ).sort((a, b) =>
-        b.similarity_score - a.similarity_score
-    );
+    const matching_qs_topics = mapped_quick_support_topics
+        .filter((quick_support_topic) => quick_support_topic.similarity_score >= confidence_threshold)
+        .sort((a, b) => b.similarity_score - a.similarity_score);
 
     return matching_qs_topics;
 }
 
 // ------------------------------------------------------------//
 
-export async function automatedQuickSupportHandler(
-    message: Discord.Message,
-) {
+export async function automatedQuickSupportHandler(message: Discord.Message) {
     if (message.author.system || message.author.bot) return;
     if (message.cleanContent.length < 5) return;
-    if (!(/\w+/gi).test(message.cleanContent)) return;
+    if (!/\w+/gi.test(message.cleanContent)) return;
 
     const client = message.client;
 
     const matching_qs_topics = findPotentialMatchingQuickSupportTopics(message.cleanContent).slice(0, 3);
     if (matching_qs_topics.length === 0) return;
 
-    message.reply({
-        content: [
-            `I found ${matching_qs_topics.length} quick support topic(s) that might be related to your message!`,
-        ].join('\n'),
-        embeds: matching_qs_topics.map(
-            (quick_support_topic) => CustomEmbed.from({
-                author: {
-                    icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
-                    name: 'Inertia Lighting | Automatic Quick Support',
-                },
-                title: quick_support_topic.title,
-                description: quick_support_topic.support_contents,
-                footer: {
-                    text: `Automated Confidence: ${clampNumber(quick_support_topic.similarity_score * 100, 0, 100).toFixed(2)}%`,
-                },
-            })
-        ),
-    }).catch(console.warn);
+    message
+        .reply({
+            content: [
+                `I found ${matching_qs_topics.length} quick support topic(s) that might be related to your message!`,
+            ].join('\n'),
+            embeds: matching_qs_topics.map((quick_support_topic) =>
+                CustomEmbed.from({
+                    author: {
+                        icon_url: `${client.user!.displayAvatarURL({ forceStatic: false })}`,
+                        name: 'Inertia Lighting | Automatic Quick Support',
+                    },
+                    title: quick_support_topic.title,
+                    description: quick_support_topic.support_contents,
+                    footer: {
+                        text: `Automated Confidence: ${clampNumber(quick_support_topic.similarity_score * 100, 0, 100).toFixed(2)}%`,
+                    },
+                }),
+            ),
+        })
+        .catch(console.warn);
 }

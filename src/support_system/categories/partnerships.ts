@@ -4,10 +4,8 @@
 
 import * as Discord from 'discord.js';
 
-import { BaseSupportCategoryHandler } from '../core/base-handler.js'
-;
-import { SupportCategoryId } from '../types/index.js'
-;
+import { BaseSupportCategoryHandler } from '../core/base-handler.js';
+import { SupportCategoryId } from '../types/index.js';
 
 /**
  * Handler for partnership requests support category
@@ -44,7 +42,7 @@ export class PartnershipRequestsHandler extends BaseSupportCategoryHandler {
                 answer: interaction.fields.getTextInputValue('group_reason'),
             },
             {
-                question: 'What are your group\'s social links?',
+                question: "What are your group's social links?",
                 answer: interaction.fields.getTextInputValue('group_social_links'),
             },
         ];
@@ -163,7 +161,7 @@ export const PartnershipRequestsConfig = {
                         type: Discord.ComponentType.TextInput,
                         customId: 'group_social_links',
                         style: Discord.TextInputStyle.Paragraph,
-                        label: 'What are your group\'s social links?',
+                        label: "What are your group's social links?",
                         minLength: 1,
                         maxLength: 1024,
                         required: true,

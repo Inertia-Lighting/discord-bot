@@ -32,16 +32,19 @@ Centralizes all configuration loading from environment variables:
 #### 3. Core Services
 
 ##### Registry (`src/support_system/core/registry.ts`)
+
 - Manages registration and retrieval of support categories
 - Validates category configurations
 - Provides enabled categories for UI
 
 ##### Ticket Service (`src/support_system/core/ticket-service.ts`)
+
 - Handles ticket channel creation
 - Manages ticket closure and cleanup
 - Generates transcripts and handles feedback
 
 ##### Base Handler (`src/support_system/core/base-handler.ts`)
+
 - Provides common functionality for all category handlers
 - Implements the template method pattern
 - Standardizes response formatting
@@ -51,31 +54,37 @@ Centralizes all configuration loading from environment variables:
 Each support category is implemented as a separate module with its own handler and configuration:
 
 #### 1. Product Issues (`src/support_system/categories/issues.ts`)
+
 - Handles technical support requests
 - Validates product-related inputs
 - Provides automated responses for common issues
 
 #### 2. Account Recovery (`src/support_system/categories/recovery.ts`)
+
 - Handles account recovery requests
 - Validates user IDs (Roblox and Discord)
 - Staff: Database support team
 
 #### 3. Product Transfers (`src/support_system/categories/transfers.ts`)
+
 - Handles product transfer requests
 - Validates transfer details
 - Staff: Database support team
 
 #### 4. Product Transactions (`src/support_system/categories/transactions.ts`)
+
 - Handles transaction issues
 - Validates purchase information
 - Staff: Product purchases support team
 
 #### 5. Partnership Requests (`src/support_system/categories/partnerships.ts`)
+
 - Handles partnership applications
 - Validates group information
 - Staff: Partnership support team
 
 #### 6. Other Questions (`src/support_system/categories/other.ts`)
+
 - Handles general support questions
 - Minimal validation requirements
 - Staff: General support and customer service
@@ -83,6 +92,7 @@ Each support category is implemented as a separate module with its own handler a
 ### Manager (`src/support_system/manager.ts`)
 
 The main orchestrator that:
+
 - Initializes all categories with proper role assignments
 - Provides a unified interface for the support system
 - Handles modal submissions and ticket operations
@@ -159,26 +169,31 @@ Environment variables are centralized in the configuration service. To add new v
 ## Benefits
 
 ### 1. Modularity
+
 - Each category is self-contained
 - Easy to add, remove, or modify categories
 - Clear separation of concerns
 
 ### 2. Maintainability
+
 - Smaller, focused files
 - Consistent patterns across categories
 - Clear interfaces and contracts
 
 ### 3. Extensibility
+
 - Easy to add new categories
 - Plugin-like architecture
 - Configurable behavior
 
 ### 4. Testability
+
 - Each component can be tested independently
 - Clear interfaces for mocking
 - Isolated business logic
 
 ### 5. Type Safety
+
 - Full TypeScript support
 - Compile-time error checking
 - IntelliSense support

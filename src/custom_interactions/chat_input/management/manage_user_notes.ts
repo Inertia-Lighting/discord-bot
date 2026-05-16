@@ -4,17 +4,25 @@
 
 import * as Discord from 'discord.js';
 
-import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
-import { CustomEmbed } from '@/common/message.js'
-import { createNoteForUser, lookupNoteForUser, lookupNotesForUser, purgeNotesFromUser, removeNoteFromUser, updateNoteForUser } from '@/lib/notes/index.js';
-import { chunkArray, delay, ellipseString, getMarkdownFriendlyTimestamp } from '@/utilities/index.js'
-
+import {
+    CustomInteraction,
+    CustomInteractionAccessLevel,
+    CustomInteractionRunContext,
+} from '@/common/managers/custom_interactions_manager.js';
+import { CustomEmbed } from '@/common/message.js';
+import {
+    createNoteForUser,
+    lookupNoteForUser,
+    lookupNotesForUser,
+    purgeNotesFromUser,
+    removeNoteFromUser,
+    updateNoteForUser,
+} from '@/lib/notes/index.js';
+import { chunkArray, delay, ellipseString, getMarkdownFriendlyTimestamp } from '@/utilities/index.js';
 
 // ------------------------------------------------------------//
 
-async function manageNotesLookupSubCommandHandler(
-    interaction: Discord.ChatInputCommandInteraction,
-) {
+async function manageNotesLookupSubCommandHandler(interaction: Discord.ChatInputCommandInteraction) {
     if (!interaction.inCachedGuild()) return;
     if (!interaction.isChatInputCommand()) return;
 
@@ -25,47 +33,49 @@ async function manageNotesLookupSubCommandHandler(
     });
 
     if (!user_note) {
-        await interaction.editReply({
-            embeds: [
-                CustomEmbed.from({
-                    color: CustomEmbed.Color.Yellow,
-                    author: {
-                        icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
-                        name: 'Inertia Lighting | User Notes',
-                    },
-                    description: 'I wasn\'t able to find the specified note in the database.',
-                }),
-            ],
-        }).catch(console.warn);
+        await interaction
+            .editReply({
+                embeds: [
+                    CustomEmbed.from({
+                        color: CustomEmbed.Color.Yellow,
+                        author: {
+                            icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
+                            name: 'Inertia Lighting | User Notes',
+                        },
+                        description: "I wasn't able to find the specified note in the database.",
+                    }),
+                ],
+            })
+            .catch(console.warn);
 
         return;
     }
 
-    await interaction.editReply({
-        embeds: [
-            CustomEmbed.from({
-                author: {
-                    icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
-                    name: 'Inertia Lighting | User Notes',
-                },
-                description: [
-                    `**Id** \`${user_note.id}\``,
-                    `**Staff** ${Discord.userMention(user_note.staffUserId)}`,
-                    `**Member** ${Discord.userMention(user_note.notedUserId)}`,
-                    `**Date** <t:${getMarkdownFriendlyTimestamp(user_note.createdAt.getUTCMilliseconds())}:f>`,
-                    '**Content**',
-                    '```',
-                    `${ellipseString(Discord.escapeMarkdown(user_note.note), 512)}`,
-                    '```',
-                ].join('\n'),
-            }),
-        ],
-    }).catch(console.warn);
+    await interaction
+        .editReply({
+            embeds: [
+                CustomEmbed.from({
+                    author: {
+                        icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
+                        name: 'Inertia Lighting | User Notes',
+                    },
+                    description: [
+                        `**Id** \`${user_note.id}\``,
+                        `**Staff** ${Discord.userMention(user_note.staffUserId)}`,
+                        `**Member** ${Discord.userMention(user_note.notedUserId)}`,
+                        `**Date** <t:${getMarkdownFriendlyTimestamp(user_note.createdAt.getUTCMilliseconds())}:f>`,
+                        '**Content**',
+                        '```',
+                        `${ellipseString(Discord.escapeMarkdown(user_note.note), 512)}`,
+                        '```',
+                    ].join('\n'),
+                }),
+            ],
+        })
+        .catch(console.warn);
 }
 
-async function manageNotesForSubCommandHandler(
-    interaction: Discord.ChatInputCommandInteraction,
-) {
+async function manageNotesForSubCommandHandler(interaction: Discord.ChatInputCommandInteraction) {
     if (!interaction.inCachedGuild()) return;
     if (!interaction.isChatInputCommand()) return;
 
@@ -84,26 +94,30 @@ async function manageNotesForSubCommandHandler(
 
     const user_notes = await lookupNotesForUser({
         discordId: user.id,
-    })
+    });
 
     if (user_notes.length === 0) {
-        await bot_message.edit({
-            embeds: [
-                CustomEmbed.from({
-                    color: CustomEmbed.Color.Yellow,
-                    author: {
-                        icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
-                        name: 'Inertia Lighting | User Notes',
-                    },
-                    description: 'I wasn\'t able to find any notes for that user.',
-                }),
-            ],
-        }).catch(console.warn);
+        await bot_message
+            .edit({
+                embeds: [
+                    CustomEmbed.from({
+                        color: CustomEmbed.Color.Yellow,
+                        author: {
+                            icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
+                            name: 'Inertia Lighting | User Notes',
+                        },
+                        description: "I wasn't able to find any notes for that user.",
+                    }),
+                ],
+            })
+            .catch(console.warn);
 
         return;
     }
 
-    const sorted_user_notes = user_notes.sort((a, b) => b.createdAt.getUTCMilliseconds() - a.createdAt.getUTCMilliseconds());
+    const sorted_user_notes = user_notes.sort(
+        (a, b) => b.createdAt.getUTCMilliseconds() - a.createdAt.getUTCMilliseconds(),
+    );
     const user_notes_chunks = chunkArray(sorted_user_notes, 5);
 
     if (user_notes_chunks.length > 1) {
@@ -117,12 +131,14 @@ async function manageNotesForSubCommandHandler(
                             style: Discord.ButtonStyle.Secondary,
                             custom_id: 'previous',
                             label: 'Previous',
-                        }, {
+                        },
+                        {
                             type: Discord.ComponentType.Button,
                             style: Discord.ButtonStyle.Secondary,
                             custom_id: 'next',
                             label: 'Next',
-                        }, {
+                        },
+                        {
                             type: Discord.ComponentType.Button,
                             style: Discord.ButtonStyle.Danger,
                             custom_id: 'stop',
@@ -139,35 +155,38 @@ async function manageNotesForSubCommandHandler(
     async function editEmbedWithNextUserNotesChunk() {
         const user_notes_chunk = user_notes_chunks[page_index];
 
-        await bot_message.edit({
-            embeds: [
-                CustomEmbed.from({
-                    author: {
-                        icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
-                        name: 'Inertia Lighting | User Notes',
-                    },
-                    description: user_notes_chunk.map(user_note =>
-                        [
-                            `**Id** \`${user_note.id}\``,
-                            `**Staff** ${Discord.userMention(user_note.staffUser.discordId)}`,
-                            `**Member** ${Discord.userMention(user_note.notedUser.discordId)}`,
-                            `**Date** <t:${`${user_note.createdAt}`.slice(0, -3)}:f>`,
-                            '**Content**',
-                            '```',
-                            `${ellipseString(Discord.escapeMarkdown(user_note.note), 250)}`,
-                            '```',
-                        ].join('\n')
-                    ).join('\n'),
-                }),
-            ],
-        }).catch(console.warn);
+        await bot_message
+            .edit({
+                embeds: [
+                    CustomEmbed.from({
+                        author: {
+                            icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
+                            name: 'Inertia Lighting | User Notes',
+                        },
+                        description: user_notes_chunk
+                            .map((user_note) =>
+                                [
+                                    `**Id** \`${user_note.id}\``,
+                                    `**Staff** ${Discord.userMention(user_note.staffUser.discordId)}`,
+                                    `**Member** ${Discord.userMention(user_note.notedUser.discordId)}`,
+                                    `**Date** <t:${`${user_note.createdAt}`.slice(0, -3)}:f>`,
+                                    '**Content**',
+                                    '```',
+                                    `${ellipseString(Discord.escapeMarkdown(user_note.note), 250)}`,
+                                    '```',
+                                ].join('\n'),
+                            )
+                            .join('\n'),
+                    }),
+                ],
+            })
+            .catch(console.warn);
     }
 
     await editEmbedWithNextUserNotesChunk();
 
-    const message_button_collector_filter = (
-        button_interaction: Discord.MessageComponentInteraction,
-    ) => button_interaction.user.id === interaction.user.id;
+    const message_button_collector_filter = (button_interaction: Discord.MessageComponentInteraction) =>
+        button_interaction.user.id === interaction.user.id;
 
     const message_button_collector = bot_message.createMessageComponentCollector({
         filter: message_button_collector_filter,
@@ -210,57 +229,60 @@ async function manageNotesForSubCommandHandler(
     });
 }
 
-async function manageNotesAddSubCommandHandler(
-    interaction: Discord.ChatInputCommandInteraction,
-) {
+async function manageNotesAddSubCommandHandler(interaction: Discord.ChatInputCommandInteraction) {
     if (!interaction.inCachedGuild()) return;
     if (!interaction.isChatInputCommand()) return;
 
     const user = interaction.options.getUser('user', true);
     const note = interaction.options.getString('note', true);
 
-    const note_was_created_successfully = await createNoteForUser({
-        discordId: user.id,
-    }, {
-        epoch: Date.now(),
-        note: note,
-        staffId: interaction.user.id,
-    });
+    const note_was_created_successfully = await createNoteForUser(
+        {
+            discordId: user.id,
+        },
+        {
+            epoch: Date.now(),
+            note: note,
+            staffId: interaction.user.id,
+        },
+    );
 
     if (!note_was_created_successfully) {
-        await interaction.editReply({
-            embeds: [
-                CustomEmbed.from({
-                    color: CustomEmbed.Color.Red,
-                    author: {
-                        icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
-                        name: 'Inertia Lighting | User Notes',
-                    },
-                    description: 'An error occurred while creating a note for the user.',
-                }),
-            ],
-        }).catch(console.warn);
+        await interaction
+            .editReply({
+                embeds: [
+                    CustomEmbed.from({
+                        color: CustomEmbed.Color.Red,
+                        author: {
+                            icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
+                            name: 'Inertia Lighting | User Notes',
+                        },
+                        description: 'An error occurred while creating a note for the user.',
+                    }),
+                ],
+            })
+            .catch(console.warn);
 
         return;
     }
 
-    await interaction.editReply({
-        embeds: [
-            CustomEmbed.from({
-                color: CustomEmbed.Color.Green,
-                author: {
-                    icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
-                    name: 'Inertia Lighting | User Notes',
-                },
-                description: 'Successfully created note for user.',
-            }),
-        ],
-    }).catch(console.warn);
+    await interaction
+        .editReply({
+            embeds: [
+                CustomEmbed.from({
+                    color: CustomEmbed.Color.Green,
+                    author: {
+                        icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
+                        name: 'Inertia Lighting | User Notes',
+                    },
+                    description: 'Successfully created note for user.',
+                }),
+            ],
+        })
+        .catch(console.warn);
 }
 
-async function manageNotesEditSubCommandHandler(
-    interaction: Discord.ChatInputCommandInteraction,
-) {
+async function manageNotesEditSubCommandHandler(interaction: Discord.ChatInputCommandInteraction) {
     if (!interaction.inCachedGuild()) return;
     if (!interaction.isChatInputCommand()) return;
 
@@ -272,18 +294,20 @@ async function manageNotesEditSubCommandHandler(
     });
 
     if (!note_in_database) {
-        await interaction.editReply({
-            embeds: [
-                CustomEmbed.from({
-                    color: CustomEmbed.Color.Yellow,
-                    author: {
-                        icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
-                        name: 'Inertia Lighting | User Notes',
-                    },
-                    description: 'Unable to find specified note id in the database!',
-                }),
-            ],
-        }).catch(console.warn);
+        await interaction
+            .editReply({
+                embeds: [
+                    CustomEmbed.from({
+                        color: CustomEmbed.Color.Yellow,
+                        author: {
+                            icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
+                            name: 'Inertia Lighting | User Notes',
+                        },
+                        description: 'Unable to find specified note id in the database!',
+                    }),
+                ],
+            })
+            .catch(console.warn);
 
         return;
     }
@@ -296,39 +320,41 @@ async function manageNotesEditSubCommandHandler(
     });
 
     if (!successfully_updated_note) {
-        await interaction.editReply({
-            embeds: [
-                CustomEmbed.from({
-                    color: CustomEmbed.Color.Red,
-                    author: {
-                        icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
-                        name: 'Inertia Lighting | User Notes',
-                    },
-                    description: 'An error occurred while updating a note for the user.',
-                }),
-            ],
-        }).catch(console.warn);
+        await interaction
+            .editReply({
+                embeds: [
+                    CustomEmbed.from({
+                        color: CustomEmbed.Color.Red,
+                        author: {
+                            icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
+                            name: 'Inertia Lighting | User Notes',
+                        },
+                        description: 'An error occurred while updating a note for the user.',
+                    }),
+                ],
+            })
+            .catch(console.warn);
 
         return;
     }
 
-    await interaction.editReply({
-        embeds: [
-            CustomEmbed.from({
-                color: CustomEmbed.Color.Green,
-                author: {
-                    icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
-                    name: 'Inertia Lighting | User Notes',
-                },
-                description: 'Successfully updated note for user.',
-            }),
-        ],
-    }).catch(console.warn);
+    await interaction
+        .editReply({
+            embeds: [
+                CustomEmbed.from({
+                    color: CustomEmbed.Color.Green,
+                    author: {
+                        icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
+                        name: 'Inertia Lighting | User Notes',
+                    },
+                    description: 'Successfully updated note for user.',
+                }),
+            ],
+        })
+        .catch(console.warn);
 }
 
-async function manageNotesRemoveSubCommandHandler(
-    interaction: Discord.ChatInputCommandInteraction,
-) {
+async function manageNotesRemoveSubCommandHandler(interaction: Discord.ChatInputCommandInteraction) {
     if (!interaction.inCachedGuild()) return;
     if (!interaction.isChatInputCommand()) return;
 
@@ -339,18 +365,20 @@ async function manageNotesRemoveSubCommandHandler(
     });
 
     if (!note_in_database) {
-        await interaction.editReply({
-            embeds: [
-                CustomEmbed.from({
-                    color: CustomEmbed.Color.Yellow,
-                    author: {
-                        icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
-                        name: 'Inertia Lighting | User Notes',
-                    },
-                    description: 'That note ID was not found in the database!',
-                }),
-            ],
-        }).catch(console.warn);
+        await interaction
+            .editReply({
+                embeds: [
+                    CustomEmbed.from({
+                        color: CustomEmbed.Color.Yellow,
+                        author: {
+                            icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
+                            name: 'Inertia Lighting | User Notes',
+                        },
+                        description: 'That note ID was not found in the database!',
+                    }),
+                ],
+            })
+            .catch(console.warn);
 
         return;
     }
@@ -360,39 +388,41 @@ async function manageNotesRemoveSubCommandHandler(
     });
 
     if (!successfully_removed_note) {
-        await interaction.editReply({
-            embeds: [
-                CustomEmbed.from({
-                    color: CustomEmbed.Color.Red,
-                    author: {
-                        icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
-                        name: 'Inertia Lighting | User Notes',
-                    },
-                    description: 'An error occurred while removing a note for the user.',
-                }),
-            ],
-        }).catch(console.warn);
+        await interaction
+            .editReply({
+                embeds: [
+                    CustomEmbed.from({
+                        color: CustomEmbed.Color.Red,
+                        author: {
+                            icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
+                            name: 'Inertia Lighting | User Notes',
+                        },
+                        description: 'An error occurred while removing a note for the user.',
+                    }),
+                ],
+            })
+            .catch(console.warn);
 
         return;
     }
 
-    await interaction.editReply({
-        embeds: [
-            CustomEmbed.from({
-                color: CustomEmbed.Color.Green,
-                author: {
-                    icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
-                    name: 'Inertia Lighting | User Notes',
-                },
-                description: 'Successfully removed a note from user.',
-            }),
-        ],
-    }).catch(console.warn);
+    await interaction
+        .editReply({
+            embeds: [
+                CustomEmbed.from({
+                    color: CustomEmbed.Color.Green,
+                    author: {
+                        icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
+                        name: 'Inertia Lighting | User Notes',
+                    },
+                    description: 'Successfully removed a note from user.',
+                }),
+            ],
+        })
+        .catch(console.warn);
 }
 
-async function manageNotesPurgeSubCommandHandler(
-    interaction: Discord.ChatInputCommandInteraction,
-) {
+async function manageNotesPurgeSubCommandHandler(interaction: Discord.ChatInputCommandInteraction) {
     if (!interaction.inCachedGuild()) return;
     if (!interaction.isChatInputCommand()) return;
 
@@ -401,34 +431,38 @@ async function manageNotesPurgeSubCommandHandler(
     const successfully_purged_notes = await purgeNotesFromUser({ discordId: user.id });
 
     if (!successfully_purged_notes) {
-        await interaction.editReply({
-            embeds: [
-                CustomEmbed.from({
-                    color: CustomEmbed.Color.Red,
-                    author: {
-                        icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
-                        name: 'Inertia Lighting | User Notes',
-                    },
-                    description: `An error occurred while removing all notes from ${Discord.userMention(user.id)}.`,
-                }),
-            ],
-        }).catch(console.warn);
+        await interaction
+            .editReply({
+                embeds: [
+                    CustomEmbed.from({
+                        color: CustomEmbed.Color.Red,
+                        author: {
+                            icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
+                            name: 'Inertia Lighting | User Notes',
+                        },
+                        description: `An error occurred while removing all notes from ${Discord.userMention(user.id)}.`,
+                    }),
+                ],
+            })
+            .catch(console.warn);
 
         return;
     }
 
-    await interaction.editReply({
-        embeds: [
-            CustomEmbed.from({
-                color: CustomEmbed.Color.Green,
-                author: {
-                    icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
-                    name: 'Inertia Lighting | User Notes',
-                },
-                description: `Successfully removed all notes from ${Discord.userMention(user.id)}.`,
-            }),
-        ],
-    }).catch(console.warn);
+    await interaction
+        .editReply({
+            embeds: [
+                CustomEmbed.from({
+                    color: CustomEmbed.Color.Green,
+                    author: {
+                        icon_url: `${interaction.client.user.displayAvatarURL({ forceStatic: false })}`,
+                        name: 'Inertia Lighting | User Notes',
+                    },
+                    description: `Successfully removed all notes from ${Discord.userMention(user.id)}.`,
+                }),
+            ],
+        })
+        .catch(console.warn);
 }
 
 // ------------------------------------------------------------//
@@ -454,7 +488,8 @@ export default new CustomInteraction({
                         required: true,
                     },
                 ],
-            }, {
+            },
+            {
                 type: Discord.ApplicationCommandOptionType.Subcommand,
                 name: 'for',
                 description: 'Find all notes for a user.',
@@ -466,7 +501,8 @@ export default new CustomInteraction({
                         required: true,
                     },
                 ],
-            }, {
+            },
+            {
                 type: Discord.ApplicationCommandOptionType.Subcommand,
                 name: 'add',
                 description: 'Add a note to a user.',
@@ -476,7 +512,8 @@ export default new CustomInteraction({
                         name: 'user',
                         description: 'The user to add a note to.',
                         required: true,
-                    }, {
+                    },
+                    {
                         type: Discord.ApplicationCommandOptionType.String,
                         name: 'note',
                         description: 'The note to add to the user.',
@@ -485,7 +522,8 @@ export default new CustomInteraction({
                         required: true,
                     },
                 ],
-            }, {
+            },
+            {
                 type: Discord.ApplicationCommandOptionType.Subcommand,
                 name: 'edit',
                 description: 'Edit a note for a user.',
@@ -495,7 +533,8 @@ export default new CustomInteraction({
                         name: 'note_id',
                         description: 'The id of the note to edit.',
                         required: true,
-                    }, {
+                    },
+                    {
                         type: Discord.ApplicationCommandOptionType.String,
                         name: 'note',
                         description: 'The new note to replace the old one with.',
@@ -504,7 +543,8 @@ export default new CustomInteraction({
                         required: true,
                     },
                 ],
-            }, {
+            },
+            {
                 type: Discord.ApplicationCommandOptionType.Subcommand,
                 name: 'remove',
                 description: 'Remove a note from a user.',
@@ -516,7 +556,8 @@ export default new CustomInteraction({
                         required: true,
                     },
                 ],
-            }, {
+            },
+            {
                 type: Discord.ApplicationCommandOptionType.Subcommand,
                 name: 'purge',
                 description: 'Purge all notes for a user.',

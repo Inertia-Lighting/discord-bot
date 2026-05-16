@@ -4,13 +4,10 @@
 
 import * as Discord from 'discord.js';
 
-import { CustomEmbed } from '@/common/message.js'
-;
+import { CustomEmbed } from '@/common/message.js';
 
-import { BaseSupportCategoryHandler } from '../core/base-handler.js'
-;
-import { SupportCategoryId, SupportTicketContext } from '../types/index.js'
-;
+import { BaseSupportCategoryHandler } from '../core/base-handler.js';
+import { SupportCategoryId, SupportTicketContext } from '../types/index.js';
 
 /**
  * Handler for product issues support category
@@ -52,11 +49,11 @@ export class ProductIssuesHandler extends BaseSupportCategoryHandler {
     /**
      * Sends additional messages specific to product issues
      */
-     
+
     protected async sendAdditionalMessages(
         context: SupportTicketContext,
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        _interaction: Discord.ModalSubmitInteraction<'cached'>
+        _interaction: Discord.ModalSubmitInteraction<'cached'>,
     ): Promise<void> {
         await context.channel!.send({
             content: `${Discord.userMention(context.owner.id)}`,
@@ -91,27 +88,27 @@ export class ProductIssuesHandler extends BaseSupportCategoryHandler {
                 console.error(`Product validation failed: "${product}"`);
                 return false;
             }
-            
+
             if (!readMe || !['yes', 'no'].includes(readMe.trim().toLowerCase())) {
                 console.error(`ReadMe validation failed: "${readMe}"`);
                 return false;
             }
-            
+
             if (!http || !['yes', 'no', 'idk'].includes(http.trim().toLowerCase())) {
                 console.error(`HTTP validation failed: "${http}"`);
                 return false;
             }
-            
+
             if (!output || output.trim().length < 25 || !output.startsWith('https://pastebin.com/')) {
                 console.error(`Output validation failed: "${output}"`);
                 return false;
             }
 
-            if (!output.startsWith('https://pastebin.com/')){
-              console.error(`Invalid Output URL: ${output}`)
-        return false;
+            if (!output.startsWith('https://pastebin.com/')) {
+                console.error(`Invalid Output URL: ${output}`);
+                return false;
             }
-            
+
             if (!issue || issue.trim().length < 1) {
                 console.error(`Issue validation failed: "${issue}"`);
                 return false;

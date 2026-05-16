@@ -4,9 +4,13 @@
 
 import * as Discord from 'discord.js';
 
-import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
-import { CustomEmbed } from '@/common/message.js'
-import prisma from '@/lib/prisma_client.js'
+import {
+    CustomInteraction,
+    CustomInteractionAccessLevel,
+    CustomInteractionRunContext,
+} from '@/common/managers/custom_interactions_manager.js';
+import { CustomEmbed } from '@/common/message.js';
+import prisma from '@/lib/prisma_client.js';
 import config from '@/utilities/bot_config.js';
 
 // ------------------------------------------------------------//
@@ -45,12 +49,14 @@ export default new CustomInteraction({
                     },
                 ],
                 required: true,
-            }, {
+            },
+            {
                 name: 'current_id',
                 type: Discord.ApplicationCommandOptionType.String,
                 description: 'The identity id to find and modify.',
                 required: true,
-            }, {
+            },
+            {
                 name: 'new_id_type',
                 type: Discord.ApplicationCommandOptionType.String,
                 description: 'The identity type to modify.',
@@ -65,7 +71,8 @@ export default new CustomInteraction({
                     },
                 ],
                 required: true,
-            }, {
+            },
+            {
                 name: 'new_id',
                 type: Discord.ApplicationCommandOptionType.String,
                 description: 'The identity id to set.',
@@ -98,7 +105,7 @@ export default new CustomInteraction({
                     CustomEmbed.from({
                         color: CustomEmbed.Color.Violet,
                         title: 'Inertia Lighting | Identity Manager',
-                        description: 'You aren\'t allowed to use this command!',
+                        description: "You aren't allowed to use this command!",
                     }),
                 ],
             });
@@ -110,7 +117,7 @@ export default new CustomInteraction({
         const logging_channel = await interaction.client.channels.fetch(config.logging_identity_manager_channel_id);
         if (!logging_channel) throw new Error('Unable to find the identity manager logging channel!');
         if (!logging_channel.isTextBased()) throw new Error('The identity manager logging channel is not text-based!');
-        if(!logging_channel.isSendable()) throw new Error('The identity manager logging channel is not sendable!');
+        if (!logging_channel.isSendable()) throw new Error('The identity manager logging channel is not sendable!');
 
         // get the specified command options
         const current_id_type = interaction.options.getString('current_id_type', true) as IdentityType;
@@ -183,8 +190,8 @@ export default new CustomInteraction({
 
         // fetch the user document to modify from the database
         const db_user_data = await prisma.user.findFirst({
-            where: { 
-                [current_id_type]: current_id 
+            where: {
+                [current_id_type]: current_id,
             },
             select: {
                 discordId: true,
@@ -198,7 +205,7 @@ export default new CustomInteraction({
                     CustomEmbed.from({
                         color: CustomEmbed.Color.Yellow,
                         title: 'Inertia Lighting | Identity Manager',
-                        description: `Unable to find user in database matching identity: \`${Object.keys(IdentityType).find(key => IdentityType[key as keyof typeof IdentityType] === current_id_type)}\` \`${current_id}\``,
+                        description: `Unable to find user in database matching identity: \`${Object.keys(IdentityType).find((key) => IdentityType[key as keyof typeof IdentityType] === current_id_type)}\` \`${current_id}\``,
                     }),
                 ],
             });
@@ -247,7 +254,7 @@ export default new CustomInteraction({
                 },
             });
         } catch (error: unknown) {
-            console.trace('Failed to update the user\'s identity:', error);
+            console.trace("Failed to update the user's identity:", error);
 
             await interaction.editReply({
                 embeds: [
@@ -255,7 +262,7 @@ export default new CustomInteraction({
                         color: CustomEmbed.Color.Red,
                         title: 'Inertia Lighting | Identity Manager',
                         description: [
-                            'Failed to update the user\'s identity.',
+                            "Failed to update the user's identity.",
                             '',
                             '```',
                             `${error}`.slice(0, 512), // limit the error message to 512 characters
@@ -278,7 +285,7 @@ export default new CustomInteraction({
                     color: CustomEmbed.Color.Green,
                     title: 'Inertia Lighting | Identity Manager',
                     description: [
-                        'Successfully updated the user\'s identity.',
+                        "Successfully updated the user's identity.",
                         '',
                         '**Identity Before:**',
                         '```json',
