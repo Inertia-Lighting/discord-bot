@@ -1,3 +1,0 @@
-[submodule "schema"]
-	path = schema
-	url = git@github.com:Inertia-Lighting/prisma-schema.git
