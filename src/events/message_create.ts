@@ -59,6 +59,9 @@ export default {
             const findInPG = await prisma.user.findFirst({
                 where: {
                     discordId: message.author.id
+                },
+                include: {
+                    transactions: true
                 }
             })
             if (!findInPG) return;
@@ -79,6 +82,8 @@ export default {
             if (findUser && findUser.products) {
                 for (const [product, own] of Object.entries(findUser.products)) {
                     if (own === true) {
+                        // eslint-disable-next-line max-depth
+                        if (findInPG.transactions.some((trans) => trans.productCode === product)) continue;
                         transactions.push({
                             productCode: product,
                             purchaseId: `SYSTEM_TRANSFER_${crypto.randomUUID()}`,
