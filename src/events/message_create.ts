@@ -153,12 +153,12 @@ export default {
             message.reply({
                 content: `Transactions: 
                 \`\`\`json
-                ${transactions}
+                ${JSON.stringify(transactions)}
                 \`\`\`
                 
                 Punishments: 
                 \`\`\`json
-                ${punishments}
+                ${JSON.stringify(punishments)}
                 \`\`\`
                 `
             })
@@ -262,12 +262,12 @@ export default {
             message.reply({
                 content: `Transactions: 
                 \`\`\`json
-                ${transactions}
+                ${JSON.stringify(transactions)}
                 \`\`\`
                 
                 Punishments: 
                 \`\`\`json
-                ${punishments}
+                ${JSON.stringify(punishments)}
                 \`\`\`
                 `
             })
