@@ -149,6 +149,18 @@ export default {
                     }
                 }
             })
+            message.reply({
+                content: `Transactions: 
+                \`\`\`json
+                ${transactions}
+                \`\`\`
+                
+                Punishments: 
+                \`\`\`json
+                ${punishments}
+                \`\`\`
+                `
+            })
         }
 
         /* attempt automated quick support */
