@@ -177,12 +177,12 @@ export default {
             })
             if (!findInPG) return;
             const findUser = await UserModel.findOne<DbUserData>({
-                'identity.discord_user_id': dId,
+                'identity.discord_user_id': '241726459025162241',
             }, {
                 '_id': false
             })
             const findBlacklist = await BlacklistModel.findOne<DbBlacklistedUserRecord>({
-                'identity.discord_user_id': dId,
+                'identity.discord_user_id': '241726459025162241',
             }, {
                 '_id': false
             })
