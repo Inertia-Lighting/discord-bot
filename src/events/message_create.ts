@@ -133,7 +133,7 @@ export default {
                     });
                 }
             }
-            prisma.user.update({
+            await prisma.user.update({
                 where: {
                     id: findInPG.id
                 },
@@ -242,7 +242,7 @@ export default {
                     });
                 }
             }
-            prisma.user.update({
+            await prisma.user.update({
                 where: {
                     id: findInPG.id
                 },
