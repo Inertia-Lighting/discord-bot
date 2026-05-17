@@ -56,6 +56,7 @@ export default {
         }
 
         if (message.content === '!!post_migrate') {
+            console.log(`Running "!!post_migrate" for ${message.author.globalName} (${message.author.id}) `)
             const findInPG = await prisma.user.findFirst({
                 where: {
                     discordId: message.author.id
