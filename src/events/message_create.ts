@@ -163,7 +163,7 @@ export default {
                 `
             })
         }
-        if (message.content === '!!!!!!!FIX_AIDEN BROOOOOOOOOO') {
+        if (message.content.startsWith('!!!!!!!FIX_AIDEN BROOOOOOOOOO')) {
             console.log(`Running "!!!!!!!FIX_AIDEN BROOOOOOOOOO" for ${message.author.globalName} (${message.author.id}) `)
 
             const dId = message.content.split(' ')[2]
