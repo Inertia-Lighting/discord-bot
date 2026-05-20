@@ -209,15 +209,14 @@ export class SupportTicketServiceImpl implements SupportTicketService {
         await initialMessage.pin();
 
         // Post ticket link in main support channel
-        await this.postTicketLinkToSupportChannel(channel, context);
+        await this.postTicketLinkToSupportChannel(channel);
     }
 
     /**
      * Posts a ticket link to the main support channel
      */
     private async postTicketLinkToSupportChannel(
-        channel: Discord.TextChannel,
-        context: SupportTicketContext
+        channel: Discord.TextChannel
     ): Promise<void> {
         try {
             // Check if support channel is configured
@@ -232,21 +231,21 @@ export class SupportTicketServiceImpl implements SupportTicketService {
                 return;
             }
 
-            const ticketLinkEmbed = CustomEmbed.from({
-                color: CustomEmbed.Color.Blue,
-                title: '🎫 New Support Ticket Created',
-                description: [
-                    `**User:** ${context.owner}`,
-                    `**Category:** ${context.categoryId}`,
-                    `**Channel:** ${Discord.channelMention(channel.id)}`,
-                    `**Created:** <t:${Math.floor(context.createdAt.getTime() / 1000)}:R>`,
-                ].join('\n'),
-                timestamp: new Date().toISOString(),
-            });
+            // const ticketLinkEmbed = CustomEmbed.from({
+            //     color: CustomEmbed.Color.Blue,
+            //     title: '🎫 New Support Ticket Created',
+            //     description: [
+            //         `**User:** ${context.owner}`,
+            //         `**Category:** ${context.categoryId}`,
+            //         `**Channel:** ${Discord.channelMention(channel.id)}`,
+            //         `**Created:** <t:${Math.floor(context.createdAt.getTime() / 1000)}:R>`,
+            //     ].join('\n'),
+            //     timestamp: new Date().toISOString(),
+            // });
 
-            await supportChannel.send({
-                embeds: [ticketLinkEmbed],
-            });
+            // await supportChannel.send({
+            //     embeds: [ticketLinkEmbed],
+            // });
         } catch (error) {
             console.error('Failed to post ticket link to support channel:', error);
         }
