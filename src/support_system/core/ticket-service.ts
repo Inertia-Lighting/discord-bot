@@ -7,18 +7,15 @@
 import * as Discord from 'discord.js'
 
 import { CustomEmbed } from '@/common/message.js'
-
 import { delay, getMarkdownFriendlyTimestamp } from '@/utilities/index.js'
 
 import { SupportSystemConfig } from '../config/index.js'
-
 import { 
     SupportCategoryId, 
     SupportTicketContext, 
     SupportTicketService,
     TicketPriority 
 } from '../types/index.js'
-
 import { TicketPriorityServiceImpl } from './priority-service.js'
 
 
