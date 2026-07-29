@@ -4,8 +4,8 @@
 
 /* ------------------------------ Dependencies ------------------------------ */
 
-import axios from 'axios'
 import * as Discord from 'discord.js'
+import got from 'got';
 
 import { CustomEmbed } from '@/common/message.js'
 import prisma from '@/lib/prisma_client.js'
@@ -87,19 +87,11 @@ export async function userProfileHandler(
         addProductsByCondition(!!discord_member.roles.cache.get(bot_config.partners_role_id), db_products);
         addProductsByCondition(!!discord_member.roles.cache.get(bot_config.staff_products_role_id), db_products);
     }
-    const roblox_user_data: {
+    const robloxUserData = await got.get<{
         name: string,
         displayName: string,
-    } = await axios({
-        method: 'get',
-        url: `https://users.roblox.com/v1/users/${encodeURIComponent(db_user.robloxId)}`,
-        timeout: 10_000, // 10 seconds
-        validateStatus: (status) => status === 200,
-    }).then(
-        (response) => response.data as {
-            name: string,
-            displayName: string,
-        },
+    }>(`https://users.roblox.com/v1/users/${encodeURIComponent(db_user.robloxId)}`).then(
+        (response) => response.body,
     ).catch(error => {
         console.trace(error);
 
@@ -145,7 +137,7 @@ export async function userProfileHandler(
                         value: `${Discord.userMention(db_user.discordId)}`,
                     }, {
                         name: 'Roblox',
-                        value: `[${`@${roblox_user_data.name}`}](https://roblox.com/users/${db_user.robloxId}/profile) (${roblox_user_data.displayName ?? 'n/a'})`,
+                        value: `[${`@${robloxUserData.name}`}](https://roblox.com/users/${db_user.robloxId}/profile) (${robloxUserData.displayName ?? 'n/a'})`,
                     },
                     // {
                     //     name: 'Lumens',

@@ -284,7 +284,6 @@ export default new CustomInteraction({
             throwHttpErrors: false,
         }).catch((err) => { console.error(err); return undefined; });
 
-        // got returns a Response with statusCode; normalize to axios-like shape for the existing logic
         const normalizedRequest = request ? { status: request.statusCode, data: request.body } : undefined;
 
         if (normalizedRequest && normalizedRequest.status === 200) {

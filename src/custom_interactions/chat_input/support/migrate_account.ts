@@ -4,8 +4,8 @@
 
 /* ------------------------------ Dependencies ------------------------------ */
 
-import axios from 'axios'
 import * as Discord from 'discord.js'
+import got from 'got';
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
 import { CustomEmbed } from '@/common/message.js'
@@ -53,52 +53,66 @@ export default new CustomInteraction({
                 })
             ]
         })
-        const alreadyMigratedResponse = await axios.post<v3Identity>(`https://${api_server}/v3/user/identity/fetch`, {
-            discordId: interaction.user.id,
+        const alreadyMigratedResponse = await got.post<v3Identity>(`https://${api_server}/v3/user/identity/fetch`, {
+            json: {
+                discordId: interaction.user.id,
+            }
         }).catch(() => {
             // Blank
         });
         try {
-        if (alreadyMigratedResponse) {
-            await interaction.editReply({
-                embeds: [
-                    CustomEmbed.from({
-                        color: CustomEmbed.Color.Red,
-                        title: 'Already Migrated',
-                        description: 'Your account is already migrated to V3'
-                    })
-                ]
-            })
-            return;
-        }
-        console.log('Starting migration for ' + interaction.user.username)
-        await interaction.editReply({
-            embeds: [
-                CustomEmbed.from({
-                    color: CustomEmbed.Color.Yellow,
-                    title: 'Migration',
-                    description: 'Migrating account'
+            if (alreadyMigratedResponse) {
+                await interaction.editReply({
+                    embeds: [
+                        CustomEmbed.from({
+                            color: CustomEmbed.Color.Red,
+                            title: 'Already Migrated',
+                            description: 'Your account is already migrated to V3'
+                        })
+                    ]
                 })
-            ]
-        })
-        const migration = await axios.post(`https://${api_server}/v2/user/identity/fetch`, {
-            discord_user_id: interaction.user.id
-        }, {
-            validateStatus: (status) => [200, 404].includes(status)
-        });
-        if (migration.status === 200) {
+                return;
+            }
+            console.log('Starting migration for ' + interaction.user.username)
             await interaction.editReply({
                 embeds: [
                     CustomEmbed.from({
-                        color: CustomEmbed.Color.Green,
+                        color: CustomEmbed.Color.Yellow,
                         title: 'Migration',
-                        description: 'Migration Successful'
+                        description: 'Migrating account'
                     })
                 ]
             })
-        } else {
-        console.log(migration.status)
-        console.log(JSON.stringify(migration.data))
+            const migration = await got.post(`https://${api_server}/v2/user/identity/fetch`, {
+                json: {
+                    discord_user_id: interaction.user.id
+                },
+            },);
+            if (migration.statusCode === 200) {
+                await interaction.editReply({
+                    embeds: [
+                        CustomEmbed.from({
+                            color: CustomEmbed.Color.Green,
+                            title: 'Migration',
+                            description: 'Migration Successful'
+                        })
+                    ]
+                })
+            } else {
+                console.log(migration.statusCode)
+                console.log(JSON.stringify(migration.body))
+                await interaction.editReply({
+                    embeds: [
+                        CustomEmbed.from({
+                            color: CustomEmbed.Color.Red,
+                            title: 'Migration',
+                            description: 'Failed to migrate account'
+                        })
+                    ]
+                })
+            }
+        } catch (err) {
+            console.trace(err)
             await interaction.editReply({
                 embeds: [
                     CustomEmbed.from({
@@ -109,17 +123,5 @@ export default new CustomInteraction({
                 ]
             })
         }
-    } catch (err) {
-        console.trace(err)
-        await interaction.editReply({
-            embeds: [
-                CustomEmbed.from({
-                    color: CustomEmbed.Color.Red,
-                    title: 'Migration',
-                    description: 'Failed to migrate account'
-                })
-            ]
-        })
-    }
     },
 });
