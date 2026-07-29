@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-// ------------------------------------------------------------//
-//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-// ------------------------------------------------------------//
+/* -------------------------------------------------------------------------- */
+/*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
+/* -------------------------------------------------------------------------- */
+
 
 import * as Discord from 'discord.js';
 

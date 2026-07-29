@@ -1,3 +1,7 @@
+/* -------------------------------------------------------------------------- */
+/*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
+/* -------------------------------------------------------------------------- */
+
 export * from './list.js'
 export * from './purge.js'
 export * from './remove.js'

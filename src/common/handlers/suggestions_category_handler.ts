@@ -1,6 +1,7 @@
-// ------------------------------------------------------------//
-//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-// ------------------------------------------------------------//
+/* -------------------------------------------------------------------------- */
+/*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
+/* -------------------------------------------------------------------------- */
+
 
 import { Message } from 'discord.js'
 import { findBestMatch, Rating } from 'string-similarity';

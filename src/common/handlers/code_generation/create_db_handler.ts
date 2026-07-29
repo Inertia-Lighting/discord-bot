@@ -1,3 +1,8 @@
+/* -------------------------------------------------------------------------- */
+/*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
+/* -------------------------------------------------------------------------- */
+
+
 import { Low } from 'lowdb';
 
 import { event_map } from './user_update.js'

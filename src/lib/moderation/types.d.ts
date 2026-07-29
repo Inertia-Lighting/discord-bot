@@ -1,3 +1,7 @@
+/* -------------------------------------------------------------------------- */
+/*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
+/* -------------------------------------------------------------------------- */
+
 enum ModerationActionLookupMode {
     All = 'all',
     DiscordUser = 'member',

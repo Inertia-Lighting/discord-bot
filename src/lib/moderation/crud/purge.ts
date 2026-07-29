@@ -1,3 +1,7 @@
+/* -------------------------------------------------------------------------- */
+/*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
+/* -------------------------------------------------------------------------- */
+
 import * as Discord from 'discord.js'
 
 import { CustomEmbed } from '@/common/message.js';

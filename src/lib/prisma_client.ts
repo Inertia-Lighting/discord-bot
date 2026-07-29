@@ -1,3 +1,7 @@
+/* -------------------------------------------------------------------------- */
+/*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
+/* -------------------------------------------------------------------------- */
+
 import { PrismaPg } from '@prisma/adapter-pg'
 import { env } from 'prisma/config'
 

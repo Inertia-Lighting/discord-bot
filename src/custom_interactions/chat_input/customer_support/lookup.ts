@@ -1,6 +1,7 @@
-// ------------------------------------------------------------//
-//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-// ------------------------------------------------------------//
+/* -------------------------------------------------------------------------- */
+/*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
+/* -------------------------------------------------------------------------- */
+
 
 import { DefaultArgs } from '@prisma/client/runtime/client';
 import * as Discord from 'discord.js';

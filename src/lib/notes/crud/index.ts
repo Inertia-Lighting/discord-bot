@@ -1,3 +1,7 @@
+/* -------------------------------------------------------------------------- */
+/*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
+/* -------------------------------------------------------------------------- */
+
 export * from './createNote.js'
 export * from './lookupNote.js'
 export * from './lookupNotes.js'

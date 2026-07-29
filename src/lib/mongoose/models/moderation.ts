@@ -1,3 +1,7 @@
+/* -------------------------------------------------------------------------- */
+/*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
+/* -------------------------------------------------------------------------- */
+
 import mongoose from 'mongoose';
 
 import { MongoDB } from '@/common/mongo/mongo.js';

@@ -1,6 +1,7 @@
-// ------------------------------------------------------------//
-//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-// ------------------------------------------------------------//
+/* -------------------------------------------------------------------------- */
+/*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
+/* -------------------------------------------------------------------------- */
+
 
 import { ButtonStyle, CommandInteraction, ComponentType } from 'discord.js';
 

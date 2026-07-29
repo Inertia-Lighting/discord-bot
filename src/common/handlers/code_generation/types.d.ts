@@ -1,3 +1,8 @@
+/* -------------------------------------------------------------------------- */
+/*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
+/* -------------------------------------------------------------------------- */
+
+
 interface verification_code_data {
     interaction: CommandInteraction,
     roblox_id: string,
