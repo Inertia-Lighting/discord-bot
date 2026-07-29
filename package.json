@@ -11,11 +11,7 @@
   },
   "type": "module",
   "scripts": {
-    "hook": "is-ci || husky install || true",
     "lint": "npx eslint --fix",
-    "clean": "run-script-os",
-    "clean:linux": "rm -rf ./dist",
-    "clean:default": "rm ./dist",
     "build": "npx prisma generate --no-hints && npx tsc --build && npx tsc-alias",
     "test": "npm run prepare && npx prisma generate --no-hints",
     "prepare": "npm run lint",
@@ -28,16 +24,9 @@
   "devDependencies": {
     "@stylistic/eslint-plugin": "^5.10.0",
     "@types/string-similarity": "4.0.2",
-    "@types/uuid": "11.0.0",
-    "@typescript-eslint/eslint-plugin": "8.65.0",
-    "@typescript-eslint/parser": "8.65.0",
     "eslint": "10.8.0",
-    "eslint-plugin-deprecation": "3.0.0",
     "eslint-plugin-simple-import-sort": "^14.0.0",
     "globals": "^17.8.0",
-    "husky": "9.1.7",
-    "is-ci": "4.1.0",
-    "run-script-os": "1.1.6",
     "typescript": "6.0.3",
     "typescript-eslint": "^8.65.0"
   },
@@ -45,8 +34,6 @@
     "@prisma/adapter-pg": "^7.9.1",
     "@prisma/client": "^7.9.1",
     "axios": "1.18.1",
-    "bufferutil": "4.1.0",
-    "discord-html-transcripts": "3.3.0",
     "discord.js": "14.27.0",
     "dotenv": "17.4.2",
     "got": "^15.1.0",
@@ -54,12 +41,9 @@
     "module-alias": "2.3.4",
     "moment-timezone": "0.6.3",
     "mongoose": "^9.8.1",
-    "node-gyp": "13.0.1",
     "prisma": "^7.9.1",
     "string-similarity": "4.0.4",
-    "tsc-alias": "^1.9.1",
-    "utf-8-validate": "6.0.6",
-    "uuid": "14.0.1"
+    "tsc-alias": "^1.9.1"
   },
   "resolutions": {
     "strip-ansi": "6.0.1",
