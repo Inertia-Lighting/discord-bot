@@ -5,7 +5,7 @@
 /* ------------------------------ Dependencies ------------------------------ */
 /* ------------------------------ Dependencies ------------------------------ */
 
-import * as Discord from 'discord.js';
+import * as Discord from 'discord.js'
 
 import { userProfileHandler } from '@/common/handlers/index.js'
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'

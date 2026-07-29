@@ -3,13 +3,13 @@
 /* -------------------------------------------------------------------------- */
 
 
-import * as Discord from 'discord.js';
-import moment from 'moment-timezone';
+import * as Discord from 'discord.js'
+import moment from 'moment-timezone'
 
 import { illegalNicknameHandler } from '@/common/handlers/index.js'
 import { CustomInteractionsManager } from '@/common/managers/custom_interactions_manager.js'
 import prisma from '@/lib/prisma_client.js'
-import config from '@/utilities/bot_config.js';
+import config from '@/utilities/bot_config.js'
 import { delay } from '@/utilities/index.js'
 
     /* -------------------------------------------------------------------------- */

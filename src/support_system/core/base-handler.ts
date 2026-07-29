@@ -4,7 +4,7 @@
 
 /* ------------------------------ Dependencies ------------------------------ */
 
-import * as Discord from 'discord.js';
+import * as Discord from 'discord.js'
 
 import { CustomEmbed } from '@/common/message.js'
 ;
@@ -142,6 +142,6 @@ export abstract class BaseSupportCategoryHandler implements SupportCategoryHandl
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     protected async getStaffRoleMentions(_context: SupportTicketContext): Promise<string> {
         // This will be implemented by subclasses or retrieved from config
-        return 'support staff';
+        return 'support staff'
     }
 }

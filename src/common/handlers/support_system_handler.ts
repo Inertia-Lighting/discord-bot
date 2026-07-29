@@ -5,11 +5,11 @@
 
 /* ------------------------------ Dependencies ------------------------------ */
 
-import * as Discord from 'discord.js';
+import * as Discord from 'discord.js'
 
-// import * as DiscordTranscripts from 'discord-html-transcripts';
+// import * as DiscordTranscripts from 'discord-html-transcripts'
 import { CustomEmbed } from '@/common/message.js'
-import config from '@/utilities/bot_config.js';
+import config from '@/utilities/bot_config.js'
 import { delay, getMarkdownFriendlyTimestamp } from '@/utilities/index.js'
 
 /* -------------------------------- Constants ------------------------------- */
@@ -882,7 +882,7 @@ export async function closeSupportTicketChannel(
 
         const support_ticket_creation_timestamp = support_channel.createdTimestamp ? (
             `<t:${getMarkdownFriendlyTimestamp(support_channel.createdTimestamp)}:F>`
-        ) : 'unknown';
+        ) : 'unknown'
 
         // const transcript = await DiscordTranscripts.createTranscript(support_channel, {
         //     limit: -1,

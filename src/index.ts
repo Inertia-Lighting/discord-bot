@@ -7,10 +7,10 @@
 import 'dotenv/config'
 
 import fs from 'node:fs'
-import path, { dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import path, { dirname } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
-import * as Discord from 'discord.js';
+import * as Discord from 'discord.js'
 
 /* ---------------------- Rejection/Exception Handlers ---------------------- */
 

@@ -4,10 +4,10 @@
 
 /* ------------------------------ Dependencies ------------------------------ */
 
-import mongoose from 'mongoose';
+import mongoose from 'mongoose'
 
-import { MongoDB } from '@/common/mongo/mongo.js';
-import type { DbUserData } from '@/types/index.js';
+import { MongoDB } from '@/common/mongo/mongo.js'
+import type { DbUserData } from '@/types/index.js'
 
 /* -------------------------- Environment Variables ------------------------- */
 

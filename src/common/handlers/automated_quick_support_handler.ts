@@ -4,8 +4,8 @@
 
 /* ------------------------------ Dependencies ------------------------------ */
 
-import * as Discord from 'discord.js';
-import { compareTwoStrings } from 'string-similarity';
+import * as Discord from 'discord.js'
+import { compareTwoStrings } from 'string-similarity'
 
 import { CustomEmbed } from '@/common/message.js'
 import { clampNumber } from '@/utilities/index.js'

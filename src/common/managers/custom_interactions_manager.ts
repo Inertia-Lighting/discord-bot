@@ -18,15 +18,15 @@
 
 /* ------------------------------ Dependencies ------------------------------ */
 
-import { createRequire } from 'node:module';
-import path from 'node:path';
+import { createRequire } from 'node:module'
+import path from 'node:path'
 
-import * as Discord from 'discord.js';
+import * as Discord from 'discord.js'
 
 import { CustomEmbed } from '@/common/message.js'
 import { DistributiveOmit } from '@/types/index.js'
 import { delay, findJSFiles } from '@/utilities/index.js'
-import { fetchPermissions, isDeveloper } from '@/utilities/permissions.js';
+import { fetchPermissions, isDeveloper } from '@/utilities/permissions.js'
 
 /* -------------------------------- Constants ------------------------------- */
 

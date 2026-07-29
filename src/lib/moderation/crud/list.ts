@@ -5,12 +5,12 @@
 /* ------------------------------ Dependencies ------------------------------ */
 
 import * as Discord from 'discord.js'
-import moment from 'moment-timezone';
+import moment from 'moment-timezone'
 
-import { CustomEmbed } from '@/common/message.js';
-import { Prisma } from '@/lib/prisma/client.js';
-import prisma from '@/lib/prisma_client.js';
-import { chunkArray, delay, ellipseString } from '@/utilities/index.js';
+import { CustomEmbed } from '@/common/message.js'
+import { Prisma } from '@/lib/prisma/client.js'
+import prisma from '@/lib/prisma_client.js'
+import { chunkArray, delay, ellipseString } from '@/utilities/index.js'
 
 /* ------------------------------- Definition ------------------------------- */
 

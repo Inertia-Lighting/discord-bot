@@ -4,9 +4,9 @@
 
 /* ------------------------------ Dependencies ------------------------------ */
 
-import prisma from '@/lib/prisma_client.js';
+import prisma from '@/lib/prisma_client.js'
 
-import { FullNote } from '../types.js';
+import { FullNote } from '../types.js'
 
 /* ------------------------------- Definition ------------------------------- */
 

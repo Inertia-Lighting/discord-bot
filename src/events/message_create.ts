@@ -3,14 +3,14 @@
 /* -------------------------------------------------------------------------- */
 
 
-import * as Discord from 'discord.js';
+import * as Discord from 'discord.js'
 
 import { automatedQuickSupportHandler, suggestionsCategoryHandler } from '@/common/handlers/index.js'
-import { BlacklistModel, UserModel } from '@/lib/mongoose/models/index.js';
-import { Prisma } from '@/lib/prisma/client.js';
-import prisma from '@/lib/prisma_client.js';
-import { DbBlacklistedUserRecord, DbUserData } from '@/types/index.js';
-import config from '@/utilities/bot_config.js';
+import { BlacklistModel, UserModel } from '@/lib/mongoose/models/index.js'
+import { Prisma } from '@/lib/prisma/client.js'
+import prisma from '@/lib/prisma_client.js'
+import { DbBlacklistedUserRecord, DbUserData } from '@/types/index.js'
+import config from '@/utilities/bot_config.js'
 
     /* -------------------------------------------------------------------------- */
 

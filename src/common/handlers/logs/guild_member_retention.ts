@@ -4,7 +4,7 @@
 
 /* ------------------------------ Dependencies ------------------------------ */
 
-import * as Discord from 'discord.js';
+import * as Discord from 'discord.js'
 
 import { CustomEmbed } from '@/common/message.js'
 import config from '@/utilities/bot_config.js'
@@ -129,7 +129,7 @@ async function guildMemberBannedLogger(
 
     const member_banned_timestamp = getMarkdownFriendlyTimestamp(Date.now());
 
-    const ban_reason = guild_ban.reason ?? 'Unknown';
+    const ban_reason = guild_ban.reason ?? 'Unknown'
 
     await member_retention_logging_channel.send({
         embeds: [

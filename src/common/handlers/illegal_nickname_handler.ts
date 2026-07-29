@@ -3,18 +3,18 @@
 /* -------------------------------------------------------------------------- */
 
 
-import * as Discord from 'discord.js';
+import * as Discord from 'discord.js'
 
 import { delay } from '@/utilities/index.js'
-import { fetchPermissions } from '@/utilities/permissions.js';
+import { fetchPermissions } from '@/utilities/permissions.js'
 
 /* -------------------------------- Constants ------------------------------- */
 
 
 const non_allowed_regex_filter = /[^\w\d]|_/gi;
 
-const display_name_override_nickname = 'Illegal Nickname';
-const display_name_override_reason = 'The user\'s display name contained too many non-allowed characters.';
+const display_name_override_nickname = 'Illegal Nickname'
+const display_name_override_reason = 'The user\'s display name contained too many non-allowed characters.'
 
 /* ------------------------------- Definition ------------------------------- */
 

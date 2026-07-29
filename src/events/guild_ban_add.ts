@@ -3,10 +3,10 @@
 /* -------------------------------------------------------------------------- */
 
 
-import * as Discord from 'discord.js';
+import * as Discord from 'discord.js'
 
 import { guildMemberBannedLogger } from '@/common/handlers/index.js'
-import config from '@/utilities/bot_config.js';
+import config from '@/utilities/bot_config.js'
 
     /* -------------------------------------------------------------------------- */
 

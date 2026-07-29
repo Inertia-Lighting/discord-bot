@@ -4,9 +4,9 @@
 
 /* ------------------------------ Dependencies ------------------------------ */
 
-import prisma from '@/lib/prisma_client.js';
+import prisma from '@/lib/prisma_client.js'
 
-import { FullPunishment } from '../types.js';
+import { FullPunishment } from '../types.js'
 
 /* ------------------------------- Definition ------------------------------- */
 

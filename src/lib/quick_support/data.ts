@@ -4,7 +4,7 @@
 
 /* ------------------------------ Dependencies ------------------------------ */
 
-import { QSTopic } from '@/types/index.js';
+import { QSTopic } from '@/types/index.js'
 
 /* ------------------------------- Definition ------------------------------- */
 

@@ -4,7 +4,7 @@
 
 /* ------------------------------ Dependencies ------------------------------ */
 
-import * as Discord from 'discord.js';
+import * as Discord from 'discord.js'
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
 import { loadSupportSystemConfig } from '@/support_system/config/index.js'
@@ -121,7 +121,7 @@ export default new CustomInteraction({
         } catch (error) {
             console.error('Error changing ticket type:', error);
             
-            let errorMessage = 'An error occurred while changing the ticket type.';
+            let errorMessage = 'An error occurred while changing the ticket type.'
             if (error instanceof Error) {
                 errorMessage = error.message;
             }

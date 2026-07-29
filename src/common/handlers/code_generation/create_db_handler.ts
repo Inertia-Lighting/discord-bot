@@ -4,10 +4,9 @@
 
 /* ------------------------------ Dependencies ------------------------------ */
 
-import { Low } from 'lowdb';
+import { Low } from 'lowdb'
 
 import { event_map } from './user_update.js'
-;
 
 /* -------------------------------- Constants ------------------------------- */
 

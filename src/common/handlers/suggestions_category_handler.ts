@@ -5,11 +5,11 @@
 /* ------------------------------ Dependencies ------------------------------ */
 
 import { Message } from 'discord.js'
-import { findBestMatch, Rating } from 'string-similarity';
+import { findBestMatch, Rating } from 'string-similarity'
 
 import { CustomEmbed } from '@/common/message.js'
 import { delay, ellipseString } from '@/utilities/index.js'
-import { fetchPermissions } from '@/utilities/permissions.js';
+import { fetchPermissions } from '@/utilities/permissions.js'
 
 /* -------------------------------- Constants ------------------------------- */
 

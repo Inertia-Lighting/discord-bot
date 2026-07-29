@@ -4,14 +4,13 @@
 
 /* ------------------------------ Dependencies ------------------------------ */
 
-import { ButtonStyle, CommandInteraction, ComponentType } from 'discord.js';
+import { ButtonStyle, CommandInteraction, ComponentType } from 'discord.js'
 
 import { getMarkdownFriendlyTimestamp } from '@/utilities/index.js'
-;
 
-import { CustomEmbed } from '../../message.js';
-import create_db_handler from './create_db_handler.js';
-import { event_map, getUserUpdates,RobloxUsersApiUser, UserDataClient } from './user_update.js';
+import { CustomEmbed } from '../../message.js'
+import create_db_handler from './create_db_handler.js'
+import { event_map, getUserUpdates,RobloxUsersApiUser, UserDataClient } from './user_update.js'
 
 /* -------------------------------- Constants ------------------------------- */
 
@@ -95,7 +94,7 @@ export async function generateVerificationCode(user_id: string, interaction: Com
         /* -------------------------------------------------------------------------- */
 
 
-    let code: string = '';
+    let code: string = ''
     const random_places: Array<[number, string]> = [];
     special_word_array.forEach((word) => {
         let isValid;

@@ -5,17 +5,17 @@
 
 /* ------------------------------ Dependencies ------------------------------ */
 
-import { randomUUID } from 'node:crypto';
+import { randomUUID } from 'node:crypto'
 
-import * as Discord from 'discord.js';
-import { compareTwoStrings } from 'string-similarity';
+import * as Discord from 'discord.js'
+import { compareTwoStrings } from 'string-similarity'
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
 import { CustomEmbed } from '@/common/message.js'
-import { TransactionsCreateManyUserInput } from '@/lib/prisma/models.js';
+import { TransactionsCreateManyUserInput } from '@/lib/prisma/models.js'
 import prisma from '@/lib/prisma_client.js'
-import config from '@/utilities/bot_config.js';
-import { DbProductsCache } from '@/utilities/productCache.js';
+import config from '@/utilities/bot_config.js'
+import { DbProductsCache } from '@/utilities/productCache.js'
 
 /* -------------------------------- Constants ------------------------------- */
 
@@ -32,8 +32,8 @@ enum ManageTransactionsAction {
 }
 
 
-const ALL_PRODUCTS_CODE = 'ALL';
-const ALL_VIEWABLE_PRODUCTS_CODE = 'ALL_VIEWABLE';
+const ALL_PRODUCTS_CODE = 'ALL'
+const ALL_VIEWABLE_PRODUCTS_CODE = 'ALL_VIEWABLE'
 
 /* -------------------------------- Functions ------------------------------- */
 

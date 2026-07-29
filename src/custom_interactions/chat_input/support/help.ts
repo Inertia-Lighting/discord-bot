@@ -4,11 +4,11 @@
 
 /* ------------------------------ Dependencies ------------------------------ */
 
-import * as Discord from 'discord.js';
+import * as Discord from 'discord.js'
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext, CustomInteractionsManager } from '@/common/managers/custom_interactions_manager.js'
 import { CustomEmbed } from '@/common/message.js'
-import { fetchPermissions } from '@/utilities/permissions.js';
+import { fetchPermissions } from '@/utilities/permissions.js'
 
 /* ------------------------------- Definition ------------------------------- */
 

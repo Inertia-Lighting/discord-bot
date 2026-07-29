@@ -4,7 +4,7 @@
 
 /* ------------------------------ Dependencies ------------------------------ */
 
-import type MongoDB from 'mongodb';
+import type MongoDB from 'mongodb'
 
 import { AccountType, Prisma, Verification } from '@/lib/prisma.js'
 
@@ -62,7 +62,7 @@ interface DbBlacklistedUserRecord {
     staff_member_id: string;
 }
 
-type DbModerationActionType = 'WARN' | 'TIMEOUT' | 'MUTE' | 'KICK' | 'BAN';
+type DbModerationActionType = 'WARN' | 'TIMEOUT' | 'MUTE' | 'KICK' | 'BAN'
 
 interface DbModerationActionRecord {
     id: string, // a UUIDv4 string

@@ -4,7 +4,7 @@
 
 /* ------------------------------ Dependencies ------------------------------ */
 
-import * as Discord from 'discord.js';
+import * as Discord from 'discord.js'
 
 import { CustomEmbed } from '@/common/message.js'
 ;
@@ -298,7 +298,7 @@ export class SupportTicketServiceImpl implements SupportTicketService {
         const ticketOwner = await channel.client.users.fetch(ticketOwnerId);
         const creationTimestamp = channel.createdTimestamp ? 
             `<t:${getMarkdownFriendlyTimestamp(channel.createdTimestamp)}:F>` : 
-            'unknown';
+            'unknown'
 
         // Generate transcript
         // const transcript = await DiscordTranscripts.createTranscript(channel, {

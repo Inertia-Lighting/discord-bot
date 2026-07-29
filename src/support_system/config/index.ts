@@ -4,7 +4,7 @@
 
 /* ------------------------------ Dependencies ------------------------------ */
 
-import config from '@/utilities/bot_config.js';
+import config from '@/utilities/bot_config.js'
 
 import { SatisfactionLevel } from '../types/index.js'
 ;
