@@ -1,6 +1,14 @@
+/* -------------------------------------------------------------------------- */
+/*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
+/* -------------------------------------------------------------------------- */
+
+/* ------------------------------ Dependencies ------------------------------ */
+
 import * as Discord from 'discord.js'
 
 import { staff_roles } from './bot_config.js'
+
+/* ------------------------------- Definition ------------------------------- */
 
 export function fetchPermissions(member: Discord.GuildMember): PermissionLevel {
     const highestStaffRole = member.roles.cache

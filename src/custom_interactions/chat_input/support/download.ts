@@ -1,13 +1,15 @@
-// ------------------------------------------------------------//
-//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-// ------------------------------------------------------------//
+/* -------------------------------------------------------------------------- */
+/*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
+/* -------------------------------------------------------------------------- */
 
-import * as Discord from 'discord.js';
+/* ------------------------------ Dependencies ------------------------------ */
+
+import * as Discord from 'discord.js'
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
 import { CustomEmbed } from '@/common/message.js'
 
-// ------------------------------------------------------------//
+/* ------------------------------- Definition ------------------------------- */
 
 export default new CustomInteraction({
     identifier: 'download',

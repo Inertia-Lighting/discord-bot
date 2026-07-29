@@ -1,20 +1,19 @@
-// ------------------------------------------------------------//
-//    Copyright (c) Inertia Lighting, Some Rights Reserved     //
-// ------------------------------------------------------------//
+/* -------------------------------------------------------------------------- */
+/*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
+/* -------------------------------------------------------------------------- */
 
-import type MongoDB from 'mongodb';
+/* ------------------------------ Dependencies ------------------------------ */
+
+import type MongoDB from 'mongodb'
 
 import { AccountType, Prisma, Verification } from '@/lib/prisma.js'
 
-// ------------------------------------------------------------//
-//                        Helper Types                         //
-// ------------------------------------------------------------//
+/* ------------------------------ Helper Types ------------------------------ */
+
 
 type DistributiveOmit<T, K extends keyof T> = T extends unknown ? Omit<T, K> : never;
 
-// ------------------------------------------------------------//
-//                      Prisma Database Schemas                //
-// ------------------------------------------------------------//
+/* ------------------------- Prisma Database Schemas ------------------------ */
 
 type PrismaUserData = Prisma.UserGetPayload<{
     select: {
@@ -31,9 +30,7 @@ type PrismaProductData = Prisma.ProductsGetPayload<{
     }
 }>
 
-// ------------------------------------------------------------//
-//                      Database Schemas                       //
-// ------------------------------------------------------------//
+/* ---------------------------- Database Schemas ---------------------------- */
 
 interface DbUserIdentity {
     discord_user_id: string;
@@ -57,8 +54,6 @@ interface DbUserData {
     ticket_blacklist?: DbUserTicketBlacklist
 }
 
-// ------------------------------------------------------------//
-
 interface DbBlacklistedUserRecord {
     _id: MongoDB.ObjectId;
     identity: DbUserIdentity;
@@ -67,9 +62,7 @@ interface DbBlacklistedUserRecord {
     staff_member_id: string;
 }
 
-// ------------------------------------------------------------//
-
-type DbModerationActionType = 'WARN' | 'TIMEOUT' | 'MUTE' | 'KICK' | 'BAN';
+type DbModerationActionType = 'WARN' | 'TIMEOUT' | 'MUTE' | 'KICK' | 'BAN'
 
 interface DbModerationActionRecord {
     id: string, // a UUIDv4 string
@@ -85,10 +78,10 @@ interface DbModerationAction {
 }
 
 interface QSTopic {
-  id: string;
-  title: string;
-  searchable_queries: string[],
-  support_contents: string;
+    id: string;
+    title: string;
+    searchable_queries: string[],
+    support_contents: string;
 }
 
 interface UserVerificationContextFetch {
@@ -106,9 +99,7 @@ interface FailedRequest {
 type v3VerificationFetch = UserVerificationContextFetch | FailedRequest
 
 declare global {
-    /* -------------------------------------------------------------------------- */
-    /*                                Interactions                                */
-    /* -------------------------------------------------------------------------- */
+    /* ------------------------------ Interactions ------------------------------ */
 
     type InteractionIdentifier = string;
 

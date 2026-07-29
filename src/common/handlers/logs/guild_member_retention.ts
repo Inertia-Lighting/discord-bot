@@ -1,14 +1,16 @@
-// ------------------------------------------------------------//
-//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-// ------------------------------------------------------------//
+/* -------------------------------------------------------------------------- */
+/*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
+/* -------------------------------------------------------------------------- */
 
-import * as Discord from 'discord.js';
+/* ------------------------------ Dependencies ------------------------------ */
+
+import * as Discord from 'discord.js'
 
 import { CustomEmbed } from '@/common/message.js'
 import config from '@/utilities/bot_config.js'
 import { getMarkdownFriendlyTimestamp } from '@/utilities/index.js'
 
-// ------------------------------------------------------------//
+/* ------------------------------- Definition ------------------------------- */
 
 function discordTimestampsDifferenceInDays(
     newest_timestamp: number | string, // in seconds
@@ -26,7 +28,8 @@ function discordTimestampsDifferenceInDays(
     );
 }
 
-// ------------------------------------------------------------//
+    /* -------------------------------------------------------------------------- */
+
 
 async function guildMemberAddLogger(
     member: Discord.GuildMember,
@@ -125,7 +128,7 @@ async function guildMemberBannedLogger(
 
     const member_banned_timestamp = getMarkdownFriendlyTimestamp(Date.now());
 
-    const ban_reason = guild_ban.reason ?? 'Unknown';
+    const ban_reason = guild_ban.reason ?? 'Unknown'
 
     await member_retention_logging_channel.send({
         embeds: [
@@ -150,7 +153,8 @@ async function guildMemberBannedLogger(
     }).catch(console.trace);
 }
 
-// ------------------------------------------------------------//
+    /* -------------------------------------------------------------------------- */
+
 
 export {
     guildMemberAddLogger,

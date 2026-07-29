@@ -1,15 +1,17 @@
-// ------------------------------------------------------------//
-//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-// ------------------------------------------------------------//
+/* -------------------------------------------------------------------------- */
+/*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
+/* -------------------------------------------------------------------------- */
 
-import * as Discord from 'discord.js';
+/* ------------------------------ Dependencies ------------------------------ */
+
+import * as Discord from 'discord.js'
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
 import { CustomEmbed } from '@/common/message.js'
 import prisma from '@/lib/prisma_client.js'
-import config from '@/utilities/bot_config.js';
+import config from '@/utilities/bot_config.js'
 
-// ------------------------------------------------------------//
+/* -------------------------------- Constants ------------------------------- */
 
 enum IdentityType {
     Roblox = 'robloxId',
@@ -17,11 +19,9 @@ enum IdentityType {
     Discord = 'discordId',
 }
 
-// ------------------------------------------------------------//
-
 const regex_user_id_filter = /^\d+$/;
 
-// ------------------------------------------------------------//
+/* ------------------------------- Definition ------------------------------- */
 
 export default new CustomInteraction({
     identifier: 'manage_user_identity',

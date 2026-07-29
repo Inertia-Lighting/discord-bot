@@ -1,21 +1,23 @@
 /* eslint-disable complexity */
-// ------------------------------------------------------------//
-//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-// ------------------------------------------------------------//
+/* -------------------------------------------------------------------------- */
+/*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
+/* -------------------------------------------------------------------------- */
 
-import { randomUUID } from 'node:crypto';
+/* ------------------------------ Dependencies ------------------------------ */
 
-import * as Discord from 'discord.js';
-import { compareTwoStrings } from 'string-similarity';
+import { randomUUID } from 'node:crypto'
+
+import * as Discord from 'discord.js'
+import { compareTwoStrings } from 'string-similarity'
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
 import { CustomEmbed } from '@/common/message.js'
-import { TransactionsCreateManyUserInput } from '@/lib/prisma/models.js';
+import { TransactionsCreateManyUserInput } from '@/lib/prisma/models.js'
 import prisma from '@/lib/prisma_client.js'
-import config from '@/utilities/bot_config.js';
-import { DbProductsCache } from '@/utilities/productCache.js';
+import config from '@/utilities/bot_config.js'
+import { DbProductsCache } from '@/utilities/productCache.js'
 
-// ------------------------------------------------------------//
+/* -------------------------------- Constants ------------------------------- */
 
 // Note for the future:
 //
@@ -29,12 +31,11 @@ enum ManageTransactionsAction {
     Remove = 'remove',
 }
 
-// ------------------------------------------------------------//
 
-const ALL_PRODUCTS_CODE = 'ALL';
-const ALL_VIEWABLE_PRODUCTS_CODE = 'ALL_VIEWABLE';
+const ALL_PRODUCTS_CODE = 'ALL'
+const ALL_VIEWABLE_PRODUCTS_CODE = 'ALL_VIEWABLE'
 
-// ------------------------------------------------------------//
+/* -------------------------------- Functions ------------------------------- */
 
 async function manageProductsAutocompleteHandler(
     interaction: Discord.AutocompleteInteraction,
@@ -156,7 +157,8 @@ async function manageProductsAutocompleteHandler(
     interaction.respond(autocomplete_results);
 }
 
-// ------------------------------------------------------------//
+    /* -------------------------------------------------------------------------- */
+
 
 // Note:
 //
@@ -538,7 +540,7 @@ async function manageProductsChatInputCommandHandler(
     }).catch(console.warn);
 }
 
-// ------------------------------------------------------------//
+/* ------------------------------- Definition ------------------------------- */
 
 export default new CustomInteraction({
     identifier: 'manage_user_transactions',

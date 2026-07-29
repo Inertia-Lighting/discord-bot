@@ -1,18 +1,19 @@
-// ------------------------------------------------------------//
-//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-// ------------------------------------------------------------//
+/* -------------------------------------------------------------------------- */
+/*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
+/* -------------------------------------------------------------------------- */
 
-import * as Discord from 'discord.js';
-import moment from 'moment-timezone';
+/* ------------------------------ Dependencies ------------------------------ */
+
+import * as Discord from 'discord.js'
+import moment from 'moment-timezone'
 
 import { illegalNicknameHandler } from '@/common/handlers/index.js'
 import { CustomInteractionsManager } from '@/common/managers/custom_interactions_manager.js'
 import prisma from '@/lib/prisma_client.js'
-import config from '@/utilities/bot_config.js';
+import config from '@/utilities/bot_config.js'
 import { delay } from '@/utilities/index.js'
 
-// ------------------------------------------------------------//
-
+/* -------------------------------- Functions ------------------------------- */
 
 async function updateBotNickname(
     client: Discord.Client<true>,
@@ -36,7 +37,7 @@ async function removeIllegalNicknames(
     }
 }
 
-// ------------------------------------------------------------//
+/* ------------------------------- Definition ------------------------------- */
 
 export default {
     name: Discord.Events.ClientReady,

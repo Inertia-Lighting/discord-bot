@@ -11,11 +11,7 @@
   },
   "type": "module",
   "scripts": {
-    "hook": "is-ci || husky install || true",
     "lint": "npx eslint --fix",
-    "clean": "run-script-os",
-    "clean:linux": "rm -rf ./dist",
-    "clean:default": "rm ./dist",
     "build": "npx prisma generate --no-hints && npx tsc --build && npx tsc-alias",
     "test": "npm run prepare && npx prisma generate --no-hints",
     "prepare": "npm run lint",
@@ -28,43 +24,30 @@
   "devDependencies": {
     "@stylistic/eslint-plugin": "^5.10.0",
     "@types/string-similarity": "4.0.2",
-    "@types/uuid": "11.0.0",
-    "@typescript-eslint/eslint-plugin": "8.59.3",
-    "@typescript-eslint/parser": "8.59.3",
-    "eslint": "10.3.0",
-    "eslint-plugin-deprecation": "3.0.0",
-    "eslint-plugin-simple-import-sort": "^13.0.0",
-    "globals": "^17.6.0",
-    "husky": "9.1.7",
-    "is-ci": "4.1.0",
-    "run-script-os": "1.1.6",
+    "eslint": "10.8.0",
+    "eslint-plugin-simple-import-sort": "^14.0.0",
+    "globals": "^17.8.0",
     "typescript": "6.0.3",
-    "typescript-eslint": "^8.59.3"
+    "typescript-eslint": "^8.65.0"
   },
   "dependencies": {
-    "@prisma/adapter-pg": "^7.8.0",
-    "@prisma/client": "^7.8.0",
-    "axios": "1.16.0",
-    "bufferutil": "4.1.0",
-    "discord-html-transcripts": "3.3.0",
-    "discord.js": "14.26.4",
+    "@prisma/adapter-pg": "^7.9.1",
+    "@prisma/client": "^7.9.1",
+    "discord.js": "14.27.0",
     "dotenv": "17.4.2",
-    "got": "^15.0.5",
+    "got": "^15.1.0",
     "lowdb": "^7.0.1",
     "module-alias": "2.3.4",
-    "moment-timezone": "0.6.2",
-    "mongoose": "^9.6.2",
-    "node-gyp": "12.3.0",
-    "prisma": "^7.8.0",
+    "moment-timezone": "0.6.3",
+    "mongoose": "^9.8.1",
+    "prisma": "^7.9.1",
     "string-similarity": "4.0.4",
-    "tsc-alias": "^1.8.17",
-    "utf-8-validate": "6.0.6",
-    "uuid": "14.0.0"
+    "tsc-alias": "^1.9.1"
   },
   "resolutions": {
     "strip-ansi": "6.0.1",
     "string-width": "4.2.2",
     "wrap-ansi": "7.0.0"
   },
-  "packageManager": "pnpm@11.1.1+sha512.d1fdf5f73c617b64fa1a56a81c3c8dfe0e966e33a6010aa256b517ae77be21d93e05affc0de1a83b0e4f29d569f68b446ae8f068cd7247c0bb3df0fb4d7bdf9a"
+  "packageManager": "pnpm@11.17.0+sha512.cca3cea332ad254bb84145f966d19f4879615210346fc92c79a047f23a0d7b3cca3c3792f0076ba1f1831d277efbcf0a9119b31a9a60eca7fb3d6231f331ef72"
 }

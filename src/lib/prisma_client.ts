@@ -1,12 +1,22 @@
+/* -------------------------------------------------------------------------- */
+/*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
+/* -------------------------------------------------------------------------- */
+
+/* ------------------------------ Dependencies ------------------------------ */
+
 import { PrismaPg } from '@prisma/adapter-pg'
 import { env } from 'prisma/config'
 
 import { PrismaClient } from '@/lib/prisma/client.js'
 
+/* -------------------------------- Constants ------------------------------- */
+
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient }
 const connectionString = env('DATABASE_URL')
 
 const adapter = new PrismaPg({ connectionString }, { schema: 'inertia_main' })
+
+/* ------------------------------- Definition ------------------------------- */
 
 const prisma =
   globalForPrisma.prisma || new PrismaClient({

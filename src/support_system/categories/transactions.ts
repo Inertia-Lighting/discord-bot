@@ -1,13 +1,16 @@
-// ------------------------------------------------------------//
-//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-// ------------------------------------------------------------//
+/* -------------------------------------------------------------------------- */
+/*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
+/* -------------------------------------------------------------------------- */
 
-import * as Discord from 'discord.js';
+/* ------------------------------ Dependencies ------------------------------ */
+
+import * as Discord from 'discord.js'
 
 import { BaseSupportCategoryHandler } from '../core/base-handler.js'
-;
 import { SupportCategoryId } from '../types/index.js'
-;
+
+
+/* ------------------------------- Definition ------------------------------- */
 
 /**
  * Handler for product transactions support category

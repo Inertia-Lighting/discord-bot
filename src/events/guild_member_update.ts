@@ -1,13 +1,15 @@
-// ------------------------------------------------------------//
-//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-// ------------------------------------------------------------//
+/* -------------------------------------------------------------------------- */
+/*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
+/* -------------------------------------------------------------------------- */
 
-import * as Discord from 'discord.js';
+/* ------------------------------ Dependencies ------------------------------ */
+
+import * as Discord from 'discord.js'
 
 import { guildMemberRolesAddedLogger, guildMemberRolesRemovedLogger, illegalNicknameHandler } from '@/common/handlers/index.js'
-import config from '@/utilities/bot_config.js';
+import config from '@/utilities/bot_config.js'
 
-// ------------------------------------------------------------//
+/* ------------------------------- Definition ------------------------------- */
 
 export default {
     name: Discord.Events.GuildMemberUpdate,

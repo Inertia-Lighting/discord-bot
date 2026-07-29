@@ -1,25 +1,25 @@
-// ------------------------------------------------------------//
-//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-// ------------------------------------------------------------//
+/* -------------------------------------------------------------------------- */
+/*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
+/* -------------------------------------------------------------------------- */
 
-import * as Discord from 'discord.js';
+/* ------------------------------ Dependencies ------------------------------ */
+
+import * as Discord from 'discord.js'
 
 import { CustomEmbed } from '@/common/message.js'
-;
 import { delay, getMarkdownFriendlyTimestamp } from '@/utilities/index.js'
-;
 
 import { SupportSystemConfig } from '../config/index.js'
-;
 import { 
     SupportCategoryId, 
     SupportTicketContext, 
     SupportTicketService,
     TicketPriority 
 } from '../types/index.js'
-;
 import { TicketPriorityServiceImpl } from './priority-service.js'
-;
+
+
+/* ------------------------------- Definition ------------------------------- */
 
 /**
  * Implementation of the support ticket service
@@ -294,7 +294,7 @@ export class SupportTicketServiceImpl implements SupportTicketService {
         const ticketOwner = await channel.client.users.fetch(ticketOwnerId);
         const creationTimestamp = channel.createdTimestamp ? 
             `<t:${getMarkdownFriendlyTimestamp(channel.createdTimestamp)}:F>` : 
-            'unknown';
+            'unknown'
 
         // Generate transcript
         // const transcript = await DiscordTranscripts.createTranscript(channel, {

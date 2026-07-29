@@ -1,16 +1,17 @@
-// ------------------------------------------------------------//
-//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-// ------------------------------------------------------------//
+/* -------------------------------------------------------------------------- */
+/*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
+/* -------------------------------------------------------------------------- */
 
-import * as Discord from 'discord.js';
+/* ------------------------------ Dependencies ------------------------------ */
+
+import * as Discord from 'discord.js'
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
 import { CustomEmbed } from '@/common/message.js'
-import { BlacklistModel, UserModel } from '@/lib/mongoose/models/index.js';
+import { BlacklistModel, UserModel } from '@/lib/mongoose/models/index.js'
 import { DbBlacklistedUserRecord, DbUserData } from '@/types/index.js'
 
-
-// ------------------------------------------------------------//
+/* ------------------------------- Definition ------------------------------- */
 
 export default new CustomInteraction({
     identifier: 'User Lookup V2',

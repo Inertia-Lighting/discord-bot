@@ -1,20 +1,22 @@
-// ------------------------------------------------------------//
-//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-// ------------------------------------------------------------//
+/* -------------------------------------------------------------------------- */
+/*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
+/* -------------------------------------------------------------------------- */
 
-import * as Discord from 'discord.js';
+/* ------------------------------ Dependencies ------------------------------ */
+
+import * as Discord from 'discord.js'
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
 import { loadSupportSystemConfig } from '@/support_system/config/index.js'
 import { TicketPriorityServiceImpl } from '@/support_system/core/priority-service.js'
 import { TicketPriority } from '@/support_system/types/index.js'
 
-// ------------------------------------------------------------//
+/* -------------------------------- Constants ------------------------------- */
 
 const config = loadSupportSystemConfig();
 const priorityService = new TicketPriorityServiceImpl();
 
-// ------------------------------------------------------------//
+/* ------------------------------- Definition ------------------------------- */
 
 export default new CustomInteraction({
     identifier: 'priority',
@@ -115,7 +117,7 @@ export default new CustomInteraction({
         } catch (error) {
             console.error('Error setting ticket priority:', error);
             
-            let errorMessage = 'An error occurred while setting the ticket priority.';
+            let errorMessage = 'An error occurred while setting the ticket priority.'
             if (error instanceof Error) {
                 errorMessage = `${error.message}`;
             }
@@ -126,29 +128,3 @@ export default new CustomInteraction({
         }
     },
 });
-
-/**
- * Checks if a user is the owner of a ticket channel
- */
-// async function isUserTicketOwner(channel: Discord.TextChannel, member: Discord.GuildMember): Promise<boolean> {
-//     const channelName = channel.name;
-    
-//     // Remove priority emoji if present
-//     const priorityEmojis = ['🟢', '🟡', '🔴', '⏸️'];
-//     let nameWithoutEmoji = channelName;
-//     for (const emoji of priorityEmojis) {
-//         if (channelName.startsWith(emoji + '-')) {
-//             nameWithoutEmoji = channelName.substring(emoji.length + 1);
-//             break;
-//         }
-//     }
-    
-//     // Extract user ID from channel name (format: categoryId-userId)
-//     const parts = nameWithoutEmoji.split('-');
-//     if (parts.length >= 2 && parts[0] !== '' && parts[parts.length - 1] !== '') {
-//         const ticketOwnerId = parts[parts.length - 1]; // Last part should be user ID
-//         return member.id === ticketOwnerId;
-//     }
-    
-//     return false;
-// }
