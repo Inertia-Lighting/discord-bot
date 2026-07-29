@@ -2,6 +2,7 @@
 /*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
 /* -------------------------------------------------------------------------- */
 
+/* ------------------------------ Dependencies ------------------------------ */
 
 import * as Discord from 'discord.js'
 import moment from 'moment-timezone'
@@ -12,9 +13,7 @@ import prisma from '@/lib/prisma_client.js'
 import config from '@/utilities/bot_config.js'
 import { delay } from '@/utilities/index.js'
 
-    /* -------------------------------------------------------------------------- */
-
-
+/* ------------------------------- Definition ------------------------------- */
 
 async function updateBotNickname(
     client: Discord.Client<true>,

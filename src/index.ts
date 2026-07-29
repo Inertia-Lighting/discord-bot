@@ -69,7 +69,7 @@ const client = new Discord.Client({
     },
 });
 
-/* -------------------------------------------------------------------------- */
+/* ----------------------------- Register Events ---------------------------- */
 
 function registerEvents(): void {
     try {
@@ -89,6 +89,8 @@ function registerEvents(): void {
         console.trace(error)
     }
 }
+
+/* ---------------------------- Start Discord Bot --------------------------- */
 
 registerEvents()
 

@@ -2,14 +2,14 @@
 /*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
 /* -------------------------------------------------------------------------- */
 
+/* ------------------------------ Dependencies ------------------------------ */
 
 import * as Discord from 'discord.js'
 
 import { guildMemberMessageUpdateLogger } from '@/common/handlers/index.js'
 import config from '@/utilities/bot_config.js'
 
-    /* -------------------------------------------------------------------------- */
-
+/* ------------------------------- Definition ------------------------------- */
 
 export default {
     name: Discord.Events.MessageUpdate,

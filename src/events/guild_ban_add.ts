@@ -2,6 +2,7 @@
 /*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
 /* -------------------------------------------------------------------------- */
 
+/* ------------------------------ Dependencies ------------------------------ */
 
 import * as Discord from 'discord.js'
 
