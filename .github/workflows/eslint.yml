@@ -18,7 +18,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
 
-    - name: Install Yarn with Corepack
+    - name: Install Package Manager with Corepack
       run: corepack enable
     
     - name: Install Dependencies

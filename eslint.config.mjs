@@ -9,7 +9,6 @@ export default [
   { languageOptions: { globals: globals.node } },
   ...tseslint.configs.recommended,
   globalIgnores(['dist/'], 'Build Folder'),
-  globalIgnores(['.yarn/**/*'], 'Yarn Stuff'),
   globalIgnores(['src/types/zod/**/*', 'src/lib/prisma/**/*'], 'Prisma stuff'),
   /* -------------------------------------------------------------------------- */
   {

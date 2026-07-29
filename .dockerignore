@@ -6,8 +6,6 @@
 # Node.js (keep node_modules if it exists for Docker builds)
 # node_modules - commented out to allow copying existing node_modules
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 .npm
 
 # Build artifacts (keep dist if it exists)
