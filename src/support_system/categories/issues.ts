@@ -7,12 +7,9 @@
 import * as Discord from 'discord.js'
 
 import { CustomEmbed } from '@/common/message.js'
-;
 
 import { BaseSupportCategoryHandler } from '../core/base-handler.js'
-;
 import { SupportCategoryId, SupportTicketContext } from '../types/index.js'
-;
 
 /* ------------------------------- Definition ------------------------------- */
 

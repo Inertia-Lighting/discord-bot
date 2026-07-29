@@ -11,7 +11,6 @@ import config from '@/utilities/bot_config.js'
 
 /* ------------------------------- Definition ------------------------------- */
 
-
 async function guildMemberRolesAddedLogger(
     old_member: Discord.GuildMember,
     new_member: Discord.GuildMember,

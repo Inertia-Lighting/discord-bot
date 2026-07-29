@@ -7,14 +7,12 @@
 import * as Discord from 'discord.js'
 
 import { CustomEmbed } from '@/common/message.js'
-;
 
 import { 
     SupportCategoryHandler, 
     SupportCategoryId, 
     SupportTicketContext 
 } from '../types/index.js'
-;
 
 /* ------------------------------- Definition ------------------------------- */
 

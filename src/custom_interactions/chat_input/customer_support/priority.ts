@@ -128,29 +128,3 @@ export default new CustomInteraction({
         }
     },
 });
-
-/**
- * Checks if a user is the owner of a ticket channel
- */
-// async function isUserTicketOwner(channel: Discord.TextChannel, member: Discord.GuildMember): Promise<boolean> {
-//     const channelName = channel.name;
-    
-//     // Remove priority emoji if present
-//     const priorityEmojis = ['🟢', '🟡', '🔴', '⏸️'];
-//     let nameWithoutEmoji = channelName;
-//     for (const emoji of priorityEmojis) {
-//         if (channelName.startsWith(emoji + '-')) {
-//             nameWithoutEmoji = channelName.substring(emoji.length + 1);
-//             break;
-//         }
-//     }
-    
-//     // Extract user ID from channel name (format: categoryId-userId)
-//     const parts = nameWithoutEmoji.split('-');
-//     if (parts.length >= 2 && parts[0] !== '' && parts[parts.length - 1] !== '') {
-//         const ticketOwnerId = parts[parts.length - 1]; // Last part should be user ID
-//         return member.id === ticketOwnerId;
-//     }
-    
-//     return false;
-// }

@@ -8,7 +8,6 @@ import * as Discord from 'discord.js'
 
 /* -------------------------------- Constants ------------------------------- */
 
-
 enum CustomEmbedColor {
     Brand = 0x60A0FF,
     White = 0xFFFFFF,

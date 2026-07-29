@@ -2,7 +2,6 @@
 /*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
 /* -------------------------------------------------------------------------- */
 
-
 /**
  * Custom Interactions Manager
  *
@@ -29,7 +28,6 @@ import { delay, findJSFiles } from '@/utilities/index.js'
 import { fetchPermissions, isDeveloper } from '@/utilities/permissions.js'
 
 /* -------------------------------- Constants ------------------------------- */
-
 
 const require = createRequire(import.meta.url);
 
@@ -69,7 +67,6 @@ export enum CustomInteractionAccessLevel {
 }
 
 /* -------------------------------------------------------------------------- */
-
 
 /**
  * Represents a single custom interaction implementation.

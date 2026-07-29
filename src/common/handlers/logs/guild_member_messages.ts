@@ -12,7 +12,6 @@ import { ellipseString, getMarkdownFriendlyTimestamp } from '@/utilities/index.j
 
 /* ------------------------------- Definition ------------------------------- */
 
-
 export async function guildMemberMessageUpdateLogger(
     old_message: Discord.Message,
     new_message: Discord.Message,

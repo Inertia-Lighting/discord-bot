@@ -10,7 +10,6 @@ import {
     SupportCategoryId, 
     SupportCategoryRegistry 
 } from '../types/index.js'
-;
 
 /* ------------------------------- Definition ------------------------------- */
 

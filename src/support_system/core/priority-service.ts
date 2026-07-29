@@ -7,9 +7,8 @@
 import * as Discord from 'discord.js'
 
 import { CustomEmbed } from '@/common/message.js'
-;
+
 import prisma from '@/lib/prisma_client.js'
-;
 
 import { 
     PriorityConfig,
@@ -17,7 +16,6 @@ import {
     TicketPriorityContext,
     TicketPriorityService
 } from '../types/index.js'
-;
 
 /* ------------------------------- Definition ------------------------------- */
 

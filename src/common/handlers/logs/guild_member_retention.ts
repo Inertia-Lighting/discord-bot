@@ -12,7 +12,6 @@ import { getMarkdownFriendlyTimestamp } from '@/utilities/index.js'
 
 /* ------------------------------- Definition ------------------------------- */
 
-
 function discordTimestampsDifferenceInDays(
     newest_timestamp: number | string, // in seconds
     oldest_timestamp: number | string, // in seconds

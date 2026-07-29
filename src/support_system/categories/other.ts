@@ -7,9 +7,7 @@
 import * as Discord from 'discord.js'
 
 import { BaseSupportCategoryHandler } from '../core/base-handler.js'
-;
 import { SupportCategoryId } from '../types/index.js'
-;
 
 /* ------------------------------- Definition ------------------------------- */
 

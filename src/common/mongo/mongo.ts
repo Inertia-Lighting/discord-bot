@@ -29,7 +29,6 @@ const connection = await mongoose.connect(mongo_connection_url, {
 
 /* ------------------------------- Definition ------------------------------- */
 
-
 export {
     connection as MongoDB,
 };
