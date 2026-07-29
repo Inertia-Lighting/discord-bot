@@ -12,7 +12,7 @@ export default [
   { languageOptions: { globals: globals.node } },
   ...tseslint.configs.recommended,
   globalIgnores(['dist/'], 'Build Folder'),
-  globalIgnores(['src/types/zod/**/*', 'src/lib/prisma/**/*'], 'Prisma stuff'),
+  globalIgnores(['src/lib/prisma/**/*'], 'Prisma stuff'),
   /* -------------------------------------------------------------------------- */
   {
     plugins: {
