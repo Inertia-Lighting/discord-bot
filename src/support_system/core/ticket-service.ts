@@ -2,6 +2,7 @@
 /*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
 /* -------------------------------------------------------------------------- */
 
+/* ------------------------------ Dependencies ------------------------------ */
 
 import * as Discord from 'discord.js';
 
@@ -21,6 +22,8 @@ import {
 ;
 import { TicketPriorityServiceImpl } from './priority-service.js'
 ;
+
+/* ------------------------------- Definition ------------------------------- */
 
 /**
  * Implementation of the support ticket service

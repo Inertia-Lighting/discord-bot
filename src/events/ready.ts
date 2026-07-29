@@ -12,7 +12,8 @@ import prisma from '@/lib/prisma_client.js'
 import config from '@/utilities/bot_config.js';
 import { delay } from '@/utilities/index.js'
 
-// ------------------------------------------------------------//
+    /* -------------------------------------------------------------------------- */
+
 
 
 async function updateBotNickname(
@@ -37,7 +38,8 @@ async function removeIllegalNicknames(
     }
 }
 
-// ------------------------------------------------------------//
+    /* -------------------------------------------------------------------------- */
+
 
 export default {
     name: Discord.Events.ClientReady,

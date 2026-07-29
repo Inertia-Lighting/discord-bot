@@ -2,13 +2,15 @@
 /*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
 /* -------------------------------------------------------------------------- */
 
+/* ------------------------------ Dependencies ------------------------------ */
 
 import * as Discord from 'discord.js';
 
 import { CustomEmbed } from '@/common/message.js'
 import config from '@/utilities/bot_config.js'
 
-// ------------------------------------------------------------//
+/* ------------------------------- Definition ------------------------------- */
+
 
 async function guildMemberRolesAddedLogger(
     old_member: Discord.GuildMember,
@@ -84,7 +86,8 @@ async function guildMemberRolesRemovedLogger(
     }).catch(console.trace);
 }
 
-// ------------------------------------------------------------//
+    /* -------------------------------------------------------------------------- */
+
 
 export {
     guildMemberRolesAddedLogger,

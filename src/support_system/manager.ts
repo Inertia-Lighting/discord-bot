@@ -2,6 +2,7 @@
 /*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
 /* -------------------------------------------------------------------------- */
 
+/* ------------------------------ Dependencies ------------------------------ */
 
 import * as Discord from 'discord.js';
 
@@ -24,6 +25,8 @@ import {
     SupportTicketService,
     TicketPriorityService} from './types/index.js';
 
+/* ------------------------------- Definition ------------------------------- */
+    
 /**
  * Main support system manager
  */

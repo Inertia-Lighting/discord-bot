@@ -2,6 +2,7 @@
 /*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
 /* -------------------------------------------------------------------------- */
 
+/* ------------------------------ Dependencies ------------------------------ */
 
 import * as Discord from 'discord.js';
 
@@ -11,7 +12,7 @@ import { addUserToBlacklistedUsersDatabase, findUserInBlacklistedUsersDatabase, 
 import prisma from '@/lib/prisma_client.js';
 import { getMarkdownFriendlyTimestamp } from '@/utilities/index.js'
 
-// ------------------------------------------------------------//
+/* -------------------------------- Functions ------------------------------- */
 
 /**
  * Check if the staff member is allowed to blacklist the potential user.
@@ -41,7 +42,8 @@ async function isStaffMemberAllowedToBlacklistUser(
     return staff_member_role_hierarchy_is_greater;
 }
 
-// ------------------------------------------------------------//
+    /* -------------------------------------------------------------------------- */
+
 
 async function blacklistAddSubcommand(
     interaction: Discord.CommandInteraction,
@@ -277,7 +279,7 @@ async function blacklistLookupSubcommand(
     });
 }
 
-// ------------------------------------------------------------//
+/* ------------------------------- Definition ------------------------------- */
 
 export default new CustomInteraction({
     identifier: 'blacklist',

@@ -2,10 +2,14 @@
 /*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
 /* -------------------------------------------------------------------------- */
 
+/* ------------------------------ Dependencies ------------------------------ */
+
 import * as Discord from 'discord.js'
 
 import { CustomEmbed } from '@/common/message.js';
 import prisma from '@/lib/prisma_client.js';
+
+/* ------------------------------- Definition ------------------------------- */
 
 export async function purgeModerationActions(
     interaction: Discord.ChatInputCommandInteraction,

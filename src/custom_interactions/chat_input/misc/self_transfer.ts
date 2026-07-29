@@ -2,6 +2,7 @@
 /*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
 /* -------------------------------------------------------------------------- */
 
+/* ------------------------------ Dependencies ------------------------------ */
 
 import * as Discord from 'discord.js';
 import { compareTwoStrings } from 'string-similarity';
@@ -12,12 +13,12 @@ import prisma from '@/lib/prisma_client.js'
 import config from '@/utilities/bot_config.js';
 import { DbProductsCache } from '@/utilities/productCache.js';
 
-// ------------------------------------------------------------//
+/* -------------------------- Environment Variables ------------------------- */
 
 const api_server = `${process.env.API_SERVER ?? ''}`;
 if (api_server.length < 1) throw new Error('Environment variable: API_SERVER; is not set correctly.');
 
-// ------------------------------------------------------------//
+/* -------------------------- Autocomplete Handler -------------------------- */
 
 async function selfTransferAutocompleteHandler(
     interaction: Discord.AutocompleteInteraction
@@ -119,6 +120,7 @@ async function selfTransferAutocompleteHandler(
     interaction.respond(autocomplete_results);
 }
 
+/* ------------------------------- Definition ------------------------------- */
 
 export default new CustomInteraction({
     identifier: 'self_transfer',

@@ -7,7 +7,8 @@ import * as Discord from 'discord.js';
 
 import { CustomInteractionsManager } from '@/common/managers/custom_interactions_manager.js'
 
-// ------------------------------------------------------------//
+    /* -------------------------------------------------------------------------- */
+
 
 export default {
     name: Discord.Events.InteractionCreate,

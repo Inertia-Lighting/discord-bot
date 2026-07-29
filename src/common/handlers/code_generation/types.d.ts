@@ -2,6 +2,7 @@
 /*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
 /* -------------------------------------------------------------------------- */
 
+/* ------------------------------- Definition ------------------------------- */
 
 interface verification_code_data {
     interaction: CommandInteraction,

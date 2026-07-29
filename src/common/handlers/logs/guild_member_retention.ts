@@ -2,6 +2,7 @@
 /*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
 /* -------------------------------------------------------------------------- */
 
+/* ------------------------------ Dependencies ------------------------------ */
 
 import * as Discord from 'discord.js';
 
@@ -9,7 +10,8 @@ import { CustomEmbed } from '@/common/message.js'
 import config from '@/utilities/bot_config.js'
 import { getMarkdownFriendlyTimestamp } from '@/utilities/index.js'
 
-// ------------------------------------------------------------//
+/* ------------------------------- Definition ------------------------------- */
+
 
 function discordTimestampsDifferenceInDays(
     newest_timestamp: number | string, // in seconds
@@ -27,7 +29,8 @@ function discordTimestampsDifferenceInDays(
     );
 }
 
-// ------------------------------------------------------------//
+    /* -------------------------------------------------------------------------- */
+
 
 async function guildMemberAddLogger(
     member: Discord.GuildMember,
@@ -151,7 +154,8 @@ async function guildMemberBannedLogger(
     }).catch(console.trace);
 }
 
-// ------------------------------------------------------------//
+    /* -------------------------------------------------------------------------- */
+
 
 export {
     guildMemberAddLogger,

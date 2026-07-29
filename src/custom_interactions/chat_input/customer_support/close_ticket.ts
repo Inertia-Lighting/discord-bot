@@ -2,6 +2,7 @@
 /*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
 /* -------------------------------------------------------------------------- */
 
+/* ------------------------------ Dependencies ------------------------------ */
 
 import * as Discord from 'discord.js';
 
@@ -10,11 +11,12 @@ import { loadSupportSystemConfig } from '@/support_system/config/index.js'
 import { supportSystemManager } from '@/support_system/index.js'
 import { fetchPermissions } from '@/utilities/permissions.js';
 
-// ------------------------------------------------------------//
+/* -------------------------------- Constants ------------------------------- */
+
 
 const config = loadSupportSystemConfig();
 
-// ------------------------------------------------------------//
+/* ------------------------------- Definition ------------------------------- */
 
 export default new CustomInteraction({
     identifier: 'close_ticket',

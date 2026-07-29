@@ -2,6 +2,7 @@
 /*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
 /* -------------------------------------------------------------------------- */
 
+/* ------------------------------ Dependencies ------------------------------ */
 
 import * as Discord from 'discord.js';
 
@@ -10,12 +11,12 @@ import { loadSupportSystemConfig } from '@/support_system/config/index.js'
 import { TicketPriorityServiceImpl } from '@/support_system/core/priority-service.js'
 import { TicketPriority } from '@/support_system/types/index.js'
 
-// ------------------------------------------------------------//
+/* -------------------------------- Constants ------------------------------- */
 
 const config = loadSupportSystemConfig();
 const priorityService = new TicketPriorityServiceImpl();
 
-// ------------------------------------------------------------//
+/* ------------------------------- Definition ------------------------------- */
 
 export default new CustomInteraction({
     identifier: 'priority',

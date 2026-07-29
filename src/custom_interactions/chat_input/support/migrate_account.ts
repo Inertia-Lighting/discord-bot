@@ -2,6 +2,7 @@
 /*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
 /* -------------------------------------------------------------------------- */
 
+/* ------------------------------ Dependencies ------------------------------ */
 
 import axios from 'axios';
 import * as Discord from 'discord.js';
@@ -9,12 +10,14 @@ import * as Discord from 'discord.js';
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
 import { CustomEmbed } from '@/common/message.js'
 
-// ------------------------------------------------------------//
+/* -------------------------- Environment Variables ------------------------- */
+
 
 const api_server = `${process.env.API_SERVER ?? ''}`;
 if (api_server.length < 1) throw new Error('Environment variable: API_SERVER; is not set correctly.');
 
-// ------------------------------------------------------------//
+/* -------------------------------- Constants ------------------------------- */
+
 
 interface v3Identity {
     blacklisted: boolean | object
@@ -22,6 +25,9 @@ interface v3Identity {
     discordId: string;
     robloxId: string;
 }
+
+/* ------------------------------- Definition ------------------------------- */
+
 export default new CustomInteraction({
     identifier: 'migrate_account',
     type: Discord.InteractionType.ApplicationCommand,

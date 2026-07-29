@@ -2,17 +2,20 @@
 /*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
 /* -------------------------------------------------------------------------- */
 
+/* ------------------------------ Dependencies ------------------------------ */
+
 import mongoose from 'mongoose';
 
 import { MongoDB } from '@/common/mongo/mongo.js';
 import type { DbUserData } from '@/types/index.js';
 
-/* -------------------------------------------------------------------------- */
+/* -------------------------- Environment Variables ------------------------- */
 
 const db_users_collection_name = `${process.env.MONGO_USERS_COLLECTION_NAME ?? ''}`;
 if (db_users_collection_name.length < 1) throw new Error('Environment variable: MONGO_USERS_COLLECTION_NAME; is not set correctly.');
 
-/* -------------------------------------------------------------------------- */
+/* ------------------------------- Definition ------------------------------- */
+
 const UserSchema = new mongoose.Schema<DbUserData>({
     identity: {
         discord_user_id: { type: String, required: true },

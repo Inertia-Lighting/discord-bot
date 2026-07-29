@@ -2,6 +2,7 @@
 /*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
 /* -------------------------------------------------------------------------- */
 
+/* ------------------------------ Dependencies ------------------------------ */
 
 import * as Discord from 'discord.js';
 
@@ -10,12 +11,12 @@ import { CustomEmbed } from '@/common/message.js'
 import prisma from '@/lib/prisma_client.js'
 import config from '@/utilities/bot_config.js';
 
-// ------------------------------------------------------------//
+/* -------------------------- Environment Variables ------------------------- */
 
 const api_server = `${process.env.API_SERVER ?? ''}`;
 if (api_server.length < 1) throw new Error('Environment variable: API_SERVER; is not set correctly.');
 
-// ------------------------------------------------------------//
+/* ------------------------------- Definition ------------------------------- */
 
 export default new CustomInteraction({
     identifier: 'transfer',

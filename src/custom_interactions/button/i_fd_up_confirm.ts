@@ -2,6 +2,8 @@
 /*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
 /* -------------------------------------------------------------------------- */
 
+/* ------------------------------ Dependencies ------------------------------ */
+/* ------------------------------ Dependencies ------------------------------ */
 
 import * as Discord from 'discord.js';
 
@@ -9,7 +11,7 @@ import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunCo
 import { CustomEmbed } from '@/common/message.js'
 import prisma from '@/lib/prisma_client.js'
 
-// ------------------------------------------------------------//
+/* ------------------------------- Definition ------------------------------- */
 
 export default new CustomInteraction({
     identifier: 'i_fd_up_confirm',

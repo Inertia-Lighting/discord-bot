@@ -2,6 +2,7 @@
 /*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
 /* -------------------------------------------------------------------------- */
 
+/* ------------------------------ Dependencies ------------------------------ */
 
 import * as Discord from 'discord.js';
 import got from 'got';
@@ -10,7 +11,7 @@ import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunCo
 import { CustomEmbed } from '@/common/message.js'
 import { v3VerificationFetch } from '@/types/index.js'
 
-// ------------------------------------------------------------//
+/* -------------------------- Environment Variables ------------------------- */
 
 const user_verification_endpoints_base64_encoded_token = `${process.env.API_BASE64_ENCODED_TOKEN_FOR_USER_VERIFICATION_ENDPOINTS ?? ''}`;
 if (user_verification_endpoints_base64_encoded_token.length < 1) throw new Error('Environment variable: API_BASE64_ENCODED_TOKEN_FOR_USER_VERIFICATION_ENDPOINTS; is not set correctly.');
@@ -18,7 +19,7 @@ if (user_verification_endpoints_base64_encoded_token.length < 1) throw new Error
 const api_server = `${process.env.API_SERVER ?? ''}`;
 if (api_server.length < 1) throw new Error('Environment variable: API_SERVER; is not set correctly.');
 
-// ------------------------------------------------------------//
+/* -------------------------------- Handlers -------------------------------- */
 
 async function userAlreadyVerifiedHandler(
     interaction: Discord.ChatInputCommandInteraction,
@@ -246,7 +247,7 @@ async function verifyHandler(
     }).catch(console.warn);
 }
 
-// ------------------------------------------------------------//
+/* ------------------------------- Definition ------------------------------- */
 
 export default new CustomInteraction({
     identifier: 'verify',

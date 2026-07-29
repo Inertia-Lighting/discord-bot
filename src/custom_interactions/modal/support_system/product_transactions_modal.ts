@@ -2,6 +2,7 @@
 /*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
 /* -------------------------------------------------------------------------- */
 
+/* ------------------------------ Dependencies ------------------------------ */
 
 import * as Discord from 'discord.js';
 
@@ -9,7 +10,7 @@ import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunCo
 import { supportSystemManager } from '@/support_system/index.js'
 import { SupportCategoryId } from '@/support_system/types/index.js'
 
-// ------------------------------------------------------------//
+/* ------------------------------- Definition ------------------------------- */
 
 export default new CustomInteraction({
     identifier: 'transaction_modal',

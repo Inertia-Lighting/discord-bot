@@ -1,9 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 /* -------------------------------------------------------------------------- */
 /*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
 /* -------------------------------------------------------------------------- */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
+/* ------------------------------ Dependencies ------------------------------ */
 
 import * as Discord from 'discord.js';
 
@@ -12,13 +12,14 @@ import { CustomEmbed } from '@/common/message.js'
 import config from '@/utilities/bot_config.js';
 import { delay, getMarkdownFriendlyTimestamp } from '@/utilities/index.js'
 
-// ------------------------------------------------------------//
+/* -------------------------------- Constants ------------------------------- */
 
 const support_ticket_cleanup_timeout_in_ms = 10_000; // 10 seconds
 
 const user_feedback_survey_collector_timeout_in_ms = 30 * 60_000; // 30 minutes
 
-// ------------------------------------------------------------//
+/* ------------------------------- Definition ------------------------------- */
+
 
 export const satisfaction_levels = {
     highest_satisfaction: {
@@ -48,7 +49,8 @@ export const satisfaction_levels = {
     },
 };
 
-// ------------------------------------------------------------//
+/* -------------------------------------------------------------------------- */
+
 
 /**
  * Do not modify the values of this enum.
@@ -524,140 +526,140 @@ export const support_categories: SupportCategory[] = [
             });
         },
     }, {
-         id: SupportCategoryId.PartnershipRequests,
-         name: 'Partnership Requests',
-         description: 'Interested in partnering with us?',
-         staff_role_ids: [
+        id: SupportCategoryId.PartnershipRequests,
+        name: 'Partnership Requests',
+        description: 'Interested in partnering with us?',
+        staff_role_ids: [
             config.support_staff_partnership_requests_role_id,
-         ],
-         modal_data: {
-             title: 'Partnership Request Questions',
-             customId: 'support_system_partnership_request_modal',
-             components: [
-                 {
-                     type: Discord.ComponentType.ActionRow,
-                     components: [
-                         {
-                             type: Discord.ComponentType.TextInput,
-                             customId: 'group_name',
-                             style: Discord.TextInputStyle.Short,
-                             label: 'What is the name of your group?',
-                             minLength: 1,
-                             maxLength: 64,
-                             required: true,
-                         },
-                     ],
-                 }, {
-                     type: Discord.ComponentType.ActionRow,
-                     components: [
-                         {
-                             type: Discord.ComponentType.TextInput,
-                             customId: 'group_owner_age',
-                             style: Discord.TextInputStyle.Short,
-                             label: 'How old are you?',
-                             minLength: 1,
-                             maxLength: 4,
-                             required: true,
-                         },
-                     ],
-                 }, {
-                     type: Discord.ComponentType.ActionRow,
-                     components: [
-                         {
-                             type: Discord.ComponentType.TextInput,
-                             customId: 'group_member_count',
-                             style: Discord.TextInputStyle.Short,
-                             label: 'How many members are in your group?',
-                             minLength: 1,
-                             maxLength: 10,
-                             required: true,
-                         },
-                     ],
-                 }, {
-                     type: Discord.ComponentType.ActionRow,
-                     components: [
-                         {
-                             type: Discord.ComponentType.TextInput,
-                             customId: 'group_description',
-                             style: Discord.TextInputStyle.Paragraph,
-                             label: 'Describe your group, be detailed.',
-                             minLength: 128,
-                             maxLength: 1024,
-                             required: true,
-                         },
-                     ],
-                 }, {
-                     type: Discord.ComponentType.ActionRow,
-                     components: [
-                         {
-                             type: Discord.ComponentType.TextInput,
-                             customId: 'group_reason',
-                             style: Discord.TextInputStyle.Paragraph,
-                             label: 'Why do you want to partner with us?',
-                             minLength: 128,
-                             maxLength: 1024,
-                             required: true,
-                         },
-                     ],
-                 }, {
-                     type: Discord.ComponentType.ActionRow,
-                     components: [
-                         {
-                             type: Discord.ComponentType.TextInput,
-                             customId: 'group_social_links',
-                             style: Discord.TextInputStyle.Paragraph,
-                             label: 'Link your socials: Discord, Roblox, etc.',
-                             minLength: 32,
-                             maxLength: 1024,
-                             required: true,
-                         },
-                     ],
-                 },
-             ],
-         },
+        ],
+        modal_data: {
+            title: 'Partnership Request Questions',
+            customId: 'support_system_partnership_request_modal',
+            components: [
+                {
+                    type: Discord.ComponentType.ActionRow,
+                    components: [
+                        {
+                            type: Discord.ComponentType.TextInput,
+                            customId: 'group_name',
+                            style: Discord.TextInputStyle.Short,
+                            label: 'What is the name of your group?',
+                            minLength: 1,
+                            maxLength: 64,
+                            required: true,
+                        },
+                    ],
+                }, {
+                    type: Discord.ComponentType.ActionRow,
+                    components: [
+                        {
+                            type: Discord.ComponentType.TextInput,
+                            customId: 'group_owner_age',
+                            style: Discord.TextInputStyle.Short,
+                            label: 'How old are you?',
+                            minLength: 1,
+                            maxLength: 4,
+                            required: true,
+                        },
+                    ],
+                }, {
+                    type: Discord.ComponentType.ActionRow,
+                    components: [
+                        {
+                            type: Discord.ComponentType.TextInput,
+                            customId: 'group_member_count',
+                            style: Discord.TextInputStyle.Short,
+                            label: 'How many members are in your group?',
+                            minLength: 1,
+                            maxLength: 10,
+                            required: true,
+                        },
+                    ],
+                }, {
+                    type: Discord.ComponentType.ActionRow,
+                    components: [
+                        {
+                            type: Discord.ComponentType.TextInput,
+                            customId: 'group_description',
+                            style: Discord.TextInputStyle.Paragraph,
+                            label: 'Describe your group, be detailed.',
+                            minLength: 128,
+                            maxLength: 1024,
+                            required: true,
+                        },
+                    ],
+                }, {
+                    type: Discord.ComponentType.ActionRow,
+                    components: [
+                        {
+                            type: Discord.ComponentType.TextInput,
+                            customId: 'group_reason',
+                            style: Discord.TextInputStyle.Paragraph,
+                            label: 'Why do you want to partner with us?',
+                            minLength: 128,
+                            maxLength: 1024,
+                            required: true,
+                        },
+                    ],
+                }, {
+                    type: Discord.ComponentType.ActionRow,
+                    components: [
+                        {
+                            type: Discord.ComponentType.TextInput,
+                            customId: 'group_social_links',
+                            style: Discord.TextInputStyle.Paragraph,
+                            label: 'Link your socials: Discord, Roblox, etc.',
+                            minLength: 32,
+                            maxLength: 1024,
+                            required: true,
+                        },
+                    ],
+                },
+            ],
+        },
         modal_handler: async (
             interaction,
             _support_category,
             support_ticket_channel,
             _support_ticket_owner
         ) => {
-             const group_name = interaction.fields.getTextInputValue('group_name');
-             const group_owner_age = interaction.fields.getTextInputValue('group_owner_age');
-             const group_member_count = interaction.fields.getTextInputValue('group_member_count');
-             const group_description = interaction.fields.getTextInputValue('group_description');
-             const group_reason = interaction.fields.getTextInputValue('group_reason');
-             const group_social_links = interaction.fields.getTextInputValue('group_social_links');
+            const group_name = interaction.fields.getTextInputValue('group_name');
+            const group_owner_age = interaction.fields.getTextInputValue('group_owner_age');
+            const group_member_count = interaction.fields.getTextInputValue('group_member_count');
+            const group_description = interaction.fields.getTextInputValue('group_description');
+            const group_reason = interaction.fields.getTextInputValue('group_reason');
+            const group_social_links = interaction.fields.getTextInputValue('group_social_links');
 
-             await support_ticket_channel.send({
-                 embeds: [
-                     CustomEmbed.from({
-                         author: {
-                             icon_url: interaction.client.user.displayAvatarURL({ forceStatic: false }),
-                             name: 'Inertia Lighting | Support System',
-                         },
-                         description: [
-                             '**What is the name of your group?**',
-                             `${group_name}`,
-                             '',
-                             '**How old are you?**',
-                             `${group_owner_age}`,
-                             '',
-                             '**How many members are in your group?**',
-                             `${group_member_count}`,
-                             '',
-                             '**Describe your group.**',
-                             `${group_description}`,
-                             '',
-                             '**Why do you want to partner with us?**',
-                             `${group_reason}`,
-                             '',
-                             '**What are your group\'s social links?**',
-                             `${group_social_links}`,
-                         ].join('\n'),
-                     }),
-                 ],
-             });
-         },
+            await support_ticket_channel.send({
+                embeds: [
+                    CustomEmbed.from({
+                        author: {
+                            icon_url: interaction.client.user.displayAvatarURL({ forceStatic: false }),
+                            name: 'Inertia Lighting | Support System',
+                        },
+                        description: [
+                            '**What is the name of your group?**',
+                            `${group_name}`,
+                            '',
+                            '**How old are you?**',
+                            `${group_owner_age}`,
+                            '',
+                            '**How many members are in your group?**',
+                            `${group_member_count}`,
+                            '',
+                            '**Describe your group.**',
+                            `${group_description}`,
+                            '',
+                            '**Why do you want to partner with us?**',
+                            `${group_reason}`,
+                            '',
+                            '**What are your group\'s social links?**',
+                            `${group_social_links}`,
+                        ].join('\n'),
+                    }),
+                ],
+            });
+        },
     }, {
         id: SupportCategoryId.Other,
         name: 'Other & Quick Questions',
@@ -771,7 +773,8 @@ export const support_categories: SupportCategory[] = [
     },
 ];
 
-// ------------------------------------------------------------//
+/* -------------------------------------------------------------------------- */
+
 
 async function sendInitialInformationToSupportTicketChannel(
     support_ticket_channel: Discord.TextChannel,
@@ -826,11 +829,11 @@ export async function createSupportTicketChannel(
             ...support_tickets_category.permissionOverwrites.cache.values(), // clone the parent channel permissions
             {
                 id: config.customer_service_role_id.id,
-                allow: [ Discord.PermissionFlagsBits.ViewChannel, Discord.PermissionFlagsBits.SendMessages ],
+                allow: [Discord.PermissionFlagsBits.ViewChannel, Discord.PermissionFlagsBits.SendMessages],
             }, {
                 id: config.staff_role_id.id,
-                allow: [ Discord.PermissionFlagsBits.ViewChannel ],
-                deny: [ Discord.PermissionFlagsBits.SendMessages ],
+                allow: [Discord.PermissionFlagsBits.ViewChannel],
+                deny: [Discord.PermissionFlagsBits.SendMessages],
             }, {
                 id: support_ticket_owner.id,
                 allow: [Discord.PermissionFlagsBits.ViewChannel, Discord.PermissionFlagsBits.SendMessages],
@@ -942,7 +945,7 @@ export async function closeSupportTicketChannel(
         const support_ticket_transcripts_channel = await client.channels.fetch(config.support_tickets_transcripts_channel_id);
         if (!support_ticket_transcripts_channel) throw new Error('Unable to find the support ticket transcripts channel!');
         if (!support_ticket_transcripts_channel.isTextBased()) throw new Error('The support ticket transcripts channel is not a text channel!');
-        if(!support_ticket_transcripts_channel.isSendable()) throw new Error('The identity manager logging channel is not sendable!');
+        if (!support_ticket_transcripts_channel.isSendable()) throw new Error('The identity manager logging channel is not sendable!');
 
         const transcript_message = await support_ticket_transcripts_channel.send({
             embeds: [

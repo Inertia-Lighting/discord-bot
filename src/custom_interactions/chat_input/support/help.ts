@@ -2,6 +2,7 @@
 /*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
 /* -------------------------------------------------------------------------- */
 
+/* ------------------------------ Dependencies ------------------------------ */
 
 import * as Discord from 'discord.js';
 
@@ -9,7 +10,7 @@ import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunCo
 import { CustomEmbed } from '@/common/message.js'
 import { fetchPermissions } from '@/utilities/permissions.js';
 
-// ------------------------------------------------------------//
+/* ------------------------------- Definition ------------------------------- */
 
 export default new CustomInteraction({
     identifier: 'help',

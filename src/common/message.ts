@@ -2,10 +2,12 @@
 /*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
 /* -------------------------------------------------------------------------- */
 
+/* ------------------------------ Dependencies ------------------------------ */
 
 import * as Discord from 'discord.js';
 
-// ------------------------------------------------------------//
+/* -------------------------------- Constants ------------------------------- */
+
 
 enum CustomEmbedColor {
     Brand = 0x60A0FF,
@@ -20,6 +22,8 @@ enum CustomEmbedColor {
     Magenta = 0xFF00FF,
     Gray = 0x808080,
 }
+
+/* ------------------------------- Definition ------------------------------- */
 
 export class CustomEmbed {
     static Color = CustomEmbedColor;

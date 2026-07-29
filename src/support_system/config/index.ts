@@ -2,11 +2,14 @@
 /*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
 /* -------------------------------------------------------------------------- */
 
+/* ------------------------------ Dependencies ------------------------------ */
 
 import config from '@/utilities/bot_config.js';
 
 import { SatisfactionLevel } from '../types/index.js'
 ;
+
+/* ------------------------------- Definition ------------------------------- */
 
 /**
  * Configuration for support ticket channels

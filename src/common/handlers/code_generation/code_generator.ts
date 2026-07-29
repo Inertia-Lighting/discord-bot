@@ -2,6 +2,7 @@
 /*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
 /* -------------------------------------------------------------------------- */
 
+/* ------------------------------ Dependencies ------------------------------ */
 
 import { ButtonStyle, CommandInteraction, ComponentType } from 'discord.js';
 
@@ -12,7 +13,7 @@ import { CustomEmbed } from '../../message.js';
 import create_db_handler from './create_db_handler.js';
 import { event_map, getUserUpdates,RobloxUsersApiUser, UserDataClient } from './user_update.js';
 
-// ------------------------------------------------------------//
+/* -------------------------------- Constants ------------------------------- */
 
 const word_array = ['white', 'black', 'source', 'copy', 'possible', 'new', 'native', 'rocks', 'apple', 'pear', 'tree', 'quackers', 'aiden', 'cole', 'cheese', 'pizza', 'man', 'transfer', 'ticket', 'products', 'alpha', 'bravo', 'charlie', 'delta', 'echo', 'foxtrot', 'golf', 'hotel', 'india', 'lima', 'mike', 'november', 'oscar', 'papa', 'romeo', 'tango', 'uniform', 'victor', 'zulu'];
 
@@ -22,7 +23,7 @@ const code_length = 10;
 
 const { getUserData } = new UserDataClient<true>();
 
-// ------------------------------------------------------------//
+/* ------------------------------- Definition ------------------------------- */
 
 /**
  * @async
@@ -39,11 +40,12 @@ async function checkUser(user_id: string, interaction: CommandInteraction): Prom
     // console.log('Checking user...');
     const user_data = await getUserData(user_id);
     // console.log(user_data);
-    // ------------------------------------------------------------//
+    /* -------------------------------------------------------------------------- */
 
     const { code_db } = await create_db_handler();
 
-   // ------------------------------------------------------------//
+       /* -------------------------------------------------------------------------- */
+
 
     code_db.data.codes.filter((data: verification_code_data) => data.roblox_id === user_id).forEach((data) => {
         interaction.editReply({
@@ -85,11 +87,13 @@ async function checkUser(user_id: string, interaction: CommandInteraction): Prom
 export async function generateVerificationCode(user_id: string, interaction: CommandInteraction): Promise<undefined> {
     if (await checkUser(user_id, interaction) === false) return;
 
-    // ------------------------------------------------------------//
+        /* -------------------------------------------------------------------------- */
+
 
     const { code_db } = await create_db_handler();
 
-    // ------------------------------------------------------------//
+        /* -------------------------------------------------------------------------- */
+
 
     let code: string = '';
     const random_places: Array<[number, string]> = [];
@@ -207,11 +211,13 @@ export async function generateVerificationCode(user_id: string, interaction: Com
 /* -------------------------------------------------------------------------- */
 
 setInterval(async () => {
-    // ------------------------------------------------------------//
+        /* -------------------------------------------------------------------------- */
+
 
     const { code_db } = await create_db_handler();
 
-    // ------------------------------------------------------------//
+        /* -------------------------------------------------------------------------- */
+
 
     code_db.data.codes.filter((element) => element.expiration <= Date.now()).forEach((data, index) => {
         data.interaction?.editReply({

@@ -8,7 +8,8 @@ import * as Discord from 'discord.js';
 import { guildMemberRolesAddedLogger, guildMemberRolesRemovedLogger, illegalNicknameHandler } from '@/common/handlers/index.js'
 import config from '@/utilities/bot_config.js';
 
-// ------------------------------------------------------------//
+    /* -------------------------------------------------------------------------- */
+
 
 export default {
     name: Discord.Events.GuildMemberUpdate,

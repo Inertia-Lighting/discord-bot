@@ -2,6 +2,7 @@
 /*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
 /* -------------------------------------------------------------------------- */
 
+/* ------------------------------ Dependencies ------------------------------ */
 
 import * as Discord from 'discord.js';
 
@@ -10,8 +11,7 @@ import { CustomEmbed } from '@/common/message.js'
 import { createNoteForUser, lookupNoteForUser, lookupNotesForUser, purgeNotesFromUser, removeNoteFromUser, updateNoteForUser } from '@/lib/notes/index.js';
 import { chunkArray, delay, ellipseString, getMarkdownFriendlyTimestamp } from '@/utilities/index.js'
 
-
-// ------------------------------------------------------------//
+/* -------------------------------- Functions ------------------------------- */
 
 async function manageNotesLookupSubCommandHandler(
     interaction: Discord.ChatInputCommandInteraction,
@@ -432,7 +432,7 @@ async function manageNotesPurgeSubCommandHandler(
     }).catch(console.warn);
 }
 
-// ------------------------------------------------------------//
+/* ------------------------------- Definition ------------------------------- */
 
 export default new CustomInteraction({
     identifier: 'manage_user_notes',

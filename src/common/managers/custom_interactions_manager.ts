@@ -16,6 +16,8 @@
  * `createRequire(import.meta.url)`.
  */
 
+/* ------------------------------ Dependencies ------------------------------ */
+
 import { createRequire } from 'node:module';
 import path from 'node:path';
 
@@ -26,7 +28,8 @@ import { DistributiveOmit } from '@/types/index.js'
 import { delay, findJSFiles } from '@/utilities/index.js'
 import { fetchPermissions, isDeveloper } from '@/utilities/permissions.js';
 
-// ------------------------------------------------------------//
+/* -------------------------------- Constants ------------------------------- */
+
 
 const require = createRequire(import.meta.url);
 
@@ -44,7 +47,7 @@ type CustomInteractionMetadata = {
 
 type CustomInteractionHandler = (discord_client: Discord.Client<true>, interaction: Discord.Interaction) => Promise<void>;
 
-// ------------------------------------------------------------//
+/* ------------------------------- Definition ------------------------------- */
 
 export enum CustomInteractionRunContext {
     Global = 1,
@@ -65,7 +68,8 @@ export enum CustomInteractionAccessLevel {
     BotAdmin = 10
 }
 
-// ------------------------------------------------------------//
+/* -------------------------------------------------------------------------- */
+
 
 /**
  * Represents a single custom interaction implementation.
@@ -272,7 +276,7 @@ export class CustomInteractionsManager {
 
         // If we don't have a registered interaction, ignore it quietly.
         if (!client_interaction) {
-            throw new Error(`Could not find interaction (${interaction_name}) in cache`, );
+            throw new Error(`Could not find interaction (${interaction_name}) in cache`,);
         }
 
         if (client_interaction.metadata.guild_only && !interaction.inCachedGuild()) throw new Error('Expected guild for this interaction');

@@ -2,15 +2,17 @@
 /*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
 /* -------------------------------------------------------------------------- */
 
+/* ------------------------------ Dependencies ------------------------------ */
 
 import EventEmitter from 'node:events';
 
 import axios from 'axios';
 
 import create_db_handler from './create_db_handler.js'
-;
+    ;
 
-// ------------------------------------------------------------//
+/* ------------------------------- Definition ------------------------------- */
+
 
 export class UserUpdateEmitter extends EventEmitter { }
 
@@ -40,11 +42,13 @@ export type RobloxUsersApiUser = {
  * @returns {Promise<events.EventEmitter>}
  */
 export async function getUserUpdates(roblox_id: string | number): Promise<UserUpdateEmitter> {
-    // ------------------------------------------------------------//
+    /* -------------------------------------------------------------------------- */
+
 
     const code_db = await create_db_handler();
 
-    // ------------------------------------------------------------//
+    /* -------------------------------------------------------------------------- */
+
     const returning_event = new UserUpdateEmitter();
     code_db.event_map.set(roblox_id.toString(), returning_event);
     return returning_event;
@@ -60,7 +64,7 @@ export async function getUserUpdates(roblox_id: string | number): Promise<UserUp
  * @returns {Promise<RobloxUsersApiUser>}
  */
 export class UserDataClient<AlwaysReturn extends boolean = boolean> {
-     
+
     async getUserData(roblox_id: string | number): Promise<AlwaysReturn extends true ? RobloxUsersApiUser : RobloxUsersApiUser | undefined> {
         // console.log(`v1/users/${roblox_id}`);
         console.trace(roblox_id);
@@ -89,11 +93,13 @@ export class UserDataClient<AlwaysReturn extends boolean = boolean> {
 /* -------------------------------------------------------------------------- */
 
 setInterval(async () => {
-    // ------------------------------------------------------------//
+    /* -------------------------------------------------------------------------- */
+
 
     const code_db = await create_db_handler();
 
-    // ------------------------------------------------------------//
+    /* -------------------------------------------------------------------------- */
+
     code_db.event_map.forEach(async (v, k) => {
         // console.log(k);
         const request = await users_api.get<RobloxUsersApiUser>(`v1/users/${k}`);

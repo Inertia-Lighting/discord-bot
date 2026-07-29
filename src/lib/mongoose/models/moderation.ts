@@ -2,17 +2,19 @@
 /*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
 /* -------------------------------------------------------------------------- */
 
+/* ------------------------------ Dependencies ------------------------------ */
+
 import mongoose from 'mongoose';
 
 import { MongoDB } from '@/common/mongo/mongo.js';
 import type { DbModerationAction } from '@/types/index.js';
 
-/* -------------------------------------------------------------------------- */
+/* -------------------------- Environment Variables ------------------------- */
 
 const db_moderation_action_records_collection_name = `${process.env.MONGO_MODERATION_ACTION_RECORDS_COLLECTION_NAME ?? ''}`;
 if (db_moderation_action_records_collection_name.length < 1) throw new Error('Environment variable: MONGO_USERS_COLLECTION_NAME; is not set correctly.');
 
-/* -------------------------------------------------------------------------- */
+/* ------------------------------- Definition ------------------------------- */
 
 const ModerationActionSchema = new mongoose.Schema<DbModerationAction>({
     identity: {

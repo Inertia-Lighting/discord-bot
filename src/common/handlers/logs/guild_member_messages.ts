@@ -2,6 +2,7 @@
 /*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
 /* -------------------------------------------------------------------------- */
 
+/* ------------------------------ Dependencies ------------------------------ */
 
 import * as Discord from 'discord.js';
 
@@ -9,7 +10,8 @@ import { CustomEmbed } from '@/common/message.js'
 import config from '@/utilities/bot_config.js'
 import { ellipseString, getMarkdownFriendlyTimestamp } from '@/utilities/index.js'
 
-// ------------------------------------------------------------//
+/* ------------------------------- Definition ------------------------------- */
+
 
 export async function guildMemberMessageUpdateLogger(
     old_message: Discord.Message,

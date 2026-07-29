@@ -2,11 +2,13 @@
 /*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
 /* -------------------------------------------------------------------------- */
 
+/* ------------------------------ Dependencies ------------------------------ */
+
 
 import { Prisma } from '@/lib/prisma/browser.js'
 import prisma from '@/lib/prisma_client.js'
 
-// ------------------------------------------------------------//
+/* ------------------------------- Definition ------------------------------- */
 
 /**
  * Adds a moderation action to the database

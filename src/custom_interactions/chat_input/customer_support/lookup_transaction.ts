@@ -2,6 +2,7 @@
 /*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
 /* -------------------------------------------------------------------------- */
 
+/* ------------------------------ Dependencies ------------------------------ */
 
 import * as Discord from 'discord.js';
 
@@ -10,7 +11,7 @@ import { CustomEmbed } from '@/common/message.js'
 import prisma from '@/lib/prisma_client.js';
 import config from '@/utilities/bot_config.js';
 
-// ------------------------------------------------------------//
+/* ------------------------------- Definition ------------------------------- */
 
 export default new CustomInteraction({
     identifier: 'lookup_transaction',

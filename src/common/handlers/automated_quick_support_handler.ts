@@ -2,6 +2,7 @@
 /*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
 /* -------------------------------------------------------------------------- */
 
+/* ------------------------------ Dependencies ------------------------------ */
 
 import * as Discord from 'discord.js';
 import { compareTwoStrings } from 'string-similarity';
@@ -9,7 +10,7 @@ import { compareTwoStrings } from 'string-similarity';
 import { CustomEmbed } from '@/common/message.js'
 import { clampNumber } from '@/utilities/index.js'
 
-// ------------------------------------------------------------//
+/* -------------------------------- Constants ------------------------------- */
 
 type QuickSupportTopic = {
     id: string,
@@ -18,13 +19,13 @@ type QuickSupportTopic = {
     support_contents: string,
 };
 
-// ------------------------------------------------------------//
 
 const quick_support_topics: QuickSupportTopic[] = [];
 
 const confidence_threshold = 0.75; // on a scale from <0, 1> (inclusive), how similar the two strings should be to match
 
-// ------------------------------------------------------------//
+/* -------------------------------- Functions ------------------------------- */
+
 
 function getSimilarityScore(string_1: string, string_2: string): number {
     return compareTwoStrings(string_1.toLowerCase(), string_2.toLowerCase()); // returns a number between <0, 1> (inclusive)
@@ -67,7 +68,8 @@ function findPotentialMatchingQuickSupportTopics(user_input: string): (QuickSupp
     return matching_qs_topics;
 }
 
-// ------------------------------------------------------------//
+/* ------------------------------- Definition ------------------------------- */
+
 
 export async function automatedQuickSupportHandler(
     message: Discord.Message,

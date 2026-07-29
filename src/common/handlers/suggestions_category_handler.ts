@@ -2,6 +2,7 @@
 /*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
 /* -------------------------------------------------------------------------- */
 
+/* ------------------------------ Dependencies ------------------------------ */
 
 import { Message } from 'discord.js'
 import { findBestMatch, Rating } from 'string-similarity';
@@ -10,7 +11,7 @@ import { CustomEmbed } from '@/common/message.js'
 import { delay, ellipseString } from '@/utilities/index.js'
 import { fetchPermissions } from '@/utilities/permissions.js';
 
-// ------------------------------------------------------------//
+/* -------------------------------- Constants ------------------------------- */
 
 const camera_words: string[] = [
     'camera',
@@ -37,6 +38,8 @@ function checkCameraMention(msg: string): coolStuff {
         detected: check.ratings
     });
 }
+
+/* ------------------------------- Definition ------------------------------- */
 
 export async function suggestionsCategoryHandler(
     message: Message,

@@ -2,6 +2,7 @@
 /*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
 /* -------------------------------------------------------------------------- */
 
+/* ------------------------------ Dependencies ------------------------------ */
 
 import * as Discord from 'discord.js';
 
@@ -10,7 +11,7 @@ import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunCo
 import { CustomEmbed } from '@/common/message.js'
 import config from '@/utilities/bot_config.js';
 
-// ------------------------------------------------------------//
+/* ------------------------------- Definition ------------------------------- */
 
 export default new CustomInteraction({
     identifier: 'begin_recovery_process',

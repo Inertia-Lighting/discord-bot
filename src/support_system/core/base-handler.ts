@@ -2,6 +2,7 @@
 /*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
 /* -------------------------------------------------------------------------- */
 
+/* ------------------------------ Dependencies ------------------------------ */
 
 import * as Discord from 'discord.js';
 
@@ -14,6 +15,8 @@ import {
     SupportTicketContext 
 } from '../types/index.js'
 ;
+
+/* ------------------------------- Definition ------------------------------- */
 
 /**
  * Base implementation for support category handlers

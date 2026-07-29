@@ -2,7 +2,11 @@
 /*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
 /* -------------------------------------------------------------------------- */
 
+/* ------------------------------ Dependencies ------------------------------ */
+
 import { QSTopic } from '@/types/index.js';
+
+/* ------------------------------- Definition ------------------------------- */
 
 export const topics: QSTopic[] = [
   {

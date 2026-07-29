@@ -2,6 +2,7 @@
 /*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
 /* -------------------------------------------------------------------------- */
 
+/* ------------------------------ Dependencies ------------------------------ */
 
 import * as Discord from 'discord.js';
 
@@ -17,6 +18,8 @@ import {
     TicketPriorityService
 } from '../types/index.js'
 ;
+
+/* ------------------------------- Definition ------------------------------- */
 
 /**
  * Priority configurations with SLA and visual indicators

@@ -1,7 +1,13 @@
+/* -------------------------------------------------------------------------- */
+/*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
+/* -------------------------------------------------------------------------- */
+
+/* ------------------------------ Dependencies ------------------------------ */
+
 import prisma from '@/lib/prisma_client.js';
 import { PrismaProductData } from '@/types/index.js';
 
-// ------------------------------------------------------------//
+/* ------------------------------- Definition ------------------------------- */
 
 export class DbProductsCache {
     public static readonly cache_lifetime_ms = 1 * 600_000; // 10 minutes

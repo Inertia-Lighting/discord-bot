@@ -2,6 +2,7 @@
 /*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
 /* -------------------------------------------------------------------------- */
 
+/* ------------------------------ Dependencies ------------------------------ */
 
 import * as Discord from 'discord.js';
 
@@ -11,7 +12,7 @@ import { BlacklistModel, UserModel } from '@/lib/mongoose/models/index.js';
 import { DbBlacklistedUserRecord, DbUserData } from '@/types/index.js'
 
 
-// ------------------------------------------------------------//
+/* ------------------------------- Definition ------------------------------- */
 
 export default new CustomInteraction({
     identifier: 'User Lookup V2',

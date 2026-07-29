@@ -3,6 +3,7 @@
 /*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
 /* -------------------------------------------------------------------------- */
 
+/* ------------------------------ Dependencies ------------------------------ */
 
 import { randomUUID } from 'node:crypto';
 
@@ -16,7 +17,7 @@ import prisma from '@/lib/prisma_client.js'
 import config from '@/utilities/bot_config.js';
 import { DbProductsCache } from '@/utilities/productCache.js';
 
-// ------------------------------------------------------------//
+/* -------------------------------- Constants ------------------------------- */
 
 // Note for the future:
 //
@@ -30,12 +31,11 @@ enum ManageTransactionsAction {
     Remove = 'remove',
 }
 
-// ------------------------------------------------------------//
 
 const ALL_PRODUCTS_CODE = 'ALL';
 const ALL_VIEWABLE_PRODUCTS_CODE = 'ALL_VIEWABLE';
 
-// ------------------------------------------------------------//
+/* -------------------------------- Functions ------------------------------- */
 
 async function manageProductsAutocompleteHandler(
     interaction: Discord.AutocompleteInteraction,
@@ -157,7 +157,8 @@ async function manageProductsAutocompleteHandler(
     interaction.respond(autocomplete_results);
 }
 
-// ------------------------------------------------------------//
+    /* -------------------------------------------------------------------------- */
+
 
 // Note:
 //
@@ -539,7 +540,7 @@ async function manageProductsChatInputCommandHandler(
     }).catch(console.warn);
 }
 
-// ------------------------------------------------------------//
+/* ------------------------------- Definition ------------------------------- */
 
 export default new CustomInteraction({
     identifier: 'manage_user_transactions',

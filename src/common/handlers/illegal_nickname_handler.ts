@@ -8,14 +8,16 @@ import * as Discord from 'discord.js';
 import { delay } from '@/utilities/index.js'
 import { fetchPermissions } from '@/utilities/permissions.js';
 
-// ------------------------------------------------------------//
+/* -------------------------------- Constants ------------------------------- */
+
 
 const non_allowed_regex_filter = /[^\w\d]|_/gi;
 
 const display_name_override_nickname = 'Illegal Nickname';
 const display_name_override_reason = 'The user\'s display name contained too many non-allowed characters.';
 
-// ------------------------------------------------------------//
+/* ------------------------------- Definition ------------------------------- */
+
 
 export async function illegalNicknameHandler(client: Discord.Client<true>, member: Discord.GuildMember) {
     if (member.user.bot) return;

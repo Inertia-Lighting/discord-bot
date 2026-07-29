@@ -2,6 +2,7 @@
 /*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
 /* -------------------------------------------------------------------------- */
 
+/* ------------------------------ Dependencies ------------------------------ */
 
 import { 
     SupportCategoryConfig, 
@@ -10,6 +11,8 @@ import {
     SupportCategoryRegistry 
 } from '../types/index.js'
 ;
+
+/* ------------------------------- Definition ------------------------------- */
 
 /**
  * Implementation of the support category registry

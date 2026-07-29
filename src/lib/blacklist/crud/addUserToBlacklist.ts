@@ -2,7 +2,11 @@
 /*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
 /* -------------------------------------------------------------------------- */
 
+/* ------------------------------ Dependencies ------------------------------ */
+
 import prisma from '@/lib/prisma_client.js';
+
+/* ------------------------------- Definition ------------------------------- */
 
 export async function addUserToBlacklistedUsersDatabase(
     {

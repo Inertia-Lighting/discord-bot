@@ -2,14 +2,20 @@
 /*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
 /* -------------------------------------------------------------------------- */
 
+/* ------------------------------ Dependencies ------------------------------ */
 
 import { Low } from 'lowdb';
 
 import { event_map } from './user_update.js'
 ;
+
+/* -------------------------------- Constants ------------------------------- */
+
 interface userData {
     codes: verification_code_data[]
 }
+
+/* ------------------------------- Definition ------------------------------- */
 
 export default async function genHandler(): Promise<{ code_db: Low<userData>; event_map: typeof event_map }> {
     const { JSONFilePreset } = await import('lowdb/node');

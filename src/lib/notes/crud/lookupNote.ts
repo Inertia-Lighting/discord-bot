@@ -2,9 +2,13 @@
 /*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
 /* -------------------------------------------------------------------------- */
 
+/* ------------------------------ Dependencies ------------------------------ */
+
 import prisma from '@/lib/prisma_client.js';
 
 import { FullNote } from '../types.js';
+
+/* ------------------------------- Definition ------------------------------- */
 
 export async function lookupNoteForUser(
     { id }: {
