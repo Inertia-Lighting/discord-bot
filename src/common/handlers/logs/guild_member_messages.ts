@@ -1,20 +1,16 @@
-// ------------------------------------------------------------//
-//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-// ------------------------------------------------------------//
+/* -------------------------------------------------------------------------- */
+/*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
+/* -------------------------------------------------------------------------- */
 
-import * as Discord from 'discord.js';
+/* ------------------------------ Dependencies ------------------------------ */
+
+import * as Discord from 'discord.js'
 
 import { CustomEmbed } from '@/common/message.js'
-;
+import config from '@/utilities/bot_config.js'
 import { ellipseString, getMarkdownFriendlyTimestamp } from '@/utilities/index.js'
-;
 
-// ------------------------------------------------------------//
-
-const logging_channel_id = process.env.BOT_LOGGING_CHANNEL_ID as string;
-if (typeof logging_channel_id !== 'string') throw new TypeError('logging_channel_id is not a string');
-
-// ------------------------------------------------------------//
+/* ------------------------------- Definition ------------------------------- */
 
 export async function guildMemberMessageUpdateLogger(
     old_message: Discord.Message,
@@ -30,7 +26,7 @@ export async function guildMemberMessageUpdateLogger(
 
     const client = old_message.client;
 
-    const logging_channel = await client.channels.fetch(logging_channel_id);
+    const logging_channel = await client.channels.fetch(config.logging_channel_id);
     if (!(logging_channel instanceof Discord.TextChannel)) throw new Error('Failed to fetch logging channel');
 
     const message_update_timestamp = getMarkdownFriendlyTimestamp(new_message.editedTimestamp ?? Date.now());
@@ -124,7 +120,7 @@ export async function guildMemberMessageDeleteLogger(
 
     const client = message.client;
 
-    const logging_channel = await client.channels.fetch(logging_channel_id);
+    const logging_channel = await client.channels.fetch(config.logging_channel_id);
     if (!(logging_channel instanceof Discord.TextChannel)) throw new Error('Failed to fetch logging channel');
 
     const message_delete_timestamp = getMarkdownFriendlyTimestamp(Date.now());

@@ -1,18 +1,20 @@
-// ------------------------------------------------------------//
-//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-// ------------------------------------------------------------//
+/* -------------------------------------------------------------------------- */
+/*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
+/* -------------------------------------------------------------------------- */
 
-import * as Discord from 'discord.js';
+/* ------------------------------ Dependencies ------------------------------ */
+
+import * as Discord from 'discord.js'
 
 import { CustomEmbed } from '@/common/message.js'
-;
 
 import { 
     SupportCategoryHandler, 
     SupportCategoryId, 
     SupportTicketContext 
 } from '../types/index.js'
-;
+
+/* ------------------------------- Definition ------------------------------- */
 
 /**
  * Base implementation for support category handlers
@@ -138,6 +140,6 @@ export abstract class BaseSupportCategoryHandler implements SupportCategoryHandl
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     protected async getStaffRoleMentions(_context: SupportTicketContext): Promise<string> {
         // This will be implemented by subclasses or retrieved from config
-        return 'support staff';
+        return 'support staff'
     }
 }

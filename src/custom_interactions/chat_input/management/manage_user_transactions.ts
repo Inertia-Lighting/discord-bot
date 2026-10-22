@@ -1,29 +1,23 @@
 /* eslint-disable complexity */
-// ------------------------------------------------------------//
-//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-// ------------------------------------------------------------//
+/* -------------------------------------------------------------------------- */
+/*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
+/* -------------------------------------------------------------------------- */
 
-import { randomUUID } from 'node:crypto';
+/* ------------------------------ Dependencies ------------------------------ */
 
-import * as Discord from 'discord.js';
-import { compareTwoStrings } from 'string-similarity';
+import { randomUUID } from 'node:crypto'
+
+import * as Discord from 'discord.js'
+import { compareTwoStrings } from 'string-similarity'
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
 import { CustomEmbed } from '@/common/message.js'
-import { TransactionsCreateManyUserInput } from '@/lib/prisma/models.js';
+import { TransactionsCreateManyUserInput } from '@/lib/prisma/models.js'
 import prisma from '@/lib/prisma_client.js'
-import { PrismaProductData } from '@/types/index.js'
+import config from '@/utilities/bot_config.js'
+import { DbProductsCache } from '@/utilities/productCache.js'
 
-
-// ------------------------------------------------------------//
-
-const db_database_support_staff_role_id = `${process.env.BOT_SUPPORT_STAFF_DATABASE_ROLE_ID ?? ''}`;
-if (db_database_support_staff_role_id.length < 1) throw new Error('Environment variable: BOT_SUPPORT_STAFF_DATABASE_ROLE_ID; is not set correctly.');
-
-const bot_logging_products_manager_channel_id = `${process.env.BOT_LOGGING_PRODUCTS_MANAGER_CHANNEL_ID ?? ''}`;
-if (bot_logging_products_manager_channel_id.length < 1) throw new Error('Environment variable: BOT_LOGGING_PRODUCTS_MANAGER_CHANNEL_ID; is not set correctly.');
-
-// ------------------------------------------------------------//
+/* -------------------------------- Constants ------------------------------- */
 
 // Note for the future:
 //
@@ -37,49 +31,11 @@ enum ManageTransactionsAction {
     Remove = 'remove',
 }
 
-// ------------------------------------------------------------//
 
-const ALL_PRODUCTS_CODE = 'ALL';
-const ALL_VIEWABLE_PRODUCTS_CODE = 'ALL_VIEWABLE';
+const ALL_PRODUCTS_CODE = 'ALL'
+const ALL_VIEWABLE_PRODUCTS_CODE = 'ALL_VIEWABLE'
 
-// ------------------------------------------------------------//
-
-class DbProductsCache {
-    public static readonly cache_lifetime_ms = 1 * 600_000; // 10 minutes
-
-    public static cache_expiration_epoch_ms = 0; // default to expired so it will be fetched on first call
-
-    public static cache: PrismaProductData[] = [];
-
-    public static async fetch(
-        bypass_cache: boolean = false,
-    ): Promise<PrismaProductData[]> {
-        const now_epoch_ms = Date.now();
-
-        if (
-            bypass_cache ||
-            this.cache_expiration_epoch_ms < now_epoch_ms
-        ) {
-            const db_roblox_products = await prisma.products.findMany({
-                select: {
-                    code: true,
-                    name: true,
-                    viewable: true,
-                },
-            });
-
-            this.cache_expiration_epoch_ms = now_epoch_ms + this.cache_lifetime_ms;
-            this.cache = db_roblox_products;
-
-            return db_roblox_products;
-        }
-
-        return this.cache;
-    }
-
-}
-
-// ------------------------------------------------------------//
+/* -------------------------------- Functions ------------------------------- */
 
 async function manageProductsAutocompleteHandler(
     interaction: Discord.AutocompleteInteraction,
@@ -201,7 +157,8 @@ async function manageProductsAutocompleteHandler(
     interaction.respond(autocomplete_results);
 }
 
-// ------------------------------------------------------------//
+    /* -------------------------------------------------------------------------- */
+
 
 // Note:
 //
@@ -228,7 +185,7 @@ async function manageProductsChatInputCommandHandler(
     const interaction_guild_member = await interaction.guild.members.fetch(interaction.user.id);
 
     /* check if the user is allowed to use this command */
-    const staff_member_is_permitted = interaction_guild_member.roles.cache.has(db_database_support_staff_role_id);
+    const staff_member_is_permitted = interaction_guild_member.roles.cache.has(config.support_staff_database_role_id);
     if (!staff_member_is_permitted) {
         interaction.editReply({
             embeds: [
@@ -517,7 +474,7 @@ async function manageProductsChatInputCommandHandler(
 
     /* log to the transactions manager logging channel */
     try {
-        const logging_channel = await interaction.client.channels.fetch(bot_logging_products_manager_channel_id);
+        const logging_channel = await interaction.client.channels.fetch(config.logging_products_manager_channel_id);
         if (!logging_channel) throw new Error('Unable to find the transactions manager logging channel!');
         if (!logging_channel.isTextBased()) throw new Error('The transactions manager logging channel is not text-based!');
         if (!logging_channel.isSendable()) throw new Error('The identity manager logging channel is not sendable!');
@@ -583,7 +540,7 @@ async function manageProductsChatInputCommandHandler(
     }).catch(console.warn);
 }
 
-// ------------------------------------------------------------//
+/* ------------------------------- Definition ------------------------------- */
 
 export default new CustomInteraction({
     identifier: 'manage_user_transactions',

@@ -1,14 +1,16 @@
-// ------------------------------------------------------------//
-//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-// ------------------------------------------------------------//
+/* -------------------------------------------------------------------------- */
+/*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
+/* -------------------------------------------------------------------------- */
 
-import * as Discord from 'discord.js';
+/* ------------------------------ Dependencies ------------------------------ */
+
+import * as Discord from 'discord.js'
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext, CustomInteractionsManager } from '@/common/managers/custom_interactions_manager.js'
 import { CustomEmbed } from '@/common/message.js'
-import { fetchHighestAccessLevelForUser } from '@/common/permissions.js'
+import { fetchPermissions } from '@/utilities/permissions.js'
 
-// ------------------------------------------------------------//
+/* ------------------------------- Definition ------------------------------- */
 
 export default new CustomInteraction({
     identifier: 'help',
@@ -29,8 +31,8 @@ export default new CustomInteraction({
 
         await interaction.deferReply({ flags: ['Ephemeral'] });
 
-        const highest_access_level_for_user = await fetchHighestAccessLevelForUser(discord_client, interaction.user);
-        const chat_input_custom_interactions = CustomInteractionsManager.interactions.filter(
+        const highest_access_level_for_user = fetchPermissions(interaction.member);
+        const chat_input_custom_interactions = CustomInteractionsManager.cached_interactions.filter(
             (custom_interaction) =>
                 custom_interaction.type === Discord.InteractionType.ApplicationCommand &&
                 'type' in custom_interaction.data &&

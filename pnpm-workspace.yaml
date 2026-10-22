@@ -1,3 +1,9 @@
+allowBuilds:
+  '@prisma/engines': true
+  bufferutil: true
+  prisma: true
+  utf-8-validate: true
+
 ignoredBuiltDependencies:
   - bufferutil
   - utf-8-validate

@@ -1,18 +1,15 @@
-// ------------------------------------------------------------//
-//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-// ------------------------------------------------------------//
+/* -------------------------------------------------------------------------- */
+/*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
+/* -------------------------------------------------------------------------- */
 
-import * as Discord from 'discord.js';
+/* ------------------------------ Dependencies ------------------------------ */
+
+import * as Discord from 'discord.js'
 
 import { CustomEmbed } from '@/common/message.js'
-;
+import config from '@/utilities/bot_config.js'
 
-// ------------------------------------------------------------//
-
-const logging_channel_id = process.env.BOT_LOGGING_CHANNEL_ID as string;
-if (typeof logging_channel_id !== 'string') throw new TypeError('logging_channel_id is not a string');
-
-// ------------------------------------------------------------//
+/* ------------------------------- Definition ------------------------------- */
 
 async function guildMemberRolesAddedLogger(
     old_member: Discord.GuildMember,
@@ -23,7 +20,7 @@ async function guildMemberRolesAddedLogger(
 
     const client = old_member.guild.client;
 
-    const logging_channel = await client.channels.fetch(logging_channel_id);
+    const logging_channel = await client.channels.fetch(config.logging_channel_id);
     if (!logging_channel) throw new Error('Failed to fetch logging channel');
     if (!logging_channel.isTextBased()) throw new TypeError('logging_channel is not a text channel');
     if(!logging_channel.isSendable()) throw new Error('The identity manager logging channel is not sendable!');
@@ -60,7 +57,7 @@ async function guildMemberRolesRemovedLogger(
 
     const client = old_member.guild.client;
 
-    const logging_channel = await client.channels.fetch(logging_channel_id);
+    const logging_channel = await client.channels.fetch(config.logging_channel_id);
     if (!logging_channel) throw new Error('Failed to fetch logging channel');
     if (!logging_channel.isTextBased()) throw new TypeError('logging_channel is not a text channel');
     if(!logging_channel.isSendable()) throw new Error('The identity manager logging channel is not sendable!');
@@ -88,7 +85,8 @@ async function guildMemberRolesRemovedLogger(
     }).catch(console.trace);
 }
 
-// ------------------------------------------------------------//
+    /* -------------------------------------------------------------------------- */
+
 
 export {
     guildMemberRolesAddedLogger,

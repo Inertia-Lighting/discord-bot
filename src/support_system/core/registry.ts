@@ -1,6 +1,8 @@
-// ------------------------------------------------------------//
-//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-// ------------------------------------------------------------//
+/* -------------------------------------------------------------------------- */
+/*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
+/* -------------------------------------------------------------------------- */
+
+/* ------------------------------ Dependencies ------------------------------ */
 
 import { 
     SupportCategoryConfig, 
@@ -8,7 +10,8 @@ import {
     SupportCategoryId, 
     SupportCategoryRegistry 
 } from '../types/index.js'
-;
+
+/* ------------------------------- Definition ------------------------------- */
 
 /**
  * Implementation of the support category registry

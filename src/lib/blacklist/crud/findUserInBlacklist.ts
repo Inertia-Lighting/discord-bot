@@ -1,6 +1,14 @@
-import prisma from '@/lib/prisma_client.js';
+/* -------------------------------------------------------------------------- */
+/*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
+/* -------------------------------------------------------------------------- */
 
-import { FullPunishment } from '../types.js';
+/* ------------------------------ Dependencies ------------------------------ */
+
+import prisma from '@/lib/prisma_client.js'
+
+import { FullPunishment } from '../types.js'
+
+/* ------------------------------- Definition ------------------------------- */
 
 export async function findUserInBlacklistedUsersDatabase(
     user_lookup_type: 'discord' | 'roblox',

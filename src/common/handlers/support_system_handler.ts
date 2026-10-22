@@ -1,56 +1,24 @@
+/* -------------------------------------------------------------------------- */
+/*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
+/* -------------------------------------------------------------------------- */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-// ------------------------------------------------------------//
-//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-// ------------------------------------------------------------//
+/* ------------------------------ Dependencies ------------------------------ */
 
-import * as Discord from 'discord.js';
+import * as Discord from 'discord.js'
 
-// import * as DiscordTranscripts from 'discord-html-transcripts';
 import { CustomEmbed } from '@/common/message.js'
-import { bot_config } from '@/utilities/bot_config.js'
+import config from '@/utilities/bot_config.js'
 import { delay, getMarkdownFriendlyTimestamp } from '@/utilities/index.js'
 
-// ------------------------------------------------------------//
-
-const support_tickets_category_id = `${process.env.BOT_SUPPORT_TICKETS_CATEGORY_ID ?? ''}`;
-if (support_tickets_category_id.length < 1) throw new Error('Environment variable: BOT_SUPPORT_TICKETS_CATEGORY_ID; is not set correctly.');
-
-const support_tickets_transcripts_channel_id = `${process.env.BOT_SUPPORT_TICKETS_TRANSCRIPTS_CHANNEL_ID ?? ''}`;
-if (support_tickets_transcripts_channel_id.length < 1) throw new Error('Environment variable: BOT_SUPPORT_TICKETS_TRANSCRIPTS_CHANNEL_ID; is not set correctly.');
-
-// ------------------------------------------------------------//
-
-const bot_staff_role_id = `${process.env.BOT_STAFF_ROLE_ID ?? ''}`;
-if (bot_staff_role_id.length < 1) throw new Error('Environment variable: BOT_STAFF_ROLE_ID; is not set correctly.');
-
-const bot_customer_service_role_id = `${process.env.BOT_CUSTOMER_SERVICE_ROLE_ID ?? ''}`;
-if (bot_customer_service_role_id.length < 1) throw new Error('Environment variable: BOT_CUSTOMER_SERVICE_ROLE_ID; is not set correctly.');
-
-// ------------------------------------------------------------//
-
-const bot_database_support_staff_role_id = `${process.env.BOT_SUPPORT_STAFF_DATABASE_ROLE_ID ?? ''}`;
-if (bot_database_support_staff_role_id.length < 1) throw new Error('Environment variable: BOT_SUPPORT_STAFF_DATABASE_ROLE_ID; is not set correctly.');
-
-const bot_other_support_staff_role_id = `${process.env.BOT_SUPPORT_STAFF_OTHER_ROLE_ID ?? ''}`;
-if (bot_other_support_staff_role_id.length < 1) throw new Error('Environment variable: BOT_SUPPORT_STAFF_OTHER_ROLE_ID; is not set correctly.');
-
-const bot_product_issues_support_staff_role_id = `${process.env.BOT_SUPPORT_STAFF_PRODUCT_ISSUES_ROLE_ID ?? ''}`;
-if (bot_product_issues_support_staff_role_id.length < 1) throw new Error('Environment variable: BOT_SUPPORT_STAFF_PRODUCT_ISSUES_ROLE_ID; is not set correctly.');
-
-const bot_product_purchases_support_staff_role_id = `${process.env.BOT_SUPPORT_STAFF_PRODUCT_PURCHASES_ROLE_ID ?? ''}`;
-if (bot_product_purchases_support_staff_role_id.length < 1) throw new Error('Environment variable: BOT_SUPPORT_STAFF_PRODUCT_PURCHASES_ROLE_ID; is not set correctly.');
-
-const bot_partnership_requests_support_staff_role_id = `${process.env.BOT_SUPPORT_STAFF_PARTNERSHIP_REQUESTS_ROLE_ID ?? ''}`;
-if (bot_partnership_requests_support_staff_role_id.length < 1) throw new Error('Environment variable: BOT_SUPPORT_STAFF_PARTNERSHIP_REQUESTS_ROLE_ID; is not set correctly.');
-
-// ------------------------------------------------------------//
+/* -------------------------------- Constants ------------------------------- */
 
 const support_ticket_cleanup_timeout_in_ms = 10_000; // 10 seconds
 
 const user_feedback_survey_collector_timeout_in_ms = 30 * 60_000; // 30 minutes
 
-// ------------------------------------------------------------//
+/* ------------------------------- Definition ------------------------------- */
+
 
 export const satisfaction_levels = {
     highest_satisfaction: {
@@ -80,7 +48,8 @@ export const satisfaction_levels = {
     },
 };
 
-// ------------------------------------------------------------//
+/* -------------------------------------------------------------------------- */
+
 
 /**
  * Do not modify the values of this enum.
@@ -92,7 +61,7 @@ export enum SupportCategoryId {
     Transactions = 'TRANSACTIONS',
     PartnershipRequests = 'PARTNERS',
     Other = 'OTHER',
-    DevlopmentApplication = 'DEVAPP'
+    DevelopmentApplication = 'DEVAPP'
 }
 
 export type SupportCategory = {
@@ -115,7 +84,7 @@ export const support_categories: SupportCategory[] = [
         name: 'Product Tech Support',
         description: 'Product technical support can be found here.',
         staff_role_ids: [
-            bot_product_issues_support_staff_role_id,
+            config.support_staff_product_issues_role_id,
         ],
         modal_data: {
             title: 'Tech Support Questions',
@@ -250,7 +219,7 @@ export const support_categories: SupportCategory[] = [
         name: 'Account Recovery',
         description: 'Recover products from an inaccessible account.',
         staff_role_ids: [
-            bot_database_support_staff_role_id,
+            config.support_staff_database_role_id,
         ],
         modal_data: {
             title: 'Account Recovery Questions',
@@ -372,7 +341,7 @@ export const support_categories: SupportCategory[] = [
         name: 'Transfer Products',
         description: 'Transfer or gift products to a different account.',
         staff_role_ids: [
-            bot_database_support_staff_role_id,
+            config.support_staff_database_role_id,
         ],
         modal_data: {
             title: 'Product Transfer Questions',
@@ -475,7 +444,7 @@ export const support_categories: SupportCategory[] = [
         name: 'Transactions',
         description: 'Failed transactions or monetary issues with purchases.',
         staff_role_ids: [
-            bot_config.support_staff_product_purchases_role_id,
+            config.support_staff_product_purchases_role_id,
         ],
         modal_data: {
             title: 'Transaction Questions',
@@ -556,147 +525,147 @@ export const support_categories: SupportCategory[] = [
             });
         },
     }, {
-         id: SupportCategoryId.PartnershipRequests,
-         name: 'Partnership Requests',
-         description: 'Interested in partnering with us?',
-         staff_role_ids: [
-            bot_config.support_staff_partnership_requests_role_id,
-         ],
-         modal_data: {
-             title: 'Partnership Request Questions',
-             customId: 'support_system_partnership_request_modal',
-             components: [
-                 {
-                     type: Discord.ComponentType.ActionRow,
-                     components: [
-                         {
-                             type: Discord.ComponentType.TextInput,
-                             customId: 'group_name',
-                             style: Discord.TextInputStyle.Short,
-                             label: 'What is the name of your group?',
-                             minLength: 1,
-                             maxLength: 64,
-                             required: true,
-                         },
-                     ],
-                 }, {
-                     type: Discord.ComponentType.ActionRow,
-                     components: [
-                         {
-                             type: Discord.ComponentType.TextInput,
-                             customId: 'group_owner_age',
-                             style: Discord.TextInputStyle.Short,
-                             label: 'How old are you?',
-                             minLength: 1,
-                             maxLength: 4,
-                             required: true,
-                         },
-                     ],
-                 }, {
-                     type: Discord.ComponentType.ActionRow,
-                     components: [
-                         {
-                             type: Discord.ComponentType.TextInput,
-                             customId: 'group_member_count',
-                             style: Discord.TextInputStyle.Short,
-                             label: 'How many members are in your group?',
-                             minLength: 1,
-                             maxLength: 10,
-                             required: true,
-                         },
-                     ],
-                 }, {
-                     type: Discord.ComponentType.ActionRow,
-                     components: [
-                         {
-                             type: Discord.ComponentType.TextInput,
-                             customId: 'group_description',
-                             style: Discord.TextInputStyle.Paragraph,
-                             label: 'Describe your group, be detailed.',
-                             minLength: 128,
-                             maxLength: 1024,
-                             required: true,
-                         },
-                     ],
-                 }, {
-                     type: Discord.ComponentType.ActionRow,
-                     components: [
-                         {
-                             type: Discord.ComponentType.TextInput,
-                             customId: 'group_reason',
-                             style: Discord.TextInputStyle.Paragraph,
-                             label: 'Why do you want to partner with us?',
-                             minLength: 128,
-                             maxLength: 1024,
-                             required: true,
-                         },
-                     ],
-                 }, {
-                     type: Discord.ComponentType.ActionRow,
-                     components: [
-                         {
-                             type: Discord.ComponentType.TextInput,
-                             customId: 'group_social_links',
-                             style: Discord.TextInputStyle.Paragraph,
-                             label: 'Link your socials: Discord, Roblox, etc.',
-                             minLength: 32,
-                             maxLength: 1024,
-                             required: true,
-                         },
-                     ],
-                 },
-             ],
-         },
+        id: SupportCategoryId.PartnershipRequests,
+        name: 'Partnership Requests',
+        description: 'Interested in partnering with us?',
+        staff_role_ids: [
+            config.support_staff_partnership_requests_role_id,
+        ],
+        modal_data: {
+            title: 'Partnership Request Questions',
+            customId: 'support_system_partnership_request_modal',
+            components: [
+                {
+                    type: Discord.ComponentType.ActionRow,
+                    components: [
+                        {
+                            type: Discord.ComponentType.TextInput,
+                            customId: 'group_name',
+                            style: Discord.TextInputStyle.Short,
+                            label: 'What is the name of your group?',
+                            minLength: 1,
+                            maxLength: 64,
+                            required: true,
+                        },
+                    ],
+                }, {
+                    type: Discord.ComponentType.ActionRow,
+                    components: [
+                        {
+                            type: Discord.ComponentType.TextInput,
+                            customId: 'group_owner_age',
+                            style: Discord.TextInputStyle.Short,
+                            label: 'How old are you?',
+                            minLength: 1,
+                            maxLength: 4,
+                            required: true,
+                        },
+                    ],
+                }, {
+                    type: Discord.ComponentType.ActionRow,
+                    components: [
+                        {
+                            type: Discord.ComponentType.TextInput,
+                            customId: 'group_member_count',
+                            style: Discord.TextInputStyle.Short,
+                            label: 'How many members are in your group?',
+                            minLength: 1,
+                            maxLength: 10,
+                            required: true,
+                        },
+                    ],
+                }, {
+                    type: Discord.ComponentType.ActionRow,
+                    components: [
+                        {
+                            type: Discord.ComponentType.TextInput,
+                            customId: 'group_description',
+                            style: Discord.TextInputStyle.Paragraph,
+                            label: 'Describe your group, be detailed.',
+                            minLength: 128,
+                            maxLength: 1024,
+                            required: true,
+                        },
+                    ],
+                }, {
+                    type: Discord.ComponentType.ActionRow,
+                    components: [
+                        {
+                            type: Discord.ComponentType.TextInput,
+                            customId: 'group_reason',
+                            style: Discord.TextInputStyle.Paragraph,
+                            label: 'Why do you want to partner with us?',
+                            minLength: 128,
+                            maxLength: 1024,
+                            required: true,
+                        },
+                    ],
+                }, {
+                    type: Discord.ComponentType.ActionRow,
+                    components: [
+                        {
+                            type: Discord.ComponentType.TextInput,
+                            customId: 'group_social_links',
+                            style: Discord.TextInputStyle.Paragraph,
+                            label: 'Link your socials: Discord, Roblox, etc.',
+                            minLength: 32,
+                            maxLength: 1024,
+                            required: true,
+                        },
+                    ],
+                },
+            ],
+        },
         modal_handler: async (
             interaction,
             _support_category,
             support_ticket_channel,
             _support_ticket_owner
         ) => {
-             const group_name = interaction.fields.getTextInputValue('group_name');
-             const group_owner_age = interaction.fields.getTextInputValue('group_owner_age');
-             const group_member_count = interaction.fields.getTextInputValue('group_member_count');
-             const group_description = interaction.fields.getTextInputValue('group_description');
-             const group_reason = interaction.fields.getTextInputValue('group_reason');
-             const group_social_links = interaction.fields.getTextInputValue('group_social_links');
+            const group_name = interaction.fields.getTextInputValue('group_name');
+            const group_owner_age = interaction.fields.getTextInputValue('group_owner_age');
+            const group_member_count = interaction.fields.getTextInputValue('group_member_count');
+            const group_description = interaction.fields.getTextInputValue('group_description');
+            const group_reason = interaction.fields.getTextInputValue('group_reason');
+            const group_social_links = interaction.fields.getTextInputValue('group_social_links');
 
-             await support_ticket_channel.send({
-                 embeds: [
-                     CustomEmbed.from({
-                         author: {
-                             icon_url: interaction.client.user.displayAvatarURL({ forceStatic: false }),
-                             name: 'Inertia Lighting | Support System',
-                         },
-                         description: [
-                             '**What is the name of your group?**',
-                             `${group_name}`,
-                             '',
-                             '**How old are you?**',
-                             `${group_owner_age}`,
-                             '',
-                             '**How many members are in your group?**',
-                             `${group_member_count}`,
-                             '',
-                             '**Describe your group.**',
-                             `${group_description}`,
-                             '',
-                             '**Why do you want to partner with us?**',
-                             `${group_reason}`,
-                             '',
-                             '**What are your group\'s social links?**',
-                             `${group_social_links}`,
-                         ].join('\n'),
-                     }),
-                 ],
-             });
-         },
+            await support_ticket_channel.send({
+                embeds: [
+                    CustomEmbed.from({
+                        author: {
+                            icon_url: interaction.client.user.displayAvatarURL({ forceStatic: false }),
+                            name: 'Inertia Lighting | Support System',
+                        },
+                        description: [
+                            '**What is the name of your group?**',
+                            `${group_name}`,
+                            '',
+                            '**How old are you?**',
+                            `${group_owner_age}`,
+                            '',
+                            '**How many members are in your group?**',
+                            `${group_member_count}`,
+                            '',
+                            '**Describe your group.**',
+                            `${group_description}`,
+                            '',
+                            '**Why do you want to partner with us?**',
+                            `${group_reason}`,
+                            '',
+                            '**What are your group\'s social links?**',
+                            `${group_social_links}`,
+                        ].join('\n'),
+                    }),
+                ],
+            });
+        },
     }, {
         id: SupportCategoryId.Other,
         name: 'Other & Quick Questions',
         description: 'For all other forms of support.',
         staff_role_ids: [
-            bot_config.support_staff_other_role_id,
-            bot_config.customer_service_role_id,
+            config.support_staff_other_role_id,
+            config.customer_service_role_id.id,
         ],
         modal_data: {
             title: 'Other Questions',
@@ -742,11 +711,11 @@ export const support_categories: SupportCategory[] = [
             });
         },
     }, {
-        id: SupportCategoryId.DevlopmentApplication,
+        id: SupportCategoryId.DevelopmentApplication,
         name: 'Development Application',
         description: 'Apply for a development position with Inertia!',
         staff_role_ids: [
-            bot_config.lead_developer_role_id,
+            config.lead_developer_role_id.id,
         ],
         modal_data: {
             title: 'Developer Application',
@@ -803,7 +772,8 @@ export const support_categories: SupportCategory[] = [
     },
 ];
 
-// ------------------------------------------------------------//
+/* -------------------------------------------------------------------------- */
+
 
 async function sendInitialInformationToSupportTicketChannel(
     support_ticket_channel: Discord.TextChannel,
@@ -836,7 +806,7 @@ export async function createSupportTicketChannel(
     support_ticket_owner: Discord.GuildMember,
     support_ticket_category: SupportCategory
 ): Promise<Discord.TextChannel> {
-    const support_tickets_category = await guild.channels.fetch(support_tickets_category_id);
+    const support_tickets_category = await guild.channels.fetch(config.support_tickets_category_id);
     if (!support_tickets_category) throw new Error('Can\'t find the support ticket category!');
     if (support_tickets_category.type !== Discord.ChannelType.GuildCategory) throw new Error('Support ticket category is not a category!');
 
@@ -857,12 +827,12 @@ export async function createSupportTicketChannel(
         permissionOverwrites: [
             ...support_tickets_category.permissionOverwrites.cache.values(), // clone the parent channel permissions
             {
-                id: bot_customer_service_role_id,
-                allow: [ Discord.PermissionFlagsBits.ViewChannel, Discord.PermissionFlagsBits.SendMessages ],
+                id: config.customer_service_role_id.id,
+                allow: [Discord.PermissionFlagsBits.ViewChannel, Discord.PermissionFlagsBits.SendMessages],
             }, {
-                id: bot_staff_role_id,
-                allow: [ Discord.PermissionFlagsBits.ViewChannel ],
-                deny: [ Discord.PermissionFlagsBits.SendMessages ],
+                id: config.staff_role_id.id,
+                allow: [Discord.PermissionFlagsBits.ViewChannel],
+                deny: [Discord.PermissionFlagsBits.SendMessages],
             }, {
                 id: support_ticket_owner.id,
                 allow: [Discord.PermissionFlagsBits.ViewChannel, Discord.PermissionFlagsBits.SendMessages],
@@ -911,7 +881,7 @@ export async function closeSupportTicketChannel(
 
         const support_ticket_creation_timestamp = support_channel.createdTimestamp ? (
             `<t:${getMarkdownFriendlyTimestamp(support_channel.createdTimestamp)}:F>`
-        ) : 'unknown';
+        ) : 'unknown'
 
         // const transcript = await DiscordTranscripts.createTranscript(support_channel, {
         //     limit: -1,
@@ -971,10 +941,10 @@ export async function closeSupportTicketChannel(
         });
 
         /* send the transcript to transcripts channel */
-        const support_ticket_transcripts_channel = await client.channels.fetch(support_tickets_transcripts_channel_id);
+        const support_ticket_transcripts_channel = await client.channels.fetch(config.support_tickets_transcripts_channel_id);
         if (!support_ticket_transcripts_channel) throw new Error('Unable to find the support ticket transcripts channel!');
         if (!support_ticket_transcripts_channel.isTextBased()) throw new Error('The support ticket transcripts channel is not a text channel!');
-        if(!support_ticket_transcripts_channel.isSendable()) throw new Error('The identity manager logging channel is not sendable!');
+        if (!support_ticket_transcripts_channel.isSendable()) throw new Error('The identity manager logging channel is not sendable!');
 
         const transcript_message = await support_ticket_transcripts_channel.send({
             embeds: [

@@ -1,28 +1,32 @@
-// ------------------------------------------------------------//
-//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-// ------------------------------------------------------------//
+/* -------------------------------------------------------------------------- */
+/*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
+/* -------------------------------------------------------------------------- */
 
-import * as Discord from 'discord.js';
+/* ------------------------------ Dependencies ------------------------------ */
+
+import * as Discord from 'discord.js'
 
 // Category handlers
-import { ProductIssuesConfig, ProductIssuesHandler } from './categories/issues.js';
-import { OtherQuestionsConfig, OtherQuestionsHandler } from './categories/other.js';
-import { PartnershipRequestsConfig, PartnershipRequestsHandler } from './categories/partnerships.js';
-import { AccountRecoveryConfig, AccountRecoveryHandler } from './categories/recovery.js';
-import { ProductTransactionsConfig, ProductTransactionsHandler } from './categories/transactions.js';
-import { ProductTransfersConfig, ProductTransfersHandler } from './categories/transfers.js';
-import { loadSupportSystemConfig } from './config/index.js';
-import { TicketPriorityServiceImpl } from './core/priority-service.js';
-import { SupportCategoryRegistryImpl } from './core/registry.js';
-import { SupportTicketServiceImpl } from './core/ticket-service.js';
+import { ProductIssuesConfig, ProductIssuesHandler } from './categories/issues.js'
+import { OtherQuestionsConfig, OtherQuestionsHandler } from './categories/other.js'
+import { PartnershipRequestsConfig, PartnershipRequestsHandler } from './categories/partnerships.js'
+import { AccountRecoveryConfig, AccountRecoveryHandler } from './categories/recovery.js'
+import { ProductTransactionsConfig, ProductTransactionsHandler } from './categories/transactions.js'
+import { ProductTransfersConfig, ProductTransfersHandler } from './categories/transfers.js'
+import { loadSupportSystemConfig } from './config/index.js'
+import { TicketPriorityServiceImpl } from './core/priority-service.js'
+import { SupportCategoryRegistryImpl } from './core/registry.js'
+import { SupportTicketServiceImpl } from './core/ticket-service.js'
 import { 
     SupportCategoryConfig,
     SupportCategoryId, 
     SupportCategoryRegistry, 
     SupportTicketContext, 
     SupportTicketService,
-    TicketPriorityService} from './types/index.js';
+    TicketPriorityService} from './types/index.js'
 
+/* ------------------------------- Definition ------------------------------- */
+    
 /**
  * Main support system manager
  */

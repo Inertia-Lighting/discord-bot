@@ -19,17 +19,17 @@ jobs:
             token: ${{ secrets.INERTIA_TOKEN }}
             submodules: recursive
         - name: Use Node.js ${{ matrix.node-version }}
-          uses: actions/setup-node@v6
+          uses: pnpm/action-setup@v6
           with:
-            node-version: ${{ matrix.node-version }}
-            cache: 'npm'
-        - name: Use Latest Corepack
-          run: |
-            echo "Before: corepack version => $(corepack --version || echo 'not installed')"
-            npm install -g corepack@latest
-            echo "After : corepack version => $(corepack --version)"
-            corepack enable
-            pnpm --version
+            version: 11.17.0
+            cache: true
+        # - name: Use Latest Corepack
+        #   run: |
+        #     echo "Before: corepack version => $(corepack --version || echo 'not installed')"
+        #     npm install -g corepack@latest
+        #     echo "After : corepack version => $(corepack --version)"
+        #     corepack enable
+        #     pnpm --version
         - name: Install Dependencies
           run: pnpm install
         - name: Build Project

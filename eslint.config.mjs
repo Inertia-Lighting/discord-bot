@@ -1,16 +1,22 @@
-import stylistic from '@stylistic/eslint-plugin';
-import { globalIgnores } from 'eslint/config';
-import simpleImportSort from 'eslint-plugin-simple-import-sort';
-import globals from 'globals';
-import tseslint from 'typescript-eslint';
+/* -------------------------------------------------------------------------- */
+/*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
+/* -------------------------------------------------------------------------- */
 
+/* ------------------------------ Dependencies ------------------------------ */
+
+import stylistic from '@stylistic/eslint-plugin'
+import { globalIgnores } from 'eslint/config'
+import simpleImportSort from 'eslint-plugin-simple-import-sort'
+import globals from 'globals'
+import tseslint from 'typescript-eslint'
+
+/* ------------------------------- Definition ------------------------------- */
 
 export default [
   { languageOptions: { globals: globals.node } },
   ...tseslint.configs.recommended,
   globalIgnores(['dist/'], 'Build Folder'),
-  globalIgnores(['.yarn/**/*'], 'Yarn Stuff'),
-  globalIgnores(['src/types/zod/**/*', 'src/lib/prisma/**/*'], 'Prisma stuff'),
+  globalIgnores(['src/lib/prisma/**/*'], 'Prisma stuff'),
   /* -------------------------------------------------------------------------- */
   {
     plugins: {

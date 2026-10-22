@@ -1,6 +1,14 @@
-import prisma from '@/lib/prisma_client.js';
+/* -------------------------------------------------------------------------- */
+/*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
+/* -------------------------------------------------------------------------- */
 
-import { FullNote } from '../types.js';
+/* ------------------------------ Dependencies ------------------------------ */
+
+import prisma from '@/lib/prisma_client.js'
+
+import { FullNote } from '../types.js'
+
+/* ------------------------------- Definition ------------------------------- */
 
 export async function lookupNotesForUser(
     { discordId }: {

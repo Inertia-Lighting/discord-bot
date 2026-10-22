@@ -1,17 +1,20 @@
-// ------------------------------------------------------------//
-//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-// ------------------------------------------------------------//
+/* -------------------------------------------------------------------------- */
+/*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
+/* -------------------------------------------------------------------------- */
 
-import * as Discord from 'discord.js';
-import { compareTwoStrings } from 'string-similarity';
+/* ------------------------------ Dependencies ------------------------------ */
+
+import * as Discord from 'discord.js'
+import { compareTwoStrings } from 'string-similarity'
 
 import { CustomInteraction, CustomInteractionAccessLevel, CustomInteractionRunContext } from '@/common/managers/custom_interactions_manager.js'
 import { CustomEmbed } from '@/common/message.js'
 import { topics as qs_topics } from '@/lib/quick_support/index.js'
-import { QSTopic } from '@/types/index.js';
+import { QSTopic } from '@/types/index.js'
 import { randomArrayItem } from '@/utilities/index.js'
 
-// ------------------------------------------------------------//
+/* -------------------------------- Functions ------------------------------- */
+
 
 async function fetchQuickSupportTopicById(
     qs_topic_id: string,
@@ -24,7 +27,8 @@ async function fetchQuickSupportTopicById(
 
 }
 
-// ------------------------------------------------------------//
+/* --------------------------------- Handler -------------------------------- */
+
 
 async function quickSupportAutoCompleteHandler(
     interaction: Discord.AutocompleteInteraction,
@@ -135,7 +139,7 @@ async function quickSupportChatInputHandler(
     }).catch(console.warn);
 }
 
-// ------------------------------------------------------------//
+/* ------------------------------- Definition ------------------------------- */
 
 export default new CustomInteraction({
     identifier: 'quick_support',

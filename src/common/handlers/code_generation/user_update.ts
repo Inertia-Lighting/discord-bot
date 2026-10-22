@@ -1,23 +1,47 @@
-// ------------------------------------------------------------//
-//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-// ------------------------------------------------------------//
+/* -------------------------------------------------------------------------- */
+/*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
+/* -------------------------------------------------------------------------- */
 
-import EventEmitter from 'node:events';
+/* ------------------------------ Dependencies ------------------------------ */
 
-import axios from 'axios';
+import EventEmitter from 'node:events'
+import http from 'node:http';
+import https from 'node:https';
+
+import got from 'got';
 
 import create_db_handler from './create_db_handler.js'
-;
 
-// ------------------------------------------------------------//
+/* ------------------------------- Definition ------------------------------- */
+
 
 export class UserUpdateEmitter extends EventEmitter { }
 
 export const event_map = new Map<string, UserUpdateEmitter>();
 
-const users_api = axios.create({
-    baseURL: 'https://users.roblox.com/',
-    timeout: 1000000,
+const httpAgent = new http.Agent({
+    keepAlive: true,
+    maxSockets: 25,
+});
+
+const httpsAgent = new https.Agent({
+    keepAlive: true,
+    maxSockets: 25,
+});
+
+const cache = new Map();
+
+
+const users_api = got.extend({
+    cache: cache,
+    prefixUrl: 'https://api.inertia.lighting/',
+    timeout: { request: 10_000 },
+    headers: { 'Content-Type': 'application/json' },
+    retry: { limit: 3 },
+    agent: {
+        http: httpAgent,
+        https: httpsAgent,
+    }
 });
 
 export type RobloxUsersApiUser = {
@@ -39,11 +63,13 @@ export type RobloxUsersApiUser = {
  * @returns {Promise<events.EventEmitter>}
  */
 export async function getUserUpdates(roblox_id: string | number): Promise<UserUpdateEmitter> {
-    // ------------------------------------------------------------//
+    /* -------------------------------------------------------------------------- */
+
 
     const code_db = await create_db_handler();
 
-    // ------------------------------------------------------------//
+    /* -------------------------------------------------------------------------- */
+
     const returning_event = new UserUpdateEmitter();
     code_db.event_map.set(roblox_id.toString(), returning_event);
     return returning_event;
@@ -59,14 +85,17 @@ export async function getUserUpdates(roblox_id: string | number): Promise<UserUp
  * @returns {Promise<RobloxUsersApiUser>}
  */
 export class UserDataClient<AlwaysReturn extends boolean = boolean> {
-     
+
     async getUserData(roblox_id: string | number): Promise<AlwaysReturn extends true ? RobloxUsersApiUser : RobloxUsersApiUser | undefined> {
         // console.log(`v1/users/${roblox_id}`);
         console.trace(roblox_id);
-        const request = users_api.get<RobloxUsersApiUser>(`v1/users/${roblox_id}`);
+        const request = users_api.get<RobloxUsersApiUser>(`v1/users/${roblox_id}`)
+        .then(
+            (response) => response.body
+        );
         try {
             const response = await request;
-            const data = response.data;
+            const data = response;
             return data as AlwaysReturn extends true ? RobloxUsersApiUser : RobloxUsersApiUser | undefined;
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -88,15 +117,21 @@ export class UserDataClient<AlwaysReturn extends boolean = boolean> {
 /* -------------------------------------------------------------------------- */
 
 setInterval(async () => {
-    // ------------------------------------------------------------//
+    /* -------------------------------------------------------------------------- */
+
 
     const code_db = await create_db_handler();
 
-    // ------------------------------------------------------------//
+    /* -------------------------------------------------------------------------- */
+
     code_db.event_map.forEach(async (v, k) => {
         // console.log(k);
-        const request = await users_api.get<RobloxUsersApiUser>(`v1/users/${k}`);
-        const request_data = request.data;
+        const request = await users_api.get<RobloxUsersApiUser>(`v1/users/${k}`)
+        .then(
+            // eslint-disable-next-line max-nested-callbacks
+            (response) => response.body
+        );
+        const request_data = request;
         v.emit('Update', request_data);
     });
 }, 30000);

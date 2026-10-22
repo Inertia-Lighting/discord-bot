@@ -1,19 +1,17 @@
-// ------------------------------------------------------------//
-//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-// ------------------------------------------------------------//
+/* -------------------------------------------------------------------------- */
+/*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
+/* -------------------------------------------------------------------------- */
+
+/* ------------------------------ Dependencies ------------------------------ */
 
 import { Message } from 'discord.js'
-import { findBestMatch, Rating } from 'string-similarity';
+import { findBestMatch, Rating } from 'string-similarity'
 
 import { CustomEmbed } from '@/common/message.js'
 import { delay, ellipseString } from '@/utilities/index.js'
+import { fetchPermissions } from '@/utilities/permissions.js'
 
-// ------------------------------------------------------------//
-
-const bot_staff_role_id = `${process.env.BOT_STAFF_ROLE_ID ?? ''}`;
-if (bot_staff_role_id.length < 1) throw new Error('Environment variable: BOT_STAFF_ROLE_ID; was not properly set or is empty');
-
-// ------------------------------------------------------------//
+/* -------------------------------- Constants ------------------------------- */
 
 const camera_words: string[] = [
     'camera',
@@ -41,13 +39,15 @@ function checkCameraMention(msg: string): coolStuff {
     });
 }
 
+/* ------------------------------- Definition ------------------------------- */
+
 export async function suggestionsCategoryHandler(
     message: Message,
 ) {
     if (!message.member) return;
     if (message.author.system || message.author.bot) return;
     if (message.content.length === 0) return;
-    const isStaff = message.member.roles.cache.has(bot_staff_role_id)
+    const isStaff = fetchPermissions(message.member) >= PermissionLevel.Staff
     /* don't allow staff to create suggestions */
     if (isStaff && !message.content.startsWith('!s ')) {
         return;

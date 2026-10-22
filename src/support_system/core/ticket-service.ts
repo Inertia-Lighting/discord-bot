@@ -1,25 +1,25 @@
-// ------------------------------------------------------------//
-//    Copyright (c) Inertia Lighting, Some Rights Reserved    //
-// ------------------------------------------------------------//
+/* -------------------------------------------------------------------------- */
+/*            Copyright (c) Inertia Lighting, Some Rights Reserved            */
+/* -------------------------------------------------------------------------- */
 
-import * as Discord from 'discord.js';
+/* ------------------------------ Dependencies ------------------------------ */
+
+import * as Discord from 'discord.js'
 
 import { CustomEmbed } from '@/common/message.js'
-;
 import { delay, getMarkdownFriendlyTimestamp } from '@/utilities/index.js'
-;
 
 import { SupportSystemConfig } from '../config/index.js'
-;
 import { 
     SupportCategoryId, 
     SupportTicketContext, 
     SupportTicketService,
     TicketPriority 
 } from '../types/index.js'
-;
 import { TicketPriorityServiceImpl } from './priority-service.js'
-;
+
+
+/* ------------------------------- Definition ------------------------------- */
 
 /**
  * Implementation of the support ticket service
@@ -209,15 +209,14 @@ export class SupportTicketServiceImpl implements SupportTicketService {
         await initialMessage.pin();
 
         // Post ticket link in main support channel
-        await this.postTicketLinkToSupportChannel(channel, context);
+        await this.postTicketLinkToSupportChannel(channel);
     }
 
     /**
      * Posts a ticket link to the main support channel
      */
     private async postTicketLinkToSupportChannel(
-        channel: Discord.TextChannel,
-        context: SupportTicketContext
+        channel: Discord.TextChannel
     ): Promise<void> {
         try {
             // Check if support channel is configured
@@ -232,21 +231,21 @@ export class SupportTicketServiceImpl implements SupportTicketService {
                 return;
             }
 
-            const ticketLinkEmbed = CustomEmbed.from({
-                color: CustomEmbed.Color.Blue,
-                title: '🎫 New Support Ticket Created',
-                description: [
-                    `**User:** ${context.owner}`,
-                    `**Category:** ${context.categoryId}`,
-                    `**Channel:** ${Discord.channelMention(channel.id)}`,
-                    `**Created:** <t:${Math.floor(context.createdAt.getTime() / 1000)}:R>`,
-                ].join('\n'),
-                timestamp: new Date().toISOString(),
-            });
+            // const ticketLinkEmbed = CustomEmbed.from({
+            //     color: CustomEmbed.Color.Blue,
+            //     title: '🎫 New Support Ticket Created',
+            //     description: [
+            //         `**User:** ${context.owner}`,
+            //         `**Category:** ${context.categoryId}`,
+            //         `**Channel:** ${Discord.channelMention(channel.id)}`,
+            //         `**Created:** <t:${Math.floor(context.createdAt.getTime() / 1000)}:R>`,
+            //     ].join('\n'),
+            //     timestamp: new Date().toISOString(),
+            // });
 
-            await supportChannel.send({
-                embeds: [ticketLinkEmbed],
-            });
+            // await supportChannel.send({
+            //     embeds: [ticketLinkEmbed],
+            // });
         } catch (error) {
             console.error('Failed to post ticket link to support channel:', error);
         }
@@ -295,7 +294,7 @@ export class SupportTicketServiceImpl implements SupportTicketService {
         const ticketOwner = await channel.client.users.fetch(ticketOwnerId);
         const creationTimestamp = channel.createdTimestamp ? 
             `<t:${getMarkdownFriendlyTimestamp(channel.createdTimestamp)}:F>` : 
-            'unknown';
+            'unknown'
 
         // Generate transcript
         // const transcript = await DiscordTranscripts.createTranscript(channel, {
