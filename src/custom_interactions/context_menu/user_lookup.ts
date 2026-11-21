@@ -33,6 +33,12 @@ export default new CustomInteraction({
         required_access_level: CustomInteractionAccessLevel.Staff,
     },
     handler: async (discord_client, interaction) => {
+        try {
+            await go_mongo_db.ensureConnection()
+        } catch(err) {
+            console.trace(err)
+            return;
+        }
         if (!interaction.inCachedGuild()) return;
         if (!interaction.isUserContextMenuCommand()) return;
 
