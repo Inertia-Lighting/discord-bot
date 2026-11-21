@@ -30,4 +30,4 @@ const ModerationActionSchema = new mongoose.Schema<DbModerationAction>({
     },
 }, { timestamps: true });
 
-export const ModerationActionRecordModel = MongoDB.model<DbModerationAction>('ModerationAction', ModerationActionSchema, db_moderation_action_records_collection_name);
+export const ModerationActionRecordModel = MongoDB?.model<DbModerationAction>('ModerationAction', ModerationActionSchema, db_moderation_action_records_collection_name);

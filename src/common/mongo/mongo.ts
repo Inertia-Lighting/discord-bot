@@ -22,9 +22,10 @@ const connection = await mongoose.connect(mongo_connection_url, {
     appName: 'Discord Bot',
     dbName: db_database_name,
     readPreference: 'primary',
-    ssl: false
+    ssl: false,
+    timeoutMS: 3_000
 }).catch((err) => {
-    throw new Error(err)
+    console.trace(err)
 })
 
 /* ------------------------------- Definition ------------------------------- */

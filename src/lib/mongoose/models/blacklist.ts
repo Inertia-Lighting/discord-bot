@@ -26,4 +26,4 @@ const BlacklistSchema = new mongoose.Schema<DbBlacklistedUserRecord>({
     staff_member_id: { type: String, required: true },
 }, { timestamps: true });
 
-export const BlacklistModel = MongoDB.model<DbBlacklistedUserRecord>('Blacklist', BlacklistSchema, db_blacklisted_users_collection_name);
+export const BlacklistModel = MongoDB?.model<DbBlacklistedUserRecord>('Blacklist', BlacklistSchema, db_blacklisted_users_collection_name); 

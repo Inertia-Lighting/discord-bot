@@ -13,6 +13,8 @@ import prisma from '@/lib/prisma_client.js'
 import { DbBlacklistedUserRecord, DbUserData } from '@/types/index.js'
 import config from '@/utilities/bot_config.js'
 
+import { MongoDB } from '../common/mongo/mongo.js';
+
 /* ------------------------------- Definition ------------------------------- */
 
 export default {
@@ -59,6 +61,7 @@ export default {
         }
 
         if (message.content === '!!post_migrate') {
+            if(!UserModel || !BlacklistModel || !MongoDB) return;
             console.log(`Running "!!post_migrate" for ${message.author.globalName} (${message.author.id}) `)
             const findInPG = await prisma.user.findFirst({
                 where: {
@@ -76,115 +79,6 @@ export default {
             })
             const findBlacklist = await BlacklistModel.findOne<DbBlacklistedUserRecord>({
                 'identity.discord_user_id': message.author.id,
-            }, {
-                '_id': false
-            })
-            const db_products = await prisma.products.findMany();
-            let lumenAdd: number = 0;
-            const transactions: Omit<Prisma.TransactionsCreateInput, 'User'>[] = [];
-            const punishments: Omit<Prisma.PunishmentsCreateManyInput, 'punishedUserId'>[] = [];
-            if (findUser && findUser.products) {
-                for (const [product, own] of Object.entries(findUser.products)) {
-                    if (own === true) {
-                        // eslint-disable-next-line max-depth
-                        if (findInPG.transactions.some((trans) => trans.productCode === product)) continue;
-                        transactions.push({
-                            productCode: product,
-                            purchaseId: `SYSTEM_TRANSFER_${crypto.randomUUID()}`,
-                            transactionAmount: '0',
-                            transactionType: 'system',
-                        });
-                        const db_product = db_products.find((v) => v.code === product)
-                        // eslint-disable-next-line max-depth
-                        if (!db_product) continue;
-                        lumenAdd = lumenAdd + db_product.price_in_robux
-
-                    }
-                }
-            }
-            if (findBlacklist) {
-                let issuingUser = await prisma.user.findFirst({
-                    where: {
-                        discordId: findBlacklist.staff_member_id,
-                    },
-                });
-
-                if (!issuingUser) {
-                    issuingUser = await prisma.user.upsert({
-                        where: {
-                            discordId: 'SYSTEM_USER',
-                            robloxId: 'SYSTEM_USER'
-                        },
-                        update: {},
-                        create: {
-                            discordId: 'SYSTEM_USER',
-                            robloxId: 'SYSTEM_USER',
-                        },
-                    });
-                }
-
-                if (issuingUser) {
-                    console.debug(issuingUser.id);
-                    const blacklist_date = new Date();
-                    blacklist_date.setFullYear(blacklist_date.getFullYear() + 10);
-                    punishments.push({
-                        punishmentReason: findBlacklist.reason,
-                        punishmentType: 'blacklist',
-                        staffUserId: issuingUser.id,
-                        duration: blacklist_date,
-                    });
-                }
-            }
-            await prisma.user.update({
-                where: {
-                    id: findInPG.id
-                },
-                data: {
-                    transactions: {
-                        createMany: {
-                            data: transactions
-                        }
-                    },
-                    receivedPunishments: {
-                        createMany: {
-                            data: punishments
-                        }
-                    }
-                }
-            })
-            message.reply({
-                content: `Transactions: 
-                \`\`\`json
-                ${JSON.stringify(transactions)}
-                \`\`\`
-                
-                Punishments: 
-                \`\`\`json
-                ${JSON.stringify(punishments)}
-                \`\`\`
-                `
-            })
-        }
-        if (message.content.startsWith('!!!!!!!FIX_AIDEN BROOOOOOOOOO')) {
-            console.log(`Running "!!!!!!!FIX_AIDEN BROOOOOOOOOO" for ${message.author.globalName} (${message.author.id}) `)
-
-            const dId = message.content.split(' ')[2]
-            const findInPG = await prisma.user.findFirst({
-                where: {
-                    discordId: dId
-                },
-                include: {
-                    transactions: true
-                }
-            })
-            if (!findInPG) return;
-            const findUser = await UserModel.findOne<DbUserData>({
-                'identity.discord_user_id': '241726459025162241',
-            }, {
-                '_id': false
-            })
-            const findBlacklist = await BlacklistModel.findOne<DbBlacklistedUserRecord>({
-                'identity.discord_user_id': '241726459025162241',
             }, {
                 '_id': false
             })

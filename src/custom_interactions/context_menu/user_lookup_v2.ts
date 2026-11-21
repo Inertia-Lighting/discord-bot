@@ -24,6 +24,7 @@ export default new CustomInteraction({
         required_access_level: CustomInteractionAccessLevel.Staff,
     },
     handler: async (discord_client, interaction) => {
+        if (!UserModel || !BlacklistModel) throw new Error('MongoDB not initialized');
         if (!interaction.inCachedGuild()) return;
         if (!interaction.isUserContextMenuCommand()) return;
 
