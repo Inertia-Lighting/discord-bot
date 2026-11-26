@@ -39,7 +39,6 @@
     "lowdb": "^7.0.1",
     "module-alias": "2.3.4",
     "moment-timezone": "0.6.3",
-    "mongoose": "^9.8.1",
     "prisma": "^7.9.1",
     "string-similarity": "4.0.4",
     "tsc-alias": "^1.9.1"
