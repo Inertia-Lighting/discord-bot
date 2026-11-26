@@ -7,16 +7,12 @@
 import * as Discord from 'discord.js'
 
 import { automatedQuickSupportHandler, suggestionsCategoryHandler } from '@/common/handlers/index.js'
-import { Prisma } from '@/lib/prisma/client.js'
-import prisma from '@/lib/prisma_client.js'
-import { DbBlacklistedUserRecord, DbUserData } from '@/types/index.js'
 import config from '@/utilities/bot_config.js'
 
 /* ------------------------------- Definition ------------------------------- */
 
 export default {
     name: Discord.Events.MessageCreate,
-    // eslint-disable-next-line complexity
     async handler(
         client: Discord.Client,
         message: Discord.Message,
